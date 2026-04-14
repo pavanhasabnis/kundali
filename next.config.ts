@@ -5,9 +5,6 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   serverExternalPackages: ["swisseph"],
-  turbopack: {
-    root: ".",
-  },
 };
 
 export default nextConfig;
