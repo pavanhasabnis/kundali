@@ -159,7 +159,7 @@ export function calculateKundli(input: BirthInput): KundliResult {
   const planets: PlanetPosition[] = [];
 
   for (const p of PLANET_MAP) {
-    const result = swisseph.swe_calc_ut(jd, p.swId, swisseph.SEFLG_SWIEPH | swisseph.SEFLG_SPEED);
+    const result = swisseph.swe_calc_ut(jd, p.swId, swisseph.SEFLG_MOSEPH | swisseph.SEFLG_SPEED);
     const tropLong = result.longitude;
     const speed = result.longitudeSpeed;
     const sidLong = getSiderealLong(tropLong, ayanamsa);
@@ -192,7 +192,7 @@ export function calculateKundli(input: BirthInput): KundliResult {
   }
 
   // Rahu (True Node)
-  const rahuResult = swisseph.swe_calc_ut(jd, swisseph.SE_TRUE_NODE, swisseph.SEFLG_SWIEPH | swisseph.SEFLG_SPEED);
+  const rahuResult = swisseph.swe_calc_ut(jd, swisseph.SE_TRUE_NODE, swisseph.SEFLG_MOSEPH | swisseph.SEFLG_SPEED);
   const rahuSid = getSiderealLong(rahuResult.longitude, ayanamsa);
   const rahuRashi = getRashiIndex(rahuSid);
   const rahuNak = getNakshatraIndex(rahuSid);
@@ -371,7 +371,7 @@ export function calculatePanchang(date: Date, latitude: number, longitude: numbe
       jdApprox - 0.5, // start searching from midnight
       swisseph.SE_SUN,
       0, // star name (not used)
-      swisseph.SEFLG_SWIEPH,
+      swisseph.SEFLG_MOSEPH,
       swisseph.SE_CALC_RISE, // sunrise
       [longitude, latitude, 0], // geopos: [lng, lat, altitude]
       0, // atpress
@@ -408,7 +408,7 @@ export function calculatePanchang(date: Date, latitude: number, longitude: numbe
       jdApprox - 0.5,
       swisseph.SE_SUN,
       0,
-      swisseph.SEFLG_SWIEPH,
+      swisseph.SEFLG_MOSEPH,
       swisseph.SE_CALC_SET, // sunset
       [longitude, latitude, 0],
       0,
@@ -427,8 +427,8 @@ export function calculatePanchang(date: Date, latitude: number, longitude: numbe
   const ayanamsa = swisseph.swe_get_ayanamsa_ut(jd);
 
   // Sun and Moon positions
-  const sunResult = swisseph.swe_calc_ut(jd, swisseph.SE_SUN, swisseph.SEFLG_SWIEPH);
-  const moonResult = swisseph.swe_calc_ut(jd, swisseph.SE_MOON, swisseph.SEFLG_SWIEPH);
+  const sunResult = swisseph.swe_calc_ut(jd, swisseph.SE_SUN, swisseph.SEFLG_MOSEPH);
+  const moonResult = swisseph.swe_calc_ut(jd, swisseph.SE_MOON, swisseph.SEFLG_MOSEPH);
 
   const sunSid = getSiderealLong(sunResult.longitude, ayanamsa);
   const moonSid = getSiderealLong(moonResult.longitude, ayanamsa);

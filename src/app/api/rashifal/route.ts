@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
     const transitPlanets: TransitPlanet[] = [];
 
     for (const planet of PLANET_IDS) {
-      const result = swisseph.swe_calc_ut(jd, planet.seId, swisseph.SEFLG_SWIEPH);
+      const result = swisseph.swe_calc_ut(jd, planet.seId, swisseph.SEFLG_MOSEPH);
       const sidLong = getSiderealLong(result.longitude, ayanamsa);
       const rashiIndex = Math.floor(sidLong / 30);
 
