@@ -182,8 +182,8 @@ export default function YatraCategoryPageClient() {
     return (
       <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-lg font-bold text-[#3d0c0c] mb-4">{t("श्रेणी सापडली नाही", "Category not found")}</p>
-          <Link href="/yatra" className="text-sm text-[#d4a843] font-medium hover:underline">&larr; {t("यात्रा सेवा", "Travel Services")}</Link>
+          <p className="text-lg font-bold text-[#3d0c0c] mb-4">{t("श्रेणी सापडली नाही", "Category not found", "श्रेणी नहीं मिली")}</p>
+          <Link href="/yatra" className="text-sm text-[#d4a843] font-medium hover:underline">&larr; {t("यात्रा सेवा", "Travel Services", "यात्रा सेवा")}</Link>
         </div>
       </div>
     );
@@ -195,13 +195,13 @@ export default function YatraCategoryPageClient() {
       <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-          <Link href="/yatra" className="inline-block text-white/40 text-xs hover:text-white/60 transition mb-4">&larr; {t("सर्व यात्रा सेवा", "All Travel Services")}</Link>
+          <Link href="/yatra" className="inline-block text-white/40 text-xs hover:text-white/60 transition mb-4">&larr; {t("सर्व यात्रा सेवा", "All Travel Services", "सभी यात्रा सेवाएँ")}</Link>
           <div className="text-4xl mb-3">{meta.icon}</div>
           <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">
-            {t(meta.labelMr, meta.labelEn)}
+            {t(meta.labelMr, meta.labelEn, meta.labelMr)}
           </h1>
           <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            {t(meta.descMr, meta.descEn)}
+            {t(meta.descMr, meta.descEn, meta.descMr)}
           </p>
         </div>
       </section>
@@ -218,19 +218,19 @@ export default function YatraCategoryPageClient() {
         {selectedPkg && !showEnquiry && (
           <div className="space-y-6">
             <button onClick={() => setSelectedPkg(null)} className="text-sm text-[#3d0c0c]/60 hover:text-[#3d0c0c] font-medium">
-              &larr; {t("मागे", "Back to packages")}
+              &larr; {t("मागे", "Back to packages", "पैकेजों पर वापस")}
             </button>
 
             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
               <div className="h-20 flex items-center justify-center px-6" style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}>
-                <h3 className="text-lg font-bold text-[#d4a843] text-center">{t(selectedPkg.titleMr, selectedPkg.titleEn)}</h3>
+                <h3 className="text-lg font-bold text-[#d4a843] text-center">{t(selectedPkg.titleMr, selectedPkg.titleEn, selectedPkg.titleMr)}</h3>
               </div>
               <div className="p-6 sm:p-8">
                 <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-[#3d0c0c]">{t(selectedPkg.titleMr, selectedPkg.titleEn)}</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-[#3d0c0c]">{t(selectedPkg.titleMr, selectedPkg.titleEn, selectedPkg.titleMr)}</h2>
                     {(selectedPkg.locationMr || selectedPkg.locationEn) && (
-                      <p className="text-sm text-[#5c1a1a]/50 mt-1">{t(selectedPkg.locationMr || "", selectedPkg.locationEn || "")}</p>
+                      <p className="text-sm text-[#5c1a1a]/50 mt-1">{t(selectedPkg.locationMr || "", selectedPkg.locationEn || "", selectedPkg.locationMr || "")}</p>
                     )}
                   </div>
                   <div className="text-right">
@@ -241,20 +241,20 @@ export default function YatraCategoryPageClient() {
                       </p>
                     )}
                     {selectedPkg.duration && <p className="text-xs text-[#5c1a1a]/50 mt-0.5">{selectedPkg.duration}</p>}
-                    <p className="text-[10px] text-[#5c1a1a]/30">{t("प्रति व्यक्ती", "per person")}</p>
+                    <p className="text-[10px] text-[#5c1a1a]/30">{t("प्रति व्यक्ती", "per person", "प्रति व्यक्ति")}</p>
                   </div>
                 </div>
 
                 {(selectedPkg.descriptionMr || selectedPkg.descriptionEn) && (
                   <p className="text-sm text-[#5c1a1a]/70 leading-relaxed mb-6">
-                    {t(selectedPkg.descriptionMr || "", selectedPkg.descriptionEn || "")}
+                    {t(selectedPkg.descriptionMr || "", selectedPkg.descriptionEn || "", selectedPkg.descriptionMr || "")}
                   </p>
                 )}
 
                 {/* Highlights */}
                 {(() => { const items = parseJsonArray(selectedPkg.highlights); return items.length > 0 ? (
                   <div className="mb-6">
-                    <h3 className="text-sm font-bold text-[#3d0c0c] mb-2">{t("ठळक वैशिष्ट्ये", "Highlights")}</h3>
+                    <h3 className="text-sm font-bold text-[#3d0c0c] mb-2">{t("ठळक वैशिष्ट्ये", "Highlights", "मुख्य विशेषताएँ")}</h3>
                     <div className="flex flex-wrap gap-2">
                       {items.map((h, i) => (
                         <span key={i} className="px-3 py-1.5 rounded-full bg-[#FFF8E7] text-xs text-[#3d0c0c] font-medium">{h}</span>
@@ -266,7 +266,7 @@ export default function YatraCategoryPageClient() {
                 {/* Inclusions */}
                 {(() => { const items = parseJsonArray(selectedPkg.inclusions); return items.length > 0 ? (
                   <div className="mb-6">
-                    <h3 className="text-sm font-bold text-[#3d0c0c] mb-2">{t("समाविष्ट सेवा", "Inclusions")}</h3>
+                    <h3 className="text-sm font-bold text-[#3d0c0c] mb-2">{t("समाविष्ट सेवा", "Inclusions", "शामिल सेवाएँ")}</h3>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {items.map((inc, i) => (
                         <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-50 text-xs text-green-700">
@@ -281,9 +281,9 @@ export default function YatraCategoryPageClient() {
                 {/* Itinerary */}
                 {(selectedPkg.itineraryMr || selectedPkg.itineraryEn) && (
                   <div className="mb-6">
-                    <h3 className="text-sm font-bold text-[#3d0c0c] mb-2">{t("यात्रा कार्यक्रम", "Itinerary")}</h3>
+                    <h3 className="text-sm font-bold text-[#3d0c0c] mb-2">{t("यात्रा कार्यक्रम", "Itinerary", "यात्रा कार्यक्रम")}</h3>
                     <div className="bg-[#FAFAF8] rounded-lg p-4 space-y-2">
-                      {t(selectedPkg.itineraryMr || "", selectedPkg.itineraryEn || "").split("\n").map((line, i) => (
+                      {t(selectedPkg.itineraryMr || "", selectedPkg.itineraryEn || "", selectedPkg.itineraryMr || "").split("\n").map((line, i) => (
                         <div key={i} className="flex gap-3 text-sm text-[#5c1a1a]/70">
                           <span className="w-6 h-6 rounded-full bg-[#3d0c0c] text-[#d4a843] flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">{i + 1}</span>
                           <span className="leading-relaxed">{line.replace(/^(दिवस \d+:|Day \d+:)\s*/, "").trim() || line}</span>
@@ -295,7 +295,7 @@ export default function YatraCategoryPageClient() {
 
                 <button onClick={() => { setShowEnquiry(true); setSubmitted(false); }}
                   className="w-full sm:w-auto px-8 py-3 rounded-lg bg-[#3d0c0c] text-[#d4a843] font-medium hover:bg-[#5c1a1a] transition text-sm">
-                  {t("चौकशी करा", "Enquire Now")}
+                  {t("चौकशी करा", "Enquire Now", "पूछताछ करें")}
                 </button>
               </div>
             </div>
@@ -306,61 +306,61 @@ export default function YatraCategoryPageClient() {
         {showEnquiry && (
           <div className="space-y-4 max-w-xl mx-auto">
             <button onClick={() => setShowEnquiry(false)} className="text-sm text-[#3d0c0c]/60 hover:text-[#3d0c0c] font-medium">
-              &larr; {t("मागे", "Back")}
+              &larr; {t("मागे", "Back", "वापस")}
             </button>
             <div className="bg-white rounded-xl border border-gray-200 p-6 sm:p-8">
-              <h2 className="text-lg font-bold text-[#3d0c0c] mb-1">{t("यात्रा चौकशी", "Travel Enquiry")}</h2>
-              {selectedPkg && <p className="text-xs text-[#d4a843] mb-4">{t(selectedPkg.titleMr, selectedPkg.titleEn)}</p>}
-              {!selectedPkg && <p className="text-xs text-[#d4a843] mb-4">{t(meta.labelMr, meta.labelEn)}</p>}
+              <h2 className="text-lg font-bold text-[#3d0c0c] mb-1">{t("यात्रा चौकशी", "Travel Enquiry", "यात्रा पूछताछ")}</h2>
+              {selectedPkg && <p className="text-xs text-[#d4a843] mb-4">{t(selectedPkg.titleMr, selectedPkg.titleEn, selectedPkg.titleMr)}</p>}
+              {!selectedPkg && <p className="text-xs text-[#d4a843] mb-4">{t(meta.labelMr, meta.labelEn, meta.labelMr)}</p>}
 
               {submitted ? (
                 <div className="text-center py-8">
                   <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
                     <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                   </div>
-                  <p className="text-lg font-bold text-green-700 mb-2">{t("चौकशी प्राप्त झाली!", "Enquiry Received!")}</p>
-                  <p className="text-sm text-[#5c1a1a]/60">{t("आमची टीम तुम्हाला लवकरच संपर्क करेल", "Our team will contact you shortly")}</p>
+                  <p className="text-lg font-bold text-green-700 mb-2">{t("चौकशी प्राप्त झाली!", "Enquiry Received!", "पूछताछ प्राप्त हुई!")}</p>
+                  <p className="text-sm text-[#5c1a1a]/60">{t("आमची टीम तुम्हाला लवकरच संपर्क करेल", "Our team will contact you shortly", "हमारी टीम जल्द ही आपसे सम्पर्क करेगी")}</p>
                   <button onClick={() => { setShowEnquiry(false); setSelectedPkg(null); setSubmitted(false); }}
                     className="mt-6 px-6 py-2 rounded-lg bg-[#3d0c0c] text-[#d4a843] text-sm font-medium hover:bg-[#5c1a1a] transition">
-                    {t("सर्व पॅकेजेस पहा", "View All Packages")}
+                    {t("सर्व पॅकेजेस पहा", "View All Packages", "सभी पैकेज देखें")}
                   </button>
                 </div>
               ) : (
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-medium text-[#5c1a1a]/60 mb-1">{t("नाव", "Name")} *</label>
+                    <label className="block text-xs font-medium text-[#5c1a1a]/60 mb-1">{t("नाव", "Name", "नाम")} *</label>
                     <input value={enquiryForm.name} onChange={(e) => setEnquiryForm({ ...enquiryForm, name: e.target.value })}
                       className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-[#d4a843]/40 focus:border-[#d4a843] focus:outline-none" />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-[#5c1a1a]/60 mb-1">{t("ईमेल", "Email")} *</label>
+                      <label className="block text-xs font-medium text-[#5c1a1a]/60 mb-1">{t("ईमेल", "Email", "ईमेल")} *</label>
                       <input type="email" value={enquiryForm.email} onChange={(e) => setEnquiryForm({ ...enquiryForm, email: e.target.value })}
                         className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-[#d4a843]/40 focus:border-[#d4a843] focus:outline-none" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#5c1a1a]/60 mb-1">{t("फोन", "Phone")} *</label>
+                      <label className="block text-xs font-medium text-[#5c1a1a]/60 mb-1">{t("फोन", "Phone", "फ़ोन")} *</label>
                       <input type="tel" value={enquiryForm.phone} onChange={(e) => setEnquiryForm({ ...enquiryForm, phone: e.target.value })}
                         className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-[#d4a843]/40 focus:border-[#d4a843] focus:outline-none" />
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-[#5c1a1a]/60 mb-1">{t("प्रवास तारीख", "Travel Date")}</label>
+                      <label className="block text-xs font-medium text-[#5c1a1a]/60 mb-1">{t("प्रवास तारीख", "Travel Date", "यात्रा तिथि")}</label>
                       <input type="date" value={enquiryForm.travelDate} onChange={(e) => setEnquiryForm({ ...enquiryForm, travelDate: e.target.value })}
                         className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-[#d4a843]/40 focus:border-[#d4a843] focus:outline-none" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[#5c1a1a]/60 mb-1">{t("प्रवासी संख्या", "Travelers")}</label>
+                      <label className="block text-xs font-medium text-[#5c1a1a]/60 mb-1">{t("प्रवासी संख्या", "Travelers", "यात्री संख्या")}</label>
                       <input type="number" min="1" value={enquiryForm.travelers} onChange={(e) => setEnquiryForm({ ...enquiryForm, travelers: e.target.value })}
                         className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-[#d4a843]/40 focus:border-[#d4a843] focus:outline-none" />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[#5c1a1a]/60 mb-1">{t("संदेश", "Message")}</label>
+                    <label className="block text-xs font-medium text-[#5c1a1a]/60 mb-1">{t("संदेश", "Message", "संदेश")}</label>
                     <textarea rows={3} value={enquiryForm.message} onChange={(e) => setEnquiryForm({ ...enquiryForm, message: e.target.value })}
                       className="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:ring-2 focus:ring-[#d4a843]/40 focus:border-[#d4a843] focus:outline-none resize-none"
-                      placeholder={t("विशेष विनंती किंवा प्रश्न", "Any special requests or questions")} />
+                      placeholder={t("विशेष विनंती किंवा प्रश्न", "Any special requests or questions", "कोई विशेष अनुरोध या प्रश्न")} />
                   </div>
                   <button onClick={submitEnquiry} disabled={submitting || !enquiryForm.name || !enquiryForm.email || !enquiryForm.phone}
                     className="w-full py-3 rounded-lg bg-[#3d0c0c] text-[#d4a843] font-medium hover:bg-[#5c1a1a] transition text-sm disabled:opacity-50">
@@ -376,18 +376,18 @@ export default function YatraCategoryPageClient() {
         {!selectedPkg && !showEnquiry && !loading && (
           <>
             <h2 className="text-lg font-bold text-[#3d0c0c] mb-4">
-              {t("उपलब्ध पॅकेजेस", "Available Packages")}
+              {t("उपलब्ध पॅकेजेस", "Available Packages", "उपलब्ध पैकेज")}
               <span className="text-sm font-normal text-[#5c1a1a]/40 ml-2">({packages.length})</span>
             </h2>
 
             {packages.length === 0 ? (
               <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
                 <div className="text-4xl mb-4">{meta.icon}</div>
-                <p className="text-[#5c1a1a]/50 mb-2">{t("या श्रेणीत अद्याप पॅकेजेस नाहीत", "No packages in this category yet")}</p>
-                <p className="text-xs text-[#5c1a1a]/30 mb-6">{t("पण तुम्ही चौकशी करू शकता — आम्ही तुमच्यासाठी पॅकेज तयार करू", "But you can enquire — we'll create a package for you")}</p>
+                <p className="text-[#5c1a1a]/50 mb-2">{t("या श्रेणीत अद्याप पॅकेजेस नाहीत", "No packages in this category yet", "इस श्रेणी में अभी पैकेज नहीं हैं")}</p>
+                <p className="text-xs text-[#5c1a1a]/30 mb-6">{t("पण तुम्ही चौकशी करू शकता — आम्ही तुमच्यासाठी पॅकेज तयार करू", "But you can enquire — we'll create a package for you", "लेकिन आप पूछताछ कर सकते हैं — हम आपके लिए पैकेज बनाएँगे")}</p>
                 <button onClick={() => { setSelectedPkg(null); setShowEnquiry(true); setSubmitted(false); }}
                   className="px-6 py-2.5 rounded-lg bg-[#3d0c0c] text-[#d4a843] text-sm font-medium hover:bg-[#5c1a1a] transition">
-                  {t("चौकशी करा", "Enquire Now")}
+                  {t("चौकशी करा", "Enquire Now", "पूछताछ करें")}
                 </button>
               </div>
             ) : (
@@ -396,7 +396,7 @@ export default function YatraCategoryPageClient() {
                   <button key={pkg.id} onClick={() => setSelectedPkg(pkg)}
                     className="text-left bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md hover:border-[#d4a843]/30 transition group">
                     <div className="h-24 flex items-center justify-center relative px-4" style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}>
-                      <h4 className="text-sm font-bold text-[#d4a843] text-center leading-tight">{t(pkg.titleMr, pkg.titleEn)}</h4>
+                      <h4 className="text-sm font-bold text-[#d4a843] text-center leading-tight">{t(pkg.titleMr, pkg.titleEn, pkg.titleMr)}</h4>
                       {pkg.priceFrom && (
                         <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: "rgba(212,168,67,0.9)", color: "#1a0505" }}>
                           ₹{pkg.priceFrom.toLocaleString()}
@@ -404,20 +404,20 @@ export default function YatraCategoryPageClient() {
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-bold text-[#3d0c0c] text-sm mb-1">{t(pkg.titleMr, pkg.titleEn)}</h3>
+                      <h3 className="font-bold text-[#3d0c0c] text-sm mb-1">{t(pkg.titleMr, pkg.titleEn, pkg.titleMr)}</h3>
                       {(pkg.descriptionMr || pkg.descriptionEn) && (
-                        <p className="text-xs text-[#5c1a1a]/50 line-clamp-2 mb-3">{t(pkg.descriptionMr || "", pkg.descriptionEn || "")}</p>
+                        <p className="text-xs text-[#5c1a1a]/50 line-clamp-2 mb-3">{t(pkg.descriptionMr || "", pkg.descriptionEn || "", pkg.descriptionMr || "")}</p>
                       )}
                       <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                         <div>
                           {pkg.priceFrom ? (
                             <span className="font-bold text-[#3d0c0c]">₹{pkg.priceFrom.toLocaleString()}</span>
                           ) : (
-                            <span className="text-xs text-[#5c1a1a]/40">{t("किंमत विचारा", "Ask for price")}</span>
+                            <span className="text-xs text-[#5c1a1a]/40">{t("किंमत विचारा", "Ask for price", "कीमत पूछें")}</span>
                           )}
                           {pkg.duration && <span className="text-[10px] text-[#5c1a1a]/40 ml-2">{pkg.duration}</span>}
                         </div>
-                        <span className="text-xs text-[#d4a843] font-medium">{t("तपशील पहा", "View Details")} &rarr;</span>
+                        <span className="text-xs text-[#d4a843] font-medium">{t("तपशील पहा", "View Details", "विवरण देखें")} &rarr;</span>
                       </div>
                     </div>
                   </button>
@@ -428,14 +428,14 @@ export default function YatraCategoryPageClient() {
             {/* Enquiry CTA */}
             <div className="mt-10 text-center bg-white rounded-xl border border-gray-200 p-8">
               <h3 className="text-lg font-bold text-[#3d0c0c] mb-2">
-                {t("या यात्रेबद्दल अधिक माहिती हवी?", "Need more information about this yatra?")}
+                {t("या यात्रेबद्दल अधिक माहिती हवी?", "Need more information about this yatra?", "इस यात्रा के बारे में अधिक जानकारी चाहिए?")}
               </h3>
               <p className="text-sm text-[#5c1a1a]/50 max-w-md mx-auto mb-4">
                 {t("आमच्या टीमशी संपर्क साधा — आम्ही तुमच्या प्रश्नांची उत्तरे देऊ", "Contact our team — we'll answer all your questions")}
               </p>
               <button onClick={() => { setSelectedPkg(null); setShowEnquiry(true); setSubmitted(false); }}
                 className="px-8 py-3 rounded-lg bg-[#3d0c0c] text-[#d4a843] font-medium hover:bg-[#5c1a1a] transition text-sm">
-                {t("चौकशी करा", "Enquire Now")}
+                {t("चौकशी करा", "Enquire Now", "पूछताछ करें")}
               </button>
             </div>
           </>
