@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const SUPPORTED_LANGS = ["mr", "en"] as const;
+const SUPPORTED_LANGS = ["mr", "en", "hi"] as const;
 const DEFAULT_LANG = "mr";
 type Lang = (typeof SUPPORTED_LANGS)[number];
 
 function detectLang(req: NextRequest): Lang {
   const cookieLang = req.cookies.get("lang")?.value;
-  if (cookieLang === "mr" || cookieLang === "en") return cookieLang;
+  if (cookieLang === "mr" || cookieLang === "en" || cookieLang === "hi") return cookieLang;
 
   const accept = req.headers.get("accept-language") || "";
   const primary = accept.split(",")[0]?.toLowerCase() || "";
-  if (primary.startsWith("mr") || primary.startsWith("hi")) return "mr";
+  if (primary.startsWith("mr")) return "mr";
+  if (primary.startsWith("hi")) return "hi";
   if (primary.startsWith("en")) return "en";
   return DEFAULT_LANG;
 }
@@ -29,12 +30,12 @@ export function middleware(req: NextRequest) {
   if (lang) {
     // Propagate x-lang to server components via REQUEST headers
     const requestHeaders = new Headers(req.headers);
-    requestHeaders.set("x-lang", lang);
+    requestHeaders.set("x-lang", lang as string);
     requestHeaders.set("x-pathname", pathname);
     const res = NextResponse.next({ request: { headers: requestHeaders } });
-    res.headers.set("x-lang", lang);
+    res.headers.set("x-lang", lang as string);
     if (req.cookies.get("lang")?.value !== lang) {
-      res.cookies.set("lang", lang, { path: "/", maxAge: 60 * 60 * 24 * 365 });
+      res.cookies.set("lang", lang as string, { path: "/", maxAge: 60 * 60 * 24 * 365 });
     }
     return res;
   }
@@ -48,6 +49,6 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|llms.txt|logos|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|json|txt|xml|pdf|woff|woff2|ttf|otf|eot)).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|llms.txt|logos|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|json|txt|xml|xsl|pdf|woff|woff2|ttf|otf|eot)).*)",
   ],
 };

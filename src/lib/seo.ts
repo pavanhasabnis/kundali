@@ -19,7 +19,7 @@ export const SITE_ADDRESS = {
   addressCountry: "IN",
 };
 
-export type Lang = "mr" | "en";
+export type Lang = "mr" | "en" | "hi";
 
 // ─── Default OpenGraph image (fallback) ─────────────────────
 export const OG_IMAGE = {
@@ -74,16 +74,26 @@ export function pageMetaI18n(opts: {
   lang: Lang;
   mr: LangMeta;
   en: LangMeta;
+  hi?: LangMeta;
   path: string; // path without lang prefix, e.g. "/kundli"
   noindex?: boolean;
   ogType?: "website" | "article";
 }): Metadata {
-  const data = opts.lang === "en" ? opts.en : opts.mr;
+  const data =
+    opts.lang === "en"
+      ? opts.en
+      : opts.lang === "hi"
+      ? opts.hi ?? opts.mr
+      : opts.mr;
   const pathWithLang = `/${opts.lang}${opts.path === "/" ? "" : opts.path}`;
   const url = `${SITE_URL}${pathWithLang}`;
   const mrUrl = `${SITE_URL}/mr${opts.path === "/" ? "" : opts.path}`;
   const enUrl = `${SITE_URL}/en${opts.path === "/" ? "" : opts.path}`;
-  const locale = opts.lang === "en" ? "en_IN" : "mr_IN";
+  const hiUrl = `${SITE_URL}/hi${opts.path === "/" ? "" : opts.path}`;
+  const locale =
+    opts.lang === "en" ? "en_IN" : opts.lang === "hi" ? "hi_IN" : "mr_IN";
+  const altLocale =
+    opts.lang === "mr" ? "en_IN" : opts.lang === "en" ? "hi_IN" : "mr_IN";
 
   return {
     title: data.title,
@@ -94,6 +104,7 @@ export function pageMetaI18n(opts: {
       languages: {
         "mr-IN": mrUrl,
         "en-IN": enUrl,
+        "hi-IN": hiUrl,
         "x-default": mrUrl,
       },
     },
@@ -103,7 +114,7 @@ export function pageMetaI18n(opts: {
       url,
       siteName: SITE_NAME,
       locale,
-      alternateLocale: opts.lang === "en" ? "mr_IN" : "en_IN",
+      alternateLocale: altLocale,
       type: opts.ogType || "website",
       images: [OG_IMAGE],
     },

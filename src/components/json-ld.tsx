@@ -33,6 +33,12 @@ export const organizationSchema = {
     postalCode: "411038",
     addressCountry: "IN",
   },
+  sameAs: [
+    "https://www.facebook.com/bhaagyavedh",
+    "https://www.instagram.com/bhaagyavedh",
+    "https://www.youtube.com/@bhaagyavedh",
+    "https://x.com/bhaagyavedh",
+  ],
 };
 
 export const websiteSchema = {
@@ -42,7 +48,7 @@ export const websiteSchema = {
   url: "https://bhaagyavedh.com",
   description:
     "Accurate Vedic astrology — free kundli, rashifal, gun milaan, panchang, muhurat, and yatra services.",
-  inLanguage: "mr-IN",
+  inLanguage: ["mr-IN", "en-IN", "hi-IN"],
   publisher: { "@type": "Organization", name: "Bhaagyavedh" },
   potentialAction: {
     "@type": "SearchAction",

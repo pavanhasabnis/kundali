@@ -99,12 +99,14 @@ export default async function RootLayout({
   const xPath = h.get("x-pathname") || "";
   const firstSeg = xPath.split("/")[1];
   const cookieLang = c.get("lang")?.value;
+  const isLang = (v: string | undefined | null): v is Lang =>
+    v === "mr" || v === "en" || v === "hi";
   let resolved: Lang = "mr";
-  if (xLang === "en" || xLang === "mr") resolved = xLang;
-  else if (firstSeg === "en" || firstSeg === "mr") resolved = firstSeg;
-  else if (cookieLang === "en" || cookieLang === "mr") resolved = cookieLang;
+  if (isLang(xLang)) resolved = xLang;
+  else if (isLang(firstSeg)) resolved = firstSeg;
+  else if (isLang(cookieLang)) resolved = cookieLang;
   const lang: Lang = resolved;
-  const htmlLang = lang === "en" ? "en-IN" : "mr-IN";
+  const htmlLang = lang === "en" ? "en-IN" : lang === "hi" ? "hi-IN" : "mr-IN";
 
   return (
     <html lang={htmlLang} className={outfit.variable}>

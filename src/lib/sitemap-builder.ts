@@ -23,14 +23,16 @@ export function buildUrlset(entries: SitemapEntry[]): string {
   for (const e of entries) {
     const mr = `${BASE}/mr${e.path === "/" ? "" : e.path}`;
     const en = `${BASE}/en${e.path === "/" ? "" : e.path}`;
+    const hi = `${BASE}/hi${e.path === "/" ? "" : e.path}`;
     const lastmod = e.lastModified ? e.lastModified.toISOString() : undefined;
     const alt = [
       `    <xhtml:link rel="alternate" hreflang="mr-IN" href="${escape(mr)}" />`,
       `    <xhtml:link rel="alternate" hreflang="en-IN" href="${escape(en)}" />`,
+      `    <xhtml:link rel="alternate" hreflang="hi-IN" href="${escape(hi)}" />`,
       `    <xhtml:link rel="alternate" hreflang="x-default" href="${escape(mr)}" />`,
     ].join("\n");
 
-    for (const loc of [mr, en]) {
+    for (const loc of [mr, en, hi]) {
       const parts = [`    <loc>${escape(loc)}</loc>`, alt];
       if (lastmod) parts.push(`    <lastmod>${lastmod}</lastmod>`);
       if (e.changeFrequency) parts.push(`    <changefreq>${e.changeFrequency}</changefreq>`);
@@ -39,6 +41,7 @@ export function buildUrlset(entries: SitemapEntry[]): string {
     }
   }
   return `<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${urls.join("\n")}
 </urlset>`;
@@ -53,6 +56,7 @@ export function buildSitemapIndex(sitemaps: { loc: string; lastmod?: Date }[]): 
     })
     .join("\n");
   return `<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${items}
 </sitemapindex>`;
