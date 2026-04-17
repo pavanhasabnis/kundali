@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
-import Link from "next/link";
+import { headers } from "next/headers";
 import "./globals.css";
-import { LangProvider } from "@/lib/astrology/language-context";
+import { LangProvider, type Lang } from "@/lib/astrology/language-context";
 import { NavBar } from "./nav-bar";
 import { Footer } from "./footer";
 import { SiteBanner } from "./site-banner";
@@ -28,6 +28,8 @@ export const metadata: Metadata = {
     "muhurat", "मुहूर्त", "janam kundali", "जन्म कुंडली",
     "marriage matching", "pooja", "yatra", "jyotirlinga", "ashtavinayak",
     "free kundli online", "marathi rashifal", "today panchang",
+    "mofat kundli", "aajcha rashifal", "ajjcha rashi bhavishya",
+    "gun milan marathi", "panchang marathi", "shubh muhurat marathi",
     "horoscope", "horoscope today", "today horoscope", "daily horoscope",
     "horoscope 2026", "tomorrow horoscope", "horoscope tomorrow",
     "virgo horoscope", "scorpio horoscope", "leo horoscope",
@@ -85,31 +87,32 @@ export const metadata: Metadata = {
   category: "Astrology",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const h = await headers();
+  const xLang = h.get("x-lang");
+  const lang: Lang = xLang === "en" ? "en" : "mr";
+  const htmlLang = lang === "en" ? "en" : "mr-IN";
+
   return (
-    <html lang="mr-IN" className={outfit.variable}>
+    <html lang={htmlLang} className={outfit.variable}>
       <head>
         <link rel="icon" href="/logos/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/logos/apple-touch-icon.png" />
         <meta name="theme-color" content="#5c1a1a" />
-        <meta httpEquiv="content-language" content="mr-IN" />
+        <meta httpEquiv="content-language" content={htmlLang} />
         <JsonLd data={organizationSchema} />
         <JsonLd data={websiteSchema} />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased font-sans">
-        <LangProvider>
+        <LangProvider lang={lang}>
           <div className="flex flex-col min-h-screen bg-[#FAFAF8]">
             <SiteBanner />
             <NavBar />
-
-            {/* Main Content */}
             <main className="flex-1">{children}</main>
-
-            {/* Footer */}
             <Footer />
           </div>
         </LangProvider>
