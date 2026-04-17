@@ -721,7 +721,7 @@ const SERVICES: PoojaService[] = [
 
 export default function PoojaServicesPageClient() {
   const { t, lang } = useLang();
-  const isMr = lang === "mr";
+  const showEn = lang === "en";
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [popupOpen, setPopupOpen] = useState(false);
@@ -754,12 +754,13 @@ export default function PoojaServicesPageClient() {
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
           <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">
-            {t("पूजा, पाठ व कर्मकांड सेवा", "Pooja, Path & Ritual Services")}
+            {t("पूजा, पाठ व कर्मकांड सेवा", "Pooja, Path & Ritual Services", "पूजा, पाठ व कर्मकांड सेवाएँ")}
           </h1>
           <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
             {t(
               "वास्तुशांती, गृहप्रवेश, सत्यनारायण, लग्नविधी, हवन, दोष निवारण — सर्व धार्मिक विधींची माहिती.",
-              "Vastushanti, Gruhapravesh, Satyanarayan, Wedding, Havan, Dosha Nivaran — all ritual services info."
+              "Vastushanti, Gruhapravesh, Satyanarayan, Wedding, Havan, Dosha Nivaran — all ritual services info.",
+              "वास्तुशांति, गृहप्रवेश, सत्यनारायण, विवाह विधि, हवन, दोष निवारण — सभी धार्मिक विधियों की जानकारी."
             )}
           </p>
         </div>
@@ -773,7 +774,7 @@ export default function PoojaServicesPageClient() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={t("पूजा शोधा...", "Search pooja...")}
+              placeholder={t("पूजा शोधा...", "Search pooja...", "पूजा खोजें...")}
               className="w-full rounded-lg border border-[#d4a843]/30 bg-white px-4 py-2.5 text-sm text-[#3d0c0c] placeholder:text-[#5c1a1a]/40 focus:border-[#d4a843] focus:outline-none focus:ring-1 focus:ring-[#d4a843]/50"
             />
           </div>
@@ -782,9 +783,9 @@ export default function PoojaServicesPageClient() {
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="rounded-lg border border-[#d4a843]/30 bg-white px-4 py-2.5 text-sm text-[#3d0c0c] focus:border-[#d4a843] focus:outline-none focus:ring-1 focus:ring-[#d4a843]/50"
           >
-            <option value="">{t("सर्व पूजा प्रकार", "All Pooja Types")}</option>
+            <option value="">{t("सर्व पूजा प्रकार", "All Pooja Types", "सभी पूजा प्रकार")}</option>
             {CATEGORIES.map((cat) => (
-              <option key={cat.id} value={cat.id}>{t(cat.mr, cat.en)}</option>
+              <option key={cat.id} value={cat.id}>{t(cat.mr, cat.en, cat.mr)}</option>
             ))}
           </select>
         </div>
@@ -795,7 +796,7 @@ export default function PoojaServicesPageClient() {
             onClick={() => setCategoryFilter("")}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${!categoryFilter ? "bg-[#3d0c0c] text-[#d4a843]" : "bg-white text-[#5c1a1a]/70 border border-[#d4a843]/20 hover:bg-[#FFF8E7]"}`}
           >
-            {t("सर्व", "All")} ({SERVICES.length})
+            {t("सर्व", "All", "सभी")} ({SERVICES.length})
           </button>
           {CATEGORIES.map((cat) => {
             const count = SERVICES.filter(s => s.category === cat.id).length;
@@ -805,7 +806,7 @@ export default function PoojaServicesPageClient() {
                 onClick={() => setCategoryFilter(cat.id === categoryFilter ? "" : cat.id)}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${categoryFilter === cat.id ? "bg-[#3d0c0c] text-[#d4a843]" : "bg-white text-[#5c1a1a]/70 border border-[#d4a843]/20 hover:bg-[#FFF8E7]"}`}
               >
-                {t(cat.mr, cat.en)} ({count})
+                {t(cat.mr, cat.en, cat.mr)} ({count})
               </button>
             );
           })}
@@ -813,7 +814,7 @@ export default function PoojaServicesPageClient() {
 
         {/* Results count */}
         <p className="text-sm text-[#5c1a1a]/60 mb-4">
-          {t(`${filtered.length} पूजा सेवा`, `${filtered.length} pooja services`)}
+          {t(`${filtered.length} पूजा सेवा`, `${filtered.length} pooja services`, `${filtered.length} पूजा सेवाएँ`)}
         </p>
 
         {/* Service Cards */}
@@ -850,9 +851,9 @@ export default function PoojaServicesPageClient() {
 
               {/* What's included */}
               <div className="px-5 pb-4 flex-1">
-                <p className="text-xs font-semibold text-[#3d0c0c] mb-1.5">{t("यात समाविष्ट", "Includes")}</p>
+                <p className="text-xs font-semibold text-[#3d0c0c] mb-1.5">{t("यात समाविष्ट", "Includes", "शामिल है")}</p>
                 <ul className="space-y-1">
-                  {(isMr ? s.includesMr : s.includesEn).map((item, i) => (
+                  {(showEn ? s.includesEn : s.includesMr).map((item, i) => (
                     <li key={i} className="flex items-start gap-1.5 text-xs text-[#5c1a1a]/60">
                       <span className="text-[#d4a843] mt-0.5 shrink-0">•</span>
                       {item}
@@ -864,11 +865,11 @@ export default function PoojaServicesPageClient() {
               {/* CTA */}
               <div className="px-5 pb-5">
                 <button
-                  onClick={() => openEnquiry(t(s.nameMr, s.nameEn))}
+                  onClick={() => openEnquiry(t(s.nameMr, s.nameEn, s.nameMr))}
                   className="w-full inline-flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold text-white transition hover:opacity-90 cursor-pointer"
                   style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}
                 >
-                  {t("चौकशी करा", "Enquire Now")}
+                  {t("चौकशी करा", "Enquire Now", "पूछताछ करें")}
                 </button>
               </div>
             </div>
@@ -879,7 +880,7 @@ export default function PoojaServicesPageClient() {
           <div className="text-center py-16">
             <p className="text-4xl mb-3">🔍</p>
             <p className="text-[#5c1a1a]/60">
-              {t("कोणतीही पूजा सापडली नाही. शोध बदला.", "No pooja found. Try a different search.")}
+              {t("कोणतीही पूजा सापडली नाही. शोध बदला.", "No pooja found. Try a different search.", "कोई पूजा नहीं मिली. खोज बदलें.")}
             </p>
           </div>
         )}
@@ -888,7 +889,8 @@ export default function PoojaServicesPageClient() {
         <div className="mt-8 p-4 rounded-lg bg-[#FFF8E7] border border-[#d4a843]/20 text-xs text-[#5c1a1a]/60 text-center">
           {t(
             "सूचना: पूजा सामग्री, पुरोहित शुल्क आणि वेळ स्थान/शहरानुसार बदलू शकतात. अधिक माहितीसाठी संपर्क करा.",
-            "Note: Pooja materials, purohit fees and timings may vary by location. Contact us for more details."
+            "Note: Pooja materials, purohit fees and timings may vary by location. Contact us for more details.",
+            "सूचना: पूजा सामग्री, पुरोहित शुल्क और समय स्थान/शहर के अनुसार बदल सकते हैं. अधिक जानकारी के लिए सम्पर्क करें."
           )}
         </div>
       </div>

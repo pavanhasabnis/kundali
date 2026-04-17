@@ -282,18 +282,19 @@ export default function ConsultationPageClient() {
       <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">{t("ज्योतिष सल्ला सेवा", "Astrology Consultation Services")}</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">{t("ज्योतिष सल्ला सेवा", "Astrology Consultation Services", "ज्योतिष परामर्श सेवाएँ")}</h1>
           <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
             {t(
               "अनुभवी वैदिक ज्योतिषांकडून वैयक्तिक सल्ला — फोन, व्हिडिओ कॉल किंवा प्रत्यक्ष भेटीद्वारे. प्रत्येक सल्ला तुमच्या कुंडलीवर आधारित — कोणतीही टेम्पलेट उत्तरे नाहीत.",
-              "Personal consultation by experienced Vedic astrologers — via phone, video call or in-person. Every consultation is based on YOUR chart — no template answers."
+              "Personal consultation by experienced Vedic astrologers — via phone, video call or in-person. Every consultation is based on YOUR chart — no template answers.",
+              "अनुभवी वैदिक ज्योतिषियों से व्यक्तिगत परामर्श — फ़ोन, वीडियो कॉल या प्रत्यक्ष भेंट द्वारा. हर परामर्श आपकी कुंडली पर आधारित — कोई टेम्पलेट उत्तर नहीं."
             )}
           </p>
           <div className="flex items-center justify-center gap-4 mt-8">
-            <button onClick={() => openEnquiry(t("ज्योतिष सल्ला सेवा", "Astrology Consultation"))}
+            <button onClick={() => openEnquiry(t("ज्योतिष सल्ला सेवा", "Astrology Consultation", "ज्योतिष परामर्श"))}
               className="px-8 py-3 rounded-full font-semibold text-sm transition-all hover:-translate-y-0.5 cursor-pointer"
               style={{ background: "linear-gradient(135deg, #d4a843, #c49535)", color: "#1a0505" }}>
-              {t("चौकशी करा", "Enquire Now")}
+              {t("चौकशी करा", "Enquire Now", "पूछताछ करें")}
             </button>
           </div>
         </div>
@@ -315,16 +316,16 @@ export default function ConsultationPageClient() {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <h2 className="text-lg font-bold" style={{ color: idx % 2 === 0 ? "#fff" : "#3d0c0c" }}>
-                    {t(s.nameMr, s.nameEn)}
+                    {t(s.nameMr, s.nameEn, s.nameMr)}
                   </h2>
                   {s.popular && (
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#d4a843", color: "#1a0505" }}>
-                      {t("लोकप्रिय", "Popular")}
+                      {t("लोकप्रिय", "Popular", "लोकप्रिय")}
                     </span>
                   )}
                 </div>
                 <p className="text-xs mt-0.5" style={{ color: idx % 2 === 0 ? "rgba(212,168,67,0.6)" : "#8b6914" }}>
-                  {s.duration} {t("मिनिटे", "minutes")} | {t("फोन / व्हिडिओ कॉल / भेट", "Phone / Video Call / Visit")}
+                  {s.duration} {t("मिनिटे", "minutes", "मिनट")} | {t("फोन / व्हिडिओ कॉल / भेट", "Phone / Video Call / Visit", "फ़ोन / वीडियो कॉल / भेंट")}
                 </p>
               </div>
             </div>
@@ -337,10 +338,10 @@ export default function ConsultationPageClient() {
 
               {/* What's Included */}
               <h3 className="text-sm font-bold mb-3" style={{ color: "#5c1a1a" }}>
-                {t("यात काय समाविष्ट आहे:", "What's Included:")}
+                {t("यात काय समाविष्ट आहे:", "What's Included:", "इसमें क्या शामिल है:")}
               </h3>
               <div className="space-y-2 mb-5">
-                {(lang === "mr" ? s.includesMr : s.includesEn).map((item, i) => (
+                {(lang === "en" ? s.includesEn : s.includesMr).map((item, i) => (
                   <div key={i} className="flex items-start gap-2">
                     <div className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: "#d4a843" }} />
                     <p className="text-sm" style={{ color: "#4a3a2a" }}>{item}</p>
@@ -350,10 +351,10 @@ export default function ConsultationPageClient() {
 
               {/* CTA */}
               <div className="flex items-center gap-3 pt-4" style={{ borderTop: "1px solid rgba(212,168,67,0.12)" }}>
-                <button onClick={() => openEnquiry(t(s.nameMr, s.nameEn))}
+                <button onClick={() => openEnquiry(t(s.nameMr, s.nameEn, s.nameMr))}
                   className="px-6 py-2.5 rounded-lg text-sm font-semibold transition-all hover:-translate-y-0.5 cursor-pointer"
                   style={{ background: "linear-gradient(135deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
-                  {t("चौकशी करा", "Enquire Now")}
+                  {t("चौकशी करा", "Enquire Now", "पूछताछ करें")}
                 </button>
               </div>
             </div>
@@ -363,21 +364,21 @@ export default function ConsultationPageClient() {
 
         {/* How It Works */}
         <div className="mt-8 pt-8" style={{ borderTop: "2px solid rgba(212,168,67,0.15)" }}>
-          <h2 className="text-2xl font-bold text-center mb-8" style={{ color: "#3d0c0c" }}>{t("कसे काम करते?", "How Does It Work?")}</h2>
+          <h2 className="text-2xl font-bold text-center mb-8" style={{ color: "#3d0c0c" }}>{t("कसे काम करते?", "How Does It Work?", "यह कैसे काम करता है?")}</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { n: "१", nE: "1", tMr: "सेवा निवडा", tEn: "Choose a Service", dMr: "वरील सेवांमधून तुम्हाला हवी ती निवडा आणि 'चौकशी करा' बटण दाबा.", dEn: "Select the service you need and click 'Enquire Now'." },
-              { n: "२", nE: "2", tMr: "जन्म माहिती पाठवा", tEn: "Send Birth Details", dMr: "तुमचे नाव, जन्म तारीख, वेळ आणि ठिकाण फॉर्ममध्ये भरा.", dEn: "Fill in your name, birth date, time and place in the form." },
-              { n: "३", nE: "3", tMr: "वेळ ठरवा", tEn: "Schedule Time", dMr: "सोयीच्या वेळी फोन / व्हिडिओ कॉल / भेट ठरवू.", dEn: "Schedule a call / visit at your convenient time." },
-              { n: "४", nE: "4", tMr: "सल्ला मिळवा", tEn: "Get Consultation", dMr: "ज्योतिषी कुंडली समजावून सांगतील आणि उपाय सुचवतील.", dEn: "Astrologer will explain your chart and suggest remedies." },
+              { n: "१", nE: "1", tMr: "सेवा निवडा", tEn: "Choose a Service", tHi: "सेवा चुनें", dMr: "वरील सेवांमधून तुम्हाला हवी ती निवडा आणि 'चौकशी करा' बटण दाबा.", dEn: "Select the service you need and click 'Enquire Now'.", dHi: "ऊपर की सेवाओं में से चुनें और 'पूछताछ करें' बटन दबाएँ." },
+              { n: "२", nE: "2", tMr: "जन्म माहिती पाठवा", tEn: "Send Birth Details", tHi: "जन्म जानकारी भेजें", dMr: "तुमचे नाव, जन्म तारीख, वेळ आणि ठिकाण फॉर्ममध्ये भरा.", dEn: "Fill in your name, birth date, time and place in the form.", dHi: "अपना नाम, जन्म तिथि, समय और स्थान फ़ॉर्म में भरें." },
+              { n: "३", nE: "3", tMr: "वेळ ठरवा", tEn: "Schedule Time", tHi: "समय तय करें", dMr: "सोयीच्या वेळी फोन / व्हिडिओ कॉल / भेट ठरवू.", dEn: "Schedule a call / visit at your convenient time.", dHi: "सुविधाजनक समय पर फ़ोन / वीडियो कॉल / भेंट तय करें." },
+              { n: "४", nE: "4", tMr: "सल्ला मिळवा", tEn: "Get Consultation", tHi: "परामर्श पाएँ", dMr: "ज्योतिषी कुंडली समजावून सांगतील आणि उपाय सुचवतील.", dEn: "Astrologer will explain your chart and suggest remedies.", dHi: "ज्योतिषी कुंडली समझाकर बताएँगे और उपाय सुझाएँगे." },
             ].map((step, i) => (
               <div key={i} className="text-center p-4 bg-white rounded-xl border border-stone-200">
                 <div className="w-10 h-10 rounded-full flex items-center justify-center text-base font-bold mx-auto mb-3"
                   style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)", color: "#d4a843" }}>
-                  {t(step.n, step.nE)}
+                  {t(step.n, step.nE, step.n)}
                 </div>
-                <h4 className="text-sm font-bold mb-1" style={{ color: "#3d0c0c" }}>{t(step.tMr, step.tEn)}</h4>
-                <p className="text-xs" style={{ color: "#6b5b3e" }}>{t(step.dMr, step.dEn)}</p>
+                <h4 className="text-sm font-bold mb-1" style={{ color: "#3d0c0c" }}>{t(step.tMr, step.tEn, step.tHi)}</h4>
+                <p className="text-xs" style={{ color: "#6b5b3e" }}>{t(step.dMr, step.dEn, step.dHi)}</p>
               </div>
             ))}
           </div>
@@ -385,20 +386,20 @@ export default function ConsultationPageClient() {
 
         {/* Bottom CTA */}
         <div className="mt-8 p-8 rounded-xl text-center" style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}>
-          <h3 className="text-xl font-bold text-white mb-2">{t("आजच सल्ला घ्या", "Get Consultation Today")}</h3>
+          <h3 className="text-xl font-bold text-white mb-2">{t("आजच सल्ला घ्या", "Get Consultation Today", "आज ही परामर्श लें")}</h3>
           <p className="text-sm mb-6" style={{ color: "rgba(255,248,231,0.5)" }}>
-            {t("प्रथम तुमची मोफत कुंडली बनवा — मग सल्ल्यासाठी संपर्क करा", "First create your free kundli — then contact for consultation")}
+            {t("प्रथम तुमची मोफत कुंडली बनवा — मग सल्ल्यासाठी संपर्क करा", "First create your free kundli — then contact for consultation", "पहले अपनी मुफ्त कुंडली बनाएँ — फिर परामर्श के लिए सम्पर्क करें")}
           </p>
           <div className="flex items-center justify-center gap-3 flex-wrap">
-            <button onClick={() => openEnquiry(t("ज्योतिष सल्ला सेवा", "Astrology Consultation"))}
+            <button onClick={() => openEnquiry(t("ज्योतिष सल्ला सेवा", "Astrology Consultation", "ज्योतिष परामर्श"))}
               className="px-8 py-3 rounded-full font-semibold text-sm cursor-pointer"
               style={{ background: "linear-gradient(135deg, #d4a843, #c49535)", color: "#1a0505" }}>
-              {t("चौकशी करा", "Enquire Now")}
+              {t("चौकशी करा", "Enquire Now", "पूछताछ करें")}
             </button>
             <Link href="/kundli"
               className="px-8 py-3 rounded-full font-semibold text-sm"
               style={{ border: "1px solid rgba(212,168,67,0.3)", color: "#d4a843" }}>
-              {t("मोफत कुंडली बनवा", "Create Free Kundli")}
+              {t("मोफत कुंडली बनवा", "Create Free Kundli", "मुफ्त कुंडली बनाएँ")}
             </Link>
           </div>
         </div>
@@ -412,13 +413,13 @@ export default function ConsultationPageClient() {
           { question: "Is an online astrology consultation as good as in-person?", answer: "Yes, the quality of astrological analysis depends on accurate birth details, not physical presence. Our astrologers provide the same thorough chart analysis online as they would in person. You can share your birth details digitally and discuss your questions via phone or video call." },
         ])} />
         <h2 className="text-xl font-bold mb-6" style={{ color: "#5c1a1a" }}>
-          {t("ज्योतिष सल्ल्याबद्दल सामान्य प्रश्न", "Frequently Asked Questions")}
+          {t("ज्योतिष सल्ल्याबद्दल सामान्य प्रश्न", "Frequently Asked Questions", "ज्योतिष परामर्श के बारे में सामान्य प्रश्न")}
         </h2>
         <div className="space-y-4">
           {[
-            { q: t("ज्योतिष सल्ला कसा चालतो?", "How does a consultation work?"), a: t("सल्ला बुक करा, जन्म माहिती शेअर करा, अनुभवी ज्योतिषांशी बोला. ते कुंडली विश्लेषण करतात, योग-दोष ओळखतात, आणि वैयक्तिक उपाय सांगतात.", "Book a slot, share birth details, and connect with an expert astrologer who analyzes your chart, identifies yogas/doshas, and provides personalized remedies.") },
-            { q: t("कोणते प्रश्न विचारता येतात?", "What questions can I ask?"), a: t("करिअर, लग्न, व्यवसाय, आरोग्य, आर्थिक, शिक्षण, परदेश प्रवास, संपत्ती — कोणत्याही विषयावर विचारा. ज्योतिषी संबंधित भावस्थान आणि दशांचे विश्लेषण करतात.", "Career, marriage, business, health, finances, education, foreign travel, property — ask about any area. The astrologer analyzes relevant houses and dashas.") },
-            { q: t("ऑनलाइन सल्ला चांगला आहे का?", "Is online consultation effective?"), a: t("होय, ज्योतिष विश्लेषण अचूक जन्म माहितीवर अवलंबून आहे, प्रत्यक्ष उपस्थितीवर नव्हे. फोन किंवा व्हिडिओ कॉलवर तोच दर्जेदार सल्ला मिळतो.", "Yes, astrological analysis depends on accurate birth data, not physical presence. The same quality analysis is provided via phone or video call.") },
+            { q: t("ज्योतिष सल्ला कसा चालतो?", "How does a consultation work?", "परामर्श कैसे काम करता है?"), a: t("सल्ला बुक करा, जन्म माहिती शेअर करा, अनुभवी ज्योतिषांशी बोला. ते कुंडली विश्लेषण करतात, योग-दोष ओळखतात, आणि वैयक्तिक उपाय सांगतात.", "Book a slot, share birth details, and connect with an expert astrologer who analyzes your chart, identifies yogas/doshas, and provides personalized remedies.", "परामर्श बुक करें, जन्म जानकारी साझा करें, अनुभवी ज्योतिषी से बात करें. वे कुंडली विश्लेषण करते हैं, योग-दोष पहचानते हैं, व्यक्तिगत उपाय सुझाते हैं.") },
+            { q: t("कोणते प्रश्न विचारता येतात?", "What questions can I ask?", "कौन से प्रश्न पूछ सकते हैं?"), a: t("करिअर, लग्न, व्यवसाय, आरोग्य, आर्थिक, शिक्षण, परदेश प्रवास, संपत्ती — कोणत्याही विषयावर विचारा. ज्योतिषी संबंधित भावस्थान आणि दशांचे विश्लेषण करतात.", "Career, marriage, business, health, finances, education, foreign travel, property — ask about any area. The astrologer analyzes relevant houses and dashas.", "करियर, विवाह, व्यवसाय, स्वास्थ्य, वित्त, शिक्षा, विदेश यात्रा, संपत्ति — किसी भी विषय पर पूछें. ज्योतिषी संबंधित भाव और दशाओं का विश्लेषण करते हैं.") },
+            { q: t("ऑनलाइन सल्ला चांगला आहे का?", "Is online consultation effective?", "ऑनलाइन परामर्श प्रभावी है?"), a: t("होय, ज्योतिष विश्लेषण अचूक जन्म माहितीवर अवलंबून आहे, प्रत्यक्ष उपस्थितीवर नव्हे. फोन किंवा व्हिडिओ कॉलवर तोच दर्जेदार सल्ला मिळतो.", "Yes, astrological analysis depends on accurate birth data, not physical presence. The same quality analysis is provided via phone or video call.", "हाँ, ज्योतिष विश्लेषण सटीक जन्म जानकारी पर निर्भर है, प्रत्यक्ष उपस्थिति पर नहीं. फ़ोन या वीडियो कॉल पर वही गुणवत्तापूर्ण परामर्श मिलता है.") },
           ].map((faq, i) => (
             <details key={i} className="bg-white rounded-xl border border-[#d4a843]/20 overflow-hidden">
               <summary className="px-5 py-4 cursor-pointer font-semibold text-sm text-[#5c1a1a] hover:bg-[#d4a843]/5">{faq.q}</summary>
