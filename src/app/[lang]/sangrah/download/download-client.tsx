@@ -83,8 +83,8 @@ export default function DownloadClient() {
     : null;
 
   const collectionTitle = categoryInfo
-    ? t(categoryInfo.labelMr, categoryInfo.labelEn)
-    : t("संपूर्ण संग्रह", "Complete Sangrah");
+    ? t(categoryInfo.labelMr, categoryInfo.labelEn, categoryInfo.labelMr)
+    : t("संपूर्ण संग्रह", "Complete Sangrah", "सम्पूर्ण संग्रह");
 
   useEffect(() => {
     const url = category
@@ -142,8 +142,8 @@ export default function DownloadClient() {
       <div className="min-h-screen flex items-center justify-center" style={{ background: "#FFF8E7" }}>
         <div className="text-center">
           <div className="w-10 h-10 border-3 border-[#d4a843] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-[#5c1a1a] font-medium">{t("संग्रह तयार होत आहे...", "Preparing sangrah...")}</p>
-          <p className="text-[#5c1a1a]/50 text-sm mt-1">{t("कृपया प्रतीक्षा करा", "Please wait")}</p>
+          <p className="text-[#5c1a1a] font-medium">{t("संग्रह तयार होत आहे...", "Preparing sangrah...", "संग्रह तैयार हो रहा है...")}</p>
+          <p className="text-[#5c1a1a]/50 text-sm mt-1">{t("कृपया प्रतीक्षा करा", "Please wait", "कृपया प्रतीक्षा करें")}</p>
         </div>
       </div>
     );
@@ -153,9 +153,9 @@ export default function DownloadClient() {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: "#FFF8E7" }}>
         <div className="text-center">
-          <p className="text-[#5c1a1a] font-medium mb-4">{t("काहीतरी चूक झाली", "Something went wrong")}</p>
+          <p className="text-[#5c1a1a] font-medium mb-4">{t("काहीतरी चूक झाली", "Something went wrong", "कुछ गलत हुआ")}</p>
           <Link href="/sangrah" className="text-[#d4a843] hover:underline text-sm">
-            {t("संग्रह पृष्ठावर परत जा", "Go back to Sangrah")}
+            {t("संग्रह पृष्ठावर परत जा", "Go back to Sangrah", "संग्रह पृष्ठ पर वापस जाएँ")}
           </Link>
         </div>
       </div>
@@ -172,18 +172,18 @@ export default function DownloadClient() {
         >
           <div className="max-w-3xl mx-auto px-4">
             <Link href="/sangrah" className="inline-block text-white/50 hover:text-[#d4a843] text-sm mb-4 transition">
-              ← {t("संग्रह", "Sangrah")}
+              ← {t("संग्रह", "Sangrah", "संग्रह")}
             </Link>
             <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">{collectionTitle}</h1>
             <p className="text-white/60 text-sm mb-6">
-              {items.length} {t("पठणे तयार आहेत डाउनलोडसाठी", "items ready for download")}
+              {items.length} {t("पठणे तयार आहेत डाउनलोडसाठी", "items ready for download", "पाठ डाउनलोड के लिए तैयार")}
             </p>
             <button
               onClick={handlePrint}
               className="px-8 py-3 rounded-xl font-semibold text-[#3d0c0c] transition-all hover:scale-105"
               style={{ background: "linear-gradient(135deg, #d4a843, #e5bc5a)" }}
             >
-              {t("PDF डाउनलोड करा", "Download as PDF")}
+              {t("PDF डाउनलोड करा", "Download as PDF", "PDF डाउनलोड करें")}
             </button>
             <p className="text-white/40 text-xs mt-3">
               {t(
@@ -196,17 +196,17 @@ export default function DownloadClient() {
 
         {/* Table of Contents preview */}
         <section className="max-w-3xl mx-auto px-4 py-8">
-          <h2 className="text-lg font-bold text-[#3d0c0c] mb-4">{t("अनुक्रमणिका", "Table of Contents")}</h2>
+          <h2 className="text-lg font-bold text-[#3d0c0c] mb-4">{t("अनुक्रमणिका", "Table of Contents", "अनुक्रमणिका")}</h2>
           {grouped.map(({ cat, items: catItems }) => (
             <div key={cat.id} className="mb-5">
               <h3 className="text-sm font-semibold text-[#d4a843] mb-2">
-                {t(cat.labelMr, cat.labelEn)}
+                {t(cat.labelMr, cat.labelEn, cat.labelMr)}
                 <span className="text-xs text-gray-400 font-normal">({catItems.length})</span>
               </h3>
               <div className="grid sm:grid-cols-2 gap-1 pl-6">
                 {catItems.map((item) => (
                   <p key={item.slug} className="text-sm text-gray-600 py-0.5">
-                    {t(item.title, item.titleEn)}
+                    {t(item.title, item.titleEn, item.title)}
                   </p>
                 ))}
               </div>
@@ -221,7 +221,7 @@ export default function DownloadClient() {
             className="px-8 py-3 rounded-xl font-semibold text-[#3d0c0c] transition-all hover:scale-105"
             style={{ background: "linear-gradient(135deg, #d4a843, #e5bc5a)" }}
           >
-            {t("PDF डाउनलोड करा", "Download as PDF")}
+            {t("PDF डाउनलोड करा", "Download as PDF", "PDF डाउनलोड करें")}
           </button>
         </div>
       </div>
@@ -240,14 +240,14 @@ export default function DownloadClient() {
               Bhaagyavedh
             </div>
             <h1 style={{ fontSize: "36px", fontWeight: 800, color: "#3d0c0c", marginBottom: "8px", lineHeight: 1.3 }}>
-              {categoryInfo ? t(categoryInfo.labelMr, categoryInfo.labelEn) : "संपूर्ण संग्रह"}
+              {categoryInfo ? t(categoryInfo.labelMr, categoryInfo.labelEn, categoryInfo.labelMr) : "संपूर्ण संग्रह"}
             </h1>
             <p style={{ fontSize: "18px", color: "#5c1a1a", marginBottom: "24px" }}>
-              {categoryInfo ? t(categoryInfo.descriptionEn, categoryInfo.descriptionEn) : "Complete Devotional Collection"}
+              {categoryInfo ? t(categoryInfo.descriptionEn, categoryInfo.descriptionEn, categoryInfo.descriptionEn) : "Complete Devotional Collection"}
             </p>
             <div style={{ width: "60px", height: "3px", background: "#d4a843", borderRadius: "2px", margin: "0 auto 24px" }} />
             <p style={{ fontSize: "14px", color: "#888" }}>
-              {items.length} {category ? t("पठणे", "items") : t("आरती, स्तोत्र, चालीसा, मंत्र आणि बरेच काही", "Aartis, Stotras, Chalisas, Mantras & more")}
+              {items.length} {category ? t("पठणे", "items", "पाठ") : t("आरती, स्तोत्र, चालीसा, मंत्र आणि बरेच काही", "Aartis, Stotras, Chalisas, Mantras & more", "आरती, स्तोत्र, चालीसा, मंत्र और बहुत कुछ")}
             </p>
             <div style={{ marginTop: "48px", fontSize: "11px", color: "#999" }}>
               ॥ श्री गणेशाय नमः ॥
@@ -307,12 +307,12 @@ export default function DownloadClient() {
           return tocPages.map((content, i) => (
             <PrintPage
               key={`toc-page-${i}`}
-              title={t("अनुक्रमणिका", "Table of Contents")}
+              title={t("अनुक्रमणिका", "Table of Contents", "अनुक्रमणिका")}
               subtitle={tocPages.length > 1 ? `${i + 1}/${tocPages.length}` : ""}
             >
               {i === 0 && (
                 <h2 style={{ fontSize: "18px", fontWeight: 700, color: "#3d0c0c", marginBottom: "14px", borderBottom: "2px solid #d4a843", paddingBottom: "6px", display: "inline-block" }}>
-                  {t("अनुक्रमणिका", "Table of Contents")}
+                  {t("अनुक्रमणिका", "Table of Contents", "अनुक्रमणिका")}
                 </h2>
               )}
               {content}
@@ -347,7 +347,7 @@ export default function DownloadClient() {
                 </p>
                 <div style={{ width: "40px", height: "2px", background: "#d4a843", borderRadius: "2px", margin: "0 auto 16px" }} />
                 <p style={{ fontSize: "12px", color: "#888" }}>
-                  {t(item.deityMr, item.deityEn)}
+                  {t(item.deityMr, item.deityEn, item.deityMr)}
                 </p>
               </div>
               <PrintFooter />
@@ -377,7 +377,7 @@ export default function DownloadClient() {
               ॥ इति शुभम् ॥
             </h2>
             <p style={{ fontSize: "13px", color: "#888", marginTop: "12px" }}>
-              {t("भाग्यवेध — वैदिक ज्योतिष आणि भक्ती संग्रह", "Bhaagyavedh — Vedic Astrology & Devotional Collection")}
+              {t("भाग्यवेध — वैदिक ज्योतिष आणि भक्ती संग्रह", "Bhaagyavedh — Vedic Astrology & Devotional Collection", "भाग्यवेध — वैदिक ज्योतिष और भक्ति संग्रह")}
             </p>
             <p style={{ fontSize: "11px", color: "#bbb", marginTop: "8px" }}>
               bhaagyavedh.com
