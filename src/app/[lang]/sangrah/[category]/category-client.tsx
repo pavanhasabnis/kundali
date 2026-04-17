@@ -61,7 +61,7 @@ export default function CategoryPageClient({ category, items }: Props) {
           description: category.descriptionEn,
           url: `https://bhaagyavedh.com/${lang}/sangrah/${category.id}`,
           numberOfItems: items.length,
-          inLanguage: lang === "en" ? "en-IN" : "mr-IN",
+          inLanguage: lang === "en" ? "en-IN" : lang === "hi" ? "hi-IN" : "mr-IN",
           publisher: { "@type": "Organization", name: "Bhaagyavedh" },
         }}
       />

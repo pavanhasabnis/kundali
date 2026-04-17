@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props) {
   const rashi = getRashiBySlug(slug);
   if (!rashi) return {};
 
-  const l: Lang = lang === "en" ? "en" : "mr";
+  const l: Lang = lang === "en" ? "en" : lang === "hi" ? "hi" : "mr";
   const today = new Date();
   const dateEn = today.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
   const dateMr = today.toLocaleDateString("mr-IN", { day: "numeric", month: "long", year: "numeric" });

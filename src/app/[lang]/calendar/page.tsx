@@ -6,7 +6,7 @@ const CURRENT_YEAR = new Date().getFullYear();
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
-  const l: Lang = lang === "en" ? "en" : "mr";
+  const l: Lang = lang === "en" ? "en" : lang === "hi" ? "hi" : "mr";
   return pageMetaI18n({
     lang: l,
     path: "/calendar",
@@ -57,7 +57,7 @@ export default async function CalendarPage({ params }: { params: Promise<{ lang:
       logo: { "@type": "ImageObject", url: "https://bhaagyavedh.com/logos/logo-dark.svg" },
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
-    inLanguage: lang === "en" ? "en-IN" : "mr-IN",
+    inLanguage: lang === "en" ? "en-IN" : lang === "hi" ? "hi-IN" : "mr-IN",
   };
   return (
     <>

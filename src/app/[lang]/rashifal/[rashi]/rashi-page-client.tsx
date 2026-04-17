@@ -94,7 +94,7 @@ export default function RashiPageClient({ rashiSlug, rashiId, initialPrediction 
             logo: { "@type": "ImageObject", url: "https://bhaagyavedh.com/logos/logo-dark.svg" },
           },
           mainEntityOfPage: { "@type": "WebPage", "@id": `https://bhaagyavedh.com/${lang}/rashifal/${rashiSlug}` },
-          inLanguage: lang === "en" ? "en-IN" : "mr-IN",
+          inLanguage: lang === "en" ? "en-IN" : lang === "hi" ? "hi-IN" : "mr-IN",
         }}
       />
 

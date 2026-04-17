@@ -8,7 +8,7 @@ export async function generateMetadata({ params }: Props) {
   const { lang, slug } = await params;
   const post = getBlogPost(slug);
   if (!post) return { title: "Post Not Found" };
-  const l: Lang = lang === "en" ? "en" : "mr";
+  const l: Lang = lang === "en" ? "en" : lang === "hi" ? "hi" : "mr";
 
   const titleMr = post.title;
   const titleEn = post.titleEn;

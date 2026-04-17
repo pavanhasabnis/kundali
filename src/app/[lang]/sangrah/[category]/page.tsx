@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props) {
   const { lang, category } = await params;
   const cat = SANGRAH_CATEGORIES.find((c) => c.id === category);
   if (!cat) return {};
-  const l: Lang = lang === "en" ? "en" : "mr";
+  const l: Lang = lang === "en" ? "en" : lang === "hi" ? "hi" : "mr";
 
   return pageMetaI18n({
     lang: l,

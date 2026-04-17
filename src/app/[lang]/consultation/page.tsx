@@ -3,7 +3,7 @@ import ConsultationPageClient from "./consultation-client";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
-  const l: Lang = lang === "en" ? "en" : "mr";
+  const l: Lang = lang === "en" ? "en" : lang === "hi" ? "hi" : "mr";
   return pageMetaI18n({
     lang: l,
     path: "/consultation",

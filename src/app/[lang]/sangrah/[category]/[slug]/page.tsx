@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props) {
   const { lang, category, slug } = await params;
   const item = getSangrahItem(slug);
   if (!item) return {};
-  const l: Lang = lang === "en" ? "en" : "mr";
+  const l: Lang = lang === "en" ? "en" : lang === "hi" ? "hi" : "mr";
 
   const cat = SANGRAH_CATEGORIES.find((c) => c.id === category);
   const catMr = cat?.labelMr || category;
@@ -77,7 +77,7 @@ export default async function SangrahDetailPage({ params }: Props) {
         description: `${item.titleEn} (${item.title}) ${cat?.labelEn.toLowerCase() || ""} — Sanskrit with Marathi transliteration and English meaning.`,
         url,
         datePublished: today,
-        inLanguage: lang === "en" ? "en-IN" : "mr-IN",
+        inLanguage: lang === "en" ? "en-IN" : lang === "hi" ? "hi-IN" : "mr-IN",
       })} />
       <SangrahDetailClient
         item={JSON.parse(JSON.stringify(item))}

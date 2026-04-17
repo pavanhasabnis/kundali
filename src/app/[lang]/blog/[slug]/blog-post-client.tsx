@@ -73,7 +73,7 @@ export default function BlogPostClient({ slug, post }: { slug: string; post: Blo
   return (
     <div className="bg-[#FAFAF8] min-h-screen py-6">
       {/* JSON-LD Structured Data */}
-      <JsonLd data={articleSchema({ title: seoTitle, description: seoDesc, url: postUrl, datePublished: post.date, inLanguage: lang === "en" ? "en-IN" : "mr-IN" })} />
+      <JsonLd data={articleSchema({ title: seoTitle, description: seoDesc, url: postUrl, datePublished: post.date, inLanguage: lang === "en" ? "en-IN" : lang === "hi" ? "hi-IN" : "mr-IN" })} />
       <JsonLd data={breadcrumbSchema([{ name: "Home", url: `https://bhaagyavedh.com/${lang}` }, { name: "Blog", url: `https://bhaagyavedh.com/${lang}/blog` }, { name: t(post.title, post.titleEn), url: postUrl }])} />
       {faqItems.length > 0 && <JsonLd data={faqSchema(faqItems)} />}
 

@@ -4,7 +4,7 @@ import { JsonLd, serviceSchema, breadcrumbSchema } from "@/components/json-ld";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
-  const l: Lang = lang === "en" ? "en" : "mr";
+  const l: Lang = lang === "en" ? "en" : lang === "hi" ? "hi" : "mr";
   const year = new Date().getFullYear();
   return pageMetaI18n({
     lang: l,

@@ -8,7 +8,7 @@ export async function generateMetadata({ params }: Props) {
   const { lang, id } = await params;
   const post = getTempleData(id);
   if (!post) return { title: "Temple Not Found" };
-  const l: Lang = lang === "en" ? "en" : "mr";
+  const l: Lang = lang === "en" ? "en" : lang === "hi" ? "hi" : "mr";
 
   const nameMr = post.title;
   const nameEn = post.titleEn;

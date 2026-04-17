@@ -47,7 +47,7 @@ const CATEGORY_META: Record<string, { mrName: string; enName: string; mrDesc: st
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string; category: string }> }) {
   const { lang, category } = await params;
-  const l: Lang = lang === "en" ? "en" : "mr";
+  const l: Lang = lang === "en" ? "en" : lang === "hi" ? "hi" : "mr";
   const cat = CATEGORY_META[category];
   if (!cat) {
     return pageMetaI18n({
