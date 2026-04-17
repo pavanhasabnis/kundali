@@ -182,7 +182,7 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
         const pages = splitForPrint(ch.content, isProse);
         return pages.map((p, i) => ({
           text: p,
-          label: t("अध्याय", "Ch.") + " " + ch.number + (pages.length > 1 ? ` (${i + 1}/${pages.length})` : ""),
+          label: t("अध्याय", "Ch.", "अध्याय") + " " + ch.number + (pages.length > 1 ? ` (${i + 1}/${pages.length})` : ""),
         }));
       });
     }
@@ -240,17 +240,17 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
             href={`/sangrah/${item.category}`}
             className="inline-block text-white/50 hover:text-[#d4a843] text-sm mb-3 transition"
           >
-            ← {t(categoryLabel.mr, categoryLabel.en)}
+            ← {t(categoryLabel.mr, categoryLabel.en, categoryLabel.mr)}
           </Link>
           <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">
-            {t(item.title, item.titleEn)}
+            {t(item.title, item.titleEn, item.title)}
           </h1>
           <p className="text-white/50 text-sm">
-            {t(item.deityMr, item.deityEn)} • {t(categoryLabel.mr, categoryLabel.en)}
+            {t(item.deityMr, item.deityEn, item.deityMr)} • {t(categoryLabel.mr, categoryLabel.en, categoryLabel.mr)}
           </p>
           {hasChapters && (
             <p className="text-[#d4a843] text-sm mt-2 font-medium">
-              {chapters.length} {t("अध्याय", "Chapters")}
+              {chapters.length} {t("अध्याय", "Chapters", "अध्याय")}
             </p>
           )}
         </div>
@@ -277,7 +277,7 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
                   className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-[#5c1a1a]/5 border border-[#d4a843]/20 text-sm font-medium text-[#3d0c0c] hover:border-[#d4a843]/50 transition"
                 >
                   <span>
-                    {t("अध्याय", "Chapter")} {chapters[activeChapter].number}
+                    {t("अध्याय", "Chapter", "अध्याय")} {chapters[activeChapter].number}
                     <span className="text-gray-400 font-normal ml-2 text-xs">
                       / {chapters.length}
                     </span>
@@ -299,7 +299,7 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
                         }`}
                       >
                         <span className="font-medium">
-                          {t("अध्याय", "Chapter")} {ch.number}
+                          {t("अध्याय", "Chapter", "अध्याय")} {ch.number}
                         </span>
                       </button>
                     ))}
@@ -329,7 +329,7 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
               [
                 { id: "devanagari", label: "देवनागरी" },
                 { id: "transliteration", label: "Roman" },
-                { id: "both", label: t("दोन्ही", "Both") },
+                { id: "both", label: t("दोन्ही", "Both", "दोनों") },
               ] as const
             ).map((mode) => (
               <button
@@ -373,13 +373,13 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
                   : "bg-white text-gray-600 border-gray-200 hover:border-[#d4a843]/40"
               }`}
             >
-              {t("अर्थ", "Meaning")}
+              {t("अर्थ", "Meaning", "अर्थ")}
             </button>
             <button
               onClick={handleShare}
               className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white text-gray-600 border border-gray-200 hover:border-[#d4a843]/40 transition"
             >
-              {copied ? "✓" : t("शेअर", "Share")}
+              {copied ? "✓" : t("शेअर", "Share", "शेयर")}
             </button>
             <button
               onClick={handlePrint}
@@ -398,7 +398,7 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
         {hasChapters && (
           <div className="mb-3 text-center">
             <span className="inline-block px-4 py-1.5 rounded-full text-sm font-semibold text-[#5c1a1a] bg-[#d4a843]/10 border border-[#d4a843]/20">
-              {t("अध्याय", "Chapter")} {chapters[activeChapter].number}
+              {t("अध्याय", "Chapter", "अध्याय")} {chapters[activeChapter].number}
             </span>
           </div>
         )}
@@ -440,14 +440,14 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
               disabled={activeChapter === 0}
               className="flex-1 py-3 rounded-xl text-sm font-medium border border-[#d4a843]/20 bg-white hover:border-[#d4a843]/50 hover:bg-[#5c1a1a]/5 transition disabled:opacity-30 disabled:cursor-not-allowed text-[#5c1a1a]"
             >
-              ← {t("मागील अध्याय", "Previous Chapter")}
+              ← {t("मागील अध्याय", "Previous Chapter", "पिछला अध्याय")}
             </button>
             <button
               onClick={() => handleChapterChange(Math.min(chapters.length - 1, activeChapter + 1))}
               disabled={activeChapter === chapters.length - 1}
               className="flex-1 py-3 rounded-xl text-sm font-medium border border-[#d4a843]/20 bg-white hover:border-[#d4a843]/50 hover:bg-[#5c1a1a]/5 transition disabled:opacity-30 disabled:cursor-not-allowed text-[#5c1a1a]"
             >
-              {t("पुढील अध्याय", "Next Chapter")} →
+              {t("पुढील अध्याय", "Next Chapter", "अगला अध्याय")} →
             </button>
           </div>
         )}
@@ -456,10 +456,10 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
         {showMeaning && (
           <div className="mt-5 bg-amber-50/50 rounded-xl border border-[#d4a843]/20 p-5 md:p-8">
             <h2 className="text-lg font-bold text-[#3d0c0c] mb-3">
-              {t("अर्थ", "Meaning")}
+              {t("अर्थ", "Meaning", "अर्थ")}
             </h2>
             <div className="whitespace-pre-line text-sm leading-relaxed text-gray-700">
-              {t(item.meaningMr, item.meaningEn)}
+              {t(item.meaningMr, item.meaningEn, item.meaningMr)}
             </div>
           </div>
         )}
@@ -468,10 +468,10 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
         {(item.benefits || item.benefitsEn) && (
           <div className="mt-5 bg-green-50/50 rounded-xl border border-green-200/40 p-5 md:p-8">
             <h2 className="text-lg font-bold text-[#3d0c0c] mb-3">
-              {t("फायदे", "Benefits")}
+              {t("फायदे", "Benefits", "लाभ")}
             </h2>
             <div className="whitespace-pre-line text-sm leading-relaxed text-gray-700">
-              {t(item.benefits, item.benefitsEn)}
+              {t(item.benefits, item.benefitsEn, item.benefits)}
             </div>
           </div>
         )}
@@ -494,13 +494,13 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
             href={`/sangrah/${item.category}`}
             className="text-sm text-[#5c1a1a] hover:text-[#d4a843] transition font-medium"
           >
-            ← {t(`सर्व ${categoryLabel.mr}`, `All ${categoryLabel.en}`)}
+            ← {t(`सर्व ${categoryLabel.mr}`, `All ${categoryLabel.en}`, `सभी ${categoryLabel.mr}`)}
           </Link>
           <Link
             href="/sangrah"
             className="text-sm text-[#5c1a1a] hover:text-[#d4a843] transition font-medium"
           >
-            {t("संपूर्ण संग्रह", "Full Sangrah")}
+            {t("संपूर्ण संग्रह", "Full Sangrah", "सम्पूर्ण संग्रह")}
           </Link>
         </div>
       </div>
@@ -518,7 +518,7 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
           </div>
           <div className="print-page-content" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
             <div style={{ marginBottom: "12px", color: "#d4a843", fontSize: "14px", fontWeight: 500 }}>
-              {t(categoryLabel.mr, categoryLabel.en)}
+              {t(categoryLabel.mr, categoryLabel.en, categoryLabel.mr)}
             </div>
             <h1 style={{ fontSize: "32px", fontWeight: 800, color: "#3d0c0c", marginBottom: "8px", lineHeight: 1.3 }}>
               {item.title}
@@ -528,11 +528,11 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
             </p>
             <div style={{ width: "60px", height: "3px", background: "#d4a843", borderRadius: "2px", margin: "0 auto 24px" }} />
             <p style={{ fontSize: "14px", color: "#666" }}>
-              {t(item.deityMr, item.deityEn)}
+              {t(item.deityMr, item.deityEn, item.deityMr)}
             </p>
             {hasChapters && (
               <p style={{ fontSize: "13px", color: "#d4a843", marginTop: "12px" }}>
-                {chapters.length} {t("अध्याय", "Chapters")}
+                {chapters.length} {t("अध्याय", "Chapters", "अध्याय")}
               </p>
             )}
             <div style={{ marginTop: "48px", fontSize: "11px", color: "#999" }}>
@@ -557,24 +557,24 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
 
         {/* Meaning & Benefits page (if available) */}
         {(item.meaningMr || item.benefits) && (
-          <PrintPage title={item.title} subtitle={`${item.titleEn} — ${t("अर्थ व फायदे", "Meaning & Benefits")}`}>
+          <PrintPage title={item.title} subtitle={`${item.titleEn} — ${t("अर्थ व फायदे", "Meaning & Benefits", "अर्थ और लाभ")}`}>
             {item.meaningMr && (
               <div style={{ marginBottom: "20px" }}>
                 <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#3d0c0c", marginBottom: "8px", borderBottom: "2px solid #d4a843", paddingBottom: "4px", display: "inline-block" }}>
-                  {t("अर्थ", "Meaning")}
+                  {t("अर्थ", "Meaning", "अर्थ")}
                 </h2>
                 <div style={{ whiteSpace: "pre-line", lineHeight: 1.7, fontSize: "12px", color: "#444", marginTop: "8px" }}>
-                  {t(item.meaningMr, item.meaningEn)}
+                  {t(item.meaningMr, item.meaningEn, item.meaningMr)}
                 </div>
               </div>
             )}
             {item.benefits && (
               <div>
                 <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#3d0c0c", marginBottom: "8px", borderBottom: "2px solid #2d7a2d", paddingBottom: "4px", display: "inline-block" }}>
-                  {t("फायदे", "Benefits")}
+                  {t("फायदे", "Benefits", "लाभ")}
                 </h2>
                 <div style={{ whiteSpace: "pre-line", lineHeight: 1.7, fontSize: "12px", color: "#444", marginTop: "8px" }}>
-                  {t(item.benefits, item.benefitsEn)}
+                  {t(item.benefits, item.benefitsEn, item.benefits)}
                 </div>
               </div>
             )}

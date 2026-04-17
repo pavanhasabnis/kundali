@@ -27,21 +27,21 @@ interface TempleDetail {
 
 export default function TempleDetailClient({ id, temple }: { id: string; temple: TempleDetail | null }) {
   const { t, lang } = useLang();
-  const isMr = lang === "mr";
+  const showEn = lang === "en";
 
   if (!temple) {
     return (
       <div className="bg-[#FAFAF8] py-20 text-center">
         <p className="text-4xl mb-3">🛕</p>
-        <p className="text-[#5c1a1a]/60 text-lg">{t("मंदिर सापडले नाही.", "Temple not found.")}</p>
+        <p className="text-[#5c1a1a]/60 text-lg">{t("मंदिर सापडले नाही.", "Temple not found.", "मंदिर नहीं मिला.")}</p>
         <Link href="/temples" className="mt-4 inline-block text-[#d4a843] hover:text-[#3d0c0c] font-medium">
-          {t("← सर्व मंदिरे", "← All Temples")}
+          {t("← सर्व मंदिरे", "← All Temples", "← सभी मंदिर")}
         </Link>
       </div>
     );
   }
 
-  const content = isMr ? temple.detailMr : temple.detailEn;
+  const content = showEn ? temple.detailEn : temple.detailMr;
 
   function renderContent(text: string) {
     return text.split("\n").map((line, i) => {
@@ -81,7 +81,7 @@ export default function TempleDetailClient({ id, temple }: { id: string; temple:
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         {/* Back link */}
         <Link href="/temples" className="inline-flex items-center gap-1 text-sm text-[#d4a843] hover:text-[#3d0c0c] mb-6 transition">
-          {t("← सर्व मंदिरे", "← All Temples")}
+          {t("← सर्व मंदिरे", "← All Temples", "← सभी मंदिर")}
         </Link>
 
         {/* Header */}
@@ -91,14 +91,14 @@ export default function TempleDetailClient({ id, temple }: { id: string; temple:
               <span className="text-4xl">{temple.icon}</span>
               <div>
                 <h1 className="text-2xl font-bold text-[#d4a843]">
-                  {t(temple.nameMr, temple.nameEn)}
+                  {t(temple.nameMr, temple.nameEn, temple.nameMr)}
                 </h1>
                 {temple.deityMr && (
-                  <p className="text-white/70 mt-1">{t(temple.deityMr, temple.deityEn)}</p>
+                  <p className="text-white/70 mt-1">{t(temple.deityMr, temple.deityEn, temple.deityMr)}</p>
                 )}
                 {temple.locationMr && (
                   <p className="text-white/50 text-sm mt-1 flex items-center gap-1">
-                    <span>📍</span> {t(temple.locationMr, temple.locationEn)}
+                    <span>📍</span> {t(temple.locationMr, temple.locationEn, temple.locationMr)}
                   </p>
                 )}
               </div>
@@ -110,12 +110,12 @@ export default function TempleDetailClient({ id, temple }: { id: string; temple:
             <div className="px-6 py-3 bg-[#FFF8E7] border-b border-[#d4a843]/10 flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#5c1a1a]/70">
               {temple.timingsMr && (
                 <span className="flex items-center gap-1">
-                  <span>🕐</span> {t(temple.timingsMr, temple.timingsEn)}
+                  <span>🕐</span> {t(temple.timingsMr, temple.timingsEn, temple.timingsMr)}
                 </span>
               )}
               {temple.specialMr && (
                 <span className="flex items-center gap-1">
-                  <span>🎉</span> {t(temple.specialMr, temple.specialEn)}
+                  <span>🎉</span> {t(temple.specialMr, temple.specialEn, temple.specialMr)}
                 </span>
               )}
             </div>
@@ -124,12 +124,12 @@ export default function TempleDetailClient({ id, temple }: { id: string; temple:
           {/* Summary */}
           <div className="p-6">
             <p className="text-[#5c1a1a]/80 leading-relaxed">
-              {t(temple.descMr, temple.descEn)}
+              {t(temple.descMr, temple.descEn, temple.descMr)}
             </p>
             {temple.significanceMr && (
               <div className="mt-4 p-3 rounded-lg bg-[#FFF8E7] border border-[#d4a843]/10">
-                <p className="text-xs font-semibold text-[#3d0c0c] mb-1">{t("महत्व", "Significance")}</p>
-                <p className="text-sm text-[#5c1a1a]/60">{t(temple.significanceMr, temple.significanceEn)}</p>
+                <p className="text-xs font-semibold text-[#3d0c0c] mb-1">{t("महत्व", "Significance", "महत्व")}</p>
+                <p className="text-sm text-[#5c1a1a]/60">{t(temple.significanceMr, temple.significanceEn, temple.significanceMr)}</p>
               </div>
             )}
           </div>
@@ -143,7 +143,7 @@ export default function TempleDetailClient({ id, temple }: { id: string; temple:
         {/* Back to all temples */}
         <div className="mt-6 text-center">
           <Link href="/temples" className="inline-flex items-center gap-1 text-sm font-medium text-[#d4a843] hover:text-[#3d0c0c] transition">
-            {t("← सर्व मंदिरांची यादी पहा", "← View all temples")}
+            {t("← सर्व मंदिरांची यादी पहा", "← View all temples", "← सभी मंदिरों की सूची देखें")}
           </Link>
         </div>
       </div>
