@@ -7,96 +7,125 @@ import { RASHI_LIST } from "@/lib/rashi-data";
 
 const BASE = "https://bhaagyavedh.com";
 
+type Entry = {
+  path: string;
+  lastModified?: Date;
+  changeFrequency?: MetadataRoute.Sitemap[number]["changeFrequency"];
+  priority?: number;
+};
+
+function withLangs(entries: Entry[]): MetadataRoute.Sitemap {
+  const out: MetadataRoute.Sitemap = [];
+  for (const e of entries) {
+    const mr = `${BASE}/mr${e.path === "/" ? "" : e.path}`;
+    const en = `${BASE}/en${e.path === "/" ? "" : e.path}`;
+    const alternates = { languages: { "mr-IN": mr, en: en, "x-default": mr } };
+    out.push({
+      url: mr,
+      lastModified: e.lastModified,
+      changeFrequency: e.changeFrequency,
+      priority: e.priority,
+      alternates,
+    });
+    out.push({
+      url: en,
+      lastModified: e.lastModified,
+      changeFrequency: e.changeFrequency,
+      priority: e.priority ? Math.max(0.1, e.priority - 0.05) : undefined,
+      alternates,
+    });
+  }
+  return out;
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Static pages with priorities
-  const staticPages: MetadataRoute.Sitemap = [
-    { url: BASE, lastModified: new Date(), changeFrequency: "daily", priority: 1.0 },
-    { url: `${BASE}/kundli`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/rashifal`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
-    { url: `${BASE}/matching`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/panchang`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
-    { url: `${BASE}/calendar`, lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
-    { url: `${BASE}/muhurat`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
-    { url: `${BASE}/graha-sthiti`, lastModified: new Date(), changeFrequency: "daily", priority: 0.7 },
-    { url: `${BASE}/compare`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
-    { url: `${BASE}/consultation`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
-    { url: `${BASE}/pooja-services`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
-    { url: `${BASE}/yatra`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
-    { url: `${BASE}/temples`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
-    { url: `${BASE}/blog`, lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
-    { url: `${BASE}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
-    { url: `${BASE}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
-    { url: `${BASE}/privacy`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.2 },
-    { url: `${BASE}/terms`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.2 },
-    { url: `${BASE}/disclaimer`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.2 },
+  const now = new Date();
+
+  const staticEntries: Entry[] = [
+    { path: "/", lastModified: now, changeFrequency: "daily", priority: 1.0 },
+    { path: "/kundli", lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    { path: "/rashifal", lastModified: now, changeFrequency: "daily", priority: 0.9 },
+    { path: "/matching", lastModified: now, changeFrequency: "monthly", priority: 0.9 },
+    { path: "/panchang", lastModified: now, changeFrequency: "daily", priority: 0.9 },
+    { path: "/calendar", lastModified: now, changeFrequency: "daily", priority: 0.8 },
+    { path: "/muhurat", lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { path: "/graha-sthiti", lastModified: now, changeFrequency: "daily", priority: 0.7 },
+    { path: "/compare", lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { path: "/consultation", lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { path: "/pooja-services", lastModified: now, changeFrequency: "monthly", priority: 0.8 },
+    { path: "/yatra", lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { path: "/temples", lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { path: "/blog", lastModified: now, changeFrequency: "daily", priority: 0.8 },
+    { path: "/sangrah", lastModified: now, changeFrequency: "weekly", priority: 0.8 },
+    { path: "/about", lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { path: "/contact", lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { path: "/privacy", lastModified: now, changeFrequency: "yearly", priority: 0.2 },
+    { path: "/terms", lastModified: now, changeFrequency: "yearly", priority: 0.2 },
+    { path: "/disclaimer", lastModified: now, changeFrequency: "yearly", priority: 0.2 },
   ];
 
-  // Dynamic blog posts from content/blog/*.json
-  let blogPages: MetadataRoute.Sitemap = [];
+  // Blog posts
+  let blogEntries: Entry[] = [];
   try {
     const blogDir = path.join(process.cwd(), "content/blog");
     if (fs.existsSync(blogDir)) {
       const files = fs.readdirSync(blogDir).filter((f) => f.endsWith(".json"));
-      blogPages = files.map((file) => {
+      blogEntries = files.map((file) => {
         const slug = file.replace(".json", "");
         const stat = fs.statSync(path.join(blogDir, file));
-        return {
-          url: `${BASE}/blog/${slug}`,
-          lastModified: stat.mtime,
-          changeFrequency: "weekly" as const,
-          priority: 0.7,
-        };
+        return { path: `/blog/${slug}`, lastModified: stat.mtime, changeFrequency: "weekly", priority: 0.7 };
       });
     }
   } catch {
-    // Skip if blog dir not available
+    // skip
   }
 
   // Yatra categories
-  const yatraCategories = [
-    "jyotirlinga", "char-dham", "ashtavinayak", "shakti-peeth", "panch-prayag",
-  ];
-  const yatraPages: MetadataRoute.Sitemap = yatraCategories.map((cat) => ({
-    url: `${BASE}/yatra/${cat}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
+  const yatraCategories = ["jyotirlinga", "char-dham", "ashtavinayak", "shakti-peeth", "panch-prayag"];
+  const yatraEntries: Entry[] = yatraCategories.map((cat) => ({
+    path: `/yatra/${cat}`,
+    lastModified: now,
+    changeFrequency: "weekly",
     priority: 0.7,
   }));
 
-  // Temple pages — all temples from TEMPLE_BLOG_MAP
-  const templeIds = Object.keys(TEMPLE_BLOG_MAP);
-  const templePages: MetadataRoute.Sitemap = templeIds.map((id) => ({
-    url: `${BASE}/temples/${id}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
+  // Temple detail pages
+  const templeEntries: Entry[] = Object.keys(TEMPLE_BLOG_MAP).map((id) => ({
+    path: `/temples/${id}`,
+    lastModified: now,
+    changeFrequency: "monthly",
     priority: 0.7,
   }));
 
-  // Sangrah pages
-  const sangrahMain: MetadataRoute.Sitemap = [
-    { url: `${BASE}/sangrah`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
-  ];
-  const sangrahCategoryPages: MetadataRoute.Sitemap = SANGRAH_CATEGORIES.map((cat) => ({
-    url: `${BASE}/sangrah/${cat.id}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
+  // Sangrah category + detail pages
+  const sangrahCategoryEntries: Entry[] = SANGRAH_CATEGORIES.map((cat) => ({
+    path: `/sangrah/${cat.id}`,
+    lastModified: now,
+    changeFrequency: "weekly",
     priority: 0.7,
   }));
-  const sangrahItems = getAllSangrahItems();
-  const sangrahDetailPages: MetadataRoute.Sitemap = sangrahItems.map((item) => ({
-    url: `${BASE}/sangrah/${item.category}/${item.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
+  const sangrahDetailEntries: Entry[] = getAllSangrahItems().map((item) => ({
+    path: `/sangrah/${item.category}/${item.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly",
     priority: 0.6,
   }));
 
-  // Individual rashi pages — daily horoscope for each zodiac sign
-  const rashiPages: MetadataRoute.Sitemap = RASHI_LIST.map((r) => ({
-    url: `${BASE}/rashifal/${r.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "daily" as const,
+  // Rashi pages (12 signs)
+  const rashiEntries: Entry[] = RASHI_LIST.map((r) => ({
+    path: `/rashifal/${r.slug}`,
+    lastModified: now,
+    changeFrequency: "daily",
     priority: 0.9,
   }));
 
-  return [...staticPages, ...rashiPages, ...blogPages, ...yatraPages, ...templePages, ...sangrahMain, ...sangrahCategoryPages, ...sangrahDetailPages];
+  return withLangs([
+    ...staticEntries,
+    ...rashiEntries,
+    ...blogEntries,
+    ...yatraEntries,
+    ...templeEntries,
+    ...sangrahCategoryEntries,
+    ...sangrahDetailEntries,
+  ]);
 }
