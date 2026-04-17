@@ -32,6 +32,10 @@ function formatDate(dateStr: string, lang: string): string {
     const months = ["जाने", "फेब्रु", "मार्च", "एप्रि", "मे", "जून", "जुलै", "ऑग", "सप्टें", "ऑक्टो", "नोव्हें", "डिसें"];
     return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
   }
+  if (lang === "hi") {
+    const months = ["जन", "फर", "मार्च", "अप्रै", "मई", "जून", "जुला", "अग", "सित", "अक्टू", "नव", "दिस"];
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  }
   return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 }
 
@@ -50,10 +54,10 @@ export default function BlogPageClient({ initialPosts }: { initialPosts: BlogPos
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
           <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">
-            {t("दैनिक ज्योतिष लेख", "Daily Astrology Blog")}
+            {t("दैनिक ज्योतिष लेख", "Daily Astrology Blog", "दैनिक ज्योतिष ब्लॉग")}
           </h1>
           <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            {t("दररोज नवीन ज्योतिष लेख, राशीफल विश्लेषण आणि वैदिक ज्ञान", "Daily astrology articles, rashifal analysis and Vedic knowledge")}
+            {t("दररोज नवीन ज्योतिष लेख, राशीफल विश्लेषण आणि वैदिक ज्ञान", "Daily astrology articles, rashifal analysis and Vedic knowledge", "प्रतिदिन नए ज्योतिष लेख, राशिफल विश्लेषण और वैदिक ज्ञान")}
           </p>
         </div>
       </section>
@@ -75,20 +79,20 @@ export default function BlogPageClient({ initialPosts }: { initialPosts: BlogPos
                         className="text-[10px] font-bold px-2.5 py-1 rounded-full text-white"
                         style={{ background: CATEGORY_COLORS[post.category] || "#6b7280" }}
                       >
-                        {t(post.category, post.categoryEn)}
+                        {t(post.category, post.categoryEn, post.category)}
                       </span>
                       <span className="text-xs text-stone-400">
                         {formatDate(post.date, lang)}
                       </span>
                     </div>
                     <h2 className="text-lg font-bold mb-1.5" style={{ color: "#3d0c0c" }}>
-                      {t(post.title, post.titleEn)}
+                      {t(post.title, post.titleEn, post.title)}
                     </h2>
                     <p className="text-sm text-stone-600 leading-relaxed">
-                      {t(post.summary, post.summaryEn)}
+                      {t(post.summary, post.summaryEn, post.summary)}
                     </p>
                     <p className="text-xs font-semibold mt-3" style={{ color: "#d4a843" }}>
-                      {t("पुढे वाचा →", "Read more →")}
+                      {t("पुढे वाचा →", "Read more →", "आगे पढ़ें →")}
                     </p>
                   </div>
                 </Link>
@@ -104,10 +108,10 @@ export default function BlogPageClient({ initialPosts }: { initialPosts: BlogPos
                   className="px-4 py-2 rounded-lg text-sm font-bold disabled:opacity-30"
                   style={{ background: "#FFF3D6", color: "#3d0c0c" }}
                 >
-                  {t("← मागील", "← Prev")}
+                  {t("← मागील", "← Prev", "← पिछला")}
                 </button>
                 <span className="text-sm text-stone-500">
-                  {t(`पृष्ठ ${page} / ${totalPages}`, `Page ${page} / ${totalPages}`)}
+                  {t(`पृष्ठ ${page} / ${totalPages}`, `Page ${page} / ${totalPages}`, `पृष्ठ ${page} / ${totalPages}`)}
                 </span>
                 <button
                   onClick={() => setPage(page + 1)}
@@ -115,7 +119,7 @@ export default function BlogPageClient({ initialPosts }: { initialPosts: BlogPos
                   className="px-4 py-2 rounded-lg text-sm font-bold disabled:opacity-30"
                   style={{ background: "#FFF3D6", color: "#3d0c0c" }}
                 >
-                  {t("पुढील →", "Next →")}
+                  {t("पुढील →", "Next →", "अगला →")}
                 </button>
               </div>
             )}
@@ -124,10 +128,10 @@ export default function BlogPageClient({ initialPosts }: { initialPosts: BlogPos
           <div className="text-center py-20">
             <div className="text-6xl mb-4">📝</div>
             <p className="text-lg font-semibold text-stone-700 mb-2">
-              {t("लवकरच लेख येत आहेत!", "Articles coming soon!")}
+              {t("लवकरच लेख येत आहेत!", "Articles coming soon!", "जल्द ही लेख आएँगे!")}
             </p>
             <p className="text-sm text-stone-500">
-              {t("दररोज नवीन ज्योतिष लेख स्वयंचलितपणे प्रकाशित होतील.", "New astrology articles will be published automatically every day.")}
+              {t("दररोज नवीन ज्योतिष लेख स्वयंचलितपणे प्रकाशित होतील.", "New astrology articles will be published automatically every day.", "प्रतिदिन नए ज्योतिष लेख स्वचालित रूप से प्रकाशित होंगे.")}
             </p>
           </div>
         )}
