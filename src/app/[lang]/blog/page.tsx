@@ -1,13 +1,37 @@
-import { pageMeta } from "@/lib/seo";
+import { pageMetaI18n, type Lang } from "@/lib/seo";
 import { getAllBlogPosts } from "@/lib/blog-reader";
 import BlogPageClient from "./blog-client";
 
-export const metadata = pageMeta({
-  title: "Vedic Astrology Blog — ज्योतिष ब्लॉग | Daily Horoscope Articles & Guides",
-  description: "Read daily Vedic astrology articles, horoscope guides, kundli tips, rashifal insights, panchang explanations, and spiritual knowledge in Marathi and English.",
-  path: "/blog",
-  keywords: ["astrology blog", "vedic astrology articles", "horoscope guide", "ज्योतिष ब्लॉग", "kundli tips", "rashifal guide", "daily horoscope articles"],
-});
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const l: Lang = lang === "en" ? "en" : "mr";
+  return pageMetaI18n({
+    lang: l,
+    path: "/blog",
+    mr: {
+      title: "दैनिक ब्लॉग — ज्योतिष, सण, व्रत लेख मराठी | Astrology Blog Marathi | भाग्यवेध",
+      description:
+        "दैनिक मराठी ज्योतिष ब्लॉग — राशीभविष्य लेख, सण महत्व, व्रत कथा, उपाय, पंचांग विशेष. Marathi astrology blog.",
+      keywords: [
+        "मराठी ज्योतिष ब्लॉग", "राशीभविष्य लेख", "सण माहिती मराठी", "व्रत कथा",
+        "ज्योतिष उपाय लेख",
+        "astrology blog marathi", "marathi jyotish blog", "rashi bhavishya articles",
+        "astrology blog", "vedic blog", "daily astrology articles",
+      ],
+    },
+    en: {
+      title: "Astrology Blog — Marathi Vedic Articles, Festivals, Remedies | Bhaagyavedh",
+      description:
+        "Daily astrology blog — Marathi vedic articles on horoscope, festivals, vrat, remedies, panchang. Read in Marathi and English.",
+      keywords: [
+        "astrology blog", "vedic astrology articles", "daily astrology",
+        "festival articles", "astrology remedies",
+        "astrology blog marathi", "marathi jyotish blog",
+        "मराठी ज्योतिष ब्लॉग", "राशीभविष्य लेख",
+      ],
+    },
+  });
+}
 
 export default function BlogPage() {
   const allPosts = getAllBlogPosts().map(({ slug, title, titleEn, summary, summaryEn, date, category, categoryEn }) => ({

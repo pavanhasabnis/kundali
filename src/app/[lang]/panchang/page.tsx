@@ -1,21 +1,38 @@
-import { pageMeta } from "@/lib/seo";
+import { pageMetaI18n, type Lang } from "@/lib/seo";
 import PanchangPageClient from "./panchang-client";
 import { JsonLd, serviceSchema, breadcrumbSchema } from "@/components/json-ld";
 
-export const metadata = pageMeta({
-  title: "Today's Panchang — आजचे पंचांग | Tithi, Nakshatra, Yoga & Karana",
-  description:
-    "Check today's Hindu Panchang with accurate Tithi, Nakshatra, Yoga, Karana, Rahu Kaal, sunrise and sunset times. Daily Vedic calendar for auspicious timing in English and Marathi.",
-  path: "/panchang",
-  keywords: [
-    "panchang today",
-    "today panchang",
-    "daily panchang",
-    "tithi today",
-    "पंचांग",
-    "आजचे पंचांग",
-  ],
-});
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const l: Lang = lang === "en" ? "en" : "mr";
+  return pageMetaI18n({
+    lang: l,
+    path: "/panchang",
+    mr: {
+      title: "आजचे पंचांग — तिथी, नक्षत्र, योग, करण | Panchang Marathi Today | भाग्यवेध",
+      description:
+        "आजचे पंचांग — तिथी, नक्षत्र, योग, करण, राहू काळ, सूर्योदय, सूर्यास्त. Aaj cha panchang marathi pune. मुंबई, नागपूर, औरंगाबाद साठी दैनिक पंचांग.",
+      keywords: [
+        "आजचे पंचांग", "पंचांग मराठी", "दैनिक पंचांग", "तिथी आज", "नक्षत्र आज",
+        "राहू काळ", "सूर्योदय वेळ", "पुणे पंचांग", "मुंबई पंचांग",
+        "aaj cha panchang", "aajcha panchang", "panchang marathi", "panchang today",
+        "rahu kaal marathi", "tithi today",
+        "today panchang", "daily panchang", "vedic panchang", "rahu kaal",
+      ],
+    },
+    en: {
+      title: "Today's Panchang — Tithi, Nakshatra, Rahu Kaal | Panchang Marathi | Bhaagyavedh",
+      description:
+        "Daily Hindu Panchang with Tithi, Nakshatra, Yoga, Karana, Rahu Kaal, sunrise, sunset. Aaj cha panchang marathi for Pune, Mumbai, Nagpur. Based on precise astronomical calculations.",
+      keywords: [
+        "panchang today", "today panchang", "daily panchang", "hindu panchang",
+        "vedic panchang", "rahu kaal today", "tithi today",
+        "aaj cha panchang", "aajcha panchang", "panchang marathi", "rahu kaal marathi",
+        "आजचे पंचांग", "पंचांग मराठी",
+      ],
+    },
+  });
+}
 
 const today = new Date().toISOString().split("T")[0];
 

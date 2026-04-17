@@ -1,19 +1,37 @@
-import { pageMeta } from "@/lib/seo";
+import { pageMetaI18n, type Lang } from "@/lib/seo";
 import YatraPageClient from "./yatra-client";
 
-export const metadata = pageMeta({
-  title: "Temple Yatra Packages — तीर्थयात्रा | Jyotirlinga, Char Dham & Pilgrimage Tours",
-  description:
-    "Guided pilgrimage tours — Jyotirlinga Darshan, Char Dham Yatra, Ashtavinayak Tour, Shakti Peeth and more from Pune. तीर्थयात्रा पॅकेजेस.",
-  path: "/yatra",
-  keywords: [
-    "temple tour packages",
-    "yatra packages india",
-    "pilgrimage tour",
-    "तीर्थयात्रा",
-    "religious tour packages",
-  ],
-});
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const l: Lang = lang === "en" ? "en" : "mr";
+  return pageMetaI18n({
+    lang: l,
+    path: "/yatra",
+    mr: {
+      title: "तीर्थयात्रा पॅकेज — ज्योतिर्लिंग, चारधाम, अष्टविनायक | Yatra Packages Marathi | भाग्यवेध",
+      description:
+        "पुणे मधून तीर्थयात्रा — १२ ज्योतिर्लिंग, चारधाम, अष्टविनायक, शक्तिपीठ, पंचप्रयाग. Yatra package marathi pune. सर्व व्यवस्था, गाइड, भोजन सोबत.",
+      keywords: [
+        "तीर्थयात्रा", "ज्योतिर्लिंग यात्रा", "चारधाम यात्रा", "अष्टविनायक यात्रा",
+        "शक्तिपीठ यात्रा", "पंचप्रयाग यात्रा", "यात्रा पॅकेज पुणे",
+        "yatra package marathi", "jyotirlinga yatra marathi", "char dham marathi",
+        "ashtavinayak yatra marathi",
+        "pilgrimage tour", "jyotirlinga darshan", "char dham yatra", "ashtavinayak yatra",
+      ],
+    },
+    en: {
+      title: "Pilgrimage Tour Packages — Jyotirlinga, Char Dham, Ashtavinayak | Bhaagyavedh",
+      description:
+        "Guided pilgrimage packages from Pune — 12 Jyotirlinga, Char Dham, Ashtavinayak, Shakti Peeth, Panch Prayag. Yatra packages in Marathi with full travel arrangements.",
+      keywords: [
+        "pilgrimage tour", "jyotirlinga yatra", "char dham yatra", "ashtavinayak yatra",
+        "shakti peeth yatra", "pilgrimage pune",
+        "yatra package marathi", "jyotirlinga yatra marathi", "char dham marathi",
+        "तीर्थयात्रा", "ज्योतिर्लिंग यात्रा", "अष्टविनायक यात्रा",
+      ],
+    },
+  });
+}
 
 export default function YatraPage() {
   return <YatraPageClient />;

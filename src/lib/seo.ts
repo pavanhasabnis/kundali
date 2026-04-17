@@ -19,6 +19,8 @@ export const SITE_ADDRESS = {
   addressCountry: "IN",
 };
 
+export type Lang = "mr" | "en";
+
 // ─── Default OpenGraph image (fallback) ─────────────────────
 export const OG_IMAGE = {
   url: `${SITE_URL}/logos/og-image.png`,
@@ -27,7 +29,7 @@ export const OG_IMAGE = {
   alt: "Bhaagyavedh — भाग्यवेध | Vedic Astrology",
 };
 
-// ─── Helper: build page metadata ────────────────────────────
+// ─── Helper: build page metadata (legacy, single-lang) ──────
 export function pageMeta(opts: {
   title: string;
   description: string;
@@ -55,6 +57,60 @@ export function pageMeta(opts: {
       card: "summary_large_image",
       title: opts.title,
       description: opts.description,
+      images: [OG_IMAGE.url],
+    },
+    ...(opts.noindex ? { robots: { index: false, follow: false } } : {}),
+  };
+}
+
+// ─── Helper: bilingual page metadata ────────────────────────
+export interface LangMeta {
+  title: string;
+  description: string;
+  keywords?: string[];
+}
+
+export function pageMetaI18n(opts: {
+  lang: Lang;
+  mr: LangMeta;
+  en: LangMeta;
+  path: string; // path without lang prefix, e.g. "/kundli"
+  noindex?: boolean;
+  ogType?: "website" | "article";
+}): Metadata {
+  const data = opts.lang === "en" ? opts.en : opts.mr;
+  const pathWithLang = `/${opts.lang}${opts.path === "/" ? "" : opts.path}`;
+  const url = `${SITE_URL}${pathWithLang}`;
+  const mrUrl = `${SITE_URL}/mr${opts.path === "/" ? "" : opts.path}`;
+  const enUrl = `${SITE_URL}/en${opts.path === "/" ? "" : opts.path}`;
+  const locale = opts.lang === "en" ? "en_IN" : "mr_IN";
+
+  return {
+    title: data.title,
+    description: data.description,
+    keywords: data.keywords?.join(", "),
+    alternates: {
+      canonical: url,
+      languages: {
+        "mr-IN": mrUrl,
+        en: enUrl,
+        "x-default": mrUrl,
+      },
+    },
+    openGraph: {
+      title: data.title,
+      description: data.description,
+      url,
+      siteName: SITE_NAME,
+      locale,
+      alternateLocale: opts.lang === "en" ? "mr_IN" : "en_IN",
+      type: opts.ogType || "website",
+      images: [OG_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: data.title,
+      description: data.description,
       images: [OG_IMAGE.url],
     },
     ...(opts.noindex ? { robots: { index: false, follow: false } } : {}),

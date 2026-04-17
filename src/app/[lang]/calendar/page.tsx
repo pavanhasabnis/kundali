@@ -1,15 +1,38 @@
-import { pageMeta } from "@/lib/seo";
+import { pageMetaI18n, type Lang } from "@/lib/seo";
 import CalendarPageClient from "./calendar-client";
 import { JsonLd, breadcrumbSchema } from "@/components/json-ld";
 
 const CURRENT_YEAR = new Date().getFullYear();
 
-export const metadata = pageMeta({
-  title: `Hindu Vedic Calendar ${CURRENT_YEAR} — हिंदू कॅलेंडर | Festivals, Tithis & Muhurat`,
-  description: `Complete Hindu Vedic calendar ${CURRENT_YEAR} with daily panchang, tithis, nakshatras, festivals, and shubh muhurat. Based on real astronomical calculations.`,
-  path: "/calendar",
-  keywords: [`hindu calendar ${CURRENT_YEAR}`, "vedic calendar", "panchang calendar", "हिंदू कॅलेंडर", "वैदिक कॅलेंडर"],
-});
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const l: Lang = lang === "en" ? "en" : "mr";
+  return pageMetaI18n({
+    lang: l,
+    path: "/calendar",
+    mr: {
+      title: `हिंदू दिनदर्शिका ${CURRENT_YEAR} — मराठी कॅलेंडर | Marathi Calendar | भाग्यवेध`,
+      description: `मराठी हिंदू दिनदर्शिका ${CURRENT_YEAR} — सर्व सण, व्रत, तिथी, नक्षत्र, शुभ मुहूर्त. Marathi calendar ${CURRENT_YEAR} festivals, vrat, muhurat. मराठी महिने आणि पंचांग.`,
+      keywords: [
+        "मराठी कॅलेंडर", "हिंदू दिनदर्शिका", "मराठी पंचांग", "मराठी महिने",
+        `सण व्रत ${CURRENT_YEAR}`,
+        `marathi calendar ${CURRENT_YEAR}`, "marathi panchang", "hindu calendar marathi",
+        `marathi festivals ${CURRENT_YEAR}`,
+        `hindu calendar ${CURRENT_YEAR}`, "vedic calendar", `festivals ${CURRENT_YEAR}`,
+      ],
+    },
+    en: {
+      title: `Hindu Marathi Calendar ${CURRENT_YEAR} — Festivals, Tithi & Muhurat | Bhaagyavedh`,
+      description: `Complete Hindu Vedic Marathi calendar ${CURRENT_YEAR} with daily tithi, nakshatra, festivals, vrat, and shubh muhurat. Marathi calendar ${CURRENT_YEAR} in English and Marathi.`,
+      keywords: [
+        `hindu calendar ${CURRENT_YEAR}`, `marathi calendar ${CURRENT_YEAR}`,
+        "vedic calendar", `festivals ${CURRENT_YEAR}`, "hindu festivals calendar",
+        "marathi calendar", "hindu calendar marathi", "marathi panchang",
+        "मराठी कॅलेंडर", "हिंदू दिनदर्शिका",
+      ],
+    },
+  });
+}
 
 const today = new Date().toISOString().split("T")[0];
 

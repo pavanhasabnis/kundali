@@ -1,13 +1,26 @@
-import { pageMeta } from "@/lib/seo";
+import { pageMetaI18n, type Lang } from "@/lib/seo";
 import PrivacyPageClient from "./privacy-client";
 
-export const metadata = pageMeta({
-  title: "Privacy Policy — गोपनीयता धोरण",
-  description:
-    "Bhaagyavedh privacy policy — how we collect, use, and protect your personal information including birth details for Vedic astrology calculations. गोपनीयता धोरण.",
-  path: "/privacy",
-  keywords: ["privacy policy", "data protection", "गोपनीयता धोरण", "bhaagyavedh privacy"],
-});
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const l: Lang = lang === "en" ? "en" : "mr";
+  return pageMetaI18n({
+    lang: l,
+    path: "/privacy",
+    mr: {
+      title: "गोपनीयता धोरण — Privacy Policy Marathi | भाग्यवेध",
+      description:
+        "भाग्यवेध गोपनीयता धोरण — आपल्या डेटाची सुरक्षा आणि वापरण्याविषयी माहिती. Privacy policy marathi.",
+      keywords: ["गोपनीयता धोरण", "privacy policy marathi", "bhaagyavedh privacy"],
+    },
+    en: {
+      title: "Privacy Policy — Bhaagyavedh",
+      description:
+        "Bhaagyavedh privacy policy — how we collect, use, and protect your data. Available in Marathi and English.",
+      keywords: ["privacy policy", "data protection", "bhaagyavedh privacy"],
+    },
+  });
+}
 
 export default function PrivacyPage() {
   return <PrivacyPageClient />;

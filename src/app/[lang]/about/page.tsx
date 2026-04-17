@@ -1,14 +1,37 @@
-import { pageMeta } from "@/lib/seo";
+import { pageMetaI18n, type Lang } from "@/lib/seo";
 import AboutPageClient from "./about-client";
 import { JsonLd, breadcrumbSchema, organizationSchema } from "@/components/json-ld";
 
-export const metadata = pageMeta({
-  title: "About Us — आमच्याबद्दल | Bhaagyavedh",
-  description:
-    "Bhaagyavedh — India's trusted Vedic astrology platform. Accurate kundli generation, guna matching, panchang, rashifal, divine sangrah and pilgrimage yatra services. भाग्यवेध — वैदिक ज्योतिष आणि तीर्थयात्रा.",
-  path: "/about",
-  keywords: ["about bhaagyavedh", "vedic astrology platform", "भाग्यवेध", "आमच्याबद्दल", "kundli", "jyotish"],
-});
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const l: Lang = lang === "en" ? "en" : "mr";
+  return pageMetaI18n({
+    lang: l,
+    path: "/about",
+    mr: {
+      title: "आमच्याबद्दल — Bhaagyavedh Marathi ज्योतिष प्लॅटफॉर्म | भाग्यवेध",
+      description:
+        "भाग्यवेध (Bhaagyavedh) — पुण्यातील विश्वसनीय मराठी वैदिक ज्योतिष प्लॅटफॉर्म. कुंडली, गुण मिलान, पंचांग, तीर्थयात्रा सेवा. आमच्याबद्दल जाणून घ्या.",
+      keywords: [
+        "भाग्यवेध आमच्याबद्दल", "Bhaagyavedh मराठी", "वैदिक ज्योतिष पुणे",
+        "मराठी ज्योतिष प्लॅटफॉर्म",
+        "bhaagyavedh about", "pune astrology platform", "marathi jyotish",
+        "about bhaagyavedh", "vedic astrology pune", "marathi astrology platform",
+      ],
+    },
+    en: {
+      title: "About Bhaagyavedh — Vedic Astrology Platform Pune | Marathi & English",
+      description:
+        "Learn about Bhaagyavedh — trusted Vedic astrology platform from Pune offering free kundli, rashifal, matching, panchang, and pilgrimage services in Marathi and English.",
+      keywords: [
+        "about bhaagyavedh", "vedic astrology pune", "marathi astrology platform",
+        "pune jyotish",
+        "bhaagyavedh marathi", "pune astrology platform", "marathi jyotish",
+        "भाग्यवेध आमच्याबद्दल", "Bhaagyavedh मराठी",
+      ],
+    },
+  });
+}
 
 const aboutPageSchema = {
   "@context": "https://schema.org",

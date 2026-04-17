@@ -36,6 +36,8 @@ export function NavBar() {
   const pathname = usePathname();
   const [user, setUser] = useState<UserSession | null>(null);
   const [showMenu, setShowMenu] = useState(false);
+  const langPrefix = `/${lang}`;
+  const withLang = (href: string) => (href === "/" ? langPrefix : `${langPrefix}${href}`);
 
   useEffect(() => {
     // Check NextAuth session
@@ -63,7 +65,7 @@ export function NavBar() {
       {/* Top row: Logo left, lang toggle + auth right */}
       <div className="max-w-[1400px] mx-auto px-3 sm:px-4 py-1.5">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center shrink-0">
+          <Link href={langPrefix} className="flex items-center shrink-0">
             <img src={lang === "mr" ? "/logos/navbar-dark-mr.svg" : "/logos/navbar-dark.svg"} alt="Bhaagyavedh" className="h-10 w-auto" />
           </Link>
 
@@ -72,7 +74,7 @@ export function NavBar() {
             {navLinks.map((link) => (
               <Link
                 key={link.href}
-                href={link.href}
+                href={withLang(link.href)}
                 className="px-1.5 xl:px-2 py-1 text-[11px] xl:text-[12px] font-medium text-white/70 hover:text-[#d4a843] transition-colors whitespace-nowrap"
               >
                 {t(link.labelMr, link.labelEn)}
@@ -103,7 +105,7 @@ export function NavBar() {
                     <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-[#d4a843]/20 py-2 z-50">
                       <p className="px-4 py-1 text-xs text-[#5c1a1a]/60 truncate">{user.email}</p>
                       <hr className="my-1 border-[#d4a843]/10" />
-                      <Link href="/account" className="block px-4 py-2 text-sm text-[#3d0c0c] hover:bg-[#FFF8E7] transition" onClick={() => setShowMenu(false)}>
+                      <Link href={withLang("/account")} className="block px-4 py-2 text-sm text-[#3d0c0c] hover:bg-[#FFF8E7] transition" onClick={() => setShowMenu(false)}>
                         {t("माझे खाते", "My Account")}
                       </Link>
                       <button
@@ -120,7 +122,7 @@ export function NavBar() {
                 </>
               ) : (
                 <Link
-                  href="/login"
+                  href={withLang("/login")}
                   className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#d4a843] text-[#3d0c0c] hover:bg-[#e5bc5a] transition"
                 >
                   {t("लॉग इन", "Login")}
@@ -135,7 +137,7 @@ export function NavBar() {
         {navLinks.map((link) => (
           <Link
             key={link.href}
-            href={link.href}
+            href={withLang(link.href)}
             className="flex-shrink-0 px-2.5 py-1 rounded-full text-[11px] font-medium text-white/60 hover:text-[#d4a843] hover:bg-white/10 transition-all whitespace-nowrap"
           >
             {t(link.labelMr, link.labelEn)}

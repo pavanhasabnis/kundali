@@ -1,19 +1,38 @@
-import { pageMeta } from "@/lib/seo";
+import { pageMetaI18n, type Lang } from "@/lib/seo";
 import { getAllSangrahItems, getSangrahCategoryCounts } from "@/lib/sangrah-reader";
 import SangrahPageClient from "./sangrah-client";
 
-export const metadata = pageMeta({
-  title: "Sangrah — आरती स्तोत्र मंत्र संग्रह",
-  description:
-    "200+ aartis, stotras, chalisas, mantras, vrat kathas & daily prayers in Marathi & Sanskrit. आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा संग्रह.",
-  path: "/sangrah",
-  keywords: [
-    "aarti sangrah", "आरती संग्रह", "stotra", "स्तोत्र",
-    "chalisa", "चालीसा", "mantra", "मंत्र", "vrat katha", "व्रत कथा",
-    "ganpati aarti", "hanuman chalisa", "ramraksha stotra",
-    "marathi aarti", "hindu prayers", "daily prayers",
-  ],
-});
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const l: Lang = lang === "en" ? "en" : "mr";
+  return pageMetaI18n({
+    lang: l,
+    path: "/sangrah",
+    mr: {
+      title: "संग्रह — आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा मराठी | Sangrah Marathi | भाग्यवेध",
+      description:
+        "मराठी संग्रह — आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा, दैनिक प्रार्थना, नामावली. Marathi aarti, stotra, chalisa, vrat katha collection.",
+      keywords: [
+        "मराठी आरती", "मराठी स्तोत्र", "चालीसा मराठी", "मंत्र मराठी",
+        "व्रत कथा मराठी", "दैनिक प्रार्थना",
+        "marathi aarti", "marathi stotra", "chalisa marathi", "mantra marathi",
+        "vrat katha marathi",
+        "aarti collection", "sanskrit stotra", "hindu chalisa", "vrat katha",
+      ],
+    },
+    en: {
+      title: "Sangrah — Aarti, Stotra, Chalisa, Mantra, Vrat Katha in Sanskrit & Marathi | Bhaagyavedh",
+      description:
+        "Complete collection of aartis, stotras, chalisas, mantras, vrat kathas in Sanskrit and Marathi with English meaning. Marathi aarti sangrah.",
+      keywords: [
+        "aarti collection", "sanskrit stotra", "hindu chalisa", "mantra list",
+        "vrat katha english",
+        "marathi aarti", "marathi stotra", "chalisa marathi", "vrat katha marathi",
+        "मराठी आरती", "मराठी स्तोत्र",
+      ],
+    },
+  });
+}
 
 export default function SangrahPage() {
   const items = getAllSangrahItems();

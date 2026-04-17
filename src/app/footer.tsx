@@ -7,8 +7,10 @@ import { useLang } from "@/lib/astrology/language-context";
 export function Footer() {
   const { t, lang } = useLang();
   const pathname = usePathname();
+  const langPrefix = `/${lang}`;
+  const L = (href: string) => (href === "/" ? langPrefix : `${langPrefix}${href}`);
 
-  if (pathname.startsWith("/admin") || pathname.startsWith("/account")) return null;
+  if (pathname.includes("/admin") || pathname.includes("/account")) return null;
 
   return (
     <footer className="text-white/60" style={{ background: "#1a0505", marginTop: "-2px", paddingTop: "2px" }}>
@@ -28,11 +30,11 @@ export function Footer() {
               {t("सेवा", "Services")}
             </h4>
             <div className="space-y-2 text-sm">
-              <Link href="/" className="block text-white/50 hover:text-[#d4a843] transition">{t("मुख्यपृष्ठ", "Home")}</Link>
-              <Link href="/kundli" className="block text-white/50 hover:text-[#d4a843] transition">{t("कुंडली", "Kundli")}</Link>
-              <Link href="/matching" className="block text-white/50 hover:text-[#d4a843] transition">{t("गुण मिलान", "Guna Matching")}</Link>
-              <Link href="/panchang" className="block text-white/50 hover:text-[#d4a843] transition">{t("पंचांग", "Panchang")}</Link>
-              <Link href="/rashifal" className="block text-white/50 hover:text-[#d4a843] transition">{t("राशीफल", "Rashifal")}</Link>
+              <Link href={L("/")} className="block text-white/50 hover:text-[#d4a843] transition">{t("मुख्यपृष्ठ", "Home")}</Link>
+              <Link href={L("/kundli")} className="block text-white/50 hover:text-[#d4a843] transition">{t("कुंडली", "Kundli")}</Link>
+              <Link href={L("/matching")} className="block text-white/50 hover:text-[#d4a843] transition">{t("गुण मिलान", "Guna Matching")}</Link>
+              <Link href={L("/panchang")} className="block text-white/50 hover:text-[#d4a843] transition">{t("पंचांग", "Panchang")}</Link>
+              <Link href={L("/rashifal")} className="block text-white/50 hover:text-[#d4a843] transition">{t("राशीफल", "Rashifal")}</Link>
             </div>
           </div>
           <div>
@@ -40,14 +42,14 @@ export function Footer() {
               {t("अधिक", "More")}
             </h4>
             <div className="space-y-2 text-sm">
-              <Link href="/calendar" className="block text-white/50 hover:text-[#d4a843] transition">{t("दिनदर्शिका", "Calendar")}</Link>
-              <Link href="/muhurat" className="block text-white/50 hover:text-[#d4a843] transition">{t("मुहूर्त", "Muhurat")}</Link>
-              <Link href="/graha-sthiti" className="block text-white/50 hover:text-[#d4a843] transition">{t("ग्रह स्थिती", "Graha Sthiti")}</Link>
-              <Link href="/sangrah" className="block text-white/50 hover:text-[#d4a843] transition">{t("संग्रह", "Sangrah")}</Link>
-              <Link href="/blog" className="block text-white/50 hover:text-[#d4a843] transition">{t("दैनिक लेख", "Daily Blog")}</Link>
-              <Link href="/consultation" className="block text-white/50 hover:text-[#d4a843] transition">{t("सल्ला सेवा", "Consultation")}</Link>
-              <Link href="/about" className="block text-white/50 hover:text-[#d4a843] transition">{t("आमच्याबद्दल", "About Us")}</Link>
-              <Link href="/contact" className="block text-white/50 hover:text-[#d4a843] transition">{t("संपर्क", "Contact Us")}</Link>
+              <Link href={L("/calendar")} className="block text-white/50 hover:text-[#d4a843] transition">{t("दिनदर्शिका", "Calendar")}</Link>
+              <Link href={L("/muhurat")} className="block text-white/50 hover:text-[#d4a843] transition">{t("मुहूर्त", "Muhurat")}</Link>
+              <Link href={L("/graha-sthiti")} className="block text-white/50 hover:text-[#d4a843] transition">{t("ग्रह स्थिती", "Graha Sthiti")}</Link>
+              <Link href={L("/sangrah")} className="block text-white/50 hover:text-[#d4a843] transition">{t("संग्रह", "Sangrah")}</Link>
+              <Link href={L("/blog")} className="block text-white/50 hover:text-[#d4a843] transition">{t("दैनिक लेख", "Daily Blog")}</Link>
+              <Link href={L("/consultation")} className="block text-white/50 hover:text-[#d4a843] transition">{t("सल्ला सेवा", "Consultation")}</Link>
+              <Link href={L("/about")} className="block text-white/50 hover:text-[#d4a843] transition">{t("आमच्याबद्दल", "About Us")}</Link>
+              <Link href={L("/contact")} className="block text-white/50 hover:text-[#d4a843] transition">{t("संपर्क", "Contact Us")}</Link>
             </div>
           </div>
           <div>
@@ -55,9 +57,9 @@ export function Footer() {
               {t("कायदेशीर", "Legal")}
             </h4>
             <div className="space-y-2 text-sm">
-              <Link href="/privacy" className="block text-white/50 hover:text-[#d4a843] transition">{t("गोपनीयता धोरण", "Privacy Policy")}</Link>
-              <Link href="/disclaimer" className="block text-white/50 hover:text-[#d4a843] transition">{t("अस्वीकरण", "Disclaimer")}</Link>
-              <Link href="/terms" className="block text-white/50 hover:text-[#d4a843] transition">{t("अटी व शर्ती", "Terms & Conditions")}</Link>
+              <Link href={L("/privacy")} className="block text-white/50 hover:text-[#d4a843] transition">{t("गोपनीयता धोरण", "Privacy Policy")}</Link>
+              <Link href={L("/disclaimer")} className="block text-white/50 hover:text-[#d4a843] transition">{t("अस्वीकरण", "Disclaimer")}</Link>
+              <Link href={L("/terms")} className="block text-white/50 hover:text-[#d4a843] transition">{t("अटी व शर्ती", "Terms & Conditions")}</Link>
             </div>
           </div>
         </div>

@@ -1,13 +1,24 @@
-import { pageMeta } from "@/lib/seo";
+import { pageMetaI18n, type Lang } from "@/lib/seo";
 import DisclaimerPageClient from "./disclaimer-client";
 
-export const metadata = pageMeta({
-  title: "Disclaimer — अस्वीकरण",
-  description:
-    "Bhaagyavedh disclaimer — astrology predictions are for guidance only. Vedic astrology methods, calculation accuracy, and professional advice notice. अस्वीकरण.",
-  path: "/disclaimer",
-  keywords: ["disclaimer", "astrology disclaimer", "अस्वीकरण", "bhaagyavedh disclaimer"],
-});
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const l: Lang = lang === "en" ? "en" : "mr";
+  return pageMetaI18n({
+    lang: l,
+    path: "/disclaimer",
+    mr: {
+      title: "अस्वीकरण — Disclaimer Marathi | भाग्यवेध",
+      description: "भाग्यवेध अस्वीकरण — ज्योतिष हे मार्गदर्शनासाठी आहे, अंतिम निर्णयासाठी नाही.",
+      keywords: ["अस्वीकरण", "disclaimer marathi", "bhaagyavedh disclaimer"],
+    },
+    en: {
+      title: "Disclaimer — Bhaagyavedh",
+      description: "Bhaagyavedh disclaimer — astrology is for guidance, not final decisions. Available in Marathi and English.",
+      keywords: ["disclaimer", "astrology disclaimer", "bhaagyavedh disclaimer"],
+    },
+  });
+}
 
 export default function DisclaimerPage() {
   return <DisclaimerPageClient />;

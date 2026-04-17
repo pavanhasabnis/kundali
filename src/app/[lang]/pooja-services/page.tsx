@@ -1,20 +1,37 @@
-import { pageMeta } from "@/lib/seo";
+import { pageMetaI18n, type Lang } from "@/lib/seo";
 import PoojaServicesPageClient from "./pooja-services-client";
 
-export const metadata = pageMeta({
-  title: "Pooja Services & Booking — पूजा सेवा | Homam, Archana & Vedic Rituals",
-  description:
-    "Book authentic Vedic pooja, path & ritual services in Pune. Satyanarayan Puja, Griha Shanti, Navgraha Shanti, Rudrabhishek, Vastu Puja performed by experienced priests. पूजा सेवा.",
-  path: "/pooja-services",
-  keywords: [
-    "online pooja booking",
-    "pooja services",
-    "puja vidhi",
-    "पूजा सेवा",
-    "homam booking",
-    "hindu puja online",
-  ],
-});
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const l: Lang = lang === "en" ? "en" : "mr";
+  return pageMetaI18n({
+    lang: l,
+    path: "/pooja-services",
+    mr: {
+      title: "पूजा सेवा — ग्रह शांती, वास्तुशांती, नवग्रह पूजा पुणे | Pooja Services Marathi | भाग्यवेध",
+      description:
+        "पुण्यात पूजा, पाठ, होम सेवा — ग्रह शांती पूजा, नवग्रह पूजा, वास्तुशांती, सत्यनारायण पूजा. Pooja services marathi pune. अनुभवी गुरुजी.",
+      keywords: [
+        "पूजा सेवा पुणे", "ग्रह शांती पूजा", "नवग्रह पूजा", "वास्तुशांती पूजा",
+        "सत्यनारायण पूजा", "महामृत्युंजय जप", "मंगळ शांती",
+        "pooja services pune", "pooja marathi", "navgraha pooja marathi",
+        "vastushanti marathi", "satyanarayan pooja",
+        "pooja services", "pooja online booking", "vedic pooja", "brahmin pooja pune",
+      ],
+    },
+    en: {
+      title: "Pooja Services Pune — Graha Shanti, Vastushanti, Navagraha | Bhaagyavedh",
+      description:
+        "Book authentic Vedic pooja services in Pune — graha shanti, navagraha pooja, vastushanti, satyanarayan pooja, mahamrityunjay jap. Experienced brahmin gurujis.",
+      keywords: [
+        "pooja services pune", "graha shanti pooja", "navagraha pooja", "vastushanti",
+        "satyanarayan pooja", "mahamrityunjay jap",
+        "pooja marathi", "navgraha pooja marathi", "vastushanti marathi",
+        "पूजा सेवा पुणे", "ग्रह शांती पूजा", "नवग्रह पूजा",
+      ],
+    },
+  });
+}
 
 export default function PoojaServicesPage() {
   return <PoojaServicesPageClient />;

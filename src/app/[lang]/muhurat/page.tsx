@@ -1,13 +1,38 @@
-import { pageMeta } from "@/lib/seo";
+import { pageMetaI18n, type Lang } from "@/lib/seo";
 import MuhuratFinderPageClient from "./muhurat-client";
 import { JsonLd, serviceSchema, breadcrumbSchema } from "@/components/json-ld";
 
-export const metadata = pageMeta({
-  title: "Shubh Muhurat Finder — शुभ मुहूर्त | Marriage, Griha Pravesh & Auspicious Times",
-  description: "Find shubh muhurat for marriage, griha pravesh, vastushanti, and business. Search auspicious dates based on Vedic panchang calculations.",
-  path: "/muhurat",
-  keywords: ["shubh muhurat", "auspicious time", "muhurat today", "शुभ मुहूर्त", "marriage muhurat", "griha pravesh muhurat"],
-});
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const l: Lang = lang === "en" ? "en" : "mr";
+  const year = new Date().getFullYear();
+  return pageMetaI18n({
+    lang: l,
+    path: "/muhurat",
+    mr: {
+      title: `शुभ मुहूर्त ${year} — विवाह, गृहप्रवेश, वास्तुशांती | Shubh Muhurat Marathi | भाग्यवेध`,
+      description: `विवाह मुहूर्त, गृहप्रवेश मुहूर्त, वास्तुशांती, व्यापार शुभारंभ साठी शुभ तिथी. Shubh muhurat marathi ${year}. वैदिक पंचांग आधारित अचूक मुहूर्त.`,
+      keywords: [
+        "शुभ मुहूर्त", "विवाह मुहूर्त", "गृहप्रवेश मुहूर्त", "वास्तुशांती मुहूर्त",
+        "व्यापार मुहूर्त", `लग्न मुहूर्त मराठी ${year}`,
+        "shubh muhurat marathi", "vivah muhurat marathi", "gruhapravesh muhurat",
+        "marriage muhurat marathi", "lagna muhurat",
+        "shubh muhurat", "marriage muhurat", "griha pravesh muhurat", "auspicious time",
+      ],
+    },
+    en: {
+      title: `Shubh Muhurat Finder ${year} — Marriage, Griha Pravesh Marathi | Bhaagyavedh`,
+      description: `Find shubh muhurat for marriage, griha pravesh, vastushanti, business. Vivah muhurat marathi ${year}. Based on Vedic panchang — tithi, nakshatra, yoga.`,
+      keywords: [
+        "shubh muhurat", "marriage muhurat", "griha pravesh muhurat", "vastushanti muhurat",
+        `auspicious time ${year}`,
+        "shubh muhurat marathi", "vivah muhurat marathi", "gruhapravesh marathi",
+        "marriage muhurat marathi",
+        "शुभ मुहूर्त", "विवाह मुहूर्त",
+      ],
+    },
+  });
+}
 
 export default function MuhuratPage() {
   return (

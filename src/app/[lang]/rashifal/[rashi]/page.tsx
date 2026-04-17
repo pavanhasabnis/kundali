@@ -1,62 +1,90 @@
-import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { RASHI_LIST, getRashiBySlug } from "@/lib/rashi-data";
-import { SITE_URL } from "@/lib/seo";
+import { pageMetaI18n, type Lang } from "@/lib/seo";
 import { predictRashifal } from "@/lib/astrology/rashifal-predictor";
 import RashiPageClient from "./rashi-page-client";
 
 export function generateStaticParams() {
-  return RASHI_LIST.map((r) => ({ rashi: r.slug }));
+  return RASHI_LIST.flatMap((r) => [
+    { lang: "mr", rashi: r.slug },
+    { lang: "en", rashi: r.slug },
+  ]);
 }
 
-const OG_IMAGE = {
-  url: `${SITE_URL}/logos/og-image.png`,
-  width: 1200,
-  height: 630,
-  alt: "Bhaagyavedh — भाग्यवेध | Vedic Astrology",
+const ROMAN_MARATHI: Record<string, string[]> = {
+  mesh: ["mesh", "mesha"],
+  vrishabh: ["vrishabh", "vrushabh", "vrishaba"],
+  mithun: ["mithun"],
+  kark: ["kark", "karka"],
+  singh: ["singh", "simha"],
+  kanya: ["kanya"],
+  tula: ["tula"],
+  vrishchik: ["vrishchik", "vrushchik"],
+  dhanu: ["dhanu"],
+  makar: ["makar"],
+  kumbh: ["kumbh"],
+  meen: ["meen", "meena"],
 };
 
-type Props = { params: Promise<{ rashi: string }> };
+type Props = { params: Promise<{ lang: string; rashi: string }> };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { rashi: slug } = await params;
+export async function generateMetadata({ params }: Props) {
+  const { lang, rashi: slug } = await params;
   const rashi = getRashiBySlug(slug);
   if (!rashi) return {};
 
-  // Include today's date for freshness signal
+  const l: Lang = lang === "en" ? "en" : "mr";
   const today = new Date();
   const dateEn = today.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
   const dateMr = today.toLocaleDateString("mr-IN", { day: "numeric", month: "long", year: "numeric" });
+  const roman = ROMAN_MARATHI[slug]?.[0] || slug;
+  const romanExtras = ROMAN_MARATHI[slug] || [];
 
-  const title = `${rashi.mr} राशीफल आज ${dateMr} — ${rashi.en} Horoscope Today ${dateEn} | Bhaagyavedh`;
-  const description = `${rashi.descMr} ${rashi.descEn} ${dateEn}.`;
-  const url = `${SITE_URL}/rashifal/${slug}`;
-  const keywords = [...rashi.keywordsMr, ...rashi.keywordsEn, "daily horoscope", "आजचे राशीफल", "rashifal today", "horoscope today marathi"];
-
-  return {
-    title,
-    description,
-    keywords: keywords.join(", "),
-    alternates: { canonical: url },
-    openGraph: {
-      title,
-      description,
-      url,
-      siteName: "Bhaagyavedh",
-      locale: "mr_IN",
-      type: "article",
-      images: [OG_IMAGE],
+  return pageMetaI18n({
+    lang: l,
+    path: `/rashifal/${slug}`,
+    ogType: "article",
+    mr: {
+      title: `${rashi.mr} राशीफल आज ${dateMr} — ${roman} Rashi Bhavishya | ${rashi.en} Horoscope Today | भाग्यवेध`,
+      description: `${rashi.mr} राशीचे आजचे भविष्य — करिअर, प्रेम, आरोग्य, आर्थिक. ${roman} rashi aaj cha bhavishya marathi. वास्तविक ग्रह गोचरावर आधारित अचूक दैनिक भविष्य.`,
+      keywords: [
+        `${rashi.mr} राशी`,
+        `${rashi.mr} राशीफल`,
+        `${rashi.mr} राशीफल आज`,
+        `${rashi.mr} राशीभविष्य`,
+        `${rashi.mr} राशी चे भविष्य`,
+        ...romanExtras.map((r) => `${r} rashi`),
+        ...romanExtras.map((r) => `${r} rashifal`),
+        ...romanExtras.map((r) => `${r} rashi bhavishya`),
+        ...romanExtras.map((r) => `${r} rashi aaj`),
+        ...romanExtras.map((r) => `aajcha ${r} rashifal`),
+        `${rashi.en} horoscope`,
+        `${rashi.en} horoscope today`,
+        `${rashi.en} daily horoscope`,
+        ...rashi.keywordsMr,
+      ],
     },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [OG_IMAGE.url],
+    en: {
+      title: `${rashi.en} Horoscope Today ${dateEn} — ${rashi.mr} राशीफल | ${roman} Rashi Bhavishya | Bhaagyavedh`,
+      description: `${rashi.en} daily horoscope — career, love, health, finance. ${roman} rashi bhavishya in Marathi. Based on real Vedic planetary transits, updated daily.`,
+      keywords: [
+        `${rashi.en} horoscope`,
+        `${rashi.en} horoscope today`,
+        `${rashi.en} daily horoscope`,
+        `${rashi.en} zodiac today`,
+        ...romanExtras.map((r) => `${r} rashi`),
+        ...romanExtras.map((r) => `${r} rashifal`),
+        ...romanExtras.map((r) => `${r} rashi bhavishya`),
+        ...romanExtras.map((r) => `aajcha ${r} rashifal`),
+        `${rashi.mr} राशीफल`,
+        `${rashi.mr} राशीभविष्य`,
+        ...rashi.keywordsEn,
+      ],
     },
-  };
+  });
 }
 
-export const dynamic = "force-dynamic"; // Must be dynamic — date changes daily
+export const dynamic = "force-dynamic";
 
 export default async function RashiPage({ params }: Props) {
   const { rashi: slug } = await params;

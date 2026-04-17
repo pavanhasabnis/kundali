@@ -1,19 +1,38 @@
-import { pageMeta } from "@/lib/seo";
+import { pageMetaI18n, type Lang } from "@/lib/seo";
 import MatchingPageClient from "./matching-client";
 
-export const metadata = pageMeta({
-  title: "Kundli Matching for Marriage — गुण मिलान | Free Gun Milan Online",
-  description:
-    "Free Ashtakoot Kundli matching for marriage compatibility. Check 36-point Guna Milan with Varna, Vashya, Tara, Yoni, Maitri, Gana, Bhakoot & Nadi analysis in English and Marathi.",
-  path: "/matching",
-  keywords: [
-    "kundli matching",
-    "gun milan",
-    "guna matching for marriage",
-    "कुंडली जुळवणी",
-    "गुण मिलान",
-  ],
-});
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const l: Lang = lang === "en" ? "en" : "mr";
+  return pageMetaI18n({
+    lang: l,
+    path: "/matching",
+    mr: {
+      title: "गुण मिलान — 36 गुण कुंडली मेळ | Gun Milan Marathi | भाग्यवेध",
+      description:
+        "विवाहासाठी 36 गुण कुंडली जुळवणी. अष्टकूट गुण मिलान — वर्ण, वश्य, तारा, योनी, ग्रह मैत्री, गण, भकूट, नाडी. Gun milan marathi, kundali matching online free.",
+      keywords: [
+        "गुण मिलान", "कुंडली मिलान", "कुंडली मेळ", "36 गुण कुंडली", "अष्टकूट",
+        "मंगळ दोष", "नाडी दोष", "भकूट दोष", "विवाह कुंडली",
+        "gun milan marathi", "gun milaan", "kundali matching marathi",
+        "ashtakoot matching marathi", "mangal dosh marathi", "nadi dosh",
+        "kundli matching", "gun milan", "36 gun milan", "ashtakoot",
+        "marriage kundli matching",
+      ],
+    },
+    en: {
+      title: "Kundli Matching — 36 Gun Milan Ashtakoot | Guna Match Marathi | Bhaagyavedh",
+      description:
+        "Free 36 guna kundli matching for marriage. Ashtakoot method — Varna, Vashya, Tara, Yoni, Graha Maitri, Gana, Bhakoot, Nadi. Mangal dosh and Nadi dosh check in Marathi + English.",
+      keywords: [
+        "kundli matching", "36 gun milan", "ashtakoot matching", "kundali matching free",
+        "marriage matching vedic", "mangal dosh check", "nadi dosh",
+        "gun milan marathi", "gun milaan", "kundali matching marathi", "ashtakoot marathi",
+        "गुण मिलान", "कुंडली मिलान", "36 गुण कुंडली",
+      ],
+    },
+  });
+}
 
 export default function MatchingPage() {
   return <MatchingPageClient />;
