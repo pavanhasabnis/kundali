@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function AboutPageClient() {
   const { t, lang } = useLang();
-  const isMr = lang === "mr";
+  const showEn = lang === "en";
 
   return (
     <div className="bg-[#FAFAF8]">
@@ -18,10 +18,10 @@ export default function AboutPageClient() {
 
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-20 sm:py-28 text-center">
           <p className="text-[#d4a843]/60 text-xs font-semibold tracking-[0.25em] uppercase mb-6">
-            {t("वैदिक ज्योतिष आणि तीर्थयात्रा", "Vedic Astrology & Divine Journeys")}
+            {t("वैदिक ज्योतिष आणि तीर्थयात्रा", "Vedic Astrology & Divine Journeys", "वैदिक ज्योतिष और तीर्थयात्रा")}
           </p>
           <h1 className="text-3xl sm:text-5xl font-bold text-[#d4a843] mb-5 leading-tight">
-            {t("भाग्यवेध — आमच्याबद्दल", "About Bhaagyavedh")}
+            {t("भाग्यवेध — आमच्याबद्दल", "About Bhaagyavedh", "भाग्यवेध — हमारे बारे में")}
           </h1>
           <p className="text-sm sm:text-base text-white/40 max-w-2xl mx-auto leading-relaxed">
             {t(
@@ -42,7 +42,7 @@ export default function AboutPageClient() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold text-[#3d0c0c]">
-              {t("आमची कहाणी", "Our Story")}
+              {t("आमची कहाणी", "Our Story", "हमारी कहानी")}
             </h2>
             <div className="w-16 h-1 bg-gradient-to-r from-[#d4a843] to-[#b8922e] mx-auto mt-3 rounded-full" />
           </div>
@@ -85,8 +85,8 @@ export default function AboutPageClient() {
               { vMr: "१२०", vEn: "120", lMr: "वर्षे दशा विश्लेषण", lEn: "Years Dasha Analysis" },
             ].map((s, i) => (
               <div key={i} className="py-2">
-                <div className="text-3xl sm:text-4xl font-bold text-[#d4a843] tracking-tight">{isMr ? s.vMr : s.vEn}</div>
-                <div className="text-white/35 text-xs sm:text-sm mt-1.5 font-medium">{isMr ? s.lMr : s.lEn}</div>
+                <div className="text-3xl sm:text-4xl font-bold text-[#d4a843] tracking-tight">{!showEn ? s.vMr : s.vEn}</div>
+                <div className="text-white/35 text-xs sm:text-sm mt-1.5 font-medium">{!showEn ? s.lMr : s.lEn}</div>
               </div>
             ))}
           </div>
@@ -98,7 +98,7 @@ export default function AboutPageClient() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-[#3d0c0c]">
-              {t("आमच्या सेवा", "What We Offer")}
+              {t("आमच्या सेवा", "What We Offer", "हमारी सेवाएँ")}
             </h2>
             <div className="w-16 h-1 bg-gradient-to-r from-[#d4a843] to-[#b8922e] mx-auto mt-3 rounded-full" />
             <p className="text-[#5c1a1a]/50 text-sm mt-4 max-w-2xl mx-auto leading-relaxed">
@@ -127,10 +127,10 @@ export default function AboutPageClient() {
             ].map((s) => (
               <Link key={s.num} href={s.link} className="group relative bg-white rounded-2xl border border-gray-100 p-7 hover:border-[#d4a843]/25 hover:shadow-lg transition-all overflow-hidden">
                 <span className="absolute top-5 right-6 text-[48px] font-bold text-[#3d0c0c]/[0.03] leading-none select-none">{s.num}</span>
-                <div className="text-[10px] font-bold text-[#d4a843] tracking-[0.2em] uppercase mb-3">{t("सेवा", "Service")} {s.num}</div>
-                <h3 className="font-bold text-[#3d0c0c] text-base mb-3 group-hover:text-[#5c1a1a] transition">{isMr ? s.titleMr : s.titleEn}</h3>
-                <p className="text-[#5c1a1a]/55 text-[13px] leading-[1.85]">{isMr ? s.descMr : s.descEn}</p>
-                <div className="mt-4 pt-3 border-t border-gray-50 text-[#d4a843]/60 text-xs font-medium group-hover:text-[#d4a843] transition">{t("अधिक पहा", "Learn more")} →</div>
+                <div className="text-[10px] font-bold text-[#d4a843] tracking-[0.2em] uppercase mb-3">{t("सेवा", "Service", "सेवा")} {s.num}</div>
+                <h3 className="font-bold text-[#3d0c0c] text-base mb-3 group-hover:text-[#5c1a1a] transition">{!showEn ? s.titleMr : s.titleEn}</h3>
+                <p className="text-[#5c1a1a]/55 text-[13px] leading-[1.85]">{!showEn ? s.descMr : s.descEn}</p>
+                <div className="mt-4 pt-3 border-t border-gray-50 text-[#d4a843]/60 text-xs font-medium group-hover:text-[#d4a843] transition">{t("अधिक पहा", "Learn more", "और जानें")} →</div>
               </Link>
             ))}
           </div>
@@ -160,8 +160,8 @@ export default function AboutPageClient() {
               <Link key={s.num} href={s.link} className="group bg-white rounded-2xl border border-gray-100 p-6 hover:border-[#d4a843]/25 hover:shadow-lg transition-all relative overflow-hidden">
                 <span className="absolute top-4 right-5 text-[40px] font-bold text-[#3d0c0c]/[0.03] leading-none select-none">{s.num}</span>
                 <div className="text-[10px] font-bold text-[#d4a843] tracking-[0.2em] uppercase mb-2">{s.num}</div>
-                <h3 className="font-bold text-[#3d0c0c] text-[14px] mb-2 group-hover:text-[#5c1a1a] transition">{isMr ? s.titleMr : s.titleEn}</h3>
-                <p className="text-[#5c1a1a]/50 text-[12px] leading-[1.8]">{isMr ? s.descMr : s.descEn}</p>
+                <h3 className="font-bold text-[#3d0c0c] text-[14px] mb-2 group-hover:text-[#5c1a1a] transition">{!showEn ? s.titleMr : s.titleEn}</h3>
+                <p className="text-[#5c1a1a]/50 text-[12px] leading-[1.8]">{!showEn ? s.descMr : s.descEn}</p>
               </Link>
             ))}
           </div>
@@ -172,7 +172,7 @@ export default function AboutPageClient() {
             <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20v20H0zM20 20h20v20H20z' fill='%23d4a843' fill-opacity='0.3' fill-rule='evenodd'/%3E%3C/svg%3E")` }} />
             <div className="relative p-8 sm:p-10 flex flex-col sm:flex-row sm:items-center gap-6">
               <div className="flex-1">
-                <div className="text-[10px] font-bold text-[#d4a843]/60 tracking-[0.2em] uppercase mb-2">{t("सेवा", "Service")} 06</div>
+                <div className="text-[10px] font-bold text-[#d4a843]/60 tracking-[0.2em] uppercase mb-2">{t("सेवा", "Service", "सेवा")} 06</div>
                 <h3 className="font-bold text-[#d4a843] text-lg mb-3">{t("भक्ती संग्रह", "Devotional Collection — Sangrah")}</h3>
                 <p className="text-white/40 text-[13px] leading-[1.85]">
                   {t(
@@ -203,10 +203,10 @@ export default function AboutPageClient() {
             ].map((s) => (
               <Link key={s.num} href={s.link} className="group relative bg-white rounded-2xl border border-gray-100 p-7 hover:border-[#d4a843]/25 hover:shadow-lg transition-all overflow-hidden">
                 <span className="absolute top-5 right-6 text-[48px] font-bold text-[#3d0c0c]/[0.03] leading-none select-none">{s.num}</span>
-                <div className="text-[10px] font-bold text-[#d4a843] tracking-[0.2em] uppercase mb-3">{t("सेवा", "Service")} {s.num}</div>
-                <h3 className="font-bold text-[#3d0c0c] text-base mb-3 group-hover:text-[#5c1a1a] transition">{isMr ? s.titleMr : s.titleEn}</h3>
-                <p className="text-[#5c1a1a]/55 text-[13px] leading-[1.85]">{isMr ? s.descMr : s.descEn}</p>
-                <div className="mt-4 pt-3 border-t border-gray-50 text-[#d4a843]/60 text-xs font-medium group-hover:text-[#d4a843] transition">{t("अधिक पहा", "Learn more")} →</div>
+                <div className="text-[10px] font-bold text-[#d4a843] tracking-[0.2em] uppercase mb-3">{t("सेवा", "Service", "सेवा")} {s.num}</div>
+                <h3 className="font-bold text-[#3d0c0c] text-base mb-3 group-hover:text-[#5c1a1a] transition">{!showEn ? s.titleMr : s.titleEn}</h3>
+                <p className="text-[#5c1a1a]/55 text-[13px] leading-[1.85]">{!showEn ? s.descMr : s.descEn}</p>
+                <div className="mt-4 pt-3 border-t border-gray-50 text-[#d4a843]/60 text-xs font-medium group-hover:text-[#d4a843] transition">{t("अधिक पहा", "Learn more", "और जानें")} →</div>
               </Link>
             ))}
           </div>
@@ -256,7 +256,7 @@ export default function AboutPageClient() {
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3 text-[12px]">
                     <div className="w-5 h-px bg-[#d4a843]/40 shrink-0" />
-                    <span className="text-[#5c1a1a]/60">{isMr ? item.mr : item.en}</span>
+                    <span className="text-[#5c1a1a]/60">{!showEn ? item.mr : item.en}</span>
                   </div>
                 ))}
               </div>
@@ -312,8 +312,8 @@ export default function AboutPageClient() {
                 </div>
                 {/* Content */}
                 <div className="pb-10">
-                  <h3 className="font-bold text-[#3d0c0c] text-[15px] mb-2">{isMr ? v.titleMr : v.titleEn}</h3>
-                  <p className="text-[#5c1a1a]/55 text-[13px] leading-[1.85]">{isMr ? v.descMr : v.descEn}</p>
+                  <h3 className="font-bold text-[#3d0c0c] text-[15px] mb-2">{!showEn ? v.titleMr : v.titleEn}</h3>
+                  <p className="text-[#5c1a1a]/55 text-[13px] leading-[1.85]">{!showEn ? v.descMr : v.descEn}</p>
                 </div>
               </div>
             ))}
@@ -394,7 +394,7 @@ export default function AboutPageClient() {
                   <div className="w-5 h-5 rounded-full border-2 border-[#d4a843]/40 flex items-center justify-center shrink-0 mt-0.5">
                     <div className="w-2 h-2 rounded-full bg-[#d4a843]" />
                   </div>
-                  <span className="text-[#5c1a1a]/65 leading-[1.7]">{isMr ? item.mr : item.en}</span>
+                  <span className="text-[#5c1a1a]/65 leading-[1.7]">{!showEn ? item.mr : item.en}</span>
                 </div>
               ))}
             </div>
