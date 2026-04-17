@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 160" width="500" height="160">
+  <!-- Logo 6 Refined: Om Mandala + Premium Typography -->
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5d662"/>
+      <stop offset="40%" style="stop-color:#d4a843"/>
+      <stop offset="100%" style="stop-color:#c9952e"/>
+    </linearGradient>
+    <linearGradient id="goldLight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5d662"/>
+      <stop offset="100%" style="stop-color:#b8941f"/>
+    </linearGradient>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d0d0d"/>
+      <stop offset="100%" style="stop-color:#1a1a1a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="500" height="160" rx="14" fill="url(#bg)"/>
+
+  <!-- Mandala pattern -->
+  <g transform="translate(80,80)">
+    <circle cx="0" cy="0" r="55" fill="none" stroke="#f5d662" stroke-width="0.5" opacity="0.15"/>
+    <circle cx="0" cy="0" r="50" fill="none" stroke="#f5d662" stroke-width="0.5" opacity="0.12"/>
+
+    <!-- Sacred geometry triangles -->
+    <polygon points="0,-46 40,23 -40,23" fill="none" stroke="url(#gold)" stroke-width="1" opacity="0.25"/>
+    <polygon points="0,46 40,-23 -40,-23" fill="none" stroke="url(#gold)" stroke-width="1" opacity="0.25"/>
+
+    <!-- Inner circles -->
+    <circle cx="0" cy="0" r="32" fill="none" stroke="url(#gold)" stroke-width="1.5" opacity="0.35"/>
+    <circle cx="0" cy="0" r="20" fill="none" stroke="url(#gold)" stroke-width="1" opacity="0.45"/>
+
+    <!-- 8 Petal shapes -->
+    <ellipse cx="0" cy="-36" rx="4.5" ry="9" fill="url(#gold)" opacity="0.18"/>
+    <ellipse cx="25.5" cy="-25.5" rx="4.5" ry="9" fill="url(#gold)" opacity="0.18" transform="rotate(45,25.5,-25.5)"/>
+    <ellipse cx="36" cy="0" rx="4.5" ry="9" fill="url(#gold)" opacity="0.18" transform="rotate(90,36,0)"/>
+    <ellipse cx="25.5" cy="25.5" rx="4.5" ry="9" fill="url(#gold)" opacity="0.18" transform="rotate(135,25.5,25.5)"/>
+    <ellipse cx="0" cy="36" rx="4.5" ry="9" fill="url(#gold)" opacity="0.18" transform="rotate(180,0,36)"/>
+    <ellipse cx="-25.5" cy="25.5" rx="4.5" ry="9" fill="url(#gold)" opacity="0.18" transform="rotate(225,-25.5,25.5)"/>
+    <ellipse cx="-36" cy="0" rx="4.5" ry="9" fill="url(#gold)" opacity="0.18" transform="rotate(270,-36,0)"/>
+    <ellipse cx="-25.5" cy="-25.5" rx="4.5" ry="9" fill="url(#gold)" opacity="0.18" transform="rotate(315,-25.5,-25.5)"/>
+
+    <!-- Center Om -->
+    <circle cx="0" cy="0" r="16" fill="url(#gold)" opacity="0.12"/>
+    <text x="0" y="9" text-anchor="middle" fill="url(#gold)" font-size="24" font-weight="bold">ॐ</text>
+  </g>
+
+  <!-- Main brand text -->
+  <g transform="translate(160,0)">
+    <!-- "My" in elegant thin style -->
+    <text x="0" y="55" fill="url(#goldLight)" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="normal" font-style="italic" letter-spacing="2" opacity="0.7">My</text>
+
+    <!-- "Patrika" in bold premium style -->
+    <text x="50" y="55" fill="url(#gold)" font-family="Georgia, 'Times New Roman', serif" font-size="44" font-weight="bold" letter-spacing="3">Patrika</text>
+
+    <!-- Gold decorative line -->
+    <line x1="0" y1="65" x2="40" y2="65" stroke="url(#gold)" stroke-width="1.5" opacity="0.4"/>
+    <circle cx="44" cy="65" r="2" fill="url(#gold)" opacity="0.4"/>
+    <line x1="48" y1="65" x2="290" y2="65" stroke="url(#gold)" stroke-width="0.5" opacity="0.25"/>
+    <circle cx="294" cy="65" r="2" fill="url(#gold)" opacity="0.4"/>
+    <line x1="298" y1="65" x2="320" y2="65" stroke="url(#gold)" stroke-width="1.5" opacity="0.4"/>
+
+    <!-- Marathi tagline -->
+    <text x="0" y="90" fill="#d4a843" font-family="Georgia, 'Times New Roman', serif" font-size="16" letter-spacing="2" opacity="0.65">माय पत्रिका</text>
+
+    <!-- Separator dot -->
+    <circle cx="130" cy="86" r="2" fill="#d4a843" opacity="0.3"/>
+
+    <!-- English tagline -->
+    <text x="142" y="90" fill="#ffffff" font-family="Georgia, 'Times New Roman', serif" font-size="12" letter-spacing="1.5" opacity="0.3">Vedic Astrology</text>
+
+    <!-- Bottom subtle text -->
+    <text x="0" y="118" fill="#d4a843" font-family="sans-serif" font-size="9" letter-spacing="5" opacity="0.3">KUNDALI  ·  RASHIFAL  ·  PANCHANG</text>
+  </g>
+</svg>

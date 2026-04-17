@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 60" width="400" height="60">
+  <defs>
+    <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#B85C00"/>
+      <stop offset="100%" stop-color="#8B4000"/>
+    </linearGradient>
+  </defs>
+  <text x="0" y="38" font-family="'Inclusive Sans', sans-serif" font-size="38" font-weight="700" fill="url(#sg)" letter-spacing="1.5">Bhaagyavedh</text>
+  <text x="0" y="56" font-family="'Inclusive Sans', sans-serif" font-size="10" fill="#8B7355" letter-spacing="2.5">वैदिक ज्योतिष आणि तीर्थयात्रा</text>
+</svg>

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 
 export type Lang = "mr" | "en";
 
@@ -18,10 +18,11 @@ const LangContext = createContext<LangContextType>({
 
 export function LangProvider({ children }: { children: ReactNode }) {
   const [lang, setLang] = useState<Lang>("mr");
-  const t = (mr: string, en: string) => (lang === "mr" ? mr : en);
+  const t = useCallback((mr: string, en: string) => (lang === "mr" ? mr : en), [lang]);
+  const value = useMemo(() => ({ lang, setLang, t }), [lang, t]);
 
   return (
-    <LangContext.Provider value={{ lang, setLang, t }}>
+    <LangContext.Provider value={value}>
       {children}
     </LangContext.Provider>
   );

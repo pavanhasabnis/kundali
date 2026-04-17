@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 60" width="380" height="60">
+  <defs>
+    <linearGradient id="sgd" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF9933"/>
+      <stop offset="100%" stop-color="#CC6600"/>
+    </linearGradient>
+  </defs>
+  <rect width="380" height="60" rx="8" fill="#0A1628"/>
+  <circle cx="30" cy="30" r="24" fill="none" stroke="#FF9933" stroke-width="1.5" opacity="0.55"/>
+  <circle cx="30" cy="30" r="19" fill="none" stroke="#CC6600" stroke-width="0.5" stroke-dasharray="5 5" opacity="0.3"/>
+  <text x="30" y="37" text-anchor="middle" font-family="'Inclusive Sans', sans-serif" font-size="22" font-weight="bold" fill="url(#sgd)">भा</text>
+  <text x="68" y="32" font-family="'Inclusive Sans', sans-serif" font-size="22" font-weight="700" fill="url(#sgd)" letter-spacing="0.5">Bhaagyavedh</text>
+  <text x="68" y="48" font-family="'Inclusive Sans', sans-serif" font-size="8.5" fill="#7A8BA8" letter-spacing="2">वैदिक ज्योतिष आणि तीर्थयात्रा</text>
+</svg>

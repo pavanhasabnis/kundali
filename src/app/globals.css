@@ -23,16 +23,59 @@
 @media print {
   header, footer, nav { display: none !important; }
   body { background: white !important; margin: 0 !important; padding: 0 !important; }
-  .no-print { display: none !important; }
+  .no-print { display: none !important; height: 0 !important; overflow: hidden !important; }
   .print-only { display: block !important; }
   * { color-adjust: exact !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  * { overflow: visible !important; max-height: none !important; }
   svg { height: auto !important; }
   .sticky { position: static !important; }
-  main, div { min-height: 0 !important; }
-  .print-page-break { page-break-before: always; break-before: page; }
   .print-avoid-break { page-break-inside: avoid; break-inside: avoid; }
-  @page { margin: 15mm 10mm; size: A4; }
+  @page { size: A4; margin: 0; }
+
+  .bg-\[\#FAFAF8\] { background: white !important; }
+
+  /* Each print page is a flexbox column that fills exactly one page */
+  .print-page {
+    page-break-after: always;
+    break-after: page;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: white !important;
+    overflow: hidden;
+  }
+  .print-page:last-child {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* Header on each page */
+  .print-page-header {
+    background: linear-gradient(135deg, #3d0c0c, #5c1a1a, #3d0c0c) !important;
+    padding: 8px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid #d4a843;
+    flex-shrink: 0;
+  }
+
+  /* Footer on each page — pushed to bottom via margin-top: auto */
+  .print-page-footer {
+    background: linear-gradient(135deg, #3d0c0c, #5c1a1a) !important;
+    padding: 6px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    margin-top: auto;
+  }
+
+  /* Content area between header and footer */
+  .print-page-content {
+    flex: 1;
+    padding: 20px 24px 32px;
+    overflow: hidden;
+  }
 }
 
 .print-only { display: none; }

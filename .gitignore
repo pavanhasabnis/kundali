@@ -19,7 +19,16 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# database
+data/
+
 # IDE
 .vscode/
 .idea/
 .vercel
+
+# Claude Code local settings
+.claude/
+
+# TS build cache
+tsconfig.tsbuildinfo

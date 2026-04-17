@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>MyPatrika — Full PDF</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#444;padding:30px;display:flex;flex-direction:column;align-items:center;gap:40px;font-family:'Outfit',sans-serif;}
+.pg-label{color:rgba(255,255,255,0.2);font-size:9px;letter-spacing:5px;text-align:center;margin-bottom:-25px;}
+.page{width:794px;min-height:1123px;background:#fff;box-shadow:0 8px 40px rgba(0,0,0,0.5);position:relative;overflow:hidden;padding-bottom:44px;}
+.watermark{position:absolute;top:46%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:76px;font-weight:800;color:rgba(212,168,67,0.02);letter-spacing:18px;pointer-events:none;white-space:nowrap;}
+
+/* Header */
+.pdf-hdr{background:linear-gradient(135deg,#3d0c0c,#5c1a1a,#3d0c0c);padding:16px 36px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #d4a843;}
+.hdr-left{display:flex;align-items:center;gap:10px;}
+.hdr-brand{color:#d4a843;font-size:16px;font-weight:700;letter-spacing:3px;}
+.hdr-sub{color:rgba(255,255,255,0.3);font-size:7px;letter-spacing:4px;}
+.hdr-ganesh{color:#d4a843;font-size:10px;opacity:0.5;}
+.pdf-hdr-mini{background:linear-gradient(135deg,#3d0c0c,#5c1a1a);padding:10px 36px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid #d4a843;}
+.hdr-mini-brand{color:#d4a843;font-size:13px;font-weight:700;letter-spacing:2px;}
+.hdr-mini-info{color:rgba(255,255,255,0.25);font-size:10px;}
+
+/* Footer */
+.pdf-ftr{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(135deg,#3d0c0c,#5c1a1a);padding:10px 36px;display:flex;justify-content:space-between;align-items:center;}
+.ftr-brand{color:#d4a843;font-size:9px;font-weight:700;letter-spacing:2px;}
+.ftr-info{color:rgba(255,255,255,0.2);font-size:7px;letter-spacing:1px;}
+.ftr-pg{color:#d4a843;font-size:9px;font-weight:600;}
+
+/* Section divider */
+.sec-div{display:flex;align-items:center;gap:10px;padding:14px 36px 8px;}
+.sec-ic{width:22px;height:22px;background:linear-gradient(135deg,#3d0c0c,#5c1a1a);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#d4a843;font-size:10px;flex-shrink:0;}
+.sec-lb{font-size:12px;font-weight:700;color:#3d0c0c;letter-spacing:3px;text-transform:uppercase;white-space:nowrap;}
+.sec-ln{flex:1;height:1px;background:linear-gradient(90deg,#d4a843,transparent);}
+
+/* Content area */
+.content{padding:0 36px;}
+
+/* Tables */
+.dt{width:100%;border-collapse:collapse;margin-top:6px;}
+.dt thead{background:linear-gradient(135deg,#3d0c0c,#5c1a1a);}
+.dt th{color:#d4a843;font-size:9px;font-weight:600;letter-spacing:1px;padding:7px 10px;text-align:left;}
+.dt td{padding:6px 10px;font-size:11px;color:#3d0c0c;border-bottom:1px solid #f0e6d0;}
+.dt tr:nth-child(even){background:#faf8f2;}
+
+/* Charts grid */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px 36px;}
+.charts-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px 36px;}
+
+/* Yoga */
+.yoga-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 36px;}
+.yoga-card{border:1px solid #f0e6d0;border-radius:6px;padding:12px;background:#faf8f2;}
+.yoga-name{font-size:13px;font-weight:700;color:#3d0c0c;}
+.yoga-name-mr{font-size:11px;color:#d4a843;}
+.yoga-desc{font-size:10px;color:#6b5b3e;margin-top:4px;line-height:1.5;}
+.yoga-badge{display:inline-block;font-size:8px;padding:2px 10px;border-radius:10px;font-weight:700;margin-top:6px;}
+.badge-shubh{background:#dcfce7;color:#166534;}
+.badge-dosh{background:#fef2f2;color:#991b1b;}
+
+/* Dosha */
+.dosha-item{padding:8px 36px;border-bottom:1px solid #f5efe0;}
+.dosha-yes{background:#fef8f8;border-left:3px solid #b91c1c;padding:10px 36px;margin:4px 0;border-radius:0 6px 6px 0;}
+.dosha-head{font-size:12px;color:#3d0c0c;display:flex;align-items:center;gap:8px;}
+.dot-red,.dot-green{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.dot-red{background:#b91c1c;}
+.dot-green{background:#166534;}
+.sev{font-size:9px;color:#b91c1c;font-weight:700;margin-left:auto;letter-spacing:1px;}
+.clear{font-size:9px;color:#166534;font-weight:700;margin-left:auto;}
+.dosha-desc{font-size:10px;color:#6b5b3e;margin-top:4px;line-height:1.5;}
+.dosha-rem{font-size:10px;color:#5c1a1a;margin-top:4px;font-weight:500;}
+
+/* Predictions */
+.pred-row{padding:8px 36px;border-bottom:1px solid #f5efe0;}
+.pred-head{display:flex;align-items:center;gap:8px;font-size:12px;}
+.pred-ic{font-size:14px;}
+.pred-t{font-weight:700;color:#3d0c0c;}
+.pred-txt{font-size:10px;color:#6b5b3e;margin-top:4px;line-height:1.5;}
+
+/* Dasha */
+.d-list{padding:0 36px;}
+.d-row{display:flex;align-items:center;gap:10px;margin-bottom:5px;}
+.d-pl{width:52px;text-align:right;font-size:11px;font-weight:700;color:#3d0c0c;}
+.d-bg{flex:1;height:22px;background:#f5efe0;border-radius:4px;overflow:hidden;}
+.d-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding:0 10px;font-size:8px;color:#fff;font-weight:600;}
+.d-yr{width:62px;font-size:9px;color:#8b6b4a;}
+
+/* Current Dasha */
+.cd-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 36px 10px;}
+.cd-card{border:1px solid #f0e6d0;border-radius:6px;padding:12px;background:#faf8f2;}
+.cd-t{font-size:12px;font-weight:700;color:#3d0c0c;margin-bottom:4px;}
+.cd-txt{font-size:10px;color:#6b5b3e;line-height:1.5;}
+.cd-adv{margin:0 36px 12px;padding:12px;background:#fff8e7;border-radius:6px;border-left:3px solid #d4a843;font-size:10px;color:#5c1a1a;line-height:1.5;}
+
+/* Remedies */
+.rem-cat{padding:10px 36px 4px;font-size:12px;font-weight:700;color:#3d0c0c;border-top:1px solid #f0e6d0;margin-top:4px;}
+.rem-it{padding:2px 36px 2px 56px;font-size:10px;color:#6b5b3e;line-height:1.5;}
+
+.disclaimer{margin:16px 36px;padding:12px 16px;background:#faf8f2;border-radius:6px;border-left:3px solid #d4a843;font-size:8px;color:#8b6b4a;line-height:1.6;}
+
+/* Cover page */
+.cover{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:1079px;}
+.cover-line{width:200px;height:1px;background:linear-gradient(90deg,transparent,#d4a843,transparent);margin:28px 0;}
+.birth-box{border:1px solid #e8dcc8;border-radius:8px;overflow:hidden;width:500px;margin-top:36px;}
+.birth-grid{display:grid;grid-template-columns:1fr 1fr 1fr;}
+.birth-cell{padding:14px 18px;text-align:center;border-right:1px solid #f0e6d0;}
+.birth-cell:last-child{border-right:none;}
+.b-label{font-size:8px;color:#a08b6e;letter-spacing:2px;text-transform:uppercase;font-weight:600;}
+.b-val{font-size:14px;font-weight:700;color:#3d0c0c;margin-top:4px;}
+.b-sub{font-size:10px;color:#8b6b4a;}
+</style>
+</head>
+<body>
+
+<!-- ═══ COVER PAGE ═══ -->
+<p class="pg-label">PAGE 1 — COVER</p>
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+  <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,#d4a843,transparent);"></div>
+  <div class="cover">
+    <svg viewBox="0 0 140 140" width="90" height="90" style="margin-bottom:16px;"><g transform="translate(70,70)"><circle cx="0" cy="0" r="55" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.3"/><polygon points="0,-46 40,23 -40,23" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.4"/><polygon points="0,46 40,-23 -40,-23" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.4"/><circle cx="0" cy="0" r="32" fill="none" stroke="#d4a843" stroke-width="2" opacity="0.5"/><circle cx="0" cy="0" r="20" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.6"/><circle cx="0" cy="0" r="16" fill="#d4a843" opacity="0.15"/><text x="0" y="9" text-anchor="middle" fill="#d4a843" font-size="24" font-weight="bold">ॐ</text></g></svg>
+    <div style="font-size:34px;font-weight:700;color:#3d0c0c;letter-spacing:5px;">MyPatrika</div>
+    <div style="font-size:10px;color:#a08b6e;letter-spacing:6px;margin-top:4px;">VEDIC ASTROLOGY</div>
+    <div class="cover-line"></div>
+    <div style="font-size:14px;color:#d4a843;margin-bottom:28px;">॥ श्री गणेशाय नमः ॥</div>
+    <div style="font-size:28px;font-weight:800;color:#3d0c0c;">पवन हसबनीस</div>
+    <div style="font-size:12px;color:#8b6b4a;margin-top:6px;">जन्म पत्रिका — Birth Chart</div>
+    <div class="birth-box">
+      <div class="birth-grid" style="border-bottom:1px solid #f0e6d0;">
+        <div class="birth-cell"><div class="b-label">लग्न</div><div class="b-val">कुंभ</div><div class="b-sub">23° 24' 28"</div></div>
+        <div class="birth-cell"><div class="b-label">राशी</div><div class="b-val">कुंभ</div><div class="b-sub">शतभिषा — पद 2</div></div>
+        <div class="birth-cell"><div class="b-label">नक्षत्र स्वामी</div><div class="b-val">राहु</div></div>
+      </div>
+      <div class="birth-grid">
+        <div class="birth-cell"><div class="b-label">जन्म तारीख</div><div class="b-val">5 जून 1991</div></div>
+        <div class="birth-cell"><div class="b-label">जन्म वेळ</div><div class="b-val">01:00 AM</div></div>
+        <div class="birth-cell"><div class="b-label">जन्म ठिकाण</div><div class="b-val">कोल्हापूर</div></div>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;bottom:30px;left:0;right:0;text-align:center;font-size:9px;color:#a08b6e;letter-spacing:1px;">mypatrika.com · वैदिक ज्योतिष सेवा</div>
+  <div class="pdf-ftr"><span class="ftr-brand">MyPatrika</span><span class="ftr-info">Generated 14 April 2026 · mypatrika.com</span><span class="ftr-pg">1 / 9</span></div>
+</div>
+
+<!-- ═══ PAGE 2: CHARTS ═══ -->
+<p class="pg-label">PAGE 2 — लग्न + चंद्र कुंडली</p>
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+  <div class="pdf-hdr-mini">
+  <span class="hdr-mini-brand">MyPatrika</span>
+  <span class="hdr-mini-info">पवन हसबनीस — जन्म पत्रिका</span>
+</div>
+  <div class="sec-div"><div class="sec-ic">☉</div><span class="sec-lb">लग्न कुंडली + चंद्र कुंडली</span><div class="sec-ln"></div></div>
+  <div class="charts-grid">
+    <div style="text-align:center;">
+    <div style="font-size:12px;font-weight:700;color:#3d0c0c;margin-bottom:6px;">लग्न कुंडली</div>
+    <svg viewBox="0 0 320 340" width="280" height="297">
+      <rect x="10" y="10" width="300" height="300" fill="none" stroke="#3d0c0c" stroke-width="1.5"/>
+      <line x1="160" y1="10" x2="310" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="310" y1="160" x2="160" y2="310" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="160" y1="310" x2="10" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="10" y1="160" x2="160" y2="10" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="85" y1="85" x2="235" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="85" x2="235" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="235" x2="85" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="85" y1="235" x2="85" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <text x="80" y="160" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">सू</text>
+<text x="80" y="176" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">बु</text>
+<text x="160" y="65" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">चं</text>
+<text x="240" y="285" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">मं</text>
+<text x="240" y="301" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">गु</text>
+<text x="240" y="317" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">शु</text>
+<text x="260" y="65" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">शन(व)</text>
+<text x="240" y="115" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">रा(व)</text>
+<text x="240" y="240" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">के(व)</text>
+
+    </svg>
+    </div>
+    <div style="text-align:center;">
+    <div style="font-size:12px;font-weight:700;color:#3d0c0c;margin-bottom:6px;">चंद्र कुंडली</div>
+    <svg viewBox="0 0 320 340" width="280" height="297">
+      <rect x="10" y="10" width="300" height="300" fill="none" stroke="#3d0c0c" stroke-width="1.5"/>
+      <line x1="160" y1="10" x2="310" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="310" y1="160" x2="160" y2="310" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="160" y1="310" x2="10" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="10" y1="160" x2="160" y2="10" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="85" y1="85" x2="235" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="85" x2="235" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="235" x2="85" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="85" y1="235" x2="85" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <text x="80" y="160" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">सू</text>
+<text x="80" y="176" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">बु</text>
+<text x="160" y="65" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">चं</text>
+<text x="240" y="285" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">मं</text>
+<text x="240" y="301" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">गु</text>
+<text x="240" y="317" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">शु</text>
+<text x="260" y="65" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">शन(व)</text>
+<text x="240" y="115" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">रा(व)</text>
+<text x="240" y="240" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">के(व)</text>
+
+    </svg>
+    </div>
+  </div>
+  <div class="sec-div"><div class="sec-ic">◈</div><span class="sec-lb">नवमांश (D9) + भाव चलित</span><div class="sec-ln"></div></div>
+  <div class="charts-grid">
+    <div style="text-align:center;">
+    <div style="font-size:12px;font-weight:700;color:#3d0c0c;margin-bottom:6px;">नवमांश (D9)</div>
+    <svg viewBox="0 0 320 340" width="280" height="297">
+      <rect x="10" y="10" width="300" height="300" fill="none" stroke="#3d0c0c" stroke-width="1.5"/>
+      <line x1="160" y1="10" x2="310" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="310" y1="160" x2="160" y2="310" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="160" y1="310" x2="10" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="10" y1="160" x2="160" y2="10" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="85" y1="85" x2="235" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="85" x2="235" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="235" x2="85" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="85" y1="235" x2="85" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <text x="60" y="65" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">सू</text>
+<text x="80" y="240" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">चं</text>
+<text x="240" y="285" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">मं</text>
+<text x="240" y="160" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">बु</text>
+<text x="160" y="285" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">गु</text>
+<text x="160" y="301" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">रा(व)</text>
+<text x="80" y="160" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">शु</text>
+<text x="260" y="65" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">शन(व)</text>
+<text x="160" y="65" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">के(व)</text>
+
+    </svg>
+    </div>
+    <div style="text-align:center;">
+    <div style="font-size:12px;font-weight:700;color:#3d0c0c;margin-bottom:6px;">निरयण भाव चलित</div>
+    <svg viewBox="0 0 320 340" width="280" height="297">
+      <rect x="10" y="10" width="300" height="300" fill="none" stroke="#3d0c0c" stroke-width="1.5"/>
+      <line x1="160" y1="10" x2="310" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="310" y1="160" x2="160" y2="310" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="160" y1="310" x2="10" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="10" y1="160" x2="160" y2="10" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="85" y1="85" x2="235" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="85" x2="235" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="235" x2="85" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="85" y1="235" x2="85" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <text x="80" y="160" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">सू</text>
+<text x="160" y="65" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">चं</text>
+<text x="240" y="285" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">मं</text>
+<text x="240" y="301" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">गु</text>
+<text x="80" y="115" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">बु</text>
+<text x="240" y="240" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">शु</text>
+<text x="240" y="256" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">के(व)</text>
+<text x="260" y="65" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">शन(व)</text>
+<text x="240" y="115" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">रा(व)</text>
+
+    </svg>
+    </div>
+  </div>
+  <div class="pdf-ftr"><span class="ftr-brand">MyPatrika</span><span class="ftr-info">Generated 14 April 2026 · mypatrika.com</span><span class="ftr-pg">2 / 9</span></div>
+</div>
+
+<!-- ═══ PAGE 3: MORE CHARTS ═══ -->
+<p class="pg-label">PAGE 3 — विभागीय कुंडली</p>
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+  <div class="pdf-hdr-mini">
+  <span class="hdr-mini-brand">MyPatrika</span>
+  <span class="hdr-mini-info">पवन हसबनीस — जन्म पत्रिका</span>
+</div>
+  <div class="sec-div"><div class="sec-ic">◈</div><span class="sec-lb">विभागीय कुंडली — Divisional Charts</span><div class="sec-ln"></div></div>
+  <div class="charts-grid-3">
+    <div style="text-align:center;">
+    <div style="font-size:12px;font-weight:700;color:#3d0c0c;margin-bottom:6px;">सप्तांश (D7) — संतती</div>
+    <svg viewBox="0 0 320 340" width="200" height="212">
+      <rect x="10" y="10" width="300" height="300" fill="none" stroke="#3d0c0c" stroke-width="1.5"/>
+      <line x1="160" y1="10" x2="310" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="310" y1="160" x2="160" y2="310" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="160" y1="310" x2="10" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="10" y1="160" x2="160" y2="10" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="85" y1="85" x2="235" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="85" x2="235" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="235" x2="85" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="85" y1="235" x2="85" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <text x="80" y="240" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">सू</text>
+<text x="80" y="256" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">मं</text>
+<text x="240" y="160" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">चं</text>
+<text x="240" y="176" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">गु</text>
+<text x="240" y="285" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">बु</text>
+<text x="80" y="285" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">शु</text>
+<text x="80" y="115" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">शन(व)</text>
+<text x="240" y="115" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">रा(व)</text>
+<text x="240" y="240" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">के(व)</text>
+
+    </svg>
+    </div>
+    <div style="text-align:center;">
+    <div style="font-size:12px;font-weight:700;color:#3d0c0c;margin-bottom:6px;">दशमांश (D10) — करिअर</div>
+    <svg viewBox="0 0 320 340" width="200" height="212">
+      <rect x="10" y="10" width="300" height="300" fill="none" stroke="#3d0c0c" stroke-width="1.5"/>
+      <line x1="160" y1="10" x2="310" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="310" y1="160" x2="160" y2="310" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="160" y1="310" x2="10" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="10" y1="160" x2="160" y2="10" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="85" y1="85" x2="235" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="85" x2="235" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="235" x2="85" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="85" y1="235" x2="85" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <text x="240" y="115" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">सू</text>
+<text x="80" y="240" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">चं</text>
+<text x="240" y="160" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">मं</text>
+<text x="240" y="285" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">बु</text>
+<text x="240" y="301" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">के(व)</text>
+<text x="260" y="65" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">गु</text>
+<text x="260" y="81" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">रा(व)</text>
+<text x="80" y="285" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">शु</text>
+<text x="240" y="240" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">शन(व)</text>
+
+    </svg>
+    </div>
+    <div style="text-align:center;">
+    <div style="font-size:12px;font-weight:700;color:#3d0c0c;margin-bottom:6px;">द्वादशांश (D12) — पितृ/वंश</div>
+    <svg viewBox="0 0 320 340" width="200" height="212">
+      <rect x="10" y="10" width="300" height="300" fill="none" stroke="#3d0c0c" stroke-width="1.5"/>
+      <line x1="160" y1="10" x2="310" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="310" y1="160" x2="160" y2="310" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="160" y1="310" x2="10" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="10" y1="160" x2="160" y2="10" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="85" y1="85" x2="235" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="85" x2="235" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="235" x2="85" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="85" y1="235" x2="85" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <text x="60" y="65" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">सू</text>
+<text x="80" y="285" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">चं</text>
+<text x="80" y="301" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">शन(व)</text>
+<text x="160" y="65" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">मं</text>
+<text x="80" y="240" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">बु</text>
+<text x="80" y="115" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">गु</text>
+<text x="240" y="115" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">शु</text>
+<text x="260" y="65" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">रा(व)</text>
+<text x="240" y="285" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">के(व)</text>
+
+    </svg>
+    </div>
+  </div>
+  <div class="charts-grid-3">
+    <div style="text-align:center;">
+    <div style="font-size:12px;font-weight:700;color:#3d0c0c;margin-bottom:6px;">षोडशांश (D16) — सुखसोयी</div>
+    <svg viewBox="0 0 320 340" width="200" height="212">
+      <rect x="10" y="10" width="300" height="300" fill="none" stroke="#3d0c0c" stroke-width="1.5"/>
+      <line x1="160" y1="10" x2="310" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="310" y1="160" x2="160" y2="310" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="160" y1="310" x2="10" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="10" y1="160" x2="160" y2="10" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="85" y1="85" x2="235" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="85" x2="235" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="235" x2="85" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="85" y1="235" x2="85" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <text x="240" y="115" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">सू</text>
+<text x="240" y="131" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">शु</text>
+<text x="240" y="285" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">चं</text>
+<text x="240" y="301" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">रा(व)</text>
+<text x="80" y="115" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">मं</text>
+<text x="80" y="131" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">शन(व)</text>
+<text x="80" y="160" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">बु</text>
+<text x="240" y="240" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">गु</text>
+<text x="260" y="65" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">के(व)</text>
+
+    </svg>
+    </div>
+    <div style="text-align:center;">
+    <div style="font-size:12px;font-weight:700;color:#3d0c0c;margin-bottom:6px;">त्रिंशांश (D30) — अरिष्ट</div>
+    <svg viewBox="0 0 320 340" width="200" height="212">
+      <rect x="10" y="10" width="300" height="300" fill="none" stroke="#3d0c0c" stroke-width="1.5"/>
+      <line x1="160" y1="10" x2="310" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="310" y1="160" x2="160" y2="310" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="160" y1="310" x2="10" y2="160" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="10" y1="160" x2="160" y2="10" stroke="#3d0c0c" stroke-width="1"/>
+      <line x1="85" y1="85" x2="235" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="85" x2="235" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="235" y1="235" x2="85" y2="235" stroke="#3d0c0c" stroke-width="0.5"/>
+      <line x1="85" y1="235" x2="85" y2="85" stroke="#3d0c0c" stroke-width="0.5"/>
+      <text x="240" y="160" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">सू</text>
+<text x="240" y="176" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">गु</text>
+<text x="240" y="192" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">शन(व)</text>
+<text x="160" y="285" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">चं</text>
+<text x="80" y="160" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">मं</text>
+<text x="80" y="176" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">बु</text>
+<text x="80" y="192" text-anchor="middle" fill="#3d0c0c" font-size="12" font-weight="600">शु</text>
+<text x="240" y="240" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">रा(व)</text>
+<text x="240" y="115" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="600">के(व)</text>
+
+    </svg>
+    </div>
+    <div></div>
+  </div>
+  <div class="pdf-ftr"><span class="ftr-brand">MyPatrika</span><span class="ftr-info">Generated 14 April 2026 · mypatrika.com</span><span class="ftr-pg">3 / 9</span></div>
+</div>
+
+<!-- ═══ PAGE 4: PLANETS + STRENGTH ═══ -->
+<p class="pg-label">PAGE 4 — ग्रह स्पष्ट + ग्रह बल</p>
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+  <div class="pdf-hdr-mini">
+  <span class="hdr-mini-brand">MyPatrika</span>
+  <span class="hdr-mini-info">पवन हसबनीस — जन्म पत्रिका</span>
+</div>
+  <div class="sec-div"><div class="sec-ic">☽</div><span class="sec-lb">ग्रह स्पष्ट — Planet Positions</span><div class="sec-ln"></div></div>
+  <div class="content">
+    <table class="dt"><thead><tr><th>ग्रह</th><th>राशी</th><th>अंश</th><th>नक्षत्र</th><th>पद</th><th>भाव</th><th>स्थिती</th></tr></thead><tbody><tr><td><strong>सूर्य</strong></td><td>वृषभ</td><td>19° 56' 27"</td><td>रोहिणी</td><td>3</td><td>4</td><td>—</td></tr>
+<tr><td><strong>चंद्र</strong></td><td>कुंभ</td><td>10° 19' 2"</td><td>शतभिषा</td><td>2</td><td>1</td><td>—</td></tr>
+<tr><td><strong>मंगळ</strong></td><td>कर्क</td><td>11° 43' 35"</td><td>पुष्य</td><td>3</td><td>6</td><td><span style="color:#b91c1c;font-weight:700;">नीच ↓</span></td></tr>
+<tr><td><strong>बुध</strong></td><td>वृषभ</td><td>5° 42' 23"</td><td>कृत्तिका</td><td>3</td><td>4</td><td>—</td></tr>
+<tr><td><strong>गुरु</strong></td><td>कर्क</td><td>15° 52' 19"</td><td>पुष्य</td><td>4</td><td>6</td><td><span style="color:#166534;font-weight:700;">उच्च ↑</span></td></tr>
+<tr><td><strong>शुक्र</strong></td><td>कर्क</td><td>5° 0' 27"</td><td>पुष्य</td><td>1</td><td>6</td><td>—</td></tr>
+<tr><td><strong>शनि</strong></td><td>मकर</td><td>12° 49' 34"</td><td>श्रवण</td><td>1</td><td>12</td><td><span style="color:#166534;">स्वगृही</span></td></tr>
+<tr><td><strong>राहु</strong></td><td>धनु</td><td>25° 42' 33"</td><td>पूर्वाषाढा</td><td>4</td><td>11</td><td><span style="color:#b91c1c;">वक्री ↺</span></td></tr>
+<tr><td><strong>केतु</strong></td><td>मिथुन</td><td>25° 42' 33"</td><td>पुनर्वसु</td><td>2</td><td>5</td><td><span style="color:#b91c1c;">वक्री ↺</span></td></tr>
+</tbody></table>
+  </div>
+  <div class="sec-div"><div class="sec-ic">⚡</div><span class="sec-lb">ग्रह बल — Planet Strength</span><div class="sec-ln"></div></div>
+  <div class="content">
+    <table class="dt"><thead><tr><th>ग्रह</th><th>स्थिती</th><th>भाव</th><th>बल</th></tr></thead><tbody><tr><td><strong>सूर्य</strong></td><td>शत्रुगृही</td><td>H4</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:45%;height:100%;background:#d4a843;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#d4a843;">45%</span></div></td></tr>
+<tr><td><strong>चंद्र</strong></td><td>समगृही</td><td>H1</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:60%;height:100%;background:#166534;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#166534;">60%</span></div></td></tr>
+<tr><td><strong>मंगळ</strong></td><td>नीच</td><td>H6</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:5%;height:100%;background:#b91c1c;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#b91c1c;">5%</span></div></td></tr>
+<tr><td><strong>बुध</strong></td><td>मित्रगृही</td><td>H4</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:70%;height:100%;background:#166534;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#166534;">70%</span></div></td></tr>
+<tr><td><strong>गुरु</strong></td><td>उच्च</td><td>H6</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:85%;height:100%;background:#166534;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#166534;">85%</span></div></td></tr>
+<tr><td><strong>शुक्र</strong></td><td>शत्रुगृही</td><td>H6</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:25%;height:100%;background:#b91c1c;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#b91c1c;">25%</span></div></td></tr>
+<tr><td><strong>शनि</strong> <span style="color:#b91c1c;font-size:9px;">(वक्री)</span></td><td>स्वगृही</td><td>H12</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:70%;height:100%;background:#166534;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#166534;">70%</span></div></td></tr>
+<tr><td><strong>राहु</strong> <span style="color:#b91c1c;font-size:9px;">(वक्री)</span></td><td>समगृही</td><td>H11</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:50%;height:100%;background:#d4a843;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#d4a843;">50%</span></div></td></tr>
+<tr><td><strong>केतु</strong> <span style="color:#b91c1c;font-size:9px;">(वक्री)</span></td><td>समगृही</td><td>H5</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:58%;height:100%;background:#d4a843;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#d4a843;">58%</span></div></td></tr>
+</tbody></table>
+  </div>
+  <div class="pdf-ftr"><span class="ftr-brand">MyPatrika</span><span class="ftr-info">Generated 14 April 2026 · mypatrika.com</span><span class="ftr-pg">4 / 9</span></div>
+</div>
+
+<!-- ═══ PAGE 5: YOGAS + DOSHAS ═══ -->
+<p class="pg-label">PAGE 5 — योग + दोष</p>
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+  <div class="pdf-hdr-mini">
+  <span class="hdr-mini-brand">MyPatrika</span>
+  <span class="hdr-mini-info">पवन हसबनीस — जन्म पत्रिका</span>
+</div>
+  <div class="sec-div"><div class="sec-ic">✦</div><span class="sec-lb">योग — Yogas</span><div class="sec-ln"></div></div>
+  <div class="yoga-grid"><div class="yoga-card"><div class="yoga-name">Budhaditya Yoga</div><div class="yoga-name-mr">बुधादित्य योग</div><div class="yoga-desc">सूर्य आणि बुध एकाच राशीत आहेत. हा योग तीव्र बुद्धिमत्ता, वक्तृत्व कौशल्य आणि व्यावसायिक यश देतो.</div><span class="yoga-badge badge-shubh">शुभ योग — strong</span></div>
+<div class="yoga-card"><div class="yoga-name">Raj Yoga</div><div class="yoga-name-mr">राजयोग</div><div class="yoga-desc">केंद्राधिपती सूर्य आणि त्रिकोणाधिपती बुध एकाच राशीत आहेत. राजकीय/सामाजिक उन्नती, अधिकार आणि सत्ता प्राप्ती.</div><span class="yoga-badge badge-shubh">शुभ योग — strong</span></div>
+</div>
+  <div class="sec-div"><div class="sec-ic">⚠</div><span class="sec-lb">दोष — Doshas</span><div class="sec-ln"></div></div>
+  <div class="dosha-item"><div class="dosha-head"><span class="dot-green"></span><strong>मांगलिक दोष (मंगळ दोष)</strong> (Mangal Dosha (Manglik))<span class="clear">नाही ✓</span></div></div>
+<div class="dosha-item"><div class="dosha-head"><span class="dot-green"></span><strong>काल सर्प दोष</strong> (Kaal Sarp Dosha)<span class="clear">नाही ✓</span></div></div>
+<div class="dosha-item dosha-yes"><div class="dosha-head"><span class="dot-red"></span><strong>साडेसाती</strong> (Sade Sati)<span class="sev">medium</span></div><div class="dosha-desc">जन्मकुंडलीत शनि चंद्रापासून 12व्या (चढती) स्थानात आहे. कर्मफल, शारीरिक/मानसिक तणाव, पण शिस्त आणि मेहनतीने यश मिळते.</div><div class="dosha-rem">उपाय: शनिवारी हनुमान मंदिरात तेल अर्पण करा. शनिदेवाची पूजा करा. निळा नीलम रत्न (ज्योतिष सल्ल्याने) धारण करा. दान-धर्म करा.</div></div>
+<div class="dosha-item"><div class="dosha-head"><span class="dot-green"></span><strong>पितृ दोष</strong> (Pitra Dosha)<span class="clear">नाही ✓</span></div></div>
+
+  <div class="pdf-ftr"><span class="ftr-brand">MyPatrika</span><span class="ftr-info">Generated 14 April 2026 · mypatrika.com</span><span class="ftr-pg">5 / 9</span></div>
+</div>
+
+<!-- ═══ PAGE 6: PREDICTIONS ═══ -->
+<p class="pg-label">PAGE 6 — भविष्यकथन</p>
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+  <div class="pdf-hdr-mini">
+  <span class="hdr-mini-brand">MyPatrika</span>
+  <span class="hdr-mini-info">पवन हसबनीस — जन्म पत्रिका</span>
+</div>
+  <div class="sec-div"><div class="sec-ic">🔮</div><span class="sec-lb">भविष्यकथन — House Predictions</span><div class="sec-ln"></div></div>
+  <div class="pred-row"><div class="pred-head"><span class="pred-ic">🧍</span><span class="pred-t">भाव 1 — व्यक्तिमत्व / आरोग्य</span><span style="color:#166534;margin-left:auto;">★★★★☆</span></div><div class="pred-txt">या भावात चंद्र (समगृही, बल 60%) — आत्मविश्वासी, आकर्षक व्यक्तिमत्व. चांगले आरोग्य, नेतृत्वगुण. लोक तुमच्याकडे आकर्षित होतात.</div></div>
+<div class="pred-row"><div class="pred-head"><span class="pred-ic">💰</span><span class="pred-t">भाव 2 — धन / कुटुंब / वाणी</span><span style="color:#d4a843;margin-left:auto;">★★★☆☆</span></div><div class="pred-txt">आर्थिक स्थिती मध्यम. स्वतःच्या प्रयत्नांवर अवलंबून. कुटुंब सामान्य.</div></div>
+<div class="pred-row"><div class="pred-head"><span class="pred-ic">💪</span><span class="pred-t">भाव 3 — पराक्रम / भावंडे / संवाद</span><span style="color:#d4a843;margin-left:auto;">★★★☆☆</span></div><div class="pred-txt">सामान्य पराक्रम. भावंडांशी तटस्थ संबंध. संवाद कौशल्य विकसित करा.</div></div>
+<div class="pred-row"><div class="pred-head"><span class="pred-ic">🏠</span><span class="pred-t">भाव 4 — सुख / माता / घर / वाहन</span><span style="color:#b91c1c;margin-left:auto;">★★☆☆☆</span></div><div class="pred-txt">या भावात सूर्य (शत्रुगृही, बल 45%), बुध (मित्रगृही, बल 70%) — घरगुती तणाव. मातेच्या आरोग्याची काळजी घ्या. मालमत्ता संबंधी काळजीपूर्वक निर्णय घ्या.</div></div>
+<div class="pred-row"><div class="pred-head"><span class="pred-ic">🎓</span><span class="pred-t">भाव 5 — बुद्धी / संतती / प्रेम / शिक्षण</span><span style="color:#b91c1c;margin-left:auto;">★★☆☆☆</span></div><div class="pred-txt">या भावात केतु (समगृही, बल 58%) — शिक्षणात अडथळे येऊ शकतात. प्रेमसंबंधात सावध राहा. संतती विलंब शक्य.</div></div>
+<div class="pred-row"><div class="pred-head"><span class="pred-ic">⚔️</span><span class="pred-t">भाव 6 — शत्रू / रोग / कर्ज / स्पर्धा</span><span style="color:#166534;margin-left:auto;">★★★★★</span></div><div class="pred-txt">या भावात मंगळ (नीच, बल 5%), गुरु (उच्च, बल 85%), शुक्र (शत्रुगृही, बल 25%) — शत्रूंवर विजय. स्पर्धा परीक्षांत यश. रोगांवर मात. सेवा क्षेत्रात उत्तम. कर्जमुक्ती.</div></div>
+<div class="pred-row"><div class="pred-head"><span class="pred-ic">💑</span><span class="pred-t">भाव 7 — विवाह / भागीदारी / जोडीदार</span><span style="color:#d4a843;margin-left:auto;">★★★☆☆</span></div><div class="pred-txt">विवाह सामान्य. लग्नाचा ७वा भाव स्वामीवर अवलंबून.</div></div>
+<div class="pred-row"><div class="pred-head"><span class="pred-ic">🔮</span><span class="pred-t">भाव 8 — आयुष्य / गुप्त ज्ञान / वारसा</span><span style="color:#d4a843;margin-left:auto;">★★★☆☆</span></div><div class="pred-txt">सामान्य आयुष्य. गूढ विषयांत मध्यम रस.</div></div>
+<div class="pred-row"><div class="pred-head"><span class="pred-ic">🍀</span><span class="pred-t">भाव 9 — भाग्य / धर्म / पिता / लांबचा प्रवास</span><span style="color:#d4a843;margin-left:auto;">★★★☆☆</span></div><div class="pred-txt">भाग्य मध्यम. स्वतःच्या कर्मावर अवलंबून. मेहनत फळ देईल.</div></div>
+<div class="pred-row"><div class="pred-head"><span class="pred-ic">💼</span><span class="pred-t">भाव 10 — करिअर / कीर्ती / व्यवसाय</span><span style="color:#d4a843;margin-left:auto;">★★★☆☆</span></div><div class="pred-txt">करिअर सामान्य. मेहनत आणि कौशल्यावर अवलंबून.</div></div>
+<div class="pred-row"><div class="pred-head"><span class="pred-ic">🎯</span><span class="pred-t">भाव 11 — लाभ / मित्र / आकांक्षा</span><span style="color:#b91c1c;margin-left:auto;">★★☆☆☆</span></div><div class="pred-txt">या भावात राहु (समगृही, बल 50%) — इच्छापूर्तीत विलंब. मित्रांपासून निराशा. आर्थिक लाभ अनियमित.</div></div>
+<div class="pred-row"><div class="pred-head"><span class="pred-ic">✈️</span><span class="pred-t">भाव 12 — खर्च / मोक्ष / परदेश / झोप</span><span style="color:#166534;margin-left:auto;">★★★★☆</span></div><div class="pred-txt">या भावात शनि (स्वगृही, बल 70%) — आध्यात्मिक उन्नती. परदेश यश. चांगली झोप. दानधर्मात रस. मोक्षप्राप्तीची शक्यता.</div></div>
+
+  <div class="pdf-ftr"><span class="ftr-brand">MyPatrika</span><span class="ftr-info">Generated 14 April 2026 · mypatrika.com</span><span class="ftr-pg">6 / 9</span></div>
+</div>
+
+<!-- ═══ PAGE 7: DASHA TIMELINE ═══ -->
+<p class="pg-label">PAGE 7 — दशा कालावधी</p>
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+  <div class="pdf-hdr-mini">
+  <span class="hdr-mini-brand">MyPatrika</span>
+  <span class="hdr-mini-info">पवन हसबनीस — जन्म पत्रिका</span>
+</div>
+  <div class="sec-div"><div class="sec-ic">⏳</div><span class="sec-lb">दशा कालावधी — Dasha Timeline</span><div class="sec-ln"></div></div>
+  <div class="d-list"><div class="d-row"><div class="d-pl" style="">राहु</div><div class="d-bg" style=""><div class="d-fill" style="width:58.815%;background:#6366f1;">1991 — 2004</div></div><div class="d-yr" style="">13 वर्षे</div></div>
+<div class="d-row"><div class="d-pl" style="">गुरु</div><div class="d-bg" style=""><div class="d-fill" style="width:72.0%;background:#f59e0b;">2004 — 2020</div></div><div class="d-yr" style="">16 वर्षे</div></div>
+<div class="d-row"><div class="d-pl" style="color:#d4a843;font-weight:800;">शनि ◀</div><div class="d-bg" style="border:2px solid #d4a843;border-radius:4px;"><div class="d-fill" style="width:85.5%;background:linear-gradient(90deg,#d4a843,#f0c040);">2020 — 2039 (सध्या)</div></div><div class="d-yr" style="color:#d4a843;font-weight:700;">19 वर्षे</div></div>
+<div class="d-row"><div class="d-pl" style="">बुध</div><div class="d-bg" style=""><div class="d-fill" style="width:76.5%;background:#059669;">2039 — 2056</div></div><div class="d-yr" style="">17 वर्षे</div></div>
+<div class="d-row"><div class="d-pl" style="">केतु</div><div class="d-bg" style=""><div class="d-fill" style="width:31.5%;background:#8b5cf6;">2056 — 2063</div></div><div class="d-yr" style="">7 वर्षे</div></div>
+<div class="d-row"><div class="d-pl" style="">शुक्र</div><div class="d-bg" style=""><div class="d-fill" style="width:90%;background:#ec4899;">2063 — 2083</div></div><div class="d-yr" style="">20 वर्षे</div></div>
+<div class="d-row"><div class="d-pl" style="">सूर्य</div><div class="d-bg" style=""><div class="d-fill" style="width:27.0%;background:#ef4444;">2083 — 2089</div></div><div class="d-yr" style="">6 वर्षे</div></div>
+<div class="d-row"><div class="d-pl" style="">चंद्र</div><div class="d-bg" style=""><div class="d-fill" style="width:45.0%;background:#0ea5e9;">2089 — 2099</div></div><div class="d-yr" style="">10 वर्षे</div></div>
+<div class="d-row"><div class="d-pl" style="">मंगळ</div><div class="d-bg" style=""><div class="d-fill" style="width:31.5%;background:#475569;">2099 — 2106</div></div><div class="d-yr" style="">7 वर्षे</div></div>
+</div>
+  <div class="sec-div"><div class="sec-ic">🌟</div><span class="sec-lb">चालू दशा फल — Current Dasha: {cd['lordMr'] if cd else ''}</span><div class="sec-ln"></div></div>
+  <div style="font-size:11px;color:#8b6b4a;margin-bottom:12px;">३०/६/२०२० — ३०/६/२०३९ (19.0 वर्षे)</div>
+    <div class="cd-grid">
+      <div class="cd-card"><div class="cd-t">💼 करिअर</div><div class="cd-txt">तुमच्या कुंडलीत शनि व्ययभावात स्वगृही स्थितीत आहे (बल: 70%). हा ग्रह वक्री आहे, त्यामुळे फळात विलंब पण तीव्रता अधिक. दशानाथ बलवान असल्यामुळे या काळात उत्तम फळ मिळतील. दुःस्थानात असल्यामुळे काही अडचणी येतील. कठोर परिश्रमाचे फळ. सरकारी नोकरी, लोह/तेल उ</div></div>
+      <div class="cd-card"><div class="cd-t">💰 आर्थिक</div><div class="cd-txt">दशानाथ बलवान असल्यामुळे या काळात उत्तम फळ मिळतील. विलंबाने पण स्थिर आर्थिक प्रगती. जमीन/इमारत गुंतवणूक. निळा नीलम शुभ. बचत करा.</div></div>
+      <div class="cd-card"><div class="cd-t">❤️ नातेसंबंध</div><div class="cd-txt">ज्येष्ठांचा आदर करा. नम्रता आणा. एकाकीपणा जाणवू शकतो. सेवाभावी वृत्ती ठेवा.</div></div>
+      <div class="cd-card"><div class="cd-t">🏥 आरोग्य</div><div class="cd-txt">सांधे, दात, हाडे, पाय काळजी. वात विकार सावध. नियमित व्यायाम अत्यंत आवश्यक.</div></div>
+    </div>
+    <div class="cd-adv"><strong>सल्ला:</strong> शनिवारी हनुमान मंदिरात तेल चढवा. शनिदेव मंत्र जप करा. काळे कपडे वापरा. गरिबांना दान करा.</div>
+  <div class="pdf-ftr"><span class="ftr-brand">MyPatrika</span><span class="ftr-info">Generated 14 April 2026 · mypatrika.com</span><span class="ftr-pg">7 / 9</span></div>
+</div>
+
+<!-- ═══ PAGE 8: REMEDIES ═══ -->
+<p class="pg-label">PAGE 8 — उपाय</p>
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+  <div class="pdf-hdr-mini">
+  <span class="hdr-mini-brand">MyPatrika</span>
+  <span class="hdr-mini-info">पवन हसबनीस — जन्म पत्रिका</span>
+</div>
+  <div class="sec-div"><div class="sec-ic">🙏</div><span class="sec-lb">उपाय — Remedies</span><div class="sec-ln"></div></div>
+  <div class="rem-cat">🙏 दोष निवारण उपाय (तुमच्या कुंडलीतील सक्रिय दोषांसाठी)</div>
+<div class="rem-it">• साडेसाती उपाय: शंकर भगवानाची पूजा करा. सोमवारी शिव मंदिरात रुद्राभिषेक करा.</div>
+<div class="rem-it">• महामृत्युंजय मंत्र — 'ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्' — रोज १०८ वेळा जप करा.</div>
+<div class="rem-it">• शनिवारी हनुमान मंदिरात तेल अर्पण करा. शनि स्तोत्र वाचा.</div>
+<div class="rem-it">• पिंपळाच्या झाडाला शनिवारी पाणी घाला. काळे तीळ दान करा.</div>
+<div class="rem-cat">📿 देवता पूजा (तुमच्या दुर्बल ग्रहांसाठी)</div>
+<div class="rem-it">• मंगळ दुर्बल (भाव 6) — श्री हनुमान / भगवान कार्तिकेय पूजा करा. मंगळवारी हनुमान मंदिरात जा. हनुमान चालीसा वाचा. लाल सिंदूर अर्पण करा.</div>
+<div class="rem-it">• शुक्र दुर्बल (भाव 6) — श्री लक्ष्मी / श्री महालक्ष्मी पूजा करा. शुक्रवारी लक्ष्मी पूजा करा. श्री सूक्त वाचा. पांढरे फूल अर्पण करा. महिलांना दान करा.</div>
+<div class="rem-cat">💎 रत्न धारण (अनुभवी ज्योतिषाच्या सल्ल्याने)</div>
+<div class="rem-it">• मंगळ (नीच, बल 5%) — लाल प्रवाळ (Red Coral) — सोन्या/तांब्यात, अनामिकेत, मंगळवारी धारण करा</div>
+<div class="rem-it">• शुक्र (शत्रुगृही, बल 25%) — हिरा/ओपल (Diamond/Opal) — प्लॅटिनम/चांदीत, अनामिकेत, शुक्रवारी धारण करा</div>
+<div class="rem-cat">🕉️ मंत्र जप (दुर्बल ग्रहांसाठी बीज मंत्र)</div>
+<div class="rem-it">• मंगळ — ॐ क्रां क्रीं क्रौं सः भौमाय नमः — रोज ७ वेळा</div>
+<div class="rem-it">• शुक्र — ॐ द्रां द्रीं द्रौं सः शुक्राय नमः — रोज ९ वेळा</div>
+<div class="rem-cat">🎋 दान (दुर्बल ग्रहांसाठी)</div>
+<div class="rem-it">• मंगळ — लाल मसूर डाळ, गूळ, लाल कपडा मंगळवारी दान करा</div>
+<div class="rem-it">• शुक्र — तांदूळ, साखर, कापूर, पांढरे कपडे शुक्रवारी दान करा</div>
+<div class="rem-cat">✨ चालू दशा उपाय (शनि महादशा)</div>
+<div class="rem-it">• सध्या शनि महादशा चालू आहे (बल 70%). शनिवारी श्री शनिदेव / श्री हनुमान / श्री शंकर पूजा विशेष फलदायी.</div>
+<div class="rem-it">• शनिवारी शनि मंदिरात तेल चढवा. हनुमान चालीसा वाचा. शिव मंदिरात रुद्राभिषेक करा. काळे तीळ दान करा.</div>
+<div class="rem-it">• दशानाथ मंत्र: ॐ प्रां प्रीं प्रौं सः शनैश्चराय नमः — रोज ११ वेळा</div>
+<div class="rem-it">• दशानाथ दान: काळे तीळ, सरसों तेल, लोखंड, काळा कपडा शनिवारी दान करा</div>
+<div class="rem-cat">🔱 बलवान ग्रह — या क्षेत्रांचा लाभ घ्या</div>
+<div class="rem-it">• गुरु बलवान (उच्च, बल 85%) — गुरुवारी श्री दत्तात्रेय / श्री बृहस्पती पूजा करा. हा ग्रह तुमच्यासाठी अनुकूल.</div>
+
+  <div class="pdf-ftr"><span class="ftr-brand">MyPatrika</span><span class="ftr-info">Generated 14 April 2026 · mypatrika.com</span><span class="ftr-pg">8 / 9</span></div>
+</div>
+
+<!-- ═══ PAGE 9: DISCLAIMER ═══ -->
+<p class="pg-label">PAGE 9 — अस्वीकरण</p>
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+  <div class="pdf-hdr-mini">
+  <span class="hdr-mini-brand">MyPatrika</span>
+  <span class="hdr-mini-info">पवन हसबनीस — जन्म पत्रिका</span>
+</div>
+  <div class="disclaimer" style="margin-top:20px;">
+    <strong>अस्वीकरण:</strong> ही पत्रिका Swiss Ephemeris (Lahiri Ayanamsha) वर आधारित अचूक गणनेद्वारे तयार केली आहे. ज्योतिषशास्त्र हे मार्गदर्शनासाठी आहे, अंतिम निर्णयासाठी नाही. महत्त्वाच्या निर्णयांसाठी अनुभवी ज्योतिषाचा सल्ला घ्या. — MyPatrika, mypatrika.com
+  </div>
+  <div class="pdf-ftr"><span class="ftr-brand">MyPatrika</span><span class="ftr-info">Generated 14 April 2026 · mypatrika.com</span><span class="ftr-pg">9 / 9</span></div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 50" width="220" height="50">
+  <defs>
+    <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#B85C00"/>
+      <stop offset="100%" stop-color="#8B4000"/>
+    </linearGradient>
+  </defs>
+  <circle cx="25" cy="25" r="20" fill="none" stroke="#CC6600" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="25" cy="25" r="16" fill="none" stroke="#CC6600" stroke-width="0.5" stroke-dasharray="4.2 4.2" opacity="0.25"/>
+  <text x="25" y="32" text-anchor="middle" font-family="'Inclusive Sans', sans-serif" font-size="18" font-weight="bold" fill="url(#sg)">भा</text>
+  <g fill="#CC6600" opacity="0.3"><circle cx="25" cy="3" r="1.5"/><circle cx="44" cy="15" r="1"/></g>
+  <text x="56" y="30" font-family="'Inclusive Sans', sans-serif" font-size="20" font-weight="700" fill="url(#sg)" letter-spacing="0.5">Bhaagyavedh</text>
+</svg>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bhaagyavedh — L1 Saffron on Cream (Inclusive Sans)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inclusive+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #F5F0E8; font-family: 'Inclusive Sans', sans-serif; padding: 40px 20px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; gap: 50px; }
+    h1 { font-family: 'Inclusive Sans', sans-serif; color: #8B4000; font-size: 24px; margin-bottom: -20px; }
+    .subtitle { color: #999; font-size: 13px; }
+    .section-title { font-size: 14px; color: #888; letter-spacing: 3px; text-transform: uppercase; margin-top: 20px; }
+
+    .preview-card {
+      background: #FFF9F0;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      border: 1px solid #F0E0C8;
+    }
+    .preview-dark {
+      background: #0A1628;
+      border: 1px solid #1A2A45;
+    }
+    .preview-white {
+      background: #FFFFFF;
+      border: 1px solid #E8E0D8;
+    }
+
+    /* Simulated navbar */
+    .navbar {
+      width: 900px;
+      max-width: 95vw;
+      background: #FFF9F0;
+      border-radius: 14px;
+      padding: 16px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      border: 1px solid #F0E0C8;
+    }
+    .navbar-left { display: flex; align-items: center; gap: 12px; }
+    .navbar-links { display: flex; gap: 24px; }
+    .navbar-links a { font-family: 'Inclusive Sans', sans-serif; color: #8B6A4A; text-decoration: none; font-size: 14px; }
+    .navbar-links a:hover { color: #CC6600; }
+    .navbar-cta {
+      font-family: 'Inclusive Sans', sans-serif;
+      background: linear-gradient(135deg, #CC6600, #8B4000);
+      color: #FFF9F0;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* Hero mock */
+    .hero {
+      width: 900px;
+      max-width: 95vw;
+      background: linear-gradient(135deg, #FFF9F0, #F5EDE0);
+      border-radius: 20px;
+      padding: 60px 50px;
+      text-align: center;
+      border: 1px solid #F0E0C8;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+    }
+    .hero h2 { font-family: 'Inclusive Sans', sans-serif; font-size: 32px; color: #5A3A1A; margin-top: 20px; }
+    .hero p { font-family: 'Inclusive Sans', sans-serif; color: #8B7355; margin-top: 10px; font-size: 15px; }
+
+    /* Footer mock */
+    .footer {
+      width: 900px;
+      max-width: 95vw;
+      background: #1A1510;
+      border-radius: 14px;
+      padding: 30px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-text { font-family: 'Inclusive Sans', sans-serif; color: #6A5A4A; font-size: 12px; }
+  </style>
+</head>
+<body>
+
+<h1>Bhaagyavedh — L1 Saffron on Cream</h1>
+<p class="subtitle">Font: Inclusive Sans | All variations below</p>
+
+<!-- ===== MAIN LOGO: LIGHT ===== -->
+<p class="section-title">Full Logo — Light Background</p>
+<div class="preview-card">
+  <svg viewBox="0 0 620 180" width="600" height="174">
+    <defs>
+      <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#B85C00"/>
+        <stop offset="100%" stop-color="#8B4000"/>
+      </linearGradient>
+      <filter id="gl"><feGaussianBlur stdDeviation="1" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <rect width="620" height="180" rx="14" fill="#FFF9F0"/>
+    <!-- Icon -->
+    <circle cx="90" cy="90" r="64" fill="none" stroke="#CC6600" stroke-width="2" opacity="0.5"/>
+    <circle cx="90" cy="90" r="52" fill="none" stroke="#CC6600" stroke-width="0.8" stroke-dasharray="13.6 13.6" opacity="0.25"/>
+    <ellipse cx="90" cy="90" rx="42" ry="16" fill="none" stroke="#CC6600" stroke-width="0.4" opacity="0.12" transform="rotate(-30 90 90)"/>
+    <ellipse cx="90" cy="90" rx="42" ry="16" fill="none" stroke="#CC6600" stroke-width="0.4" opacity="0.12" transform="rotate(30 90 90)"/>
+    <ellipse cx="90" cy="90" rx="42" ry="16" fill="none" stroke="#CC6600" stroke-width="0.4" opacity="0.12" transform="rotate(90 90 90)"/>
+    <text x="90" y="104" text-anchor="middle" font-family="serif" font-size="48" font-weight="bold" fill="url(#sg)" filter="url(#gl)">भा</text>
+    <g fill="#CC6600" opacity="0.35"><circle cx="90" cy="22" r="2.5"/><circle cx="152" cy="58" r="1.8"/><circle cx="28" cy="125" r="2"/><circle cx="148" cy="130" r="1.5"/><circle cx="38" cy="50" r="1.5"/></g>
+    <!-- Text -->
+    <text x="190" y="74" font-family="'Inclusive Sans', sans-serif" font-size="42" font-weight="700" fill="url(#sg)" letter-spacing="1">Bhaagyavedh</text>
+    <text x="190" y="108" font-family="serif" font-size="20" fill="#CC6600" opacity="0.55" letter-spacing="3">भाग्यवेध</text>
+    <line x1="190" y1="116" x2="530" y2="116" stroke="#CC6600" stroke-width="0.4" opacity="0.18"/>
+    <text x="190" y="140" font-family="'Inclusive Sans', sans-serif" font-size="11.5" fill="#8B7355" letter-spacing="2.5" font-weight="400">VEDIC ASTROLOGY &amp; DIVINE JOURNEYS</text>
+  </svg>
+</div>
+
+<!-- ===== MAIN LOGO: DARK ===== -->
+<p class="section-title">Full Logo — Dark Background</p>
+<div class="preview-card preview-dark">
+  <svg viewBox="0 0 620 180" width="600" height="174">
+    <defs>
+      <linearGradient id="sgd" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#FF9933"/>
+        <stop offset="100%" stop-color="#CC6600"/>
+      </linearGradient>
+    </defs>
+    <rect width="620" height="180" rx="14" fill="#0A1628"/>
+    <circle cx="90" cy="90" r="64" fill="none" stroke="#FF9933" stroke-width="2" opacity="0.6"/>
+    <circle cx="90" cy="90" r="52" fill="none" stroke="#CC6600" stroke-width="0.8" stroke-dasharray="13.6 13.6" opacity="0.3"/>
+    <ellipse cx="90" cy="90" rx="42" ry="16" fill="none" stroke="#FF9933" stroke-width="0.4" opacity="0.15" transform="rotate(-30 90 90)"/>
+    <ellipse cx="90" cy="90" rx="42" ry="16" fill="none" stroke="#FF9933" stroke-width="0.4" opacity="0.15" transform="rotate(30 90 90)"/>
+    <ellipse cx="90" cy="90" rx="42" ry="16" fill="none" stroke="#FF9933" stroke-width="0.4" opacity="0.15" transform="rotate(90 90 90)"/>
+    <text x="90" y="104" text-anchor="middle" font-family="serif" font-size="48" font-weight="bold" fill="url(#sgd)">भा</text>
+    <g fill="#FFB366" opacity="0.5"><circle cx="90" cy="22" r="2.5"/><circle cx="152" cy="58" r="1.8"/><circle cx="28" cy="125" r="2"/><circle cx="148" cy="130" r="1.5"/><circle cx="38" cy="50" r="1.5"/></g>
+    <text x="190" y="74" font-family="'Inclusive Sans', sans-serif" font-size="42" font-weight="700" fill="url(#sgd)" letter-spacing="1">Bhaagyavedh</text>
+    <text x="190" y="108" font-family="serif" font-size="20" fill="#FFB366" opacity="0.7" letter-spacing="3">भाग्यवेध</text>
+    <line x1="190" y1="116" x2="530" y2="116" stroke="#CC6600" stroke-width="0.4" opacity="0.25"/>
+    <text x="190" y="140" font-family="'Inclusive Sans', sans-serif" font-size="11.5" fill="#7A8BA8" letter-spacing="2.5" font-weight="400">VEDIC ASTROLOGY &amp; DIVINE JOURNEYS</text>
+  </svg>
+</div>
+
+<!-- ===== MAIN LOGO: WHITE ===== -->
+<p class="section-title">Full Logo — Pure White Background</p>
+<div class="preview-card preview-white">
+  <svg viewBox="0 0 620 180" width="600" height="174">
+    <rect width="620" height="180" rx="14" fill="#FFFFFF"/>
+    <circle cx="90" cy="90" r="64" fill="none" stroke="#CC6600" stroke-width="2" opacity="0.4"/>
+    <circle cx="90" cy="90" r="52" fill="none" stroke="#CC6600" stroke-width="0.8" stroke-dasharray="13.6 13.6" opacity="0.2"/>
+    <ellipse cx="90" cy="90" rx="42" ry="16" fill="none" stroke="#CC6600" stroke-width="0.4" opacity="0.1" transform="rotate(-30 90 90)"/>
+    <ellipse cx="90" cy="90" rx="42" ry="16" fill="none" stroke="#CC6600" stroke-width="0.4" opacity="0.1" transform="rotate(30 90 90)"/>
+    <ellipse cx="90" cy="90" rx="42" ry="16" fill="none" stroke="#CC6600" stroke-width="0.4" opacity="0.1" transform="rotate(90 90 90)"/>
+    <text x="90" y="104" text-anchor="middle" font-family="serif" font-size="48" font-weight="bold" fill="url(#sg)">भा</text>
+    <g fill="#CC6600" opacity="0.3"><circle cx="90" cy="22" r="2.5"/><circle cx="152" cy="58" r="1.8"/><circle cx="28" cy="125" r="2"/></g>
+    <text x="190" y="74" font-family="'Inclusive Sans', sans-serif" font-size="42" font-weight="700" fill="url(#sg)" letter-spacing="1">Bhaagyavedh</text>
+    <text x="190" y="108" font-family="serif" font-size="20" fill="#CC6600" opacity="0.5" letter-spacing="3">भाग्यवेध</text>
+    <line x1="190" y1="116" x2="530" y2="116" stroke="#CC6600" stroke-width="0.4" opacity="0.15"/>
+    <text x="190" y="140" font-family="'Inclusive Sans', sans-serif" font-size="11.5" fill="#9A8A7A" letter-spacing="2.5" font-weight="400">VEDIC ASTROLOGY &amp; DIVINE JOURNEYS</text>
+  </svg>
+</div>
+
+<!-- ===== COMPACT / HORIZONTAL SMALL ===== -->
+<p class="section-title">Compact Logo — Horizontal (for small spaces)</p>
+<div class="preview-card" style="padding: 25px 40px;">
+  <svg viewBox="0 0 380 60" width="380" height="60">
+    <rect width="380" height="60" rx="8" fill="#FFF9F0"/>
+    <circle cx="30" cy="30" r="24" fill="none" stroke="#CC6600" stroke-width="1.5" opacity="0.5"/>
+    <circle cx="30" cy="30" r="19" fill="none" stroke="#CC6600" stroke-width="0.5" stroke-dasharray="5 5" opacity="0.25"/>
+    <text x="30" y="37" text-anchor="middle" font-family="serif" font-size="22" font-weight="bold" fill="url(#sg)">भा</text>
+    <text x="68" y="32" font-family="'Inclusive Sans', sans-serif" font-size="22" font-weight="700" fill="url(#sg)" letter-spacing="0.5">Bhaagyavedh</text>
+    <text x="68" y="48" font-family="'Inclusive Sans', sans-serif" font-size="8.5" fill="#8B7355" letter-spacing="2">VEDIC ASTROLOGY &amp; DIVINE JOURNEYS</text>
+  </svg>
+</div>
+
+<!-- ===== ICON VERSIONS ===== -->
+<p class="section-title">App Icons</p>
+<div style="display: flex; gap: 30px; flex-wrap: wrap; justify-content: center;">
+  <!-- Light icon -->
+  <div class="preview-card" style="padding: 20px;">
+    <svg viewBox="0 0 140 140" width="130" height="130">
+      <circle cx="70" cy="70" r="68" fill="#FFF9F0"/>
+      <circle cx="70" cy="70" r="64" fill="none" stroke="#CC6600" stroke-width="2" opacity="0.45"/>
+      <circle cx="70" cy="70" r="52" fill="none" stroke="#CC6600" stroke-width="0.7" stroke-dasharray="13.6 13.6" opacity="0.2"/>
+      <text x="70" y="84" text-anchor="middle" font-family="serif" font-size="52" font-weight="bold" fill="url(#sg)">भा</text>
+      <g fill="#CC6600" opacity="0.3"><circle cx="70" cy="4" r="2.5"/><circle cx="132" cy="50" r="1.5"/><circle cx="8" cy="95" r="1.8"/></g>
+    </svg>
+    <p style="text-align:center; font-size:11px; color:#8B7355; margin-top:8px;">Light</p>
+  </div>
+  <!-- Dark icon -->
+  <div class="preview-card preview-dark" style="padding: 20px;">
+    <svg viewBox="0 0 140 140" width="130" height="130">
+      <circle cx="70" cy="70" r="68" fill="#0A1628"/>
+      <circle cx="70" cy="70" r="64" fill="none" stroke="#FF9933" stroke-width="2" opacity="0.55"/>
+      <circle cx="70" cy="70" r="52" fill="none" stroke="#CC6600" stroke-width="0.7" stroke-dasharray="13.6 13.6" opacity="0.25"/>
+      <text x="70" y="84" text-anchor="middle" font-family="serif" font-size="52" font-weight="bold" fill="url(#sgd)">भा</text>
+      <g fill="#FFB366" opacity="0.45"><circle cx="70" cy="4" r="2.5"/><circle cx="134" cy="50" r="1.5"/><circle cx="6" cy="95" r="1.8"/></g>
+    </svg>
+    <p style="text-align:center; font-size:11px; color:#7A8BA8; margin-top:8px;">Dark</p>
+  </div>
+  <!-- White icon -->
+  <div class="preview-card preview-white" style="padding: 20px;">
+    <svg viewBox="0 0 140 140" width="130" height="130">
+      <circle cx="70" cy="70" r="68" fill="#FFFFFF"/>
+      <circle cx="70" cy="70" r="64" fill="none" stroke="#CC6600" stroke-width="2" opacity="0.4"/>
+      <circle cx="70" cy="70" r="52" fill="none" stroke="#CC6600" stroke-width="0.7" stroke-dasharray="13.6 13.6" opacity="0.18"/>
+      <text x="70" y="84" text-anchor="middle" font-family="serif" font-size="52" font-weight="bold" fill="url(#sg)">भा</text>
+      <g fill="#CC6600" opacity="0.25"><circle cx="70" cy="4" r="2.5"/><circle cx="134" cy="50" r="1.5"/><circle cx="6" cy="95" r="1.8"/></g>
+    </svg>
+    <p style="text-align:center; font-size:11px; color:#999; margin-top:8px;">White</p>
+  </div>
+  <!-- Filled saffron icon -->
+  <div class="preview-card" style="padding: 20px; background:#E8DDD0;">
+    <svg viewBox="0 0 140 140" width="130" height="130">
+      <defs>
+        <linearGradient id="sfill" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#CC6600"/>
+          <stop offset="100%" stop-color="#8B4000"/>
+        </linearGradient>
+      </defs>
+      <circle cx="70" cy="70" r="68" fill="url(#sfill)"/>
+      <circle cx="70" cy="70" r="64" fill="none" stroke="#FFD699" stroke-width="1.5" opacity="0.35"/>
+      <circle cx="70" cy="70" r="52" fill="none" stroke="#FFD699" stroke-width="0.6" stroke-dasharray="13.6 13.6" opacity="0.2"/>
+      <text x="70" y="84" text-anchor="middle" font-family="serif" font-size="52" font-weight="bold" fill="#FFF5E6">भा</text>
+      <g fill="#FFD699" opacity="0.3"><circle cx="70" cy="4" r="2.5"/><circle cx="134" cy="50" r="1.5"/><circle cx="6" cy="95" r="1.8"/></g>
+    </svg>
+    <p style="text-align:center; font-size:11px; color:#8B7355; margin-top:8px;">Filled Saffron</p>
+  </div>
+</div>
+
+<!-- ===== NAVBAR MOCKUP ===== -->
+<p class="section-title">In-Context — Navbar Mockup</p>
+<div class="navbar">
+  <div class="navbar-left">
+    <svg viewBox="0 0 140 40" width="140" height="40">
+      <circle cx="20" cy="20" r="16" fill="none" stroke="#CC6600" stroke-width="1.2" opacity="0.5"/>
+      <text x="20" y="26" text-anchor="middle" font-family="serif" font-size="16" font-weight="bold" fill="url(#sg)">भा</text>
+      <text x="44" y="24" font-family="'Inclusive Sans', sans-serif" font-size="16" font-weight="700" fill="url(#sg)">Bhaagyavedh</text>
+    </svg>
+  </div>
+  <div class="navbar-links">
+    <a href="#">Kundli</a>
+    <a href="#">Matching</a>
+    <a href="#">Panchang</a>
+    <a href="#">Yatra</a>
+    <a href="#">Blog</a>
+  </div>
+  <button class="navbar-cta">Get Started</button>
+</div>
+
+<!-- ===== HERO MOCKUP ===== -->
+<p class="section-title">In-Context — Hero Section Mockup</p>
+<div class="hero">
+  <svg viewBox="0 0 180 180" width="120" height="120" style="margin: 0 auto;">
+    <circle cx="90" cy="90" r="85" fill="none" stroke="#CC6600" stroke-width="2" opacity="0.35"/>
+    <circle cx="90" cy="90" r="70" fill="none" stroke="#CC6600" stroke-width="0.7" stroke-dasharray="14.6 14.6" opacity="0.2"/>
+    <ellipse cx="90" cy="90" rx="55" ry="20" fill="none" stroke="#CC6600" stroke-width="0.4" opacity="0.1" transform="rotate(-30 90 90)"/>
+    <ellipse cx="90" cy="90" rx="55" ry="20" fill="none" stroke="#CC6600" stroke-width="0.4" opacity="0.1" transform="rotate(30 90 90)"/>
+    <text x="90" y="106" text-anchor="middle" font-family="serif" font-size="62" font-weight="bold" fill="url(#sg)">भा</text>
+    <g fill="#CC6600" opacity="0.3"><circle cx="90" cy="3" r="3"/><circle cx="172" cy="65" r="2"/><circle cx="8" cy="120" r="2.2"/></g>
+  </svg>
+  <h2>तुमच्या भाग्याचा वेध घ्या</h2>
+  <p>Your complete Vedic astrology & spiritual journey platform</p>
+</div>
+
+<!-- ===== FOOTER MOCKUP ===== -->
+<p class="section-title">In-Context — Dark Footer</p>
+<div class="footer">
+  <svg viewBox="0 0 180 40" width="180" height="40">
+    <circle cx="20" cy="20" r="16" fill="none" stroke="#FF9933" stroke-width="1.2" opacity="0.45"/>
+    <text x="20" y="26" text-anchor="middle" font-family="serif" font-size="16" font-weight="bold" fill="url(#sgd)">भा</text>
+    <text x="44" y="24" font-family="'Inclusive Sans', sans-serif" font-size="16" font-weight="700" fill="url(#sgd)">Bhaagyavedh</text>
+  </svg>
+  <span class="footer-text">&copy; 2026 Bhaagyavedh. All rights reserved.</span>
+</div>
+
+<div style="height: 40px;"></div>
+</body>
+</html>

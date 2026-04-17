@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>MyPatrika — Blank Proof (Header + Footer Only)</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @media screen {
+    body { background: #333; padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 40px; }
+    .page-label { color: rgba(255,255,255,0.3); font-size: 11px; letter-spacing: 5px; font-family: 'Outfit', sans-serif; margin-bottom: -20px; }
+    .page {
+      width: 794px;
+      min-height: 1123px;
+      background: #fff;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+      font-family: 'Outfit', sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  @media print {
+    @page {
+      size: A4;
+      margin: 0;
+    }
+    body { margin: 0; padding: 0; }
+    .page-label { display: none; }
+    .page {
+      width: 100%;
+      min-height: 100vh;
+      position: relative;
+      font-family: 'Outfit', sans-serif;
+      display: flex;
+      flex-direction: column;
+      page-break-after: always;
+    }
+    .page:last-child { page-break-after: avoid; }
+  }
+
+  /* ===== HEADER ===== */
+  .page-header {
+    background: linear-gradient(135deg, #3d0c0c, #5c1a1a, #3d0c0c);
+    padding: 10px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    border-bottom: 3px solid #d4a843;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .header-brand {
+    color: #d4a843;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    font-family: 'Outfit', sans-serif;
+  }
+  .header-right {
+    color: rgba(255,255,255,0.4);
+    font-size: 11px;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  /* ===== FOOTER ===== */
+  .page-footer {
+    background: linear-gradient(135deg, #3d0c0c, #5c1a1a);
+    padding: 8px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    margin-top: auto;
+  }
+  .footer-brand {
+    color: #d4a843;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    font-family: 'Outfit', sans-serif;
+  }
+  .footer-text {
+    color: rgba(255,255,255,0.3);
+    font-size: 9px;
+    letter-spacing: 1px;
+    font-family: 'Outfit', sans-serif;
+  }
+  .page-num {
+    color: #d4a843;
+    font-size: 10px;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  /* ===== CONTENT AREA (blank for now) ===== */
+  .page-content {
+    flex: 1;
+    padding: 30px;
+  }
+</style>
+</head>
+<body>
+
+<p class="page-label">PAGE 1</p>
+<div class="page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <svg viewBox="0 0 140 140" width="28" height="28">
+        <g transform="translate(70,70)">
+          <circle cx="0" cy="0" r="55" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.4"/>
+          <polygon points="0,-46 40,23 -40,23" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.5"/>
+          <polygon points="0,46 40,-23 -40,-23" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="0" cy="0" r="32" fill="none" stroke="#d4a843" stroke-width="2" opacity="0.6"/>
+          <circle cx="0" cy="0" r="20" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.7"/>
+          <circle cx="0" cy="0" r="16" fill="#d4a843" opacity="0.2"/>
+          <text x="0" y="9" text-anchor="middle" fill="#d4a843" font-size="24" font-weight="bold">ॐ</text>
+        </g>
+      </svg>
+      <span class="header-brand">MyPatrika</span>
+    </div>
+    <span class="header-right">॥ श्री गणेशाय नमः ॥</span>
+  </div>
+
+  <!-- Blank content -->
+  <div class="page-content"></div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <span class="footer-brand">MyPatrika</span>
+    <span class="footer-text">mypatrika.com</span>
+    <span class="page-num">1 / 3</span>
+  </div>
+</div>
+
+<p class="page-label">PAGE 2</p>
+<div class="page">
+  <div class="page-header">
+    <div class="header-left">
+      <svg viewBox="0 0 140 140" width="28" height="28">
+        <g transform="translate(70,70)">
+          <circle cx="0" cy="0" r="55" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.4"/>
+          <polygon points="0,-46 40,23 -40,23" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.5"/>
+          <polygon points="0,46 40,-23 -40,-23" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="0" cy="0" r="32" fill="none" stroke="#d4a843" stroke-width="2" opacity="0.6"/>
+          <circle cx="0" cy="0" r="20" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.7"/>
+          <circle cx="0" cy="0" r="16" fill="#d4a843" opacity="0.2"/>
+          <text x="0" y="9" text-anchor="middle" fill="#d4a843" font-size="24" font-weight="bold">ॐ</text>
+        </g>
+      </svg>
+      <span class="header-brand">MyPatrika</span>
+    </div>
+    <span class="header-right">॥ श्री गणेशाय नमः ॥</span>
+  </div>
+
+  <div class="page-content"></div>
+
+  <div class="page-footer">
+    <span class="footer-brand">MyPatrika</span>
+    <span class="footer-text">mypatrika.com</span>
+    <span class="page-num">2 / 3</span>
+  </div>
+</div>
+
+<p class="page-label">PAGE 3</p>
+<div class="page">
+  <div class="page-header">
+    <div class="header-left">
+      <svg viewBox="0 0 140 140" width="28" height="28">
+        <g transform="translate(70,70)">
+          <circle cx="0" cy="0" r="55" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.4"/>
+          <polygon points="0,-46 40,23 -40,23" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.5"/>
+          <polygon points="0,46 40,-23 -40,-23" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="0" cy="0" r="32" fill="none" stroke="#d4a843" stroke-width="2" opacity="0.6"/>
+          <circle cx="0" cy="0" r="20" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.7"/>
+          <circle cx="0" cy="0" r="16" fill="#d4a843" opacity="0.2"/>
+          <text x="0" y="9" text-anchor="middle" fill="#d4a843" font-size="24" font-weight="bold">ॐ</text>
+        </g>
+      </svg>
+      <span class="header-brand">MyPatrika</span>
+    </div>
+    <span class="header-right">॥ श्री गणेशाय नमः ॥</span>
+  </div>
+
+  <div class="page-content"></div>
+
+  <div class="page-footer">
+    <span class="footer-brand">MyPatrika</span>
+    <span class="footer-text">mypatrika.com</span>
+    <span class="page-num">3 / 3</span>
+  </div>
+</div>
+
+</body>
+</html>

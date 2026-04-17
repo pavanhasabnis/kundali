@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="fg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#CC6600"/>
+      <stop offset="100%" stop-color="#8B4000"/>
+    </linearGradient>
+  </defs>
+  <circle cx="16" cy="16" r="15" fill="#FFF9F0"/>
+  <circle cx="16" cy="16" r="14" fill="none" stroke="#CC6600" stroke-width="1" opacity="0.5"/>
+  <text x="16" y="21" text-anchor="middle" font-family="'Inclusive Sans', sans-serif" font-size="14" font-weight="bold" fill="url(#fg)">भा</text>
+</svg>

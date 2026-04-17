@@ -364,7 +364,7 @@ export function calculatePanchang(date: Date, latitude: number, longitude: numbe
     swisseph.SE_GREG_CAL
   );
 
-  // Calculate actual sunrise using Swiss Ephemeris
+  // Calculate actual sunrise
   let sunriseHourUTC = approxSunriseUTC;
   try {
     const riseResult = swisseph.swe_rise_trans(
@@ -441,7 +441,7 @@ export function calculatePanchang(date: Date, latitude: number, longitude: numbe
   const tithiNames = [
     "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी",
     "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी",
-    "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा/अमावस्या",
+    "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा",
     "प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी",
     "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी",
     "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "अमावस्या",
@@ -466,11 +466,16 @@ export function calculatePanchang(date: Date, latitude: number, longitude: numbe
   ];
 
   // Karana (half-tithi)
-  const karanaIndex = Math.floor(diff / 6) % 11;
-  const karanaNames = [
-    "बव", "बालव", "कौलव", "तैतिल", "गर",
-    "वणिज", "विष्टी", "शकुनी", "चतुष्पाद", "नाग", "किंस्तुघ्न",
-  ];
+  // Per BPHS: first half-tithi is Kimstughna (fixed), then 7 movable karanas repeat 8 times (56),
+  // then 3 fixed: Shakuni, Chatushpada, Nag. Total = 1 + 56 + 3 = 60.
+  const karanaAbsIndex = Math.floor(diff / 6); // 0-59
+  const movableNames = ["बव", "बालव", "कौलव", "तैतिल", "गर", "वणिज", "विष्टी"];
+  let karanaName: string;
+  if (karanaAbsIndex === 0) karanaName = "किंस्तुघ्न";
+  else if (karanaAbsIndex <= 56) karanaName = movableNames[(karanaAbsIndex - 1) % 7];
+  else if (karanaAbsIndex === 57) karanaName = "शकुनी";
+  else if (karanaAbsIndex === 58) karanaName = "चतुष्पाद";
+  else karanaName = "नाग";
 
   // Rahu Kaal calculation (simplified by day of week)
   const dayOfWeek = date.getDay();
@@ -505,7 +510,7 @@ export function calculatePanchang(date: Date, latitude: number, longitude: numbe
     nakshatraEn: NAKSHATRAS[nakIndex].en,
     nakshatraLord: NAKSHATRAS[nakIndex].lord,
     yoga: yogaNames[yogaIndex % 27],
-    karana: karanaNames[karanaIndex],
+    karana: karanaName,
     rahuKaal: rahuKaalSlots[dayOfWeek],
     masa: masaNames[sunRashi],
     moonRashi: RASHIS[getRashiIndex(moonSid)].mr,

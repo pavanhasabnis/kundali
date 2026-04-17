@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 140" width="400" height="140">
+  <!-- Logo 3: Sun-Moon fusion (Surya-Chandra) premium minimal -->
+  <defs>
+    <linearGradient id="g3gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e8c547"/>
+      <stop offset="100%" style="stop-color:#b8941f"/>
+    </linearGradient>
+    <linearGradient id="g3bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2d0a0a"/>
+      <stop offset="100%" style="stop-color:#4a1010"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="400" height="140" rx="12" fill="url(#g3bg)"/>
+
+  <!-- Sun-Moon symbol -->
+  <g transform="translate(70,70)">
+    <!-- Sun (right half) -->
+    <circle cx="0" cy="0" r="30" fill="none" stroke="url(#g3gold)" stroke-width="2"/>
+
+    <!-- Sun rays -->
+    <line x1="0" y1="-35" x2="0" y2="-42" stroke="#e8c547" stroke-width="2" stroke-linecap="round"/>
+    <line x1="25" y1="-25" x2="30" y2="-30" stroke="#e8c547" stroke-width="2" stroke-linecap="round"/>
+    <line x1="35" y1="0" x2="42" y2="0" stroke="#e8c547" stroke-width="2" stroke-linecap="round"/>
+    <line x1="25" y1="25" x2="30" y2="30" stroke="#e8c547" stroke-width="2" stroke-linecap="round"/>
+    <line x1="0" y1="35" x2="0" y2="42" stroke="#e8c547" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- Moon crescent (left side overlay) -->
+    <path d="M -8,-28 A 25,25 0 0,1 -8,28 A 18,18 0 0,0 -8,-28" fill="url(#g3gold)" opacity="0.9"/>
+
+    <!-- Center dot -->
+    <circle cx="8" cy="0" r="4" fill="#e8c547"/>
+
+    <!-- Small stars -->
+    <circle cx="-35" cy="-20" r="1.5" fill="#e8c547" opacity="0.5"/>
+    <circle cx="-40" cy="10" r="1" fill="#e8c547" opacity="0.4"/>
+    <circle cx="-28" cy="30" r="1.5" fill="#e8c547" opacity="0.3"/>
+  </g>
+
+  <!-- Text -->
+  <text x="130" y="42" fill="url(#g3gold)" font-family="Georgia, serif" font-size="14" letter-spacing="6" opacity="0.6">MY</text>
+  <text x="130" y="76" fill="#e8c547" font-family="Georgia, serif" font-size="40" font-weight="bold" letter-spacing="2">Patrika</text>
+  <line x1="130" y1="88" x2="340" y2="88" stroke="#e8c547" stroke-width="0.5" opacity="0.3"/>
+  <text x="130" y="108" fill="#ffffff" font-family="sans-serif" font-size="10" letter-spacing="2" opacity="0.35">VEDIC HOROSCOPE &amp; KUNDALI</text>
+</svg>

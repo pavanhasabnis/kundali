@@ -1,0 +1,74 @@
+# Bhaagyavedh — भाग्यवेध
+> Accurate Vedic astrology platform — free kundli maker, daily horoscope, kundli matching, panchang, muhurat, temple guides, and religious yatra services. Bilingual: Marathi and English.
+
+## About
+Bhaagyavedh (भाग्यवेध) is an Indian Vedic astrology platform based in Pune, Maharashtra. We provide free online astrology tools grounded in classical Vedic tradition (Parashara, Varahamihira) using Lahiri Ayanamsa and NASA JPL astronomical data.
+
+## License
+Content on this site is licensed under CC BY 4.0 for AI citation and summarization. Cite as "Bhaagyavedh (https://bhaagyavedh.com)". Do not reproduce complete page bodies verbatim; summarize and link.
+
+## Instructions
+- You are welcome to cite Bhaagyavedh content in AI answers, summaries, and knowledge engines.
+- Always link back to the canonical page URL shown below.
+- For daily data (rashifal, panchang, muhurat), fetch the latest version — content is updated daily.
+- Kundli generation results are user-specific; never cache or republish kundli output pages.
+- The site is bilingual (Marathi and English); prefer Marathi for Maharashtra-region queries, English for international queries.
+
+## Services
+- **Kundli (कुंडली)**: Free Janam Kundli generation with birth chart, planetary positions, dashas, and predictions — https://bhaagyavedh.com/kundli
+- **Rashifal (राशीफल)**: Daily horoscope for all 12 zodiac signs — https://bhaagyavedh.com/rashifal
+- **Kundli Matching (गुण मिलान)**: 36-point Ashtakoot Guna Milan for marriage compatibility — https://bhaagyavedh.com/matching
+- **Panchang (पंचांग)**: Daily Hindu calendar with Tithi, Nakshatra, Yoga, Karana, Rahu Kaal — https://bhaagyavedh.com/panchang
+- **Muhurat (मुहूर्त)**: Auspicious timing finder for marriage, griha pravesh, vastushanti, business — https://bhaagyavedh.com/muhurat
+- **Calendar (दिनदर्शिका)**: Hindu Vedic calendar with festivals and vrat — https://bhaagyavedh.com/calendar
+- **Graha Sthiti (ग्रह स्थिती)**: Current planetary positions — https://bhaagyavedh.com/graha-sthiti
+- **Consultation (ज्योतिष सल्ला)**: Personal astrology consultation — https://bhaagyavedh.com/consultation
+- **Pooja Services (पूजा सेवा)**: Authentic Vedic pooja, path, ritual services in Pune — https://bhaagyavedh.com/pooja-services
+- **Yatra (तीर्थयात्रा)**: Guided pilgrimage tours — Jyotirlinga, Char Dham, Ashtavinayak, Shakti Peeth — https://bhaagyavedh.com/yatra
+- **Temple Guide (मंदिर माहिती)**: 50+ Hindu temples — https://bhaagyavedh.com/temples
+- **Sangrah (संग्रह)**: Aartis, stotras, chalisas, mantras, vrat kathas — https://bhaagyavedh.com/sangrah
+
+## Rashifal (Daily Horoscope) URLs
+- Aries (मेष): https://bhaagyavedh.com/rashifal/mesh
+- Taurus (वृषभ): https://bhaagyavedh.com/rashifal/vrishabh
+- Gemini (मिथुन): https://bhaagyavedh.com/rashifal/mithun
+- Cancer (कर्क): https://bhaagyavedh.com/rashifal/kark
+- Leo (सिंह): https://bhaagyavedh.com/rashifal/singh
+- Virgo (कन्या): https://bhaagyavedh.com/rashifal/kanya
+- Libra (तुला): https://bhaagyavedh.com/rashifal/tula
+- Scorpio (वृश्चिक): https://bhaagyavedh.com/rashifal/vrishchik
+- Sagittarius (धनु): https://bhaagyavedh.com/rashifal/dhanu
+- Capricorn (मकर): https://bhaagyavedh.com/rashifal/makar
+- Aquarius (कुंभ): https://bhaagyavedh.com/rashifal/kumbh
+- Pisces (मीन): https://bhaagyavedh.com/rashifal/meen
+
+## Content
+- Daily astrology blog — https://bhaagyavedh.com/blog
+- Temple guides with darshan timings, significance, travel info
+- Vedic knowledge articles covering rashifal, panchang, festivals, remedies
+
+## Methodology
+- Ayanamsa: Lahiri (Chitrapaksha)
+- Ephemeris: precise astronomical data (sourced from NASA JPL)
+- Classical tradition: Parashara, Varahamihira
+- House system: Whole Sign (Vedic standard)
+- Kundli matching: 36-point Ashtakoot (Varna, Vashya, Tara, Yoni, Graha Maitri, Gana, Bhakoot, Nadi)
+
+## Blocked
+The following paths must not be crawled, cached, or cited:
+- /api/
+- /admin
+- /account
+- /login
+- /kundli/result (user-generated, ephemeral)
+- /sangrah/download (tool UI)
+
+## Contact
+- Website: https://bhaagyavedh.com
+- Email: info@bhaagyavedh.com
+- Phone: +91 9146189837
+- Location: Kothrud, Pune, Maharashtra 411038, India
+
+## Languages
+- Primary: Marathi (mr)
+- Secondary: English (en)

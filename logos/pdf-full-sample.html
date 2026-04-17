@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>MyPatrika — Full PDF Sample</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #444; padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 50px; font-family: 'Outfit', sans-serif; }
+  .label { color: rgba(255,255,255,0.25); font-size: 10px; letter-spacing: 6px; text-align: center; margin-bottom: -30px; }
+  .page { width: 794px; min-height: 1123px; background: #fff; box-shadow: 0 10px 50px rgba(0,0,0,0.5); position: relative; overflow: hidden; padding-bottom: 50px; }
+  .watermark { position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 80px; font-weight: 800; color: rgba(212,168,67,0.025); letter-spacing: 20px; pointer-events: none; white-space: nowrap; }
+
+  .pdf-header { background: linear-gradient(135deg, #3d0c0c, #5c1a1a, #3d0c0c); padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+  .pdf-header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, #d4a843, transparent); }
+  .pdf-header-mini { background: linear-gradient(135deg, #3d0c0c, #5c1a1a); padding: 10px 40px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+  .pdf-header-mini::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #d4a843, transparent); }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .header-brand { color: #d4a843; font-size: 18px; font-weight: 700; letter-spacing: 3px; }
+  .header-sub { color: rgba(255,255,255,0.35); font-size: 8px; letter-spacing: 4px; }
+  .header-ganesh { color: #d4a843; font-size: 11px; opacity: 0.6; font-family: 'Noto Sans Devanagari', sans-serif; }
+  .mini-brand { color: #d4a843; font-size: 14px; font-weight: 700; letter-spacing: 2px; }
+  .mini-info { color: rgba(255,255,255,0.3); font-size: 10px; }
+
+  .person-banner { background: linear-gradient(135deg, #f9f5ec, #fff8e7); padding: 24px 40px; border-bottom: 1px solid #e8dcc8; text-align: center; }
+  .person-name { font-size: 26px; font-weight: 800; color: #3d0c0c; }
+  .person-label { font-size: 11px; color: #8b6b4a; margin-top: 2px; font-family: 'Noto Sans Devanagari', sans-serif; }
+
+  .birth-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid #f0e6d0; }
+  .birth-cell { padding: 14px 20px; text-align: center; border-right: 1px solid #f0e6d0; }
+  .birth-cell:nth-child(3n) { border-right: none; }
+  .birth-label { font-size: 8px; color: #a08b6e; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; }
+  .birth-val { font-size: 14px; font-weight: 700; color: #3d0c0c; margin-top: 3px; }
+
+  .sec-title { display: flex; align-items: center; gap: 10px; padding: 16px 40px 10px; }
+  .sec-title-line { flex: 1; height: 1px; background: linear-gradient(90deg, #d4a843, transparent); }
+  .sec-title-text { font-size: 12px; font-weight: 700; color: #3d0c0c; letter-spacing: 3px; text-transform: uppercase; }
+  .sec-title-icon { width: 22px; height: 22px; background: linear-gradient(135deg, #3d0c0c, #5c1a1a); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #d4a843; font-size: 10px; }
+
+  .chart-placeholder { margin: 10px 40px 20px; padding: 30px; border: 2px dashed #d4a843; border-radius: 12px; background: #faf8f2; text-align: center; }
+  .chart-placeholder-text { font-size: 14px; color: #8b6b4a; font-weight: 600; }
+  .chart-placeholder-sub { font-size: 10px; color: #b91c1c; margin-top: 6px; }
+
+  .table-area { padding: 0 40px 16px; }
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table thead { background: linear-gradient(135deg, #3d0c0c, #5c1a1a); }
+  .data-table th { color: #d4a843; font-size: 9px; font-weight: 600; letter-spacing: 1px; padding: 8px 10px; text-align: left; }
+  .data-table td { padding: 6px 10px; font-size: 11px; color: #3d0c0c; border-bottom: 1px solid #f5efe0; }
+  .data-table tr:nth-child(even) { background: #faf8f2; }
+
+  .yoga-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 40px 16px; }
+  .yoga-card { border: 1px solid #f0e6d0; border-radius: 8px; padding: 12px; background: #faf8f2; }
+  .yoga-name { font-size: 13px; font-weight: 700; color: #3d0c0c; }
+  .yoga-name-mr { font-size: 11px; color: #d4a843; font-family: 'Noto Sans Devanagari', sans-serif; }
+  .yoga-desc { font-size: 10px; color: #6b5b3e; margin-top: 4px; line-height: 1.5; }
+  .yoga-badge { display: inline-block; font-size: 8px; padding: 2px 10px; border-radius: 10px; font-weight: 700; margin-top: 6px; }
+  .badge-shubh { background: #dcfce7; color: #166534; }
+  .badge-dosh { background: #fef2f2; color: #991b1b; }
+  .badge-neutral { background: #f5f5f5; color: #6b7280; }
+
+  .dosha-item { padding: 10px 0; border-bottom: 1px solid #f5efe0; margin: 0 40px; }
+  .dosha-present { background: #fef8f8; margin: 0 40px; padding: 10px 14px; border-radius: 8px; border-left: 3px solid #b91c1c; margin-bottom: 8px; }
+  .dosha-header { font-size: 12px; color: #3d0c0c; display: flex; align-items: center; gap: 8px; }
+  .dosha-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .dot-red { background: #b91c1c; }
+  .dot-green { background: #166534; }
+  .dosha-severity { font-size: 9px; color: #b91c1c; font-weight: 700; margin-left: auto; text-transform: uppercase; letter-spacing: 1px; }
+  .dosha-clear { font-size: 9px; color: #166534; font-weight: 700; margin-left: auto; }
+  .dosha-desc { font-size: 10px; color: #6b5b3e; margin-top: 4px; line-height: 1.5; }
+  .dosha-remedy { font-size: 10px; color: #5c1a1a; margin-top: 4px; font-weight: 500; }
+
+  .pred-item { padding: 10px 40px; border-bottom: 1px solid #f5efe0; }
+  .pred-header { display: flex; align-items: center; gap: 8px; }
+  .pred-icon { font-size: 14px; }
+  .pred-title { font-size: 11px; font-weight: 700; color: #3d0c0c; }
+  .pred-stars { font-size: 11px; margin-left: auto; }
+  .pred-text { font-size: 10px; color: #6b5b3e; margin-top: 4px; line-height: 1.5; }
+
+  .dasha-list { padding: 0 40px 16px; }
+  .dasha-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .dasha-planet { width: 55px; text-align: right; font-size: 11px; font-weight: 700; color: #3d0c0c; }
+  .dasha-bar-bg { flex: 1; height: 22px; background: #f5efe0; border-radius: 4px; overflow: hidden; }
+  .dasha-bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding: 0 10px; font-size: 8px; color: #fff; font-weight: 600; }
+  .dasha-years { width: 65px; font-size: 9px; color: #8b6b4a; }
+  .dasha-active .dasha-planet { color: #d4a843; }
+
+  .cd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 40px 10px; }
+  .cd-card { border: 1px solid #f0e6d0; border-radius: 8px; padding: 12px; background: #faf8f2; }
+  .cd-card-title { font-size: 12px; font-weight: 700; color: #3d0c0c; margin-bottom: 4px; }
+  .cd-card-text { font-size: 10px; color: #6b5b3e; line-height: 1.5; }
+  .cd-advice { margin: 0 40px 16px; padding: 12px; background: #fff8e7; border-radius: 8px; border-left: 3px solid #d4a843; font-size: 10px; color: #5c1a1a; line-height: 1.5; }
+
+  .remedy-category { padding: 10px 40px 4px; font-size: 12px; font-weight: 700; color: #3d0c0c; border-top: 1px solid #f0e6d0; margin-top: 6px; }
+  .remedy-item-row { padding: 3px 40px 3px 56px; font-size: 10px; color: #6b5b3e; line-height: 1.5; }
+
+  .disclaimer { margin: 15px 40px; padding: 14px 18px; background: #faf8f2; border-radius: 8px; border-left: 3px solid #d4a843; font-size: 8px; color: #8b6b4a; line-height: 1.6; }
+
+  .pdf-footer { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(135deg, #3d0c0c, #5c1a1a); padding: 10px 40px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-brand { color: #d4a843; font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+  .footer-info { color: rgba(255,255,255,0.25); font-size: 8px; letter-spacing: 1px; }
+  .footer-page { color: #d4a843; font-size: 9px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- ==================== PAGE 1: BIRTH CHART + PLANETS ==================== -->
+<p class="label">PAGE 1 — जन्म कुंडली + ग्रह स्पष्ट</p>
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+  <div class="pdf-header">
+    <div class="header-left">
+      <svg viewBox="0 0 140 140" width="34" height="34"><g transform="translate(70,70)"><circle cx="0" cy="0" r="55" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.4"/><polygon points="0,-46 40,23 -40,23" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.5"/><polygon points="0,46 40,-23 -40,-23" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.5"/><circle cx="0" cy="0" r="32" fill="none" stroke="#d4a843" stroke-width="2" opacity="0.6"/><circle cx="0" cy="0" r="20" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.7"/><circle cx="0" cy="0" r="16" fill="#d4a843" opacity="0.2"/><text x="0" y="9" text-anchor="middle" fill="#d4a843" font-size="24" font-weight="bold">ॐ</text></g></svg>
+      <div><div class="header-brand">MyPatrika</div><div class="header-sub">VEDIC ASTROLOGY</div></div>
+    </div>
+    <div class="header-ganesh">॥ श्री गणेशाय नमः ॥</div>
+  </div>
+  <div class="person-banner">
+    <div class="person-name">पवन हसबनीस</div>
+    <div class="person-label">जन्म पत्रिका — Birth Chart</div>
+  </div>
+  <div class="birth-grid">
+    <div class="birth-cell"><div class="birth-label">जन्म तारीख</div><div class="birth-val">5 जून 1991</div></div>
+    <div class="birth-cell"><div class="birth-label">जन्म वेळ</div><div class="birth-val">01:00 AM</div></div>
+    <div class="birth-cell"><div class="birth-label">जन्म ठिकाण</div><div class="birth-val">कोल्हापूर, महाराष्ट्र</div></div>
+  </div>
+  <div class="birth-grid">
+    <div class="birth-cell"><div class="birth-label">लग्न / Ascendant</div><div class="birth-val">कुंभ — 23° 24' 28"</div></div>
+    <div class="birth-cell"><div class="birth-label">राशी / नक्षत्र</div><div class="birth-val">कुंभ — शतभिषा (पद 2)</div></div>
+    <div class="birth-cell"><div class="birth-label">अयनांश (लाहिरी)</div><div class="birth-val">23.7373°</div></div>
+  </div>
+
+  <div class="sec-title"><div class="sec-title-icon">☉</div><span class="sec-title-text">सर्व कुंडली — All Charts</span><div class="sec-title-line"></div></div>
+  <div class="chart-placeholder">
+    <div class="chart-placeholder-text">⬦ तुमच्या विद्यमान कुंडली चार्ट्स ⬦</div>
+    <div class="chart-placeholder-sub">लग्न, चंद्र, नवमांश (D9), भाव चलित, दशमांश (D10), सप्तांश (D7), द्वादशांश (D12), षोडशांश (D16), त्रिंशांश (D30)</div>
+    <div style="font-size:9px;color:#8b6b4a;margin-top:8px;">(हे चार्ट्स तुमच्या विद्यमान डिझाइनमध्ये येतील — कोणताही बदल नाही)</div>
+  </div>
+
+  <div class="sec-title"><div class="sec-title-icon">☽</div><span class="sec-title-text">ग्रह स्पष्ट — Planet Positions</span><div class="sec-title-line"></div></div>
+  <div class="table-area">
+    <table class="data-table">
+      <thead><tr><th>ग्रह</th><th>राशी</th><th>अंश</th><th>नक्षत्र</th><th>पद</th><th>भाव</th><th>स्थिती</th></tr></thead>
+      <tbody><tr><td><strong>सूर्य</strong></td><td>वृषभ</td><td>19° 56' 27"</td><td>रोहिणी</td><td>3</td><td>4</td><td>—</td></tr>
+<tr><td><strong>चंद्र</strong></td><td>कुंभ</td><td>10° 19' 2"</td><td>शतभिषा</td><td>2</td><td>1</td><td>—</td></tr>
+<tr><td><strong>मंगळ</strong></td><td>कर्क</td><td>11° 43' 35"</td><td>पुष्य</td><td>3</td><td>6</td><td style="color:#b91c1c;font-weight:700;">नीच ↓</td></tr>
+<tr><td><strong>बुध</strong></td><td>वृषभ</td><td>5° 42' 23"</td><td>कृत्तिका</td><td>3</td><td>4</td><td>—</td></tr>
+<tr><td><strong>गुरु</strong></td><td>कर्क</td><td>15° 52' 19"</td><td>पुष्य</td><td>4</td><td>6</td><td style="color:#166534;font-weight:700;">उच्च ↑</td></tr>
+<tr><td><strong>शुक्र</strong></td><td>कर्क</td><td>5° 0' 27"</td><td>पुष्य</td><td>1</td><td>6</td><td>—</td></tr>
+<tr><td><strong>शनि</strong></td><td>मकर</td><td>12° 49' 34"</td><td>श्रवण</td><td>1</td><td>12</td><td style="color:#166534;font-weight:600;">स्वगृही</td></tr>
+<tr><td><strong>राहु</strong></td><td>धनु</td><td>25° 42' 33"</td><td>पूर्वाषाढा</td><td>4</td><td>11</td><td style="color:#b91c1c;font-weight:600;">वक्री ↺</td></tr>
+<tr><td><strong>केतु</strong></td><td>मिथुन</td><td>25° 42' 33"</td><td>पुनर्वसु</td><td>2</td><td>5</td><td style="color:#b91c1c;font-weight:600;">वक्री ↺</td></tr>
+</tbody>
+    </table>
+  </div>
+  <div class="pdf-footer"><span class="footer-brand">MyPatrika</span><span class="footer-info">Generated 14 April 2026 · mypatrika.com</span><span class="footer-page">1 / 5</span></div>
+</div>
+
+<!-- ==================== PAGE 2: STRENGTH + YOGAS + DOSHAS ==================== -->
+<p class="label">PAGE 2 — ग्रह बल + योग + दोष</p>
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+  <div class="pdf-header-mini"><span class="mini-brand">MyPatrika</span><span class="mini-info">पवन हसबनीस — जन्म पत्रिका</span></div>
+
+  <div class="sec-title"><div class="sec-title-icon">⚡</div><span class="sec-title-text">ग्रह बल — Planet Strength</span><div class="sec-title-line"></div></div>
+  <div class="table-area">
+    <table class="data-table">
+      <thead><tr><th>ग्रह</th><th>स्थिती</th><th>भाव</th><th>बल</th></tr></thead>
+      <tbody><tr>
+    <td><strong>सूर्य</strong></td>
+    <td>शत्रुगृही</td>
+    <td>H4</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:45%;height:100%;background:#d4a843;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#d4a843;">45%</span></div></td>
+    </tr>
+<tr>
+    <td><strong>चंद्र</strong></td>
+    <td>समगृही</td>
+    <td>H1</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:60%;height:100%;background:#2d6b2d;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#2d6b2d;">60%</span></div></td>
+    </tr>
+<tr>
+    <td><strong>मंगळ</strong></td>
+    <td>नीच</td>
+    <td>H6</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:5%;height:100%;background:#b91c1c;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#b91c1c;">5%</span></div></td>
+    </tr>
+<tr>
+    <td><strong>बुध</strong></td>
+    <td>मित्रगृही</td>
+    <td>H4</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:70%;height:100%;background:#2d6b2d;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#2d6b2d;">70%</span></div></td>
+    </tr>
+<tr>
+    <td><strong>गुरु</strong></td>
+    <td>उच्च</td>
+    <td>H6</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:85%;height:100%;background:#2d6b2d;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#2d6b2d;">85%</span></div></td>
+    </tr>
+<tr>
+    <td><strong>शुक्र</strong></td>
+    <td>शत्रुगृही</td>
+    <td>H6</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:25%;height:100%;background:#b91c1c;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#b91c1c;">25%</span></div></td>
+    </tr>
+<tr>
+    <td><strong>शनि</strong> <span style="color:#b91c1c;font-size:9px;">वक्री</span></td>
+    <td>स्वगृही</td>
+    <td>H12</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:70%;height:100%;background:#2d6b2d;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#2d6b2d;">70%</span></div></td>
+    </tr>
+<tr>
+    <td><strong>राहु</strong> <span style="color:#b91c1c;font-size:9px;">वक्री</span></td>
+    <td>समगृही</td>
+    <td>H11</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:50%;height:100%;background:#d4a843;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#d4a843;">50%</span></div></td>
+    </tr>
+<tr>
+    <td><strong>केतु</strong> <span style="color:#b91c1c;font-size:9px;">वक्री</span></td>
+    <td>समगृही</td>
+    <td>H5</td>
+    <td><div style="display:flex;align-items:center;gap:6px;"><div style="flex:1;height:8px;background:#f0e6d0;border-radius:4px;overflow:hidden;"><div style="width:58%;height:100%;background:#d4a843;border-radius:4px;"></div></div><span style="font-size:10px;font-weight:700;color:#d4a843;">58%</span></div></td>
+    </tr>
+</tbody>
+    </table>
+  </div>
+
+  <div class="sec-title"><div class="sec-title-icon">✦</div><span class="sec-title-text">योग — Yogas</span><div class="sec-title-line"></div></div>
+  <div class="yoga-grid"><div class="yoga-card">
+    <div class="yoga-name">Budhaditya Yoga</div>
+    <div class="yoga-name-mr">बुधादित्य योग</div>
+    <div class="yoga-desc">सूर्य आणि बुध एकाच राशीत आहेत. हा योग तीव्र बुद्धिमत्ता, वक्तृत्व कौशल्य आणि व्यावसायिक यश देतो.</div>
+    <span class="yoga-badge badge-shubh">शुभ योग — strong</span>
+    </div>
+<div class="yoga-card">
+    <div class="yoga-name">Raj Yoga</div>
+    <div class="yoga-name-mr">राजयोग</div>
+    <div class="yoga-desc">केंद्राधिपती सूर्य आणि त्रिकोणाधिपती बुध एकाच राशीत आहेत. राजकीय/सामाजिक उन्नती, अधिकार आणि सत्ता प्राप्ती.</div>
+    <span class="yoga-badge badge-shubh">शुभ योग — strong</span>
+    </div>
+</div>
+
+  <div class="sec-title"><div class="sec-title-icon">⚠</div><span class="sec-title-text">दोष — Doshas</span><div class="sec-title-line"></div></div>
+  <div class="dosha-item">
+        <div class="dosha-header"><span class="dosha-dot dot-green"></span><strong>मांगलिक दोष (मंगळ दोष)</strong> (Mangal Dosha (Manglik))<span class="dosha-clear">नाही ✓</span></div>
+        </div>
+<div class="dosha-item">
+        <div class="dosha-header"><span class="dosha-dot dot-green"></span><strong>काल सर्प दोष</strong> (Kaal Sarp Dosha)<span class="dosha-clear">नाही ✓</span></div>
+        </div>
+<div class="dosha-item dosha-present">
+        <div class="dosha-header"><span class="dosha-dot dot-red"></span><strong>साडेसाती</strong> (Sade Sati)<span class="dosha-severity">medium</span></div>
+        <div class="dosha-desc">जन्मकुंडलीत शनि चंद्रापासून 12व्या (चढती) स्थानात आहे. कर्मफल, शारीरिक/मानसिक तणाव, पण शिस्त आणि मेहनतीने यश मिळते.</div>
+        <div class="dosha-remedy">उपाय: शनिवारी हनुमान मंदिरात तेल अर्पण करा. शनिदेवाची पूजा करा. निळा नीलम रत्न (ज्योतिष सल्ल्याने) धारण कर</div>
+        </div>
+<div class="dosha-item">
+        <div class="dosha-header"><span class="dosha-dot dot-green"></span><strong>पितृ दोष</strong> (Pitra Dosha)<span class="dosha-clear">नाही ✓</span></div>
+        </div>
+
+
+  <div class="pdf-footer"><span class="footer-brand">MyPatrika</span><span class="footer-info">Generated 14 April 2026 · mypatrika.com</span><span class="footer-page">2 / 5</span></div>
+</div>
+
+<!-- ==================== PAGE 3: PREDICTIONS (12 HOUSES) ==================== -->
+<p class="label">PAGE 3 — भविष्यकथन (१२ भाव)</p>
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+  <div class="pdf-header-mini"><span class="mini-brand">MyPatrika</span><span class="mini-info">पवन हसबनीस — जन्म पत्रिका</span></div>
+
+  <div class="sec-title"><div class="sec-title-icon">🔮</div><span class="sec-title-text">भविष्यकथन — House Predictions</span><div class="sec-title-line"></div></div>
+  <div class="pred-item">
+    <div class="pred-header"><span class="pred-icon">🧍</span><span class="pred-title">भाव 1 — व्यक्तिमत्व / आरोग्य</span><span class="pred-stars" style="color:#166534">★★★★☆</span></div>
+    <div class="pred-text">या भावात चंद्र (समगृही, बल 60%) — आत्मविश्वासी, आकर्षक व्यक्तिमत्व. चांगले आरोग्य, नेतृत्वगुण. लोक तुमच्याकडे आकर्षित होतात.</div>
+    </div>
+<div class="pred-item">
+    <div class="pred-header"><span class="pred-icon">💰</span><span class="pred-title">भाव 2 — धन / कुटुंब / वाणी</span><span class="pred-stars" style="color:#d4a843">★★★☆☆</span></div>
+    <div class="pred-text">आर्थिक स्थिती मध्यम. स्वतःच्या प्रयत्नांवर अवलंबून. कुटुंब सामान्य.</div>
+    </div>
+<div class="pred-item">
+    <div class="pred-header"><span class="pred-icon">💪</span><span class="pred-title">भाव 3 — पराक्रम / भावंडे / संवाद</span><span class="pred-stars" style="color:#d4a843">★★★☆☆</span></div>
+    <div class="pred-text">सामान्य पराक्रम. भावंडांशी तटस्थ संबंध. संवाद कौशल्य विकसित करा.</div>
+    </div>
+<div class="pred-item">
+    <div class="pred-header"><span class="pred-icon">🏠</span><span class="pred-title">भाव 4 — सुख / माता / घर / वाहन</span><span class="pred-stars" style="color:#b91c1c">★★☆☆☆</span></div>
+    <div class="pred-text">या भावात सूर्य (शत्रुगृही, बल 45%), बुध (मित्रगृही, बल 70%) — घरगुती तणाव. मातेच्या आरोग्याची काळजी घ्या. मालमत्ता संबंधी काळजीपूर्वक निर्णय घ्या.</div>
+    </div>
+<div class="pred-item">
+    <div class="pred-header"><span class="pred-icon">🎓</span><span class="pred-title">भाव 5 — बुद्धी / संतती / प्रेम / शिक्षण</span><span class="pred-stars" style="color:#b91c1c">★★☆☆☆</span></div>
+    <div class="pred-text">या भावात केतु (समगृही, बल 58%) — शिक्षणात अडथळे येऊ शकतात. प्रेमसंबंधात सावध राहा. संतती विलंब शक्य.</div>
+    </div>
+<div class="pred-item">
+    <div class="pred-header"><span class="pred-icon">⚔️</span><span class="pred-title">भाव 6 — शत्रू / रोग / कर्ज / स्पर्धा</span><span class="pred-stars" style="color:#166534">★★★★★</span></div>
+    <div class="pred-text">या भावात मंगळ (नीच, बल 5%), गुरु (उच्च, बल 85%), शुक्र (शत्रुगृही, बल 25%) — शत्रूंवर विजय. स्पर्धा परीक्षांत यश. रोगांवर मात. सेवा क्षेत्रात उत्तम. क</div>
+    </div>
+<div class="pred-item">
+    <div class="pred-header"><span class="pred-icon">💑</span><span class="pred-title">भाव 7 — विवाह / भागीदारी / जोडीदार</span><span class="pred-stars" style="color:#d4a843">★★★☆☆</span></div>
+    <div class="pred-text">विवाह सामान्य. लग्नाचा ७वा भाव स्वामीवर अवलंबून.</div>
+    </div>
+<div class="pred-item">
+    <div class="pred-header"><span class="pred-icon">🔮</span><span class="pred-title">भाव 8 — आयुष्य / गुप्त ज्ञान / वारसा</span><span class="pred-stars" style="color:#d4a843">★★★☆☆</span></div>
+    <div class="pred-text">सामान्य आयुष्य. गूढ विषयांत मध्यम रस.</div>
+    </div>
+<div class="pred-item">
+    <div class="pred-header"><span class="pred-icon">🍀</span><span class="pred-title">भाव 9 — भाग्य / धर्म / पिता / लांबचा प्रवास</span><span class="pred-stars" style="color:#d4a843">★★★☆☆</span></div>
+    <div class="pred-text">भाग्य मध्यम. स्वतःच्या कर्मावर अवलंबून. मेहनत फळ देईल.</div>
+    </div>
+<div class="pred-item">
+    <div class="pred-header"><span class="pred-icon">💼</span><span class="pred-title">भाव 10 — करिअर / कीर्ती / व्यवसाय</span><span class="pred-stars" style="color:#d4a843">★★★☆☆</span></div>
+    <div class="pred-text">करिअर सामान्य. मेहनत आणि कौशल्यावर अवलंबून.</div>
+    </div>
+<div class="pred-item">
+    <div class="pred-header"><span class="pred-icon">🎯</span><span class="pred-title">भाव 11 — लाभ / मित्र / आकांक्षा</span><span class="pred-stars" style="color:#b91c1c">★★☆☆☆</span></div>
+    <div class="pred-text">या भावात राहु (समगृही, बल 50%) — इच्छापूर्तीत विलंब. मित्रांपासून निराशा. आर्थिक लाभ अनियमित.</div>
+    </div>
+<div class="pred-item">
+    <div class="pred-header"><span class="pred-icon">✈️</span><span class="pred-title">भाव 12 — खर्च / मोक्ष / परदेश / झोप</span><span class="pred-stars" style="color:#166534">★★★★☆</span></div>
+    <div class="pred-text">या भावात शनि (स्वगृही, बल 70%) — आध्यात्मिक उन्नती. परदेश यश. चांगली झोप. दानधर्मात रस. मोक्षप्राप्तीची शक्यता.</div>
+    </div>
+
+
+  <div class="pdf-footer"><span class="footer-brand">MyPatrika</span><span class="footer-info">Generated 14 April 2026 · mypatrika.com</span><span class="footer-page">3 / 5</span></div>
+</div>
+
+<!-- ==================== PAGE 4: DASHA TIMELINE + CURRENT DASHA ==================== -->
+<p class="label">PAGE 4 — दशा कालावधी + चालू दशा फल</p>
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+  <div class="pdf-header-mini"><span class="mini-brand">MyPatrika</span><span class="mini-info">पवन हसबनीस — जन्म पत्रिका</span></div>
+
+  <div class="sec-title"><div class="sec-title-icon">⏳</div><span class="sec-title-text">दशा कालावधी — Dasha Timeline</span><div class="sec-title-line"></div></div>
+  <div class="dasha-list"><div class="dasha-row">
+    <div class="dasha-planet" style="">राहु</div>
+    <div class="dasha-bar-bg" style=""><div class="dasha-bar-fill" style="width:58.815%;background:#6366f1;">1991 — 2004</div></div>
+    <div class="dasha-years" style="">13 वर्षे</div>
+    </div>
+<div class="dasha-row">
+    <div class="dasha-planet" style="">गुरु</div>
+    <div class="dasha-bar-bg" style=""><div class="dasha-bar-fill" style="width:72.0%;background:#f59e0b;">2004 — 2020</div></div>
+    <div class="dasha-years" style="">16 वर्षे</div>
+    </div>
+<div class="dasha-row dasha-active">
+    <div class="dasha-planet" style="color: #d4a843; font-weight: 800;">शनि ◀</div>
+    <div class="dasha-bar-bg" style="border: 2px solid #d4a843; border-radius: 4px;"><div class="dasha-bar-fill" style="width:85.5%;background:linear-gradient(90deg, #d4a843, #f0c040);">2020 — 2039 (सध्या)</div></div>
+    <div class="dasha-years" style="color: #d4a843; font-weight: 700;">19 वर्षे</div>
+    </div>
+<div class="dasha-row">
+    <div class="dasha-planet" style="">बुध</div>
+    <div class="dasha-bar-bg" style=""><div class="dasha-bar-fill" style="width:76.5%;background:#059669;">2039 — 2056</div></div>
+    <div class="dasha-years" style="">17 वर्षे</div>
+    </div>
+<div class="dasha-row">
+    <div class="dasha-planet" style="">केतु</div>
+    <div class="dasha-bar-bg" style=""><div class="dasha-bar-fill" style="width:31.5%;background:#8b5cf6;">2056 — 2063</div></div>
+    <div class="dasha-years" style="">7 वर्षे</div>
+    </div>
+<div class="dasha-row">
+    <div class="dasha-planet" style="">शुक्र</div>
+    <div class="dasha-bar-bg" style=""><div class="dasha-bar-fill" style="width:90%;background:#ec4899;">2063 — 2083</div></div>
+    <div class="dasha-years" style="">20 वर्षे</div>
+    </div>
+<div class="dasha-row">
+    <div class="dasha-planet" style="">सूर्य</div>
+    <div class="dasha-bar-bg" style=""><div class="dasha-bar-fill" style="width:27.0%;background:#ef4444;">2083 — 2089</div></div>
+    <div class="dasha-years" style="">6 वर्षे</div>
+    </div>
+<div class="dasha-row">
+    <div class="dasha-planet" style="">चंद्र</div>
+    <div class="dasha-bar-bg" style=""><div class="dasha-bar-fill" style="width:45.0%;background:#0ea5e9;">2089 — 2099</div></div>
+    <div class="dasha-years" style="">10 वर्षे</div>
+    </div>
+<div class="dasha-row">
+    <div class="dasha-planet" style="">मंगळ</div>
+    <div class="dasha-bar-bg" style=""><div class="dasha-bar-fill" style="width:31.5%;background:#475569;">2099 — 2106</div></div>
+    <div class="dasha-years" style="">7 वर्षे</div>
+    </div>
+</div>
+
+  <div class="sec-title"><div class="sec-title-icon">🌟</div><span class="sec-title-text">चालू दशा फल — Current Dasha: शनि</span><div class="sec-title-line"></div></div>
+  <div style="padding: 0 40px 10px; font-size: 11px; color: #8b6b4a;">३०/६/२०२० — ३०/६/२०३९ (19.0 वर्षे)</div>
+  
+    <div class="cd-grid">
+      <div class="cd-card"><div class="cd-card-title">💼 करिअर</div><div class="cd-card-text">तुमच्या कुंडलीत शनि व्ययभावात स्वगृही स्थितीत आहे (बल: 70%). हा ग्रह वक्री आहे, त्यामुळे फळात विलंब पण तीव्रता अधिक. दशानाथ बलवान असल्यामुळे या काळात उत्तम फळ मिळतील. दुःस्थानात असल्यामुळे काही अडचणी </div></div>
+      <div class="cd-card"><div class="cd-card-title">💰 आर्थिक</div><div class="cd-card-text">दशानाथ बलवान असल्यामुळे या काळात उत्तम फळ मिळतील. विलंबाने पण स्थिर आर्थिक प्रगती. जमीन/इमारत गुंतवणूक. निळा नीलम शुभ. बचत करा.</div></div>
+      <div class="cd-card"><div class="cd-card-title">❤️ नातेसंबंध</div><div class="cd-card-text">ज्येष्ठांचा आदर करा. नम्रता आणा. एकाकीपणा जाणवू शकतो. सेवाभावी वृत्ती ठेवा.</div></div>
+      <div class="cd-card"><div class="cd-card-title">🏥 आरोग्य</div><div class="cd-card-text">सांधे, दात, हाडे, पाय काळजी. वात विकार सावध. नियमित व्यायाम अत्यंत आवश्यक.</div></div>
+    </div>
+    <div class="cd-advice"><strong>सल्ला:</strong> शनिवारी हनुमान मंदिरात तेल चढवा. शनिदेव मंत्र जप करा. काळे कपडे वापरा. गरिबांना दान करा.</div>
+    
+
+  <div class="pdf-footer"><span class="footer-brand">MyPatrika</span><span class="footer-info">Generated 14 April 2026 · mypatrika.com</span><span class="footer-page">4 / 5</span></div>
+</div>
+
+<!-- ==================== PAGE 5: REMEDIES ==================== -->
+<p class="label">PAGE 5 — उपाय</p>
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+  <div class="pdf-header-mini"><span class="mini-brand">MyPatrika</span><span class="mini-info">पवन हसबनीस — जन्म पत्रिका</span></div>
+
+  <div class="sec-title"><div class="sec-title-icon">🙏</div><span class="sec-title-text">उपाय — Remedies</span><div class="sec-title-line"></div></div>
+  <div class="remedy-category">🙏 दोष निवारण उपाय (तुमच्या कुंडलीतील सक्रिय दोषांसाठी)</div>
+<div class="remedy-item-row">• साडेसाती उपाय: शंकर भगवानाची पूजा करा. सोमवारी शिव मंदिरात रुद्राभिषेक करा.</div>
+<div class="remedy-item-row">• महामृत्युंजय मंत्र — 'ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्' — रोज १०८ वेळा जप करा.</div>
+<div class="remedy-item-row">• शनिवारी हनुमान मंदिरात तेल अर्पण करा. शनि स्तोत्र वाचा.</div>
+<div class="remedy-item-row">• पिंपळाच्या झाडाला शनिवारी पाणी घाला. काळे तीळ दान करा.</div>
+<div class="remedy-category">📿 देवता पूजा (तुमच्या दुर्बल ग्रहांसाठी)</div>
+<div class="remedy-item-row">• मंगळ दुर्बल (भाव 6) — श्री हनुमान / भगवान कार्तिकेय पूजा करा. मंगळवारी हनुमान मंदिरात जा. हनुमान चालीसा वाचा. लाल सिंदूर</div>
+<div class="remedy-item-row">• शुक्र दुर्बल (भाव 6) — श्री लक्ष्मी / श्री महालक्ष्मी पूजा करा. शुक्रवारी लक्ष्मी पूजा करा. श्री सूक्त वाचा. पांढरे फूल </div>
+<div class="remedy-category">💎 रत्न धारण (अनुभवी ज्योतिषाच्या सल्ल्याने)</div>
+<div class="remedy-item-row">• मंगळ (नीच, बल 5%) — लाल प्रवाळ (Red Coral) — सोन्या/तांब्यात, अनामिकेत, मंगळवारी धारण करा</div>
+<div class="remedy-item-row">• शुक्र (शत्रुगृही, बल 25%) — हिरा/ओपल (Diamond/Opal) — प्लॅटिनम/चांदीत, अनामिकेत, शुक्रवारी धारण करा</div>
+<div class="remedy-category">🕉️ मंत्र जप (दुर्बल ग्रहांसाठी बीज मंत्र)</div>
+<div class="remedy-item-row">• मंगळ — ॐ क्रां क्रीं क्रौं सः भौमाय नमः — रोज ७ वेळा</div>
+<div class="remedy-item-row">• शुक्र — ॐ द्रां द्रीं द्रौं सः शुक्राय नमः — रोज ९ वेळा</div>
+<div class="remedy-category">🎋 दान (दुर्बल ग्रहांसाठी)</div>
+<div class="remedy-item-row">• मंगळ — लाल मसूर डाळ, गूळ, लाल कपडा मंगळवारी दान करा</div>
+<div class="remedy-item-row">• शुक्र — तांदूळ, साखर, कापूर, पांढरे कपडे शुक्रवारी दान करा</div>
+<div class="remedy-category">✨ चालू दशा उपाय (शनि महादशा)</div>
+<div class="remedy-item-row">• सध्या शनि महादशा चालू आहे (बल 70%). शनिवारी श्री शनिदेव / श्री हनुमान / श्री शंकर पूजा विशेष फलदायी.</div>
+<div class="remedy-item-row">• शनिवारी शनि मंदिरात तेल चढवा. हनुमान चालीसा वाचा. शिव मंदिरात रुद्राभिषेक करा. काळे तीळ दान करा.</div>
+<div class="remedy-item-row">• दशानाथ मंत्र: ॐ प्रां प्रीं प्रौं सः शनैश्चराय नमः — रोज ११ वेळा</div>
+<div class="remedy-item-row">• दशानाथ दान: काळे तीळ, सरसों तेल, लोखंड, काळा कपडा शनिवारी दान करा</div>
+<div class="remedy-category">🔱 बलवान ग्रह — या क्षेत्रांचा लाभ घ्या</div>
+<div class="remedy-item-row">• गुरु बलवान (उच्च, बल 85%) — गुरुवारी श्री दत्तात्रेय / श्री बृहस्पती पूजा करा. हा ग्रह तुमच्यासाठी अनुकूल.</div>
+
+
+  <div class="disclaimer">
+    <strong>अस्वीकरण:</strong> ही पत्रिका Swiss Ephemeris (Lahiri Ayanamsha) वर आधारित अचूक गणनेद्वारे तयार केली आहे. ज्योतिषशास्त्र हे मार्गदर्शनासाठी आहे, अंतिम निर्णयासाठी नाही. महत्त्वाच्या निर्णयांसाठी अनुभवी ज्योतिषाचा सल्ला घ्या. — MyPatrika, mypatrika.com
+  </div>
+
+  <div class="pdf-footer"><span class="footer-brand">MyPatrika</span><span class="footer-info">Generated 14 April 2026 · mypatrika.com</span><span class="footer-page">5 / 5</span></div>
+</div>
+
+</body>
+</html>

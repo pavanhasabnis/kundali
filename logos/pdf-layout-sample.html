@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>MyPatrika — PDF Layout Sample</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #444; padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 50px; font-family: 'Outfit', sans-serif; }
+  .label { color: rgba(255,255,255,0.25); font-size: 10px; letter-spacing: 6px; text-align: center; margin-bottom: -30px; }
+
+  .page {
+    width: 794px;
+    min-height: 1123px;
+    background: #fff;
+    box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── Branded Header ── */
+  .pdf-header {
+    background: linear-gradient(135deg, #3d0c0c, #5c1a1a, #3d0c0c);
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+  }
+  .pdf-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #d4a843, transparent);
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .header-brand { color: #d4a843; font-size: 18px; font-weight: 700; letter-spacing: 3px; }
+  .header-sub { color: rgba(255,255,255,0.35); font-size: 8px; letter-spacing: 4px; }
+  .header-right { text-align: right; }
+  .header-ganesh { color: #d4a843; font-size: 11px; opacity: 0.6; font-family: 'Noto Sans Devanagari', sans-serif; }
+
+  /* ── Person Banner ── */
+  .person-banner {
+    background: linear-gradient(135deg, #f9f5ec, #fff8e7);
+    padding: 24px 40px;
+    border-bottom: 1px solid #e8dcc8;
+    text-align: center;
+  }
+  .person-name { font-size: 26px; font-weight: 800; color: #3d0c0c; }
+  .person-label { font-size: 11px; color: #8b6b4a; margin-top: 2px; font-family: 'Noto Sans Devanagari', sans-serif; }
+
+  /* ── Birth Details Grid ── */
+  .birth-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid #f0e6d0;
+  }
+  .birth-cell {
+    padding: 14px 20px;
+    text-align: center;
+    border-right: 1px solid #f0e6d0;
+  }
+  .birth-cell:nth-child(3n) { border-right: none; }
+  .birth-label { font-size: 8px; color: #a08b6e; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; }
+  .birth-val { font-size: 14px; font-weight: 700; color: #3d0c0c; margin-top: 3px; }
+
+  /* ── Section Title ── */
+  .sec-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 40px 10px;
+    margin-top: 6px;
+  }
+  .sec-title-line { flex: 1; height: 1px; background: linear-gradient(90deg, #d4a843, transparent); }
+  .sec-title-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: #3d0c0c;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .sec-title-icon {
+    width: 22px; height: 22px;
+    background: linear-gradient(135deg, #3d0c0c, #5c1a1a);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #d4a843;
+    font-size: 10px;
+  }
+
+  /* ── Chart Placeholder ── */
+  .chart-area {
+    padding: 20px 40px;
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .chart-box {
+    width: 340px; height: 340px;
+    border: 2px dashed #d4a843;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    background: #faf8f2;
+    flex-shrink: 0;
+  }
+  .chart-box-text { font-size: 12px; color: #8b6b4a; font-weight: 600; }
+  .chart-box-sub { font-size: 9px; color: #a08b6e; }
+
+  .chart-sidebar { flex: 1; }
+  .sidebar-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: 1px solid #f5efe0;
+    font-size: 12px;
+  }
+  .sidebar-row:nth-child(even) { background: #faf8f2; }
+  .sidebar-label { color: #8b6b4a; font-weight: 500; }
+  .sidebar-val { color: #3d0c0c; font-weight: 700; }
+
+  /* ── Table Placeholder ── */
+  .table-area { padding: 0 40px 20px; }
+  .placeholder-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .placeholder-table thead { background: linear-gradient(135deg, #3d0c0c, #5c1a1a); }
+  .placeholder-table th {
+    color: #d4a843;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 8px 12px;
+    text-align: left;
+  }
+  .placeholder-table td {
+    padding: 7px 12px;
+    font-size: 11px;
+    color: #3d0c0c;
+    border-bottom: 1px solid #f5efe0;
+  }
+  .placeholder-table tr:nth-child(even) { background: #faf8f2; }
+  .tag-good { color: #166534; font-weight: 700; font-size: 10px; }
+  .tag-retro { color: #b91c1c; font-weight: 700; font-size: 10px; }
+
+  /* ── Branded Footer ── */
+  .pdf-footer {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(135deg, #3d0c0c, #5c1a1a);
+    padding: 10px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-brand { color: #d4a843; font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+  .footer-info { color: rgba(255,255,255,0.25); font-size: 8px; letter-spacing: 1px; }
+  .footer-page { color: #d4a843; font-size: 9px; font-weight: 600; }
+
+  /* ── Watermark ── */
+  .watermark {
+    position: absolute;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+    font-size: 80px;
+    font-weight: 800;
+    color: rgba(212,168,67,0.025);
+    letter-spacing: 20px;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  /* ── Yoga Cards ── */
+  .yoga-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 40px 20px; }
+  .yoga-card {
+    border: 1px solid #f0e6d0;
+    border-radius: 8px;
+    padding: 14px;
+    background: #faf8f2;
+  }
+  .yoga-name { font-size: 13px; font-weight: 700; color: #3d0c0c; }
+  .yoga-name-mr { font-size: 11px; color: #d4a843; font-family: 'Noto Sans Devanagari', sans-serif; }
+  .yoga-desc { font-size: 10px; color: #6b5b3e; margin-top: 4px; line-height: 1.5; }
+  .yoga-badge { display: inline-block; font-size: 8px; padding: 2px 10px; border-radius: 10px; font-weight: 700; margin-top: 6px; }
+  .badge-shubh { background: #dcfce7; color: #166534; }
+  .badge-dosh { background: #fef2f2; color: #991b1b; }
+
+  /* ── Dasha Timeline ── */
+  .dasha-list { padding: 0 40px 20px; }
+  .dasha-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .dasha-planet { width: 50px; text-align: right; font-size: 11px; font-weight: 700; color: #3d0c0c; }
+  .dasha-bar-bg { flex: 1; height: 22px; background: #f5efe0; border-radius: 4px; overflow: hidden; }
+  .dasha-bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding: 0 10px; font-size: 8px; color: #fff; font-weight: 600; letter-spacing: 0.5px; }
+  .dasha-years { width: 70px; font-size: 9px; color: #8b6b4a; }
+  .dasha-active { border: 2px solid #d4a843; }
+  .dasha-active .dasha-planet { color: #d4a843; }
+
+  /* ── Remedy ── */
+  .remedy-list { padding: 0 40px 20px; }
+  .remedy-item { display: flex; gap: 12px; padding: 10px 14px; border-bottom: 1px solid #f5efe0; align-items: flex-start; }
+  .remedy-icon { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #f9f5ec, #fff8e7); border: 1px solid #e8dcc8; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  .remedy-text { font-size: 11px; color: #3d0c0c; line-height: 1.5; }
+  .remedy-text strong { color: #5c1a1a; }
+
+  /* ── Disclaimer ── */
+  .disclaimer {
+    margin: 15px 40px;
+    padding: 14px 18px;
+    background: #faf8f2;
+    border-radius: 8px;
+    border-left: 3px solid #d4a843;
+    font-size: 8px;
+    color: #8b6b4a;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<p class="label">PAGE 1 — BIRTH CHART &amp; PLANET POSITIONS</p>
+
+<!-- ==================== PAGE 1 ==================== -->
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+
+  <!-- Branded Header -->
+  <div class="pdf-header">
+    <div class="header-left">
+      <svg viewBox="0 0 140 140" width="34" height="34">
+        <g transform="translate(70,70)">
+          <circle cx="0" cy="0" r="55" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.4"/>
+          <polygon points="0,-46 40,23 -40,23" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.5"/>
+          <polygon points="0,46 40,-23 -40,-23" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="0" cy="0" r="32" fill="none" stroke="#d4a843" stroke-width="2" opacity="0.6"/>
+          <circle cx="0" cy="0" r="20" fill="none" stroke="#d4a843" stroke-width="1.5" opacity="0.7"/>
+          <circle cx="0" cy="0" r="16" fill="#d4a843" opacity="0.2"/>
+          <text x="0" y="9" text-anchor="middle" fill="#d4a843" font-size="24" font-weight="bold">ॐ</text>
+        </g>
+      </svg>
+      <div>
+        <div class="header-brand">MyPatrika</div>
+        <div class="header-sub">VEDIC ASTROLOGY</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="header-ganesh">॥ श्री गणेशाय नमः ॥</div>
+    </div>
+  </div>
+
+  <!-- Person Banner -->
+  <div class="person-banner">
+    <div class="person-name">पवन हसबनीस</div>
+    <div class="person-label">जन्म पत्रिका — Birth Chart</div>
+  </div>
+
+  <!-- Birth Details -->
+  <div class="birth-grid">
+    <div class="birth-cell">
+      <div class="birth-label">जन्म तारीख</div>
+      <div class="birth-val">5 जून 1991</div>
+    </div>
+    <div class="birth-cell">
+      <div class="birth-label">जन्म वेळ</div>
+      <div class="birth-val">01:00 AM</div>
+    </div>
+    <div class="birth-cell">
+      <div class="birth-label">जन्म ठिकाण</div>
+      <div class="birth-val">कोल्हापूर, महाराष्ट्र</div>
+    </div>
+  </div>
+  <div class="birth-grid">
+    <div class="birth-cell">
+      <div class="birth-label">अक्षांश / रेखांश</div>
+      <div class="birth-val">16.69°N, 74.46°E</div>
+    </div>
+    <div class="birth-cell">
+      <div class="birth-label">अयनांश (लाहिरी)</div>
+      <div class="birth-val">23° 43' 18"</div>
+    </div>
+    <div class="birth-cell">
+      <div class="birth-label">टाइमझोन</div>
+      <div class="birth-val">IST (+5:30)</div>
+    </div>
+  </div>
+
+  <!-- Section: Birth Chart -->
+  <div class="sec-title">
+    <div class="sec-title-icon">☉</div>
+    <span class="sec-title-text">जन्म कुंडली</span>
+    <div class="sec-title-line"></div>
+  </div>
+
+  <div class="chart-area">
+    <div class="chart-box">
+      <div class="chart-box-text">⬦ तुमची विद्यमान कुंडली ⬦</div>
+      <div class="chart-box-sub">YOUR EXISTING CHART — NO CHANGES</div>
+      <div style="font-size: 9px; color: #b91c1c; margin-top: 10px;">(हा भाग बदलणार नाही)</div>
+    </div>
+    <div class="chart-sidebar">
+      <div style="font-size: 10px; font-weight: 700; color: #d4a843; letter-spacing: 2px; padding-bottom: 6px; border-bottom: 1px solid #f0e6d0; margin-bottom: 4px;">मूलभूत माहिती</div>
+      <div class="sidebar-row"><span class="sidebar-label">लग्न</span><span class="sidebar-val">मीन — 8° 46'</span></div>
+      <div class="sidebar-row"><span class="sidebar-label">राशी (चंद्र)</span><span class="sidebar-val">कुंभ</span></div>
+      <div class="sidebar-row"><span class="sidebar-label">नक्षत्र</span><span class="sidebar-val">धनिष्ठा — पद ४</span></div>
+      <div class="sidebar-row"><span class="sidebar-label">नक्षत्र स्वामी</span><span class="sidebar-val">मंगळ</span></div>
+      <div class="sidebar-row"><span class="sidebar-label">गण</span><span class="sidebar-val">राक्षस</span></div>
+      <div class="sidebar-row"><span class="sidebar-label">नाडी</span><span class="sidebar-val">आद्य</span></div>
+      <div class="sidebar-row"><span class="sidebar-label">योनी</span><span class="sidebar-val">सिंह</span></div>
+      <div class="sidebar-row"><span class="sidebar-label">वर्ण</span><span class="sidebar-val">शूद्र</span></div>
+      <div class="sidebar-row"><span class="sidebar-label">महादशा</span><span class="sidebar-val" style="color: #d4a843;">गुरु (2023-2039)</span></div>
+    </div>
+  </div>
+
+  <!-- Section: Planet Positions -->
+  <div class="sec-title">
+    <div class="sec-title-icon">☽</div>
+    <span class="sec-title-text">ग्रह स्पष्ट</span>
+    <div class="sec-title-line"></div>
+  </div>
+
+  <div class="table-area">
+    <table class="placeholder-table">
+      <thead><tr><th>ग्रह</th><th>राशी</th><th>अंश</th><th>नक्षत्र</th><th>पद</th><th>भाव</th><th>स्थिती</th></tr></thead>
+      <tbody>
+        <tr><td><strong>सूर्य</strong></td><td>धनु</td><td>16° 51'</td><td>पूर्वाषाढा</td><td>2</td><td>10</td><td>—</td></tr>
+        <tr><td><strong>चंद्र</strong></td><td>कुंभ</td><td>6° 28'</td><td>धनिष्ठा</td><td>4</td><td>12</td><td>—</td></tr>
+        <tr><td><strong>मंगळ</strong></td><td>वृश्चिक</td><td>16° 07'</td><td>अनुराधा</td><td>4</td><td>9</td><td>—</td></tr>
+        <tr><td><strong>बुध</strong></td><td>मकर</td><td>2° 01'</td><td>उत्तराषाढा</td><td>3</td><td>11</td><td>—</td></tr>
+        <tr><td><strong>गुरु</strong></td><td>कर्क</td><td>15° 42'</td><td>पुष्य</td><td>3</td><td>5</td><td class="tag-good">उच्च ↑</td></tr>
+        <tr><td><strong>शुक्र</strong></td><td>मीन</td><td>22° 18'</td><td>रेवती</td><td>3</td><td>1</td><td class="tag-good">उच्च ↑</td></tr>
+        <tr><td><strong>शनि</strong></td><td>कन्या</td><td>28° 55'</td><td>चित्रा</td><td>2</td><td>7</td><td>—</td></tr>
+        <tr><td><strong>राहु</strong></td><td>मेष</td><td>12° 34'</td><td>अश्विनी</td><td>4</td><td>2</td><td>—</td></tr>
+        <tr><td><strong>केतु</strong></td><td>तुला</td><td>12° 34'</td><td>स्वाती</td><td>2</td><td>8</td><td class="tag-retro">वक्री ↺</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <div class="pdf-footer">
+    <span class="footer-brand">MyPatrika</span>
+    <span class="footer-info">Generated 14 April 2026 · mypatrika.com</span>
+    <span class="footer-page">1 / 3</span>
+  </div>
+</div>
+
+
+<p class="label">PAGE 2 — YOGAS, DOSHAS &amp; DASHA</p>
+
+<!-- ==================== PAGE 2 ==================== -->
+<div class="page">
+  <div class="watermark">MYPATRIKA</div>
+
+  <!-- Mini Header -->
+  <div class="pdf-header" style="padding: 12px 40px;">
+    <div class="header-left">
+      <div class="header-brand" style="font-size: 14px;">MyPatrika</div>
+    </div>
+    <div style="color: rgba(255,255,255,0.3); font-size: 10px;">पवन हसबनीस — जन्म पत्रिका</div>
+  </div>
+
+  <!-- Section: Yogas -->
+  <div class="sec-title">
+    <div class="sec-title-icon">✦</div>
+    <span class="sec-title-text">योग</span>
+    <div class="sec-title-line"></div>
+  </div>
+
+  <div class="yoga-grid">
+    <div class="yoga-card">
+      <div class="yoga-name">Gajakesari Yoga</div>
+      <div class="yoga-name-mr">गजकेसरी योग</div>
+      <div class="yoga-desc">गुरु केंद्रात चंद्रापासून — बुद्धिमत्ता, प्रसिद्धी, आर्थिक स्थिरता. समाजात मान-सन्मान.</div>
+      <span class="yoga-badge badge-shubh">शुभ योग</span>
+    </div>
+    <div class="yoga-card">
+      <div class="yoga-name">Budhaditya Yoga</div>
+      <div class="yoga-name-mr">बुधादित्य योग</div>
+      <div class="yoga-desc">सूर्य आणि बुध एकत्र — तीक्ष्ण बुद्धी, व्यवसाय कौशल्य, वक्तृत्व.</div>
+      <span class="yoga-badge badge-shubh">शुभ योग</span>
+    </div>
+    <div class="yoga-card">
+      <div class="yoga-name">Hamsa Yoga</div>
+      <div class="yoga-name-mr">हंस योग</div>
+      <div class="yoga-desc">गुरु उच्चीचा केंद्रात — धार्मिक, ज्ञानी, सन्मानित व्यक्तिमत्त्व. पंचमहापुरुष योग.</div>
+      <span class="yoga-badge badge-shubh">महायोग</span>
+    </div>
+    <div class="yoga-card">
+      <div class="yoga-name">Mangal Dosha</div>
+      <div class="yoga-name-mr">मांगलिक दोष</div>
+      <div class="yoga-desc">मंगळ अष्टम भावात — वैवाहिक जीवनात काळजी आवश्यक. उपाय करणे गरजेचे.</div>
+      <span class="yoga-badge badge-dosh">दोष — उपाय आवश्यक</span>
+    </div>
+  </div>
+
+  <!-- Section: Dasha Timeline -->
+  <div class="sec-title">
+    <div class="sec-title-icon">⏳</div>
+    <span class="sec-title-text">विंशोत्तरी दशा</span>
+    <div class="sec-title-line"></div>
+  </div>
+
+  <div class="dasha-list">
+    <div class="dasha-row">
+      <div class="dasha-planet">केतु</div>
+      <div class="dasha-bar-bg"><div class="dasha-bar-fill" style="width: 25%; background: #6366f1;">1991 — 1997</div></div>
+      <div class="dasha-years">7 वर्षे</div>
+    </div>
+    <div class="dasha-row">
+      <div class="dasha-planet">शुक्र</div>
+      <div class="dasha-bar-bg"><div class="dasha-bar-fill" style="width: 80%; background: #ec4899;">1997 — 2017</div></div>
+      <div class="dasha-years">20 वर्षे</div>
+    </div>
+    <div class="dasha-row">
+      <div class="dasha-planet">सूर्य</div>
+      <div class="dasha-bar-bg"><div class="dasha-bar-fill" style="width: 24%; background: #f59e0b;">2017 — 2023</div></div>
+      <div class="dasha-years">6 वर्षे</div>
+    </div>
+    <div class="dasha-row dasha-active">
+      <div class="dasha-planet">चंद्र ◀</div>
+      <div class="dasha-bar-bg" style="border: 2px solid #d4a843; border-radius: 4px;"><div class="dasha-bar-fill" style="width: 40%; background: linear-gradient(90deg, #d4a843, #f0c040);">2023 — 2033 (सध्या)</div></div>
+      <div class="dasha-years" style="color: #d4a843; font-weight: 700;">10 वर्षे</div>
+    </div>
+    <div class="dasha-row">
+      <div class="dasha-planet">मंगळ</div>
+      <div class="dasha-bar-bg"><div class="dasha-bar-fill" style="width: 28%; background: #ef4444;">2033 — 2040</div></div>
+      <div class="dasha-years">7 वर्षे</div>
+    </div>
+    <div class="dasha-row">
+      <div class="dasha-planet">राहु</div>
+      <div class="dasha-bar-bg"><div class="dasha-bar-fill" style="width: 72%; background: #475569;">2040 — 2058</div></div>
+      <div class="dasha-years">18 वर्षे</div>
+    </div>
+    <div class="dasha-row">
+      <div class="dasha-planet">गुरु</div>
+      <div class="dasha-bar-bg"><div class="dasha-bar-fill" style="width: 64%; background: #8b5cf6;">2058 — 2074</div></div>
+      <div class="dasha-years">16 वर्षे</div>
+    </div>
+    <div class="dasha-row">
+      <div class="dasha-planet">शनि</div>
+      <div class="dasha-bar-bg"><div class="dasha-bar-fill" style="width: 76%; background: #1e293b;">2074 — 2093</div></div>
+      <div class="dasha-years">19 वर्षे</div>
+    </div>
+    <div class="dasha-row">
+      <div class="dasha-planet">बुध</div>
+      <div class="dasha-bar-bg"><div class="dasha-bar-fill" style="width: 68%; background: #059669;">2093 — 2110</div></div>
+      <div class="dasha-years">17 वर्षे</div>
+    </div>
+  </div>
+
+  <!-- Section: Remedies -->
+  <div class="sec-title">
+    <div class="sec-title-icon">🙏</div>
+    <span class="sec-title-text">उपाय</span>
+    <div class="sec-title-line"></div>
+  </div>
+
+  <div class="remedy-list">
+    <div class="remedy-item">
+      <div class="remedy-icon">💎</div>
+      <div class="remedy-text"><strong>पुष्कराज (Yellow Sapphire)</strong> — गुरुवारी सोन्याच्या अंगठीत तर्जनीत धारण करा. गुरु दशेत अत्यंत लाभदायक. किमान 3.5 रत्ती.</div>
+    </div>
+    <div class="remedy-item">
+      <div class="remedy-icon">📿</div>
+      <div class="remedy-text"><strong>विष्णू सहस्रनाम पठण</strong> — दररोज सकाळी पठण करा. गुरुची कृपा वाढवण्यासाठी आणि बुद्धीच्या विकासासाठी.</div>
+    </div>
+    <div class="remedy-item">
+      <div class="remedy-icon">🙏</div>
+      <div class="remedy-text"><strong>हनुमान चालीसा</strong> — मंगळवारी आणि शनिवारी पठण. मांगलिक दोष शमनासाठी आणि मंगळ शांतीसाठी.</div>
+    </div>
+    <div class="remedy-item">
+      <div class="remedy-icon">🎋</div>
+      <div class="remedy-text"><strong>दान</strong> — गुरुवारी पिवळे वस्त्र, हळद, चणाडाळ, केळी दान करा. गरिबांना अन्नदान करा.</div>
+    </div>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    <strong>अस्वीकरण:</strong> ही पत्रिका Swiss Ephemeris (Lahiri Ayanamsha) वर आधारित अचूक गणनेद्वारे तयार केली आहे. ज्योतिषशास्त्र हे मार्गदर्शनासाठी आहे, अंतिम निर्णयासाठी नाही. महत्त्वाच्या निर्णयांसाठी अनुभवी ज्योतिषाचा सल्ला घ्या. — MyPatrika, mypatrika.com
+  </div>
+
+  <!-- Footer -->
+  <div class="pdf-footer">
+    <span class="footer-brand">MyPatrika</span>
+    <span class="footer-info">Generated 14 April 2026 · mypatrika.com</span>
+    <span class="footer-page">2 / 3</span>
+  </div>
+</div>
+
+</body>
+</html>

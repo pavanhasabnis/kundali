@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 140" width="400" height="140">
+  <!-- Logo 5: Zodiac Wheel with 12 rashi symbols -->
+  <defs>
+    <linearGradient id="g5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c9952e"/>
+      <stop offset="100%" style="stop-color:#e8c547"/>
+    </linearGradient>
+    <radialGradient id="g5r">
+      <stop offset="0%" style="stop-color:#4a1010"/>
+      <stop offset="100%" style="stop-color:#2d0808"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="400" height="140" rx="12" fill="url(#g5r)"/>
+
+  <!-- Zodiac wheel -->
+  <g transform="translate(70,70)">
+    <!-- Outer ring -->
+    <circle cx="0" cy="0" r="50" fill="none" stroke="url(#g5)" stroke-width="1.5" opacity="0.5"/>
+    <circle cx="0" cy="0" r="38" fill="none" stroke="url(#g5)" stroke-width="1" opacity="0.3"/>
+
+    <!-- 12 Rashi symbols around the wheel -->
+    <text x="0" y="-42" text-anchor="middle" fill="#e8c547" font-size="9" opacity="0.8">♈</text>
+    <text x="22" y="-37" text-anchor="middle" fill="#e8c547" font-size="9" opacity="0.7">♉</text>
+    <text x="37" y="-22" text-anchor="middle" fill="#e8c547" font-size="9" opacity="0.8">♊</text>
+    <text x="44" y="4" text-anchor="middle" fill="#e8c547" font-size="9" opacity="0.7">♋</text>
+    <text x="37" y="28" text-anchor="middle" fill="#e8c547" font-size="9" opacity="0.8">♌</text>
+    <text x="22" y="42" text-anchor="middle" fill="#e8c547" font-size="9" opacity="0.7">♍</text>
+    <text x="0" y="48" text-anchor="middle" fill="#e8c547" font-size="9" opacity="0.8">♎</text>
+    <text x="-22" y="42" text-anchor="middle" fill="#e8c547" font-size="9" opacity="0.7">♏</text>
+    <text x="-37" y="28" text-anchor="middle" fill="#e8c547" font-size="9" opacity="0.8">♐</text>
+    <text x="-44" y="4" text-anchor="middle" fill="#e8c547" font-size="9" opacity="0.7">♑</text>
+    <text x="-37" y="-22" text-anchor="middle" fill="#e8c547" font-size="9" opacity="0.8">♒</text>
+    <text x="-22" y="-37" text-anchor="middle" fill="#e8c547" font-size="9" opacity="0.7">♓</text>
+
+    <!-- Divider lines -->
+    <line x1="0" y1="-38" x2="0" y2="-50" stroke="#e8c547" stroke-width="0.5" opacity="0.3"/>
+    <line x1="19" y1="-33" x2="25" y2="-43" stroke="#e8c547" stroke-width="0.5" opacity="0.3"/>
+    <line x1="33" y1="-19" x2="43" y2="-25" stroke="#e8c547" stroke-width="0.5" opacity="0.3"/>
+    <line x1="38" y1="0" x2="50" y2="0" stroke="#e8c547" stroke-width="0.5" opacity="0.3"/>
+    <line x1="33" y1="19" x2="43" y2="25" stroke="#e8c547" stroke-width="0.5" opacity="0.3"/>
+    <line x1="19" y1="33" x2="25" y2="43" stroke="#e8c547" stroke-width="0.5" opacity="0.3"/>
+    <line x1="0" y1="38" x2="0" y2="50" stroke="#e8c547" stroke-width="0.5" opacity="0.3"/>
+    <line x1="-19" y1="33" x2="-25" y2="43" stroke="#e8c547" stroke-width="0.5" opacity="0.3"/>
+    <line x1="-33" y1="19" x2="-43" y2="25" stroke="#e8c547" stroke-width="0.5" opacity="0.3"/>
+    <line x1="-38" y1="0" x2="-50" y2="0" stroke="#e8c547" stroke-width="0.5" opacity="0.3"/>
+    <line x1="-33" y1="-19" x2="-43" y2="-25" stroke="#e8c547" stroke-width="0.5" opacity="0.3"/>
+    <line x1="-19" y1="-33" x2="-25" y2="-43" stroke="#e8c547" stroke-width="0.5" opacity="0.3"/>
+
+    <!-- Center -->
+    <circle cx="0" cy="0" r="16" fill="url(#g5)" opacity="0.15"/>
+    <circle cx="0" cy="0" r="10" fill="none" stroke="#e8c547" stroke-width="1.5"/>
+    <text x="0" y="4" text-anchor="middle" fill="#e8c547" font-size="10" font-weight="bold">☉</text>
+  </g>
+
+  <!-- Text -->
+  <text x="135" y="45" fill="#e8c547" font-family="Georgia, serif" font-size="14" letter-spacing="8" opacity="0.5">MY</text>
+  <text x="135" y="78" fill="url(#g5)" font-family="Georgia, serif" font-size="42" font-weight="bold">Patrika</text>
+  <text x="137" y="105" fill="#ffffff" font-family="sans-serif" font-size="10" letter-spacing="1" opacity="0.35">माय पत्रिका | १२ राशी | नवग्रह | वैदिक ज्योतिष</text>
+</svg>

@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" width="600" height="200">
+  <defs>
+    <linearGradient id="deepGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#92400E"/>
+      <stop offset="50%" style="stop-color:#78350F"/>
+      <stop offset="100%" style="stop-color:#451A03"/>
+    </linearGradient>
+    <linearGradient id="ringG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#B45309"/>
+      <stop offset="100%" style="stop-color:#78350F"/>
+    </linearGradient>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="1" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- White/cream background -->
+  <rect width="600" height="200" rx="16" fill="#FFFBEB"/>
+
+  <!-- Outer celestial ring -->
+  <circle cx="100" cy="100" r="70" fill="none" stroke="url(#ringG)" stroke-width="2.5" opacity="0.8"/>
+
+  <!-- Inner zodiac ring -->
+  <circle cx="100" cy="100" r="58" fill="none" stroke="#B45309" stroke-width="1" stroke-dasharray="15.2 15.2" opacity="0.4"/>
+
+  <!-- 12 zodiac ticks -->
+  <g stroke="#92400E" stroke-width="1.5" opacity="0.4">
+    <line x1="100" y1="30" x2="100" y2="38"/>
+    <line x1="135" y1="32.68" x2="131" y2="39.6"/>
+    <line x1="160.62" y1="50" x2="154.62" y2="55"/>
+    <line x1="170" y1="100" x2="162" y2="100"/>
+    <line x1="160.62" y1="150" x2="154.62" y2="145"/>
+    <line x1="135" y1="167.32" x2="131" y2="160.4"/>
+    <line x1="100" y1="170" x2="100" y2="162"/>
+    <line x1="65" y1="167.32" x2="69" y2="160.4"/>
+    <line x1="39.38" y1="150" x2="45.38" y2="145"/>
+    <line x1="30" y1="100" x2="38" y2="100"/>
+    <line x1="39.38" y1="50" x2="45.38" y2="55"/>
+    <line x1="65" y1="32.68" x2="69" y2="39.6"/>
+  </g>
+
+  <!-- Center 'भा' -->
+  <text x="100" y="112" text-anchor="middle" font-family="serif" font-size="52" font-weight="bold" fill="url(#deepGold)" filter="url(#softGlow)">भा</text>
+
+  <!-- Orbital paths -->
+  <ellipse cx="100" cy="100" rx="45" ry="20" fill="none" stroke="#92400E" stroke-width="0.5" opacity="0.2" transform="rotate(-30 100 100)"/>
+  <ellipse cx="100" cy="100" rx="45" ry="20" fill="none" stroke="#92400E" stroke-width="0.5" opacity="0.2" transform="rotate(30 100 100)"/>
+  <ellipse cx="100" cy="100" rx="45" ry="20" fill="none" stroke="#92400E" stroke-width="0.5" opacity="0.2" transform="rotate(90 100 100)"/>
+
+  <!-- Accent dots -->
+  <g fill="#D97706" opacity="0.5">
+    <circle cx="100" cy="26" r="3"/>
+    <circle cx="170" cy="65" r="2"/>
+    <circle cx="170" cy="135" r="2.5"/>
+    <circle cx="30" cy="70" r="2"/>
+    <circle cx="35" cy="140" r="2.5"/>
+  </g>
+
+  <!-- Main brand name -->
+  <text x="210" y="95" font-family="serif" font-size="48" font-weight="bold" fill="url(#deepGold)" letter-spacing="2">Bhaagyavedh</text>
+
+  <!-- Devanagari subtitle -->
+  <text x="210" y="130" font-family="serif" font-size="22" fill="#92400E" opacity="0.75" letter-spacing="4">भाग्यवेध</text>
+
+  <!-- Tagline -->
+  <text x="210" y="158" font-family="sans-serif" font-size="13" fill="#78350F" opacity="0.6" letter-spacing="3">VEDIC ASTROLOGY &amp; DIVINE JOURNEYS</text>
+
+  <!-- Decorative line -->
+  <line x1="210" y1="138" x2="520" y2="138" stroke="#B45309" stroke-width="0.5" opacity="0.3"/>
+</svg>

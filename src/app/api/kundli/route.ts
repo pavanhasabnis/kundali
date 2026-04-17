@@ -9,6 +9,7 @@ import {
   generateRemedies,
 } from "@/lib/astrology/analysis";
 import { calculateAllDivisionalCharts } from "@/lib/astrology/divisional";
+import { calculateAllEnhancements } from "@/lib/astrology/enhancements";
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,6 +42,9 @@ export async function POST(req: NextRequest) {
     // Calculate all divisional charts
     const divisionalCharts = calculateAllDivisionalCharts(result);
 
+    // Calculate all enhancements (panchang, aspects, house lords, etc.)
+    const enhancements = calculateAllEnhancements(result, divisionalCharts);
+
     // Serialize dates in dasha
     const serialized = {
       ...result,
@@ -63,6 +67,7 @@ export async function POST(req: NextRequest) {
         remedies,
       },
       divisionalCharts,
+      enhancements,
     };
 
     return NextResponse.json(serialized);

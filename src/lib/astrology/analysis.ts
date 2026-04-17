@@ -64,7 +64,7 @@ const FRIENDS: Record<string, string[]> = {
 
 const ENEMIES: Record<string, string[]> = {
   Sun: ["Venus", "Saturn"],
-  Moon: ["Rahu", "Ketu"],
+  Moon: [],
   Mars: ["Mercury"],
   Mercury: ["Moon"],
   Jupiter: ["Mercury", "Venus"],
@@ -148,8 +148,10 @@ function isCombust(planet: PlanetPosition, sun: PlanetPosition): boolean {
   if (planet.id === "Sun" || planet.id === "Rahu" || planet.id === "Ketu") return false;
   const diff = Math.abs(planet.siderealLongitude - sun.siderealLongitude);
   const distance = Math.min(diff, 360 - diff);
+  // Mercury & Venus have smaller combustion ranges when retrograde (per Surya Siddhanta)
   const combustDegrees: Record<string, number> = {
-    Moon: 12, Mars: 17, Mercury: 14, Jupiter: 11, Venus: 10, Saturn: 15,
+    Moon: 12, Mars: 17, Mercury: planet.isRetrograde ? 12 : 14,
+    Jupiter: 11, Venus: planet.isRetrograde ? 8 : 10, Saturn: 15,
   };
   return distance < (combustDegrees[planet.id] || 15);
 }
@@ -608,24 +610,35 @@ export function detectDoshas(kundli: KundliResult): Dosha[] {
   const sunWithRahu = sun.rashiIndex === rahu.rashiIndex;
   const sunInNine = sun.house === 9;
   const rahuInNine = rahu.house === 9;
-  const isPitrDosha = sunWithRahu || (sunInNine && rahuInNine);
+  const sunDebilitatedInNine = sun.rashiIndex === DEBILITATION["Sun"] && sunInNine;
+  const isPitrDoshaStrong = sunWithRahu || (sunInNine && rahuInNine);
+  const isPitrDoshaMild = !isPitrDoshaStrong && sunDebilitatedInNine;
+  const isPitrDosha = isPitrDoshaStrong || isPitrDoshaMild;
 
   doshas.push({
     nameMr: "पितृ दोष",
     nameEn: "Pitra Dosha",
     present: isPitrDosha,
-    severity: isPitrDosha ? "medium" : "none",
-    descriptionMr: isPitrDosha
-      ? "सूर्य-राहू युती/9व्या भावात प्रभाव. पितृकार्यात अडथळे, पिढ्यांचे अपूर्ण कर्म. संतती/करिअरमध्ये विलंब."
+    severity: isPitrDoshaStrong ? "medium" : isPitrDoshaMild ? "low" : "none",
+    descriptionMr: isPitrDoshaStrong
+      ? "सूर्य-राहू युती/९व्या भावात प्रभाव. पितृकार्यात अडथळे, पिढ्यांचे अपूर्ण कर्म. संतती/करिअरमध्ये विलंब."
+      : isPitrDoshaMild
+      ? "सूर्य नीच स्थितीत ९व्या भावात (धर्म/पिता स्थान). पितृ संबंधात काळजी आवश्यक. पित्याच्या आरोग्याकडे लक्ष द्या. पैतृक संपत्तीबाबत विलंब शक्य."
       : "पितृ दोष नाही.",
-    descriptionEn: isPitrDosha
+    descriptionEn: isPitrDoshaStrong
       ? "Sun-Rahu conjunction or influence in 9th house. Obstacles in ancestral matters, generational karma. Delays in progeny/career."
+      : isPitrDoshaMild
+      ? "Sun debilitated in 9th house (house of father/dharma). Mild Pitru Dosha — care needed regarding father's health and ancestral matters. Possible delays in paternal blessings."
       : "No Pitra Dosha present.",
-    remedyMr: isPitrDosha
+    remedyMr: isPitrDoshaStrong
       ? "पितृ तर्पण करा. श्राद्ध विधी नियमित करा. गया/प्रयागमध्ये पिंडदान करा. रविवारी सूर्यदेवाला अर्घ्य द्या."
+      : isPitrDoshaMild
+      ? "रविवारी सूर्योदयाला सूर्याला अर्घ्य द्या. आदित्य हृदय स्तोत्र वाचा. पित्याची सेवा करा. लाल वस्तू दान करा."
       : "उपाय आवश्यक नाही.",
-    remedyEn: isPitrDosha
+    remedyEn: isPitrDoshaStrong
       ? "Perform Pitru Tarpan. Observe regular Shraddha rituals. Offer Pind Daan at Gaya/Prayag. Offer Arghya to Sun on Sundays."
+      : isPitrDoshaMild
+      ? "Offer Arghya to Sun at sunrise on Sundays. Recite Aditya Hrudaya Stotra. Serve and respect your father. Donate red items."
       : "No remedy needed.",
   });
 

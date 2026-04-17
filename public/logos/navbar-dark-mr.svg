@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 40" width="240" height="40">
+  <defs>
+    <linearGradient id="sgd" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF9933"/>
+      <stop offset="100%" stop-color="#CC6600"/>
+    </linearGradient>
+    <filter id="gl"><feGaussianBlur stdDeviation="0.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <!-- Icon -->
+  <circle cx="20" cy="20" r="17" fill="none" stroke="#FF9933" stroke-width="1.2" opacity="0.55"/>
+  <circle cx="20" cy="20" r="13" fill="none" stroke="#CC6600" stroke-width="0.4" stroke-dasharray="4 4" opacity="0.3"/>
+  <ellipse cx="20" cy="20" rx="11" ry="4" fill="none" stroke="#FF9933" stroke-width="0.3" opacity="0.15" transform="rotate(-30 20 20)"/>
+  <ellipse cx="20" cy="20" rx="11" ry="4" fill="none" stroke="#FF9933" stroke-width="0.3" opacity="0.15" transform="rotate(30 20 20)"/>
+  <ellipse cx="20" cy="20" rx="11" ry="4" fill="none" stroke="#FF9933" stroke-width="0.3" opacity="0.15" transform="rotate(90 20 20)"/>
+  <text x="20" y="26" text-anchor="middle" font-family="'Inclusive Sans', sans-serif" font-size="16" font-weight="bold" fill="url(#sgd)" filter="url(#gl)">भा</text>
+  <!-- Marathi brand name -->
+  <text x="46" y="19" font-family="serif" font-size="16" font-weight="700" fill="url(#sgd)" letter-spacing="1">भाग्यवेध</text>
+  <!-- Marathi tagline -->
+  <text x="46" y="33" font-family="'Inclusive Sans', sans-serif" font-size="8" fill="#FFB366" opacity="0.6" letter-spacing="0.8">वैदिक ज्योतिष आणि तीर्थयात्रा</text>
+</svg>

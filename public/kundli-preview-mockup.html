@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<title>Kundli Enhancement Preview — ALL Changes — Bhaagyavedh</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #e8e0d0; font-family: -apple-system, 'Noto Sans Devanagari', sans-serif; padding: 40px; }
+
+  h1.section-title {
+    text-align: center; color: #3d0c0c; font-size: 22px; margin: 50px 0 10px;
+    padding: 10px; background: #f5efe0; border-radius: 8px;
+  }
+  .comparison-label {
+    text-align: center; font-size: 13px; color: #8b6b4a; margin-bottom: 30px;
+  }
+
+  .page {
+    width: 794px; min-height: 1123px; background: white;
+    margin: 0 auto 60px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    display: flex; flex-direction: column; overflow: hidden; position: relative;
+  }
+  .page.auto-height { min-height: auto; }
+
+  .page-header {
+    background: linear-gradient(135deg, #3d0c0c, #5c1a1a, #3d0c0c);
+    padding: 8px 24px; display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 3px solid #d4a843;
+  }
+  .page-header .logo { color: #d4a843; font-size: 14px; font-weight: 700; letter-spacing: 2px; }
+  .page-header .mantra { color: #d4a843; font-size: 10px; opacity: 0.5; }
+
+  .cover-header {
+    background: linear-gradient(135deg, #3d0c0c, #5c1a1a, #3d0c0c);
+    padding: 30px 40px; text-align: center; position: relative;
+  }
+  .cover-header .logo-text { color: #d4a843; font-size: 22px; font-weight: 700; letter-spacing: 3px; }
+  .cover-header .tagline { color: rgba(212,168,67,0.5); font-size: 11px; margin-top: 4px; }
+  .cover-header::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, #3d0c0c, #d4a843, #3d0c0c);
+  }
+
+  .page-footer {
+    background: linear-gradient(135deg, #3d0c0c, #5c1a1a);
+    padding: 6px 24px; display: flex; justify-content: space-between; align-items: center;
+    margin-top: auto;
+  }
+  .page-footer span:first-child { color: #d4a843; font-size: 9px; font-weight: 700; letter-spacing: 2px; }
+  .page-footer span:last-child { color: rgba(255,255,255,0.2); font-size: 8px; }
+
+  .page-content { flex: 1; padding: 20px 30px 16px; }
+
+  .person-name { text-align: center; padding: 24px 40px 16px; border-bottom: 2px solid #f5efe0; }
+  .person-name .mr { font-size: 30px; font-weight: 700; color: #3d0c0c; }
+  .person-name .en { font-size: 13px; color: #8b6b4a; margin-top: 4px; }
+
+  .info-grid { display: grid; border-bottom: 1px solid #f5efe0; margin: 0; }
+  .info-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .info-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .info-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .info-grid.thick-bottom { border-bottom: 2px solid #f5efe0; }
+  .info-cell { padding: 12px 16px; text-align: center; border-right: 1px solid #f5efe0; }
+  .info-cell:last-child { border-right: none; }
+  .info-cell .label { font-size: 8px; color: #8b6b4a; letter-spacing: 2px; font-weight: 600; text-transform: uppercase; }
+  .info-cell .value { font-size: 14px; font-weight: 600; color: #3d0c0c; margin-top: 4px; }
+
+  .section-head {
+    font-size: 11px; font-weight: 700; color: #d4a843; letter-spacing: 2px;
+    margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #f5efe0;
+  }
+  .section-head.mt { margin-top: 18px; }
+
+  .kv-row {
+    display: flex; justify-content: space-between; padding: 5px 0;
+    border-bottom: 1px solid #faf5eb; font-size: 12px;
+  }
+  .kv-row .k { color: #8b6b4a; font-weight: 500; }
+  .kv-row .v { color: #3d0c0c; font-weight: 600; }
+
+  .new-tag {
+    display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 8px;
+    padding: 1px 6px; border-radius: 3px; font-weight: 700; margin-left: 6px;
+    vertical-align: middle; letter-spacing: 1px;
+  }
+  .changed-tag {
+    display: inline-block; background: #fff3e0; color: #e65100; font-size: 8px;
+    padding: 1px 6px; border-radius: 3px; font-weight: 700; margin-left: 6px;
+    vertical-align: middle; letter-spacing: 1px;
+  }
+
+  .badge-green { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 11px; padding: 3px 10px; border-radius: 4px; font-weight: 600; }
+  .badge-red { display: inline-block; background: #fce4ec; color: #c62828; font-size: 11px; padding: 3px 10px; border-radius: 4px; font-weight: 600; }
+  .badge-amber { display: inline-block; background: #fff8e1; color: #f57f17; font-size: 11px; padding: 3px 10px; border-radius: 4px; font-weight: 600; }
+
+  .lucky-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .lucky-card { background: #FFF8E7; border: 1px solid #f5efe0; border-radius: 8px; padding: 12px; text-align: center; }
+  .lucky-card .lc-label { font-size: 9px; color: #8b6b4a; font-weight: 600; letter-spacing: 1px; }
+  .lucky-card .lc-value { font-size: 16px; color: #3d0c0c; font-weight: 700; margin-top: 4px; }
+  .lucky-card .lc-sub { font-size: 9px; color: #8b6b4a; margin-top: 2px; }
+
+  .data-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
+  .data-table th { background: #3d0c0c; color: #d4a843; padding: 6px 8px; text-align: left; font-size: 9px; letter-spacing: 1px; font-weight: 600; }
+  .data-table td { padding: 5px 8px; border-bottom: 1px solid #f5efe0; color: #3d0c0c; }
+  .data-table tr:nth-child(even) td { background: #fdfbf6; }
+
+  .aspect-table { width: 100%; border-collapse: collapse; font-size: 9px; margin-top: 8px; }
+  .aspect-table th, .aspect-table td { border: 1px solid #f5efe0; padding: 4px; text-align: center; width: 10%; }
+  .aspect-table th { background: #3d0c0c; color: #d4a843; font-size: 8px; }
+  .aspect-table .has-aspect { background: #e8f5e9; color: #2e7d32; font-weight: 700; }
+  .aspect-table .special { background: #fff3e0; color: #e65100; font-weight: 700; }
+
+  /* Chart placeholder */
+  .chart-placeholder {
+    width: 280px; height: 280px; border: 2px solid #d4a843; position: relative;
+    transform: rotate(0deg); margin: 0 auto;
+  }
+  .chart-placeholder .inner {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(45deg);
+    width: 198px; height: 198px; border: 1.5px solid #c0a060;
+  }
+  .chart-placeholder .label {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    font-size: 12px; color: #d4a843; font-weight: 600;
+  }
+
+  /* Interpretation box */
+  .interp-box {
+    background: #FFF8E7; border: 1px solid #f5efe0; border-left: 3px solid #d4a843;
+    border-radius: 0 8px 8px 0; padding: 14px 18px; margin-top: 16px;
+  }
+  .interp-box h4 { font-size: 12px; color: #3d0c0c; font-weight: 700; margin-bottom: 6px; }
+  .interp-box p { font-size: 11px; color: #5c3a1a; line-height: 1.6; }
+  .interp-box .interp-item { padding: 6px 0; border-bottom: 1px solid #f5efe0; }
+  .interp-box .interp-item:last-child { border-bottom: none; }
+  .interp-box .interp-label { font-size: 10px; color: #8b6b4a; font-weight: 600; }
+  .interp-box .interp-value { font-size: 11px; color: #3d0c0c; margin-top: 2px; }
+
+  /* Two column layout for chart + analysis */
+  .chart-analysis-row { display: grid; grid-template-columns: 300px 1fr; gap: 20px; align-items: start; }
+
+  /* Vargottam highlight */
+  .vargottam-pill {
+    display: inline-block; background: linear-gradient(135deg, #d4a843, #b8922e);
+    color: white; font-size: 10px; padding: 3px 10px; border-radius: 12px;
+    font-weight: 600; margin: 2px 4px;
+  }
+
+  /* Page number index */
+  .page-index {
+    max-width: 794px; margin: 0 auto 40px; background: white; padding: 30px;
+    border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .page-index h2 { color: #3d0c0c; font-size: 18px; margin-bottom: 16px; }
+  .page-index table { width: 100%; }
+  .page-index td { padding: 6px 10px; font-size: 12px; border-bottom: 1px solid #f5efe0; }
+  .page-index td:first-child { font-weight: 700; color: #3d0c0c; width: 80px; }
+  .page-index td:nth-child(2) { color: #5c3a1a; }
+  .page-index td:last-child { text-align: right; width: 100px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- TABLE OF CONTENTS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="page-index">
+  <h2>Complete Kundli Preview — All Discussed Changes</h2>
+  <p style="font-size:12px;color:#8b6b4a;margin-bottom:16px;">Scroll down to see every page. Green tags = NEW content. Orange tags = ENHANCED content.</p>
+  <table>
+    <tr><td>Page 1</td><td>जन्म माहिती (Cover) — Enhanced with पंचांग, दोष स्थिती, शुभ माहिती</td><td><span class="changed-tag">ENHANCED</span></td></tr>
+    <tr><td>Page 2</td><td>लग्न कुंडली + भाव स्वामी + मंगळिक/साडेसाती analysis below chart</td><td><span class="changed-tag">ENHANCED</span></td></tr>
+    <tr><td>Page 3</td><td>चंद्र कुंडली + चंद्र योग + मानसिक स्वभाव below chart</td><td><span class="changed-tag">ENHANCED</span></td></tr>
+    <tr><td>Page 4</td><td>नवमांश (D9) + वर्गोत्तम ग्रह + विवाह विश्लेषण below chart</td><td><span class="changed-tag">ENHANCED</span></td></tr>
+    <tr><td>Page 5</td><td>भाव चलित + भाव संधी degrees + ग्रह भाव बदल below chart</td><td><span class="changed-tag">ENHANCED</span></td></tr>
+    <tr><td>Page 6</td><td>दशमांश (D10) + करिअर विश्लेषण below chart</td><td><span class="changed-tag">ENHANCED</span></td></tr>
+    <tr><td>Page 7</td><td>सप्तांश (D7) + संतती विश्लेषण below chart</td><td><span class="changed-tag">ENHANCED</span></td></tr>
+    <tr><td>Page 8</td><td>D12 + D16 + D30 — charts stay same, small labels added</td><td>MINOR</td></tr>
+    <tr><td>Page 9</td><td>ग्रह स्पष्ट — Planet table with 2 new columns (नक्ष. स्वामी + अस्त)</td><td><span class="changed-tag">ENHANCED</span></td></tr>
+    <tr><td>Page 10</td><td>भाव स्वामी सारणी (House Lords) — NEW PAGE</td><td><span class="new-tag">NEW</span></td></tr>
+    <tr><td>Page 11</td><td>ग्रह दृष्टी सारणी (Aspects) — NEW PAGE</td><td><span class="new-tag">NEW</span></td></tr>
+    <tr><td>Page 12</td><td>ग्रह बल (Strength) — NO CHANGE</td><td>✅</td></tr>
+    <tr><td>Page 13</td><td>योग — NO CHANGE</td><td>✅</td></tr>
+    <tr><td>Page 14</td><td>दोष — NO CHANGE</td><td>✅</td></tr>
+    <tr><td>Page 15-16</td><td>भविष्यकथन — NO CHANGE</td><td>✅</td></tr>
+    <tr><td>Page 17</td><td>चालू दशा फल — NO CHANGE</td><td>✅</td></tr>
+    <tr><td>Page 18-19</td><td>दशा कालावधी — enhanced with प्रत्यंतर दशा</td><td><span class="changed-tag">ENHANCED</span></td></tr>
+    <tr><td>Page 20-21</td><td>उपाय — NO CHANGE</td><td>✅</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PAGE 1: ENHANCED COVER -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h1 class="section-title">Page 1 — जन्म माहिती (Enhanced Cover)</h1>
+<p class="comparison-label">Empty space filled with पंचांग, दोष स्थिती, शुभ माहिती</p>
+
+<div class="page">
+  <div class="cover-header">
+    <div class="logo-text">भा Bhaagyavedh</div>
+    <div class="tagline">भाग्यवेध — भव्य भविष्य आणि दैवज्ञ</div>
+  </div>
+  <div class="person-name">
+    <div class="mr">अक्षय राजपूत</div>
+    <div class="en">जन्म पत्रिका — Akshay Rajput</div>
+  </div>
+  <div style="margin: 0 30px;">
+    <div class="info-grid cols-3" style="border-bottom: 1px solid #f5efe0;">
+      <div class="info-cell"><div class="label">जन्म तारीख</div><div class="value">०७/२/१९९०</div></div>
+      <div class="info-cell"><div class="label">जन्म वेळ</div><div class="value">११:०५ PM</div></div>
+      <div class="info-cell">
+        <div class="label">जन्म ठिकाण <span class="changed-tag">IMPROVED</span></div>
+        <div class="value">पुणे</div>
+        <div style="font-size:9px;color:#8b6b4a;margin-top:2px;">१८.५२°N, ७३.८६°E</div>
+      </div>
+    </div>
+    <div class="info-grid cols-4" style="border-bottom: 1px solid #f5efe0;">
+      <div class="info-cell"><div class="label">अयनांश</div><div class="value" style="font-size:12px;">लाहिरी २३°४३'८"</div></div>
+      <div class="info-cell"><div class="label">वार <span class="new-tag">NEW</span></div><div class="value">बुधवार</div></div>
+      <div class="info-cell"><div class="label">सूर्योदय / सूर्यास्त <span class="new-tag">NEW</span></div><div class="value" style="font-size:12px;">०७:०८ / १८:३१</div></div>
+      <div class="info-cell"><div class="label">दिनमान <span class="new-tag">NEW</span></div><div class="value" style="font-size:12px;">११:२३</div></div>
+    </div>
+    <div class="info-grid cols-4 thick-bottom">
+      <div class="info-cell"><div class="label">तिथी <span class="new-tag">NEW</span></div><div class="value" style="font-size:12px;">शुक्ल त्रयोदशी</div></div>
+      <div class="info-cell"><div class="label">योग / करण <span class="new-tag">NEW</span></div><div class="value" style="font-size:11px;">प्रीती / तैतिल</div></div>
+      <div class="info-cell"><div class="label">राशी अक्षर <span class="new-tag">NEW</span></div><div class="value">क, छ, घ</div></div>
+      <div class="info-cell"><div class="label">शक संवत <span class="new-tag">NEW</span></div><div class="value" style="font-size:12px;">१९११ माघ</div></div>
+    </div>
+  </div>
+  <div class="page-content" style="padding-top:14px;">
+    <div class="section-head">मूलभूत माहिती</div>
+    <div class="kv-row"><span class="k">लग्न (Ascendant)</span><span class="v">तुला — ०° ८' ३५"</span></div>
+    <div class="kv-row"><span class="k">राशी (Moon Sign)</span><span class="v">मिथुन</span></div>
+    <div class="kv-row"><span class="k">नक्षत्र</span><span class="v">पुनर्वसु — पद ३</span></div>
+    <div class="kv-row"><span class="k">नक्षत्र स्वामी</span><span class="v">गुरु</span></div>
+
+    <div class="section-head mt">विंशोत्तरी दशा</div>
+    <div class="kv-row"><span class="k">सध्याची महादशा</span><span class="v">बुध दशा</span></div>
+    <div class="kv-row"><span class="k">कालावधी</span><span class="v">२०१३ - २०३०</span></div>
+    <div class="kv-row"><span class="k">अंतर्दशा</span><span class="v">बुध-गुरु</span></div>
+    <div class="kv-row"><span class="k">भोग्य दशा (जन्मवेळी शिल्लक) <span class="new-tag">NEW</span></span><span class="v">गुरु: ४ वर्षे ८ महिने ४ दिवस</span></div>
+
+    <div class="section-head mt">दोष स्थिती <span class="new-tag">NEW SECTION</span></div>
+    <div class="kv-row"><span class="k">मंगळिक (कुज दोष)</span><span class="v"><span class="badge-red">मंगळिक — अंशतः</span></span></div>
+    <div class="kv-row"><span class="k">काळसर्प दोष</span><span class="v"><span class="badge-green">नाही</span></span></div>
+    <div class="kv-row"><span class="k">साडेसाती</span><span class="v"><span class="badge-green">चालू नाही</span> <span style="font-size:10px;color:#8b6b4a;">पुढची: २०२७-२०३४</span></span></div>
+    <div class="kv-row"><span class="k">पितृ दोष</span><span class="v"><span class="badge-green">नाही</span></span></div>
+
+    <div class="section-head mt">शुभ माहिती <span class="new-tag">NEW SECTION</span></div>
+    <div class="lucky-grid">
+      <div class="lucky-card"><div class="lc-label">शुभ रत्न</div><div class="lc-value">पन्ना</div><div class="lc-sub">Emerald — बुध</div></div>
+      <div class="lucky-card"><div class="lc-label">शुभ रंग</div><div class="lc-value">हिरवा</div><div class="lc-sub">Green</div></div>
+      <div class="lucky-card"><div class="lc-label">शुभ अंक</div><div class="lc-value">५</div><div class="lc-sub">बुधवार</div></div>
+      <div class="lucky-card"><div class="lc-label">शुभ दिवस</div><div class="lc-value">बुधवार</div><div class="lc-sub">Wednesday</div></div>
+      <div class="lucky-card"><div class="lc-label">शुभ दिशा</div><div class="lc-value">उत्तर</div><div class="lc-sub">North</div></div>
+      <div class="lucky-card"><div class="lc-label">शुभ धातू</div><div class="lc-value">सोने</div><div class="lc-sub">Gold</div></div>
+    </div>
+  </div>
+  <div class="page-footer"><span>Bhaagyavedh</span><span>bhaagyavedh.com</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PAGE 2: LAGNA CHART + ANALYSIS BELOW -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h1 class="section-title">Page 2 — लग्न कुंडली + Analysis Below</h1>
+<p class="comparison-label">Chart stays SAME. New analysis section added below the chart.</p>
+
+<div class="page">
+  <div class="page-header"><span class="logo">Bhaagyavedh</span><span class="mantra">॥ श्री गणेशाय नमः ॥</span></div>
+  <div class="page-content">
+    <h2 style="font-size:16px;font-weight:700;color:#1c1917;margin-bottom:16px;">लग्न कुंडली</h2>
+
+    <!-- Chart placeholder -->
+    <div style="width:300px;height:300px;border:2px solid #c0a060;margin:0 auto 20px;position:relative;background:#fdfbf6;">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg);width:212px;height:212px;border:1.5px solid #c0a060;"></div>
+      <div style="position:absolute;top:15%;left:42%;font-size:12px;color:#d4a843;font-weight:600;">लग्न</div>
+      <div style="position:absolute;top:35%;left:10%;font-size:10px;color:#3d0c0c;">मंगळ<br><span style="color:#c62828;">शुक्र(व)</span><br>शनि</div>
+      <div style="position:absolute;top:35%;right:15%;font-size:10px;color:#3d0c0c;">चंद्र<br><span style="color:#c62828;">गुरु(व)</span></div>
+      <div style="position:absolute;bottom:25%;left:10%;font-size:10px;color:#3d0c0c;">सूर्य<br>बुध<br><span style="color:#c62828;">राहु(व)</span></div>
+      <div style="position:absolute;top:8%;right:10%;font-size:10px;color:#c62828;">केतु(व)</div>
+      <div style="position:absolute;bottom:10%;right:10%;font-size:10px;color:#3d0c0c;">मंगळ<br><span style="color:#c62828;">शुक्र(व)</span><br>शनि</div>
+    </div>
+
+    <!-- NEW: Analysis below Lagna chart -->
+    <div class="interp-box">
+      <h4>लग्न विश्लेषण <span class="new-tag">NEW</span></h4>
+      <div class="interp-item">
+        <div class="interp-label">लग्न राशी</div>
+        <div class="interp-value">तुला (Libra) — शुक्र स्वामित्व. कलात्मक, सौंदर्यप्रेमी, न्यायप्रिय व्यक्तिमत्व. संतुलन व सौहार्दाला प्राधान्य.</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-label">लग्नेश स्थिती</div>
+        <div class="interp-value">शुक्र (लग्नेश) भाव ३ मध्ये, धनु राशीत, वक्री. पराक्रम, धैर्य व कलागुणांना विशेष बळ. लहान प्रवासांचा योग.</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-label">मंगळिक स्थिती</div>
+        <div class="interp-value"><span class="badge-red">अंशतः मंगळिक</span> — मंगळ भाव ३ मध्ये (कमी तीव्रता). विवाह योग्यतेवर किरकोळ प्रभाव. शनि दृष्टीमुळे दोष कमी.</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-label">साडेसाती</div>
+        <div class="interp-value"><span class="badge-green">सध्या चालू नाही</span>. चंद्र मिथुन राशीत. पुढची साडेसाती: शनि मिथुन गोचर (अंदाजे २०२७-२०३४).</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer"><span>Bhaagyavedh</span><span>bhaagyavedh.com</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PAGE 3: CHANDRA CHART + ANALYSIS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h1 class="section-title">Page 3 — चंद्र कुंडली + Analysis Below</h1>
+<p class="comparison-label">Chart stays SAME. चंद्र योग + मानसिक स्वभाव added below.</p>
+
+<div class="page">
+  <div class="page-header"><span class="logo">Bhaagyavedh</span><span class="mantra">॥ श्री गणेशाय नमः ॥</span></div>
+  <div class="page-content">
+    <h2 style="font-size:16px;font-weight:700;color:#1c1917;margin-bottom:16px;">चंद्र कुंडली</h2>
+
+    <div style="width:300px;height:300px;border:2px solid #c0a060;margin:0 auto 20px;position:relative;background:#fdfbf6;">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg);width:212px;height:212px;border:1.5px solid #c0a060;"></div>
+      <div style="position:absolute;top:10%;left:42%;font-size:10px;color:#3d0c0c;"><span style="color:#c62828;">केतु(व)</span></div>
+      <div style="position:absolute;top:15%;right:15%;font-size:10px;color:#3d0c0c;">चंद्र<br><span style="color:#c62828;">गुरु(व)</span></div>
+      <div style="position:absolute;top:45%;left:42%;font-size:10px;color:#d4a843;font-weight:600;">चंद्र</div>
+    </div>
+
+    <div class="interp-box">
+      <h4>चंद्र विश्लेषण <span class="new-tag">NEW</span></h4>
+      <div class="interp-item">
+        <div class="interp-label">चंद्र राशी + नक्षत्र</div>
+        <div class="interp-value">मिथुन राशी, पुनर्वसु नक्षत्र, पद ३. बुद्धिमान, जिज्ञासू, संवाद कौशल्य उत्तम. बहुमुखी प्रतिभा.</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-label">चंद्र योग</div>
+        <div class="interp-value"><span class="badge-green">अनफा योग</span> — चंद्रापासून २ऱ्या भावात ग्रह आहे. आर्थिक स्थिरता, सुंदर रूप, चांगली वाणी. हा शुभ योग आहे.</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-label">मानसिक स्वभाव</div>
+        <div class="interp-value">चंद्र बुध राशीत (मिथुन) — तर्कशील, विश्लेषणात्मक, चंचल मन. गुरु दृष्टी चंद्रावर — आध्यात्मिक झुकाव, शैक्षणिक प्रगती. एकूण भावनिक स्थिरता चांगली.</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-label">चंद्र बल</div>
+        <div class="interp-value">शुक्ल पक्ष (शुभ) — चंद्र वाढता. पुनर्वसु नक्षत्र स्वामी गुरु — शुभ प्रभाव. चंद्र बलवान.</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer"><span>Bhaagyavedh</span><span>bhaagyavedh.com</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PAGE 4: NAVAMSHA (D9) + MARRIAGE ANALYSIS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h1 class="section-title">Page 4 — नवमांश (D9) + विवाह विश्लेषण</h1>
+<p class="comparison-label">Chart stays SAME. वर्गोत्तम ग्रह + विवाह analysis added below.</p>
+
+<div class="page">
+  <div class="page-header"><span class="logo">Bhaagyavedh</span><span class="mantra">॥ श्री गणेशाय नमः ॥</span></div>
+  <div class="page-content">
+    <h2 style="font-size:16px;font-weight:700;color:#1c1917;margin-bottom:16px;">नवमांश (D9) — विवाह व भाग्य</h2>
+
+    <div style="width:300px;height:300px;border:2px solid #c0a060;margin:0 auto 20px;position:relative;background:#fdfbf6;">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg);width:212px;height:212px;border:1.5px solid #c0a060;"></div>
+      <div style="position:absolute;top:45%;left:42%;font-size:11px;color:#d4a843;font-weight:600;">D9</div>
+    </div>
+
+    <div class="interp-box">
+      <h4>वर्गोत्तम ग्रह <span class="new-tag">NEW</span></h4>
+      <p style="font-size:10px;color:#8b6b4a;margin-bottom:8px;">D1 आणि D9 दोन्हीत एकाच राशीत असलेले ग्रह — अत्यंत बलवान</p>
+      <div style="margin-bottom:12px;">
+        <span class="vargottam-pill">शनि — धनु</span>
+        <span style="font-size:10px;color:#5c3a1a;margin-left:8px;">शनि दोन्ही कुंडलीत धनु राशीत — कर्मात सातत्य, दीर्घकालीन यश</span>
+      </div>
+    </div>
+
+    <div class="interp-box" style="margin-top:12px;">
+      <h4>विवाह विश्लेषण <span class="new-tag">NEW</span></h4>
+      <div class="interp-item">
+        <div class="interp-label">D9 लग्न</div>
+        <div class="interp-value">D9 लग्न राशीवरून जीवनसाथीचा स्वभाव, रूप आणि गुणधर्म कळतात.</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-label">शुक्र स्थिती (D9)</div>
+        <div class="interp-value">शुक्र D9 मध्ये वक्री — विवाहात विलंब शक्य, परंतु जीवनसाथी सुंदर व कलाप्रेमी. शुक्र गुरु सोबत — शुभ संयोग.</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-label">७ वा भाव (D9)</div>
+        <div class="interp-value">D9 मधील ७ व्या भावावरून विवाह सुख, जीवनसाथीशी नाते, व वैवाहिक जीवनाची गुणवत्ता कळते.</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-label">पुष्कर नवमांश</div>
+        <div class="interp-value">पुष्कर नवमांशात ग्रह असल्यास — विशेष शुभ फळ. लक्ष्मी कृपा.</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer"><span>Bhaagyavedh</span><span>bhaagyavedh.com</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PAGE 5: BHAV CHALIT + CUSP TABLE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h1 class="section-title">Page 5 — भाव चलित + भाव संधी</h1>
+<p class="comparison-label">Chart stays SAME. House cusp degrees + planet shift list added below.</p>
+
+<div class="page auto-height">
+  <div class="page-header"><span class="logo">Bhaagyavedh</span><span class="mantra">॥ श्री गणेशाय नमः ॥</span></div>
+  <div class="page-content">
+    <h2 style="font-size:16px;font-weight:700;color:#1c1917;margin-bottom:16px;">निरयण भाव चलित</h2>
+
+    <div style="width:260px;height:260px;border:2px solid #c0a060;margin:0 auto 20px;position:relative;background:#fdfbf6;">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg);width:184px;height:184px;border:1.5px solid #c0a060;"></div>
+      <div style="position:absolute;top:45%;left:38%;font-size:11px;color:#d4a843;font-weight:600;">भाव चलित</div>
+    </div>
+
+    <div class="interp-box">
+      <h4>भाव संधी (House Cusps) <span class="new-tag">NEW</span></h4>
+      <table class="data-table" style="font-size:10px;">
+        <thead><tr><th>भाव</th><th>प्रारंभ अंश</th><th>मध्य अंश</th><th>अंत अंश</th><th>राशी</th></tr></thead>
+        <tbody>
+          <tr><td>१</td><td>१५°१२' कन्या</td><td>०°०८' तुला</td><td>१५°०४' तुला</td><td>तुला</td></tr>
+          <tr><td>२</td><td>१५°०४' तुला</td><td>०°०१' वृश्चिक</td><td>१४°५७' वृश्चिक</td><td>वृश्चिक</td></tr>
+          <tr><td>३</td><td>१४°५७' वृश्चिक</td><td>२९°५३' वृश्चिक</td><td>१४°५०' धनु</td><td>धनु</td></tr>
+          <tr><td colspan="5" style="text-align:center;color:#8b6b4a;font-style:italic;">... (एकूण १२ भाव)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="interp-box" style="margin-top:12px;">
+      <h4>ग्रह भाव बदल (D1 → भाव चलित) <span class="new-tag">NEW</span></h4>
+      <p style="font-size:10px;color:#8b6b4a;margin-bottom:8px;">हे ग्रह लग्न कुंडलीपेक्षा भाव चलितमध्ये वेगळ्या भावात बसतात — भविष्यकथनात महत्त्वाचे</p>
+      <div class="interp-item">
+        <div class="interp-value"><span class="badge-amber">चंद्र</span> — लग्न कुंडली: भाव ९ → भाव चलित: <strong>भाव ८</strong> (भाग्य → आयुष्य/अडचणी मध्ये बदल)</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-value"><span class="badge-amber">गुरु</span> — लग्न कुंडली: भाव ९ → भाव चलित: <strong>भाव ९</strong> (बदल नाही)</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer"><span>Bhaagyavedh</span><span>bhaagyavedh.com</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PAGE 6: DASHAMSHA (D10) + CAREER -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h1 class="section-title">Page 6 — दशमांश (D10) + करिअर विश्लेषण</h1>
+<p class="comparison-label">Chart stays SAME. Career interpretation added below.</p>
+
+<div class="page auto-height">
+  <div class="page-header"><span class="logo">Bhaagyavedh</span><span class="mantra">॥ श्री गणेशाय नमः ॥</span></div>
+  <div class="page-content">
+    <h2 style="font-size:16px;font-weight:700;color:#1c1917;margin-bottom:16px;">दशमांश (D10) — करिअर</h2>
+
+    <div style="width:260px;height:260px;border:2px solid #c0a060;margin:0 auto 20px;position:relative;background:#fdfbf6;">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg);width:184px;height:184px;border:1.5px solid #c0a060;"></div>
+      <div style="position:absolute;top:45%;left:42%;font-size:11px;color:#d4a843;font-weight:600;">D10</div>
+    </div>
+
+    <div class="interp-box">
+      <h4>करिअर विश्लेषण <span class="new-tag">NEW</span></h4>
+      <div class="interp-item">
+        <div class="interp-label">व्यवसाय प्रकार</div>
+        <div class="interp-value">D10 लग्नेश + दशमेश स्थितीवरून — तंत्रज्ञान, संगणक, लेखन, संवाद क्षेत्र अनुकूल. बुध प्रभावामुळे विश्लेषणात्मक कार्य उत्तम.</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-label">नोकरी / व्यवसाय</div>
+        <div class="interp-value">D10 मध्ये ७ वा भाव बलवान असल्यास — व्यवसाय/भागीदारी अनुकूल. १० वा भाव बलवान — नोकरीत यश.</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-label">करिअर उन्नती काळ</div>
+        <div class="interp-value">D10 लग्नेश दशा/अंतर्दशा काळात — व्यावसायिक प्रगतीचा उत्तम काळ. सध्या बुध महादशा — बौद्धिक कार्यात यश.</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer"><span>Bhaagyavedh</span><span>bhaagyavedh.com</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- PAGE 7: SAPTAMSHA (D7) + CHILDREN -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h1 class="section-title">Page 7 — सप्तांश (D7) + संतती विश्लेषण</h1>
+<p class="comparison-label">Chart stays SAME. Children analysis added below.</p>
+
+<div class="page auto-height">
+  <div class="page-header"><span class="logo">Bhaagyavedh</span><span class="mantra">॥ श्री गणेशाय नमः ॥</span></div>
+  <div class="page-content">
+    <h2 style="font-size:16px;font-weight:700;color:#1c1917;margin-bottom:16px;">सप्तांश (D7) — संतती</h2>
+
+    <div style="width:260px;height:260px;border:2px solid #c0a060;margin:0 auto 20px;position:relative;background:#fdfbf6;">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg);width:184px;height:184px;border:1.5px solid #c0a060;"></div>
+      <div style="position:absolute;top:45%;left:42%;font-size:11px;color:#d4a843;font-weight:600;">D7</div>
+    </div>
+
+    <div class="interp-box">
+      <h4>संतती विश्लेषण <span class="new-tag">NEW</span></h4>
+      <div class="interp-item">
+        <div class="interp-label">संतती योग</div>
+        <div class="interp-value">D7 मधील ५ वा भाव + पंचमेश स्थिती — संतती सुखाचे संकेत. गुरु (पुत्रकारक) बलवान असल्यास उत्तम.</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-label">संतती संख्या संकेत</div>
+        <div class="interp-value">D7 लग्नेश + ५ व्या भावाचे स्वामी यांच्या स्थितीवरून संतती संख्येचे अनुमान.</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-label">संतती काळ</div>
+        <div class="interp-value">पंचमेश दशा/अंतर्दशा काळात — संतती प्राप्तीचा अनुकूल काळ.</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer"><span>Bhaagyavedh</span><span>bhaagyavedh.com</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ENHANCED PLANET TABLE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h1 class="section-title">Page 9 — ग्रह स्पष्ट (Enhanced Table)</h1>
+<p class="comparison-label">Same table + 2 new columns: नक्षत्र स्वामी + अस्त</p>
+
+<div class="page auto-height">
+  <div class="page-header"><span class="logo">Bhaagyavedh</span><span class="mantra">॥ श्री गणेशाय नमः ॥</span></div>
+  <div class="page-content">
+    <h2 style="font-size:16px;font-weight:700;color:#1c1917;margin-bottom:12px;">निरयण ग्रह स्पष्ट</h2>
+    <table class="data-table">
+      <thead>
+        <tr><th>ग्रह</th><th>राशी</th><th>अंश</th><th>नक्षत्र</th><th>नक्ष. स्वामी <span class="new-tag">NEW</span></th><th>पद</th><th>भाव</th><th>वक्री</th><th>अस्त <span class="new-tag">NEW</span></th></tr>
+      </thead>
+      <tbody>
+        <tr><td style="font-weight:600;">सूर्य</td><td>मकर</td><td>२४°५८'९"</td><td>धनिष्ठा</td><td style="color:#d4a843;font-weight:600;">मंगळ</td><td>१</td><td>४</td><td>—</td><td>—</td></tr>
+        <tr><td style="font-weight:600;">चंद्र</td><td>मिथुन</td><td>२९°२०'१९"</td><td>पुनर्वसु</td><td style="color:#d4a843;font-weight:600;">गुरु</td><td>३</td><td>९</td><td>—</td><td>—</td></tr>
+        <tr><td style="font-weight:600;">मंगळ</td><td>धनु</td><td>१२°५३'७"</td><td>मूळ</td><td style="color:#d4a843;font-weight:600;">केतु</td><td>४</td><td>३</td><td>—</td><td>—</td></tr>
+        <tr><td style="font-weight:600;">बुध</td><td>मकर</td><td>००°४०'२४"</td><td>उत्तराषाढा</td><td style="color:#d4a843;font-weight:600;">सूर्य</td><td>२</td><td>४</td><td>—</td><td style="color:#c62828;font-weight:600;">अस्त</td></tr>
+        <tr><td style="font-weight:600;">गुरु</td><td>मिथुन</td><td>०७°३४'२२"</td><td>आर्द्रा</td><td style="color:#d4a843;font-weight:600;">राहु</td><td>१</td><td>९</td><td style="color:#c62828;">वक्री</td><td>—</td></tr>
+        <tr><td style="font-weight:600;">शुक्र</td><td>धनु</td><td>२७°१२'३८"</td><td>उत्तराषाढा</td><td style="color:#d4a843;font-weight:600;">सूर्य</td><td>१</td><td>३</td><td style="color:#c62828;">वक्री</td><td>—</td></tr>
+        <tr><td style="font-weight:600;">शनि</td><td>धनु</td><td>२६°१४'५७"</td><td>पूर्वाषाढा</td><td style="color:#d4a843;font-weight:600;">शुक्र</td><td>४</td><td>३</td><td>—</td><td>—</td></tr>
+        <tr><td style="font-weight:600;">राहु</td><td>मकर</td><td>२२°४६'३१"</td><td>श्रवण</td><td style="color:#d4a843;font-weight:600;">चंद्र</td><td>४</td><td>४</td><td style="color:#c62828;">वक्री</td><td>—</td></tr>
+        <tr><td style="font-weight:600;">केतु</td><td>कर्क</td><td>२२°४६'३१"</td><td>आश्लेषा</td><td style="color:#d4a843;font-weight:600;">बुध</td><td>२</td><td>१०</td><td style="color:#c62828;">वक्री</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="page-footer"><span>Bhaagyavedh</span><span>bhaagyavedh.com</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- NEW PAGE: BHAV SWAMI TABLE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h1 class="section-title">Page 10 — भाव स्वामी सारणी (NEW PAGE)</h1>
+<p class="comparison-label">Completely new page. Shows which planet owns which house.</p>
+
+<div class="page auto-height">
+  <div class="page-header"><span class="logo">Bhaagyavedh</span><span class="mantra">॥ श्री गणेशाय नमः ॥</span></div>
+  <div class="page-content">
+    <h2 style="font-size:16px;font-weight:700;color:#1c1917;margin-bottom:12px;">भाव स्वामी सारणी <span class="new-tag">NEW PAGE</span></h2>
+    <p style="font-size:10px;color:#8b6b4a;margin-bottom:10px;">प्रत्येक भावाचा स्वामी (मालक) ग्रह कोणता आणि तो कोणत्या भावात बसला आहे</p>
+    <table class="data-table">
+      <thead><tr><th>भाव</th><th>राशी</th><th>विषय</th><th>स्वामी</th><th>स्वामी भाव</th><th>स्वामी राशी</th><th>स्वामी बल</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">१</td><td>तुला</td><td>तनु / व्यक्तिमत्व</td><td style="color:#d4a843;font-weight:600;">शुक्र</td><td>३</td><td>धनु</td><td>वक्री</td></tr>
+        <tr><td style="font-weight:600;">२</td><td>वृश्चिक</td><td>धन / कुटुंब</td><td style="color:#d4a843;font-weight:600;">मंगळ</td><td>३</td><td>धनु</td><td>मूळ नक्षत्र</td></tr>
+        <tr><td style="font-weight:600;">३</td><td>धनु</td><td>पराक्रम / भावंडे</td><td style="color:#d4a843;font-weight:600;">गुरु</td><td>९</td><td>मिथुन</td><td>वक्री, मित्र</td></tr>
+        <tr><td style="font-weight:600;">४</td><td>मकर</td><td>सुख / माता / घर</td><td style="color:#d4a843;font-weight:600;">शनि</td><td>३</td><td>धनु</td><td>मित्र राशी</td></tr>
+        <tr><td style="font-weight:600;">५</td><td>कुंभ</td><td>संतती / विद्या</td><td style="color:#d4a843;font-weight:600;">शनि</td><td>३</td><td>धनु</td><td>मित्र राशी</td></tr>
+        <tr><td style="font-weight:600;">६</td><td>मीन</td><td>शत्रू / रोग</td><td style="color:#d4a843;font-weight:600;">गुरु</td><td>९</td><td>मिथुन</td><td>वक्री</td></tr>
+        <tr><td style="font-weight:600;">७</td><td>मेष</td><td>विवाह / भागीदारी</td><td style="color:#d4a843;font-weight:600;">मंगळ</td><td>३</td><td>धनु</td><td>मूळ नक्षत्र</td></tr>
+        <tr><td style="font-weight:600;">८</td><td>वृषभ</td><td>आयुष्य / अडचणी</td><td style="color:#d4a843;font-weight:600;">शुक्र</td><td>३</td><td>धनु</td><td>वक्री</td></tr>
+        <tr><td style="font-weight:600;">९</td><td>मिथुन</td><td>भाग्य / पिता</td><td style="color:#d4a843;font-weight:600;">बुध</td><td>४</td><td>मकर</td><td>मित्र राशी</td></tr>
+        <tr><td style="font-weight:600;">१०</td><td>कर्क</td><td>कर्म / व्यवसाय</td><td style="color:#d4a843;font-weight:600;">चंद्र</td><td>९</td><td>मिथुन</td><td>मित्र राशी</td></tr>
+        <tr><td style="font-weight:600;">११</td><td>सिंह</td><td>लाभ / मित्र</td><td style="color:#d4a843;font-weight:600;">सूर्य</td><td>४</td><td>मकर</td><td>शत्रू राशी</td></tr>
+        <tr><td style="font-weight:600;">१२</td><td>कन्या</td><td>खर्च / मोक्ष / परदेश</td><td style="color:#d4a843;font-weight:600;">बुध</td><td>४</td><td>मकर</td><td>मित्र राशी</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="page-footer"><span>Bhaagyavedh</span><span>bhaagyavedh.com</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- NEW PAGE: ASPECTS TABLE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h1 class="section-title">Page 11 — ग्रह दृष्टी सारणी (NEW PAGE)</h1>
+<p class="comparison-label">Completely new page. Shows which planet aspects which planet.</p>
+
+<div class="page auto-height">
+  <div class="page-header"><span class="logo">Bhaagyavedh</span><span class="mantra">॥ श्री गणेशाय नमः ॥</span></div>
+  <div class="page-content">
+    <h2 style="font-size:16px;font-weight:700;color:#1c1917;margin-bottom:8px;">ग्रह दृष्टी सारणी <span class="new-tag">NEW PAGE</span></h2>
+    <p style="font-size:9px;color:#8b6b4a;margin-bottom:12px;">● = ७ वी दृष्टी (सर्व ग्रह) &nbsp;&nbsp; ✦4 = ४ थी दृष्टी (मंगळ) &nbsp;&nbsp; ✦5 = ५ वी (गुरु) &nbsp;&nbsp; ✦3 = ३ री (शनि) &nbsp;&nbsp; ✦8 = ८ वी (मंगळ) &nbsp;&nbsp; ✦9 = ९ वी (गुरु) &nbsp;&nbsp; ✦10 = १० वी (शनि)</p>
+    <table class="aspect-table">
+      <thead><tr><th>दृष्टी ↓ वर →</th><th>सूर्य</th><th>चंद्र</th><th>मंगळ</th><th>बुध</th><th>गुरु</th><th>शुक्र</th><th>शनि</th><th>राहु</th><th>केतु</th></tr></thead>
+      <tbody>
+        <tr><th style="background:#3d0c0c;color:#d4a843;">सूर्य</th><td>—</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="has-aspect">●</td></tr>
+        <tr><th style="background:#3d0c0c;color:#d4a843;">चंद्र</th><td></td><td>—</td><td class="has-aspect">●</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><th style="background:#3d0c0c;color:#d4a843;">मंगळ</th><td></td><td class="special">✦4</td><td>—</td><td></td><td class="has-aspect">●</td><td></td><td></td><td class="special">✦8</td><td></td></tr>
+        <tr><th style="background:#3d0c0c;color:#d4a843;">बुध</th><td></td><td></td><td></td><td>—</td><td></td><td></td><td></td><td></td><td class="has-aspect">●</td></tr>
+        <tr><th style="background:#3d0c0c;color:#d4a843;">गुरु</th><td class="special">✦5</td><td></td><td></td><td class="has-aspect">●</td><td>—</td><td></td><td></td><td></td><td class="special">✦9</td></tr>
+        <tr><th style="background:#3d0c0c;color:#d4a843;">शुक्र</th><td></td><td class="has-aspect">●</td><td></td><td></td><td></td><td>—</td><td></td><td></td><td></td></tr>
+        <tr><th style="background:#3d0c0c;color:#d4a843;">शनि</th><td></td><td></td><td></td><td></td><td class="special">✦3</td><td></td><td>—</td><td></td><td class="has-aspect">●</td></tr>
+        <tr><th style="background:#3d0c0c;color:#d4a843;">राहु</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>—</td><td></td></tr>
+        <tr><th style="background:#3d0c0c;color:#d4a843;">केतु</th><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="font-size:14px;font-weight:700;color:#1c1917;margin:24px 0 8px;">महत्त्वाचे दृष्टी योग</h2>
+    <div class="interp-box">
+      <div class="interp-item">
+        <div class="interp-value"><strong>गुरु → सूर्य (✦5)</strong> — गुरु ५ व्या दृष्टीने सूर्याकडे पाहतो. राजयोग संकेत — अधिकार, मान-सन्मान प्राप्ती.</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-value"><strong>शनि → गुरु (✦3)</strong> — शनि ३ ऱ्या दृष्टीने गुरुकडे पाहतो. परिश्रमाने ज्ञानप्राप्ती, विलंबाने यश.</div>
+      </div>
+      <div class="interp-item">
+        <div class="interp-value"><strong>मंगळ → राहु (✦8)</strong> — मंगळ ८ व्या दृष्टीने राहुकडे पाहतो. अचानक बदल, तंत्रज्ञान क्षेत्रात यश.</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-footer"><span>Bhaagyavedh</span><span>bhaagyavedh.com</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ENHANCED DASHA PAGE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h1 class="section-title">Page 18-19 — दशा कालावधी (Enhanced with प्रत्यंतर)</h1>
+<p class="comparison-label">Existing dasha timeline + NEW 3rd level (Pratyantar) added</p>
+
+<div class="page auto-height">
+  <div class="page-header"><span class="logo">Bhaagyavedh</span><span class="mantra">॥ श्री गणेशाय नमः ॥</span></div>
+  <div class="page-content">
+    <h2 style="font-size:16px;font-weight:700;color:#1c1917;margin-bottom:12px;">चालू अंतर्दशा — प्रत्यंतर दशा <span class="new-tag">NEW</span></h2>
+    <p style="font-size:10px;color:#8b6b4a;margin-bottom:12px;">महादशा: बुध (२०१३-२०३०) → अंतर्दशा: बुध-गुरु → प्रत्यंतर दशा (3rd level)</p>
+
+    <table class="data-table">
+      <thead><tr><th>प्रत्यंतर दशा</th><th>प्रारंभ</th><th>अंत</th><th>कालावधी</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600;">बुध-गुरु-<span style="color:#d4a843;">गुरु</span></td><td>१५/०३/२०२५</td><td>२८/०६/२०२५</td><td>३ महिने १३ दिवस</td></tr>
+        <tr style="background:#FFF8E7;"><td style="font-weight:600;">बुध-गुरु-<span style="color:#d4a843;">शनि</span> ← <span class="badge-amber">चालू</span></td><td>२८/०६/२०२५</td><td>०५/११/२०२५</td><td>४ महिने ७ दिवस</td></tr>
+        <tr><td style="font-weight:600;">बुध-गुरु-<span style="color:#d4a843;">बुध</span></td><td>०५/११/२०२५</td><td>२८/०२/२०२६</td><td>३ महिने २३ दिवस</td></tr>
+        <tr><td style="font-weight:600;">बुध-गुरु-<span style="color:#d4a843;">केतु</span></td><td>२८/०२/२०२६</td><td>१८/०४/२०२६</td><td>१ महिना १८ दिवस</td></tr>
+        <tr><td style="font-weight:600;">बुध-गुरु-<span style="color:#d4a843;">शुक्र</span></td><td>१८/०४/२०२६</td><td>२३/०८/२०२६</td><td>४ महिने ५ दिवस</td></tr>
+        <tr><td style="font-weight:600;">बुध-गुरु-<span style="color:#d4a843;">सूर्य</span></td><td>२३/०८/२०२६</td><td>१२/१०/२०२६</td><td>१ महिना १९ दिवस</td></tr>
+        <tr><td style="font-weight:600;">बुध-गुरु-<span style="color:#d4a843;">चंद्र</span></td><td>१२/१०/२०२६</td><td>२६/१२/२०२६</td><td>२ महिने १४ दिवस</td></tr>
+        <tr><td style="font-weight:600;">बुध-गुरु-<span style="color:#d4a843;">मंगळ</span></td><td>२६/१२/२०२६</td><td>१३/०२/२०२७</td><td>१ महिना १८ दिवस</td></tr>
+        <tr><td style="font-weight:600;">बुध-गुरु-<span style="color:#d4a843;">राहु</span></td><td>१३/०२/२०२७</td><td>२३/०६/२०२७</td><td>४ महिने १० दिवस</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="page-footer"><span>Bhaagyavedh</span><span>bhaagyavedh.com</span></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- FINAL SUMMARY -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="page-index" style="margin-top:60px;">
+  <h2>Complete Changes Summary</h2>
+  <table>
+    <tr style="background:#e8f5e9;"><td colspan="3" style="font-weight:700;color:#2e7d32;">PAGE 1 — Cover Enhanced</td></tr>
+    <tr><td></td><td>+ वार, सूर्योदय/सूर्यास्त, दिनमान, तिथी, योग/करण, राशी अक्षर, शक संवत</td><td><span class="new-tag">NEW</span></td></tr>
+    <tr><td></td><td>+ भोग्य दशा at birth</td><td><span class="new-tag">NEW</span></td></tr>
+    <tr><td></td><td>+ दोष स्थिती section (मंगळिक, काळसर्प, साडेसाती, पितृ)</td><td><span class="new-tag">NEW</span></td></tr>
+    <tr><td></td><td>+ शुभ माहिती section (रत्न, रंग, अंक, दिवस, दिशा, धातू)</td><td><span class="new-tag">NEW</span></td></tr>
+    <tr><td></td><td>+ जन्म ठिकाण name (पुणे) instead of just lat/lng</td><td><span class="changed-tag">FIX</span></td></tr>
+
+    <tr style="background:#e8f5e9;"><td colspan="3" style="font-weight:700;color:#2e7d32;">CHART PAGES — Analysis Below Each Chart</td></tr>
+    <tr><td></td><td>लग्न कुंडली + लग्न विश्लेषण, लग्नेश स्थिती, मंगळिक, साडेसाती</td><td><span class="new-tag">NEW</span></td></tr>
+    <tr><td></td><td>चंद्र कुंडली + चंद्र योग, मानसिक स्वभाव, चंद्र बल</td><td><span class="new-tag">NEW</span></td></tr>
+    <tr><td></td><td>नवमांश (D9) + वर्गोत्तम ग्रह, विवाह विश्लेषण, शुक्र/गुरु D9 स्थिती</td><td><span class="new-tag">NEW</span></td></tr>
+    <tr><td></td><td>भाव चलित + भाव संधी degrees table, ग्रह भाव बदल list</td><td><span class="new-tag">NEW</span></td></tr>
+    <tr><td></td><td>दशमांश (D10) + करिअर विश्लेषण, व्यवसाय प्रकार, उन्नती काळ</td><td><span class="new-tag">NEW</span></td></tr>
+    <tr><td></td><td>सप्तांश (D7) + संतती विश्लेषण, संतती योग, संतती काळ</td><td><span class="new-tag">NEW</span></td></tr>
+
+    <tr style="background:#e8f5e9;"><td colspan="3" style="font-weight:700;color:#2e7d32;">PLANET TABLE — Enhanced</td></tr>
+    <tr><td></td><td>+ नक्षत्र स्वामी column</td><td><span class="new-tag">NEW</span></td></tr>
+    <tr><td></td><td>+ अस्त (Combustion) column</td><td><span class="new-tag">NEW</span></td></tr>
+
+    <tr style="background:#e8f5e9;"><td colspan="3" style="font-weight:700;color:#2e7d32;">NEW PAGES</td></tr>
+    <tr><td></td><td>भाव स्वामी सारणी — 12 row house lordship table</td><td><span class="new-tag">NEW PAGE</span></td></tr>
+    <tr><td></td><td>ग्रह दृष्टी सारणी — 9x9 aspect matrix + important aspect interpretations</td><td><span class="new-tag">NEW PAGE</span></td></tr>
+
+    <tr style="background:#e8f5e9;"><td colspan="3" style="font-weight:700;color:#2e7d32;">DASHA — Enhanced</td></tr>
+    <tr><td></td><td>+ प्रत्यंतर दशा (3rd level) table with current highlighted</td><td><span class="new-tag">NEW</span></td></tr>
+
+    <tr style="background:#fff3e0;"><td colspan="3" style="font-weight:700;color:#e65100;">UNCHANGED PAGES (no modifications)</td></tr>
+    <tr><td></td><td>ग्रह बल, योग, दोष, भविष्यकथन, चालू दशा फल, उपाय</td><td>✅ NO CHANGE</td></tr>
+  </table>
+
+  <div style="margin-top:20px;padding:14px;background:#FFF8E7;border-radius:8px;border-left:3px solid #d4a843;">
+    <p style="font-size:13px;color:#3d0c0c;font-weight:700;">Total: ~21 pages (from current ~15)</p>
+    <p style="font-size:11px;color:#8b6b4a;margin-top:4px;">Your design system (colors, fonts, layout) — ZERO changes. Only content added.</p>
+    <p style="font-size:11px;color:#8b6b4a;margin-top:4px;">All charts remain exactly as they are — only interpretation sections added BELOW each chart.</p>
+  </div>
+</div>
+
+</body>
+</html>

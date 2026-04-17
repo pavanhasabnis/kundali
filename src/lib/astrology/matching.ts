@@ -66,7 +66,7 @@ function matchVashya(boyRashi: number, girlRashi: number): number {
 
 // Tara matching (3 points) — check BOTH directions, take better score
 function matchTara(boyNak: number, girlNak: number): number {
-  const favorable = [1, 2, 4, 6, 8, 9]; // Janma, Sampat, Kshema, Sadhana, Mitra, Ati-Mitra
+  const favorable = [2, 4, 6, 8, 9]; // Sampat, Kshema, Sadhana, Mitra, Ati-Mitra (Janma excluded per Phaladeepika)
 
   // Boy's tara from girl
   const diff1 = ((boyNak - girlNak + 27) % 27);

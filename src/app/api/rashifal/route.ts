@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import swisseph from "swisseph";
 import { calculateGochar, type TransitPlanet } from "@/lib/astrology/gochar";
 
-// Planet IDs in Swiss Ephemeris
+// Planet IDs
 const PLANET_IDS: { id: string; seId: number }[] = [
   { id: "Sun", seId: swisseph.SE_SUN },
   { id: "Moon", seId: swisseph.SE_MOON },

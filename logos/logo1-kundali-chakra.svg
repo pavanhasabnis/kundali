@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 140" width="400" height="140">
+  <!-- Logo 1: Kundali Chakra with 12 houses -->
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4a843"/>
+      <stop offset="100%" style="stop-color:#8b6914"/>
+    </linearGradient>
+    <linearGradient id="g1bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3d0c0c"/>
+      <stop offset="100%" style="stop-color:#1a0505"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="140" rx="12" fill="url(#g1bg)"/>
+
+  <!-- Kundali Diamond (12 house patrika shape) -->
+  <g transform="translate(70,70)">
+    <!-- Outer diamond -->
+    <rect x="-38" y="-38" width="76" height="76" rx="2" fill="none" stroke="url(#g1)" stroke-width="2.5" transform="rotate(45)"/>
+    <!-- Inner diamond -->
+    <rect x="-22" y="-22" width="44" height="44" rx="1" fill="none" stroke="url(#g1)" stroke-width="1.5" transform="rotate(45)"/>
+    <!-- Cross lines (house divisions) -->
+    <line x1="-38" y1="0" x2="38" y2="0" stroke="url(#g1)" stroke-width="1" transform="rotate(45)"/>
+    <line x1="0" y1="-38" x2="0" y2="38" stroke="url(#g1)" stroke-width="1" transform="rotate(45)"/>
+    <!-- Center sun -->
+    <circle cx="0" cy="0" r="8" fill="url(#g1)" opacity="0.9"/>
+    <text x="0" y="4" text-anchor="middle" fill="#3d0c0c" font-size="10" font-weight="bold">ॐ</text>
+  </g>
+
+  <!-- Text -->
+  <text x="130" y="55" fill="#d4a843" font-family="Georgia, serif" font-size="36" font-weight="bold" letter-spacing="1">MyPatrika</text>
+  <text x="130" y="80" fill="#ffffff" font-family="Georgia, serif" font-size="13" letter-spacing="3" opacity="0.5">VEDIC ASTROLOGY</text>
+  <line x1="130" y1="90" x2="300" y2="90" stroke="#d4a843" stroke-width="0.5" opacity="0.3"/>
+  <text x="130" y="108" fill="#d4a843" font-family="sans-serif" font-size="11" letter-spacing="1" opacity="0.7">माय पत्रिका — वैदिक ज्योतिष</text>
+</svg>
