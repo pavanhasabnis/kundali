@@ -3,10 +3,11 @@ import RashifalPageClient from "./rashifal-client";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
-  const l: Lang = lang === "en" ? "en" : "mr";
+  const l: Lang = lang === "en" ? "en" : lang === "hi" ? "hi" : "mr";
   const today = new Date();
   const dateEn = today.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
   const dateMr = today.toLocaleDateString("mr-IN", { day: "numeric", month: "long", year: "numeric" });
+  const dateHi = today.toLocaleDateString("hi-IN", { day: "numeric", month: "long", year: "numeric" });
 
   return pageMetaI18n({
     lang: l,
@@ -30,6 +31,16 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         "aajcha rashifal", "ajjcha rashi bhavishya", "rashi bhavishya marathi",
         "daily rashifal marathi",
         "आजचे राशीभविष्य", "दैनिक राशीफल",
+      ],
+    },
+    hi: {
+      title: `आज का राशिफल — १२ राशियाँ | Aaj Ka Rashifal`,
+      description: `आज का राशिफल ${dateHi} — मेष से मीन तक सभी १२ राशियों का दैनिक राशिफल. Aaj ka rashifal hindi, ग्रह गोचर पर आधारित सटीक भविष्य.`,
+      keywords: [
+        "आज का राशिफल", "दैनिक राशिफल", "१२ राशि भविष्य", "राशि भविष्य हिंदी",
+        "aaj ka rashifal", "aaj ka rashifal hindi", "daily rashifal hindi",
+        "rashifal today hindi", "horoscope hindi", "daily horoscope hindi",
+        "12 rashi horoscope hindi",
       ],
     },
   });

@@ -3,7 +3,7 @@ import MatchingPageClient from "./matching-client";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
-  const l: Lang = lang === "en" ? "en" : "mr";
+  const l: Lang = lang === "en" ? "en" : lang === "hi" ? "hi" : "mr";
   return pageMetaI18n({
     lang: l,
     path: "/matching",
@@ -29,6 +29,18 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         "marriage matching vedic", "mangal dosh check", "nadi dosh",
         "gun milan marathi", "gun milaan", "kundali matching marathi", "ashtakoot marathi",
         "गुण मिलान", "कुंडली मिलान", "36 गुण कुंडली",
+      ],
+    },
+    hi: {
+      title: "गुण मिलान — ३६ गुण कुंडली मिलान | Gun Milan Hindi | भाग्यवेध",
+      description:
+        "विवाह के लिए ३६ गुण कुंडली मिलान. अष्टकूट गुण मिलान — वर्ण, वश्य, तारा, योनि, ग्रह मैत्री, गण, भकूट, नाड़ी. Gun milan hindi, kundali matching online free.",
+      keywords: [
+        "गुण मिलान", "कुंडली मिलान", "३६ गुण कुंडली", "अष्टकूट",
+        "मंगल दोष", "नाड़ी दोष", "भकूट दोष", "विवाह कुंडली",
+        "gun milan hindi", "kundali matching hindi", "ashtakoot matching hindi",
+        "mangal dosh hindi", "nadi dosh hindi", "36 gun milan hindi",
+        "marriage kundli matching hindi",
       ],
     },
   });

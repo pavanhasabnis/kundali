@@ -3,7 +3,7 @@ import { pageMetaI18n, type Lang } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
-  const l: Lang = lang === "en" ? "en" : "mr";
+  const l: Lang = lang === "en" ? "en" : lang === "hi" ? "hi" : "mr";
   return pageMetaI18n({
     lang: l,
     path: "/",
@@ -28,6 +28,17 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         "mofat kundli", "aajcha rashifal", "janam kundali marathi", "gun milan",
         "bhaagyavedh", "marathi horoscope",
         "आजचे राशीभविष्य", "मोफत कुंडली",
+      ],
+    },
+    hi: {
+      title: "भाग्यवेध — मुफ्त कुंडली, राशिफल, पंचांग",
+      description:
+        "मुफ्त जन्म कुंडली, आज का राशिफल, गुण मिलान, पंचांग, शुभ मुहूर्त और तीर्थयात्रा. Aaj ka rashifal, free kundli, panchang hindi. भाग्यवेध वैदिक ज्योतिष.",
+      keywords: [
+        "मुफ्त कुंडली", "जन्म कुंडली", "आज का राशिफल", "पंचांग आज", "गुण मिलान", "मुहूर्त",
+        "तीर्थयात्रा", "हिन्दी ज्योतिष",
+        "free kundli", "aaj ka rashifal", "panchang hindi", "gun milan hindi",
+        "muhurat hindi", "bhaagyavedh", "vedic astrology hindi", "janam kundali hindi",
       ],
     },
   });

@@ -4,7 +4,7 @@ import { JsonLd, serviceSchema, breadcrumbSchema } from "@/components/json-ld";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
-  const l: Lang = lang === "en" ? "en" : "mr";
+  const l: Lang = lang === "en" ? "en" : lang === "hi" ? "hi" : "mr";
   return pageMetaI18n({
     lang: l,
     path: "/panchang",
@@ -29,6 +29,18 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         "vedic panchang", "rahu kaal today", "tithi today",
         "aaj cha panchang", "aajcha panchang", "panchang marathi", "rahu kaal marathi",
         "आजचे पंचांग", "पंचांग मराठी",
+      ],
+    },
+    hi: {
+      title: "आज का पंचांग — तिथि, नक्षत्र, राहु काल | Panchang Hindi",
+      description:
+        "आज का पंचांग — तिथि, नक्षत्र, योग, करण, राहु काल, सूर्योदय, सूर्यास्त. Aaj ka panchang hindi — दिल्ली, मुंबई, पुणे, जयपुर के लिए दैनिक पंचांग.",
+      keywords: [
+        "आज का पंचांग", "पंचांग हिंदी", "दैनिक पंचांग", "तिथि आज", "नक्षत्र आज",
+        "राहु काल", "सूर्योदय समय", "दिल्ली पंचांग", "मुंबई पंचांग",
+        "aaj ka panchang", "panchang hindi", "panchang today hindi",
+        "rahu kaal hindi", "tithi today hindi",
+        "today panchang", "daily panchang hindi", "vedic panchang",
       ],
     },
   });
@@ -58,7 +70,7 @@ export default async function PanchangPage({ params }: { params: Promise<{ lang:
       logo: { "@type": "ImageObject", url: "https://bhaagyavedh.com/logos/logo-dark.svg" },
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
-    inLanguage: lang === "en" ? "en-IN" : "mr-IN",
+    inLanguage: lang === "en" ? "en-IN" : lang === "hi" ? "hi-IN" : "mr-IN",
   };
   const panchangFaqSchema = {
     "@context": "https://schema.org",
@@ -83,6 +95,16 @@ export default async function PanchangPage({ params }: { params: Promise<{ lang:
         "@type": "Question",
         name: "How is Rahu Kaal calculated?",
         acceptedAnswer: { "@type": "Answer", text: "Rahu Kaal is an inauspicious 90-minute period each day based on the weekday. The day length (sunrise to sunset) is divided into 8 parts and Rahu Kaal falls on a specific part per weekday." },
+      },
+      {
+        "@type": "Question",
+        name: "आज का पंचांग क्या है?",
+        acceptedAnswer: { "@type": "Answer", text: "आज का पंचांग आज की तिथि, नक्षत्र, योग, करण और वार की जानकारी है — दैनिक वैदिक कैलेंडर का आधार. हर शुभ कार्य के लिए पंचांग देखा जाता है." },
+      },
+      {
+        "@type": "Question",
+        name: "राहु काल क्या होता है?",
+        acceptedAnswer: { "@type": "Answer", text: "राहु काल दिन का १.५ घंटे का अशुभ समय है. सूर्योदय से सूर्यास्त तक का समय वार के अनुसार बदलता है — जैसे सोमवार को दोपहर, शनिवार को सुबह." },
       },
     ],
   };
