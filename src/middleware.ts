@@ -27,7 +27,11 @@ export function middleware(req: NextRequest) {
 
   const lang = hasLangPrefix(pathname);
   if (lang) {
-    const res = NextResponse.next();
+    // Propagate x-lang to server components via REQUEST headers
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set("x-lang", lang);
+    requestHeaders.set("x-pathname", pathname);
+    const res = NextResponse.next({ request: { headers: requestHeaders } });
     res.headers.set("x-lang", lang);
     if (req.cookies.get("lang")?.value !== lang) {
       res.cookies.set("lang", lang, { path: "/", maxAge: 60 * 60 * 24 * 365 });

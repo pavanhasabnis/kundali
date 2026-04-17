@@ -69,13 +69,13 @@ export function NavBar() {
             <img src={lang === "mr" ? "/logos/navbar-dark-mr.svg" : "/logos/navbar-dark.svg"} alt="Bhaagyavedh" className="h-10 w-auto" />
           </Link>
 
-          {/* Desktop: nav links in one line */}
-          <nav className="hidden lg:flex items-center gap-0 flex-1 justify-end mx-3">
+          {/* Desktop: nav links in one line, scroll on overflow */}
+          <nav className="hidden lg:flex items-center gap-0 flex-1 justify-end mx-3 min-w-0 overflow-x-auto scrollbar-hide">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={withLang(link.href)}
-                className="px-1.5 xl:px-2 py-1 text-[11px] xl:text-[12px] font-medium text-white/70 hover:text-[#d4a843] transition-colors whitespace-nowrap"
+                className="shrink-0 px-1.5 xl:px-2 py-1 text-[11px] xl:text-[12px] font-medium text-white/70 hover:text-[#d4a843] transition-colors whitespace-nowrap"
               >
                 {t(link.labelMr, link.labelEn)}
               </Link>

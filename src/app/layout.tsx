@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import "./globals.css";
 import { LangProvider, type Lang } from "@/lib/astrology/language-context";
 import { NavBar } from "./nav-bar";
@@ -93,8 +93,17 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const h = await headers();
+  const c = await cookies();
+  // Priority: x-lang header > x-pathname first segment > lang cookie > default mr
   const xLang = h.get("x-lang");
-  const lang: Lang = xLang === "en" ? "en" : "mr";
+  const xPath = h.get("x-pathname") || "";
+  const firstSeg = xPath.split("/")[1];
+  const cookieLang = c.get("lang")?.value;
+  let resolved: Lang = "mr";
+  if (xLang === "en" || xLang === "mr") resolved = xLang;
+  else if (firstSeg === "en" || firstSeg === "mr") resolved = firstSeg;
+  else if (cookieLang === "en" || cookieLang === "mr") resolved = cookieLang;
+  const lang: Lang = resolved;
   const htmlLang = lang === "en" ? "en" : "mr-IN";
 
   return (
