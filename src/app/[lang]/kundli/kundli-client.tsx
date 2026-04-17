@@ -252,7 +252,7 @@ export default function KundliPageClient() {
       });
       router.push(`/kundli/result?${params.toString()}`);
     } catch {
-      setError(t("कुंडली गणना करताना त्रुटी आली. कृपया माहिती तपासा.", "Error calculating Kundli. Please check your details."));
+      setError(t("कुंडली गणना करताना त्रुटी आली. कृपया माहिती तपासा.", "Error calculating Kundli. Please check your details.", "कुंडली गणना में त्रुटि हुई. कृपया जानकारी जाँचें."));
       setLoading(false);
     }
   };
@@ -270,10 +270,10 @@ export default function KundliPageClient() {
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
           <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">
-            {t("कुंडली निर्मिती", "Kundli Generation")}
+            {t("कुंडली निर्मिती", "Kundli Generation", "कुंडली निर्माण")}
           </h1>
           <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            {t("जन्म माहिती भरा आणि अचूक कुंडली मिळवा", "Enter birth details to get accurate Kundli")}
+            {t("जन्म माहिती भरा आणि अचूक कुंडली मिळवा", "Enter birth details to get accurate Kundli", "जन्म जानकारी भरें और सटीक कुंडली पाएँ")}
           </p>
         </div>
       </section>
@@ -286,7 +286,7 @@ export default function KundliPageClient() {
         if (saved.length === 0) return null;
         return (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 max-w-2xl mx-auto">
-            <h3 className="text-sm font-bold mb-3" style={{ color: "#3d0c0c" }}>{t("सेव्ह केलेल्या कुंडल्या", "Saved Kundlis")}</h3>
+            <h3 className="text-sm font-bold mb-3" style={{ color: "#3d0c0c" }}>{t("सेव्ह केलेल्या कुंडल्या", "Saved Kundlis", "सहेजी गई कुंडलियाँ")}</h3>
             <div className="space-y-2">
               {saved.map((s: { name: string; params: Record<string, string> }, i: number) => (
                 <div key={i} className="flex items-center justify-between p-2 rounded-lg hover:bg-[#FFF8E7] transition">
@@ -303,7 +303,7 @@ export default function KundliPageClient() {
                     localStorage.setItem("savedKundlis", JSON.stringify(all));
                     window.location.reload();
                   }} className="text-xs text-red-400 hover:text-red-600 px-2">
-                    {t("काढा", "Remove")}
+                    {t("काढा", "Remove", "हटाएँ")}
                   </button>
                 </div>
               ))}
@@ -318,25 +318,25 @@ export default function KundliPageClient() {
         className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 max-w-2xl mx-auto"
       >
         <h2 className="text-lg font-bold text-[#3d0c0c] mb-4">
-          {t("जन्म माहिती", "Birth Details")}
+          {t("जन्म माहिती", "Birth Details", "जन्म जानकारी")}
         </h2>
 
         {/* Name */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t("नाव", "Name")}</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t("नाव", "Name", "नाम")}</label>
           <input
             type="text"
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4a843] focus:border-[#d4a843]"
-            placeholder={t("तुमचे नाव", "Your name")}
+            placeholder={t("तुमचे नाव", "Your name", "आपका नाम")}
           />
         </div>
 
         {/* Date */}
         <div className="grid grid-cols-3 gap-3 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t("दिवस", "Day")}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t("दिवस", "Day", "दिन")}</label>
             <input
               type="number"
               min="1"
@@ -349,21 +349,21 @@ export default function KundliPageClient() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t("महिना", "Month")}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t("महिना", "Month", "महीना")}</label>
             <select
               value={form.month}
               onChange={(e) => setForm((f) => ({ ...f, month: e.target.value }))}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4a843]"
               required
             >
-              <option value="">{t("निवडा", "Select")}</option>
+              <option value="">{t("निवडा", "Select", "चुनें")}</option>
               {monthNames.map((m, i) => (
                 <option key={i + 1} value={i + 1}>{m}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t("वर्ष", "Year")}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t("वर्ष", "Year", "वर्ष")}</label>
             <input
               type="number"
               min="1900"
@@ -380,7 +380,7 @@ export default function KundliPageClient() {
         {/* Time */}
         <div className="grid grid-cols-3 gap-3 mb-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t("तास", "Hour")}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t("तास", "Hour", "घंटा")}</label>
             <input
               type="number"
               min="1"
@@ -393,7 +393,7 @@ export default function KundliPageClient() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t("मिनिटे", "Minutes")}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t("मिनिटे", "Minutes", "मिनट")}</label>
             <input
               type="number"
               min="0"
@@ -406,21 +406,21 @@ export default function KundliPageClient() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">{t("वेळ", "AM/PM")}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t("वेळ", "AM/PM", "समय")}</label>
             <select
               value={form.ampm}
               onChange={(e) => setForm((f) => ({ ...f, ampm: e.target.value }))}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4a843]"
             >
-              <option value="AM">{t("सकाळी (AM)", "AM (Morning)")}</option>
-              <option value="PM">{t("दुपारी/संध्याकाळी (PM)", "PM (Afternoon/Evening)")}</option>
+              <option value="AM">{t("सकाळी (AM)", "AM (Morning)", "सुबह (AM)")}</option>
+              <option value="PM">{t("दुपारी/संध्याकाळी (PM)", "PM (Afternoon/Evening)", "दोपहर/शाम (PM)")}</option>
             </select>
           </div>
         </div>
 
         {/* Birth Place — Searchable */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t("जन्मस्थान", "Birth Place")}</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t("जन्मस्थान", "Birth Place", "जन्मस्थान")}</label>
           <div ref={dropdownRef} className="relative">
             {/* Selected place display */}
             {selectedPlace && !showDropdown && (
@@ -448,7 +448,7 @@ export default function KundliPageClient() {
                 value={placeSearch}
                 onChange={(e) => { setPlaceSearch(e.target.value); setShowDropdown(true); }}
                 onFocus={() => setShowDropdown(true)}
-                placeholder={t("शहर, तालुका किंवा गाव शोधा...", "Search city, town, taluka or village...")}
+                placeholder={t("शहर, तालुका किंवा गाव शोधा...", "Search city, town, taluka or village...", "शहर, तहसील या गाँव खोजें...")}
                 className="w-full px-4 py-2 border border-[#d4a843] rounded-lg focus:ring-2 focus:ring-[#d4a843] outline-none"
                 autoFocus
               />
@@ -458,7 +458,7 @@ export default function KundliPageClient() {
               <div className="absolute z-50 w-full mt-1 max-h-60 overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-lg">
                 {filteredPlaces.length === 0 ? (
                   <div className="px-4 py-3 text-sm text-gray-500">
-                    {t("ठिकाण सापडले नाही. खाली अक्षांश/रेखांश टाका.", "No place found. Enter lat/lng manually below.")}
+                    {t("ठिकाण सापडले नाही. खाली अक्षांश/रेखांश टाका.", "No place found. Enter lat/lng manually below.", "स्थान नहीं मिला. नीचे अक्षांश/देशांतर भरें.")}
                   </div>
                 ) : (
                   filteredPlaces.map((p) => (
@@ -484,7 +484,7 @@ export default function KundliPageClient() {
             )}
           </div>
           <p className="text-xs text-gray-400 mt-1">
-            {t("गाव सापडत नसल्यास जवळचे ठिकाण निवडा किंवा अक्षांश/रेखांश टाका", "If your village is not listed, select nearest place or enter coordinates")}
+            {t("गाव सापडत नसल्यास जवळचे ठिकाण निवडा किंवा अक्षांश/रेखांश टाका", "If your village is not listed, select nearest place or enter coordinates", "गाँव सूची में न हो तो निकटतम स्थान चुनें या निर्देशांक भरें")}
           </p>
           <div className="flex gap-2 mt-2">
             <input
@@ -492,14 +492,14 @@ export default function KundliPageClient() {
               value={form.latitude}
               onChange={(e) => setForm((f) => ({ ...f, latitude: e.target.value }))}
               className="w-1/2 px-3 py-1 text-xs border border-gray-200 rounded"
-              placeholder={t("अक्षांश (Latitude)", "Latitude")}
+              placeholder={t("अक्षांश (Latitude)", "Latitude", "अक्षांश (Latitude)")}
             />
             <input
               type="text"
               value={form.longitude}
               onChange={(e) => setForm((f) => ({ ...f, longitude: e.target.value }))}
               className="w-1/2 px-3 py-1 text-xs border border-gray-200 rounded"
-              placeholder={t("रेखांश (Longitude)", "Longitude")}
+              placeholder={t("रेखांश (Longitude)", "Longitude", "देशांतर (Longitude)")}
             />
           </div>
         </div>
@@ -510,15 +510,15 @@ export default function KundliPageClient() {
           className="w-full py-3 bg-gradient-to-r from-[#5c1a1a] to-[#3d0c0c] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
         >
           {loading
-            ? t("गणना चालू आहे...", "Calculating...")
+            ? t("गणना चालू आहे...", "Calculating...", "गणना चल रही है...")
             : !userSession
-            ? t("लॉग इन करा आणि कुंडली बनवा", "Login & Generate Kundli")
-            : t("कुंडली बनवा", "Generate Kundli")}
+            ? t("लॉग इन करा आणि कुंडली बनवा", "Login & Generate Kundli", "लॉग इन करें और कुंडली बनाएँ")
+            : t("कुंडली बनवा", "Generate Kundli", "कुंडली बनाएँ")}
         </button>
 
         {!userSession && !sessionLoading && (
           <p className="mt-2 text-xs text-center text-[#5c1a1a]/50">
-            {t("कुंडली बनवण्यासाठी Google लॉग इन आवश्यक आहे", "Google login is required to generate kundli")}
+            {t("कुंडली बनवण्यासाठी Google लॉग इन आवश्यक आहे", "Google login is required to generate kundli", "कुंडली बनाने के लिए Google लॉग इन आवश्यक है")}
           </p>
         )}
 
@@ -534,7 +534,7 @@ export default function KundliPageClient() {
           <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
             <div className="px-6 py-5 text-center" style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}>
               <h2 className="text-xl font-bold text-[#d4a843]">
-                {t("मोफत कुंडली मर्यादा संपली", "Free Kundli Limit Reached")}
+                {t("मोफत कुंडली मर्यादा संपली", "Free Kundli Limit Reached", "मुफ्त कुंडली सीमा समाप्त")}
               </h2>
             </div>
             <div className="p-6 text-center">
@@ -556,13 +556,13 @@ export default function KundliPageClient() {
                   className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white"
                   style={{ background: "linear-gradient(135deg, #d4a843, #c49535)", color: "#1a0505" }}
                 >
-                  {t("प्रीमियम प्लॅन पहा", "View Premium Plans")}
+                  {t("प्रीमियम प्लॅन पहा", "View Premium Plans", "प्रीमियम प्लान देखें")}
                 </button>
                 <button
                   onClick={() => setShowPaywall(false)}
                   className="flex-1 py-2.5 rounded-lg text-sm font-semibold border border-gray-200 text-[#5c1a1a]/60 hover:bg-gray-50"
                 >
-                  {t("बंद करा", "Close")}
+                  {t("बंद करा", "Close", "बंद करें")}
                 </button>
               </div>
             </div>
@@ -583,15 +583,15 @@ export default function KundliPageClient() {
           { question: "What is included in the Kundli report?", answer: "Our Kundli report includes: Lagna (Ascendant) chart, planetary positions with degrees, Nakshatra details, Dasha periods (Vimshottari), Yoga analysis (Raj Yoga, Gajakesari, etc.), Dosha check (Mangal Dosha, Kaal Sarp, Sade Sati), house-wise predictions, and personalized remedies." },
         ])} />
         <h2 className="text-xl font-bold mb-6" style={{ color: "#5c1a1a" }}>
-          {t("कुंडलीबद्दल सामान्य प्रश्न", "Frequently Asked Questions about Kundli")}
+          {t("कुंडलीबद्दल सामान्य प्रश्न", "Frequently Asked Questions about Kundli", "कुंडली के बारे में सामान्य प्रश्न")}
         </h2>
         <div className="space-y-4">
           {[
-            { q: t("कुंडली म्हणजे काय?", "What is a Kundli (Birth Chart)?"), a: t("कुंडली किंवा जन्मकुंडली हा वैदिक ज्योतिषशास्त्रातील जन्मपत्रिका आहे जी तुमच्या जन्माच्या वेळी आणि ठिकाणी ग्रहांच्या अचूक स्थितीचे मॅपिंग करते. यात जीवनाच्या विविध पैलूंचे प्रतिनिधित्व करणारी १२ भावस्थाने आहेत — करिअर, लग्न, आरोग्य, संपत्ती इत्यादी.", "A Kundli or Janam Kundali is a Vedic astrological birth chart that maps the exact positions of planets at the time and place of your birth. It contains 12 houses representing different aspects of life — career, marriage, health, wealth, and more.") },
-            { q: t("ऑनलाइन कुंडली किती अचूक आहे?", "How accurate is online Kundli generation?"), a: t("आमचा कुंडली जनरेटर अचूक खगोलीय डेटा वापरतो — जगभरातील व्यावसायिक ज्योतिषी वापरतात तेच गणना आधार. अचूकतेसाठी जन्म प्रमाणपत्रावरील अचूक जन्म वेळ वापरा.", "Our Kundli generator uses precise astronomical data (the same data used by professional astrologers worldwide). For best accuracy, use the exact birth time from your birth certificate.") },
-            { q: t("कुंडली बनवण्यासाठी कोणती माहिती लागते?", "What details do I need to generate a Kundli?"), a: t("तीन गोष्टी आवश्यक आहेत: (१) जन्म तारीख, (२) अचूक जन्म वेळ, आणि (३) जन्म ठिकाण. ग्रह स्थिती आणि भावस्थान गणनेसाठी अक्षांश-रेखांश आवश्यक आहेत.", "You need three details: (1) Date of Birth, (2) Exact Time of Birth, and (3) Place of Birth. The place is needed for longitude/latitude calculations.") },
-            { q: t("कुंडली बनवणे मोफत आहे का?", "Is the Kundli generation free?"), a: t("होय, तुमची पहिली कुंडली पूर्णपणे मोफत आहे. त्यानंतर Premium plan (₹१९९/महिना) घेऊन अमर्यादित कुंडली बनवा.", "Yes, your first Kundli is completely free. After that, upgrade to Premium (₹199/month) for unlimited generations.") },
-            { q: t("कुंडली रिपोर्टमध्ये काय समाविष्ट आहे?", "What is included in the Kundli report?"), a: t("लग्न कुंडली, ग्रह स्थिती, नक्षत्र, दशा काल, योग विश्लेषण (राजयोग, गजकेसरी इ.), दोष तपासणी (मंगळ दोष, कालसर्प, साडेसाती), भावस्थान भविष्य, आणि उपाय.", "Lagna chart, planetary positions, Nakshatra, Dasha periods, Yoga analysis (Raj Yoga, Gajakesari), Dosha check (Mangal, Kaal Sarp, Sade Sati), house predictions, and remedies.") },
+            { q: t("कुंडली म्हणजे काय?", "What is a Kundli (Birth Chart)?", "कुंडली क्या है?"), a: t("कुंडली किंवा जन्मकुंडली हा वैदिक ज्योतिषशास्त्रातील जन्मपत्रिका आहे जी तुमच्या जन्माच्या वेळी आणि ठिकाणी ग्रहांच्या अचूक स्थितीचे मॅपिंग करते. यात जीवनाच्या विविध पैलूंचे प्रतिनिधित्व करणारी १२ भावस्थाने आहेत — करिअर, लग्न, आरोग्य, संपत्ती इत्यादी.", "A Kundli or Janam Kundali is a Vedic astrological birth chart that maps the exact positions of planets at the time and place of your birth. It contains 12 houses representing different aspects of life — career, marriage, health, wealth, and more.", "कुंडली या जन्मकुंडली वैदिक ज्योतिष की जन्म पत्रिका है जो आपके जन्म के समय और स्थान पर ग्रहों की सटीक स्थिति का मानचित्रण करती है. इसमें जीवन के विभिन्न पहलुओं का प्रतिनिधित्व करने वाले १२ भाव हैं — करियर, विवाह, स्वास्थ्य, धन आदि.") },
+            { q: t("ऑनलाइन कुंडली किती अचूक आहे?", "How accurate is online Kundli generation?", "ऑनलाइन कुंडली कितनी सटीक है?"), a: t("आमचा कुंडली जनरेटर अचूक खगोलीय डेटा वापरतो — जगभरातील व्यावसायिक ज्योतिषी वापरतात तेच गणना आधार. अचूकतेसाठी जन्म प्रमाणपत्रावरील अचूक जन्म वेळ वापरा.", "Our Kundli generator uses precise astronomical data (the same data used by professional astrologers worldwide). For best accuracy, use the exact birth time from your birth certificate.", "हमारा कुंडली जनरेटर सटीक खगोलीय डेटा का उपयोग करता है — दुनिया भर के पेशेवर ज्योतिषी यही गणना आधार उपयोग करते हैं. सटीकता के लिए जन्म प्रमाणपत्र पर अंकित सटीक जन्म समय का उपयोग करें.") },
+            { q: t("कुंडली बनवण्यासाठी कोणती माहिती लागते?", "What details do I need to generate a Kundli?", "कुंडली बनाने के लिए क्या जानकारी चाहिए?"), a: t("तीन गोष्टी आवश्यक आहेत: (१) जन्म तारीख, (२) अचूक जन्म वेळ, आणि (३) जन्म ठिकाण. ग्रह स्थिती आणि भावस्थान गणनेसाठी अक्षांश-रेखांश आवश्यक आहेत.", "You need three details: (1) Date of Birth, (2) Exact Time of Birth, and (3) Place of Birth. The place is needed for longitude/latitude calculations.", "तीन चीज़ें आवश्यक हैं: (१) जन्म तिथि, (२) सटीक जन्म समय, और (३) जन्म स्थान. ग्रह स्थिति और भाव गणना के लिए अक्षांश-देशांतर आवश्यक हैं.") },
+            { q: t("कुंडली बनवणे मोफत आहे का?", "Is the Kundli generation free?", "क्या कुंडली बनाना मुफ्त है?"), a: t("होय, तुमची पहिली कुंडली पूर्णपणे मोफत आहे. त्यानंतर Premium plan (₹१९९/महिना) घेऊन अमर्यादित कुंडली बनवा.", "Yes, your first Kundli is completely free. After that, upgrade to Premium (₹199/month) for unlimited generations.", "हाँ, आपकी पहली कुंडली पूरी तरह मुफ्त है. उसके बाद Premium plan (₹१९९/माह) लेकर असीमित कुंडली बनाएँ.") },
+            { q: t("कुंडली रिपोर्टमध्ये काय समाविष्ट आहे?", "What is included in the Kundli report?", "कुंडली रिपोर्ट में क्या शामिल है?"), a: t("लग्न कुंडली, ग्रह स्थिती, नक्षत्र, दशा काल, योग विश्लेषण (राजयोग, गजकेसरी इ.), दोष तपासणी (मंगळ दोष, कालसर्प, साडेसाती), भावस्थान भविष्य, आणि उपाय.", "Lagna chart, planetary positions, Nakshatra, Dasha periods, Yoga analysis (Raj Yoga, Gajakesari), Dosha check (Mangal, Kaal Sarp, Sade Sati), house predictions, and remedies.", "लग्न कुंडली, ग्रह स्थिति, नक्षत्र, दशा काल, योग विश्लेषण (राजयोग, गजकेसरी आदि), दोष जाँच (मंगल दोष, कालसर्प, साढ़ेसाती), भाव भविष्य और उपाय.") },
           ].map((faq, i) => (
             <details key={i} className="bg-white rounded-xl border border-[#d4a843]/20 overflow-hidden">
               <summary className="px-5 py-4 cursor-pointer font-semibold text-sm text-[#5c1a1a] hover:bg-[#d4a843]/5">{faq.q}</summary>
@@ -612,46 +612,46 @@ function BasicInfoSection({ result, form }: { result: KundliData; form: { name: 
   return (
     <div className="bg-gradient-to-r from-[#5c1a1a] to-[#3d0c0c] text-white rounded-2xl p-6 shadow-lg">
       <h2 className="text-xl font-bold mb-4 text-center">
-        {form.name ? `${form.name} — ` : ""}{t("मूळ माहिती", "Basic Info")}
+        {form.name ? `${form.name} — ` : ""}{t("मूळ माहिती", "Basic Info", "मूल जानकारी")}
       </h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
         <div className="bg-white/15 rounded-xl p-3">
-          <p className="text-xs text-[#d4a843]/80">{t("लग्न", "Ascendant")}</p>
+          <p className="text-xs text-[#d4a843]/80">{t("लग्न", "Ascendant", "लग्न")}</p>
           <p className="text-lg font-bold">{t(result.lagnaRashiMr, result.lagnaRashi)}</p>
           <p className="text-xs">{result.lagnaDMS}</p>
         </div>
         <div className="bg-white/15 rounded-xl p-3">
-          <p className="text-xs text-[#d4a843]/80">{t("राशी (चंद्र)", "Moon Sign")}</p>
+          <p className="text-xs text-[#d4a843]/80">{t("राशी (चंद्र)", "Moon Sign", "राशि (चंद्र)")}</p>
           <p className="text-lg font-bold">{t(result.moonRashiMr, result.moonRashi)}</p>
           <p className="text-xs">{t(result.moonRashiMr, result.moonRashi)}</p>
         </div>
         <div className="bg-white/15 rounded-xl p-3">
-          <p className="text-xs text-[#d4a843]/80">{t("नक्षत्र", "Nakshatra")}</p>
+          <p className="text-xs text-[#d4a843]/80">{t("नक्षत्र", "Nakshatra", "नक्षत्र")}</p>
           <p className="text-lg font-bold">{t(result.moonNakshatraMr, result.moonNakshatra)}</p>
-          <p className="text-xs">{t("पद", "Pada")} {result.moonPada}</p>
+          <p className="text-xs">{t("पद", "Pada", "पद")} {result.moonPada}</p>
         </div>
         <div className="bg-white/15 rounded-xl p-3">
-          <p className="text-xs text-[#d4a843]/80">{t("नक्षत्र स्वामी", "Nakshatra Lord")}</p>
+          <p className="text-xs text-[#d4a843]/80">{t("नक्षत्र स्वामी", "Nakshatra Lord", "नक्षत्र स्वामी")}</p>
           <p className="text-lg font-bold">{t(PLANET_LORD_MR[result.moonNakshatraLord] || result.moonNakshatraLord, result.moonNakshatraLord)}</p>
-          <p className="text-xs">{t("अयनांश", "Ayanamsa")}: {result.ayanamsa.toFixed(4)}°</p>
+          <p className="text-xs">{t("अयनांश", "Ayanamsa", "अयनांश")}: {result.ayanamsa.toFixed(4)}°</p>
         </div>
       </div>
       <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
         <div className="bg-white/15 rounded-xl p-3">
-          <p className="text-xs text-[#d4a843]/80">{t("लग्न नक्षत्र", "Lagna Nakshatra")}</p>
+          <p className="text-xs text-[#d4a843]/80">{t("लग्न नक्षत्र", "Lagna Nakshatra", "लग्न नक्षत्र")}</p>
           <p className="text-sm font-bold">{t(result.lagnaNakshatraMr, result.lagnaNakshatra)}</p>
         </div>
         <div className="bg-white/15 rounded-xl p-3">
-          <p className="text-xs text-[#d4a843]/80">{t("योग संख्या", "Yogas Found")}</p>
+          <p className="text-xs text-[#d4a843]/80">{t("योग संख्या", "Yogas Found", "योग संख्या")}</p>
           <p className="text-lg font-bold">{result.analysis.yogas.length}</p>
         </div>
         <div className="bg-white/15 rounded-xl p-3">
-          <p className="text-xs text-[#d4a843]/80">{t("सक्रिय दोष", "Active Doshas")}</p>
+          <p className="text-xs text-[#d4a843]/80">{t("सक्रिय दोष", "Active Doshas", "सक्रिय दोष")}</p>
           <p className="text-lg font-bold">{result.analysis.doshas.filter((d) => d.present).length}</p>
         </div>
         <div className="bg-white/15 rounded-xl p-3">
-          <p className="text-xs text-[#d4a843]/80">{t("गणना पद्धती", "Calculation Method")}</p>
-          <p className="text-sm font-bold">{t("अधिकृत पद्धत", "Official Method")}</p>
+          <p className="text-xs text-[#d4a843]/80">{t("गणना पद्धती", "Calculation Method", "गणना पद्धति")}</p>
+          <p className="text-sm font-bold">{t("अधिकृत पद्धत", "Official Method", "आधिकारिक पद्धति")}</p>
         </div>
       </div>
     </div>
@@ -663,18 +663,18 @@ function PlanetTableSection({ planets }: { planets: PlanetData[] }) {
   return (
     <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 overflow-x-auto">
       <h3 className="text-lg font-bold text-[#3d0c0c] mb-4">
-        {t("निरयण ग्रह स्पष्ट", "Nirayana Planet Positions")}
+        {t("निरयण ग्रह स्पष्ट", "Nirayana Planet Positions", "निरयण ग्रह स्थिति")}
       </h3>
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b-2 border-[#d4a843]/30">
-            <th className="text-left py-2 px-3">{t("ग्रह", "Planet")}</th>
-            <th className="text-left py-2 px-3">{t("राशी", "Sign")}</th>
-            <th className="text-left py-2 px-3">{t("अंश", "Degree")}</th>
-            <th className="text-left py-2 px-3">{t("नक्षत्र", "Nakshatra")}</th>
-            <th className="text-center py-2 px-3">{t("पद", "Pada")}</th>
-            <th className="text-center py-2 px-3">{t("भाव", "House")}</th>
-            <th className="text-center py-2 px-3">{t("वक्री", "Retro")}</th>
+            <th className="text-left py-2 px-3">{t("ग्रह", "Planet", "ग्रह")}</th>
+            <th className="text-left py-2 px-3">{t("राशी", "Sign", "राशि")}</th>
+            <th className="text-left py-2 px-3">{t("अंश", "Degree", "अंश")}</th>
+            <th className="text-left py-2 px-3">{t("नक्षत्र", "Nakshatra", "नक्षत्र")}</th>
+            <th className="text-center py-2 px-3">{t("पद", "Pada", "पद")}</th>
+            <th className="text-center py-2 px-3">{t("भाव", "House", "भाव")}</th>
+            <th className="text-center py-2 px-3">{t("वक्री", "Retro", "वक्री")}</th>
           </tr>
         </thead>
         <tbody>
@@ -686,7 +686,7 @@ function PlanetTableSection({ planets }: { planets: PlanetData[] }) {
               <td className="py-2 px-3">{t(p.nakshatraMr, p.nakshatra)}</td>
               <td className="py-2 px-3 text-center">{p.pada}</td>
               <td className="py-2 px-3 text-center">{p.house}</td>
-              <td className="py-2 px-3 text-center">{p.isRetrograde ? t("वक्री", "R") : "—"}</td>
+              <td className="py-2 px-3 text-center">{p.isRetrograde ? t("वक्री", "R", "वक्री") : "—"}</td>
             </tr>
           ))}
         </tbody>
@@ -713,7 +713,7 @@ function PlanetStrengthSection({ strengths }: { strengths: PlanetStrengthData[] 
   return (
     <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
       <h3 className="text-lg font-bold text-[#3d0c0c] mb-4">
-        {t("ग्रह बल विश्लेषण", "Planetary Strength Analysis")}
+        {t("ग्रह बल विश्लेषण", "Planetary Strength Analysis", "ग्रह बल विश्लेषण")}
       </h3>
       <div className="space-y-3">
         {strengths.map((s) => (
@@ -725,11 +725,11 @@ function PlanetStrengthSection({ strengths }: { strengths: PlanetStrengthData[] 
               <div className="flex items-center justify-between mb-1">
                 <span className={`text-xs font-medium ${getTextColor(s.strengthScore)}`}>
                   {t(s.dignityMr, s.dignityEn)}
-                  {s.isRetrograde && s.id !== "Rahu" && s.id !== "Ketu" ? t(" (वक्री)", " (Retro)") : ""}
-                  {s.isCombust ? t(" (अस्त)", " (Combust)") : ""}
+                  {s.isRetrograde && s.id !== "Rahu" && s.id !== "Ketu" ? t(" (वक्री)", " (Retro)", " (वक्री)") : ""}
+                  {s.isCombust ? t(" (अस्त)", " (Combust)", " (अस्त)") : ""}
                 </span>
                 <span className="text-xs text-gray-500">
-                  {t(`भाव ${s.house}`, `House ${s.house}`)} | {s.strengthScore}%
+                  {t(`भाव ${s.house}`, `House ${s.house}`, `भाव ${s.house}`)} | {s.strengthScore}%
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
@@ -761,10 +761,10 @@ function YogaSection({ yogas }: { yogas: YogaData[] }) {
   return (
     <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
       <h3 className="text-lg font-bold text-[#3d0c0c] mb-4">
-        {t("योग विश्लेषण", "Yoga Analysis")}
+        {t("योग विश्लेषण", "Yoga Analysis", "योग विश्लेषण")}
       </h3>
       {yogas.length === 0 ? (
-        <p className="text-gray-500 text-center py-4">{t("कोणतेही विशेष योग आढळले नाहीत.", "No special yogas found.")}</p>
+        <p className="text-gray-500 text-center py-4">{t("कोणतेही विशेष योग आढळले नाहीत.", "No special yogas found.", "कोई विशेष योग नहीं मिले.")}</p>
       ) : (
         <div className="space-y-4">
           {yogas.map((y, i) => (
@@ -811,7 +811,7 @@ function DoshaSection({ doshas }: { doshas: DoshaData[] }) {
   return (
     <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
       <h3 className="text-lg font-bold text-[#3d0c0c] mb-4">
-        {t("दोष विश्लेषण", "Dosha Analysis")}
+        {t("दोष विश्लेषण", "Dosha Analysis", "दोष विश्लेषण")}
       </h3>
       <div className="space-y-4">
         {doshas.map((d, i) => (
@@ -822,14 +822,14 @@ function DoshaSection({ doshas }: { doshas: DoshaData[] }) {
                 d.present ? "bg-red-500 text-white" : "bg-green-500 text-white"
               }`}>
                 {d.present
-                  ? `${t("उपस्थित", "Present")} — ${t(severityLabel[d.severity].mr, severityLabel[d.severity].en)}`
-                  : t("अनुपस्थित", "Absent")}
+                  ? `${t("उपस्थित", "Present", "उपस्थित")} — ${t(severityLabel[d.severity].mr, severityLabel[d.severity].en, severityLabel[d.severity].mr)}`
+                  : t("अनुपस्थित", "Absent", "अनुपस्थित")}
               </span>
             </div>
             <p className="text-sm text-gray-700 mb-3">{t(d.descriptionMr, d.descriptionEn)}</p>
             {d.present && (
               <div className="bg-white/70 rounded-lg p-3 border border-gray-100">
-                <p className="text-xs font-bold text-[#3d0c0c] mb-1">{t("उपाय:", "Remedies:")}</p>
+                <p className="text-xs font-bold text-[#3d0c0c] mb-1">{t("उपाय:", "Remedies:", "उपाय:")}</p>
                 <p className="text-sm text-gray-600">{t(d.remedyMr, d.remedyEn)}</p>
               </div>
             )}
@@ -845,10 +845,10 @@ function HousePredictionSection({ predictions }: { predictions: HousePredictionD
   return (
     <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
       <h3 className="text-lg font-bold text-[#3d0c0c] mb-2">
-        {t("भावनिहाय भविष्यकथन", "House-wise Predictions")}
+        {t("भावनिहाय भविष्यकथन", "House-wise Predictions", "भाव-अनुसार भविष्यकथन")}
       </h3>
       <p className="text-xs text-gray-500 mb-4">
-        {t("प्रत्येक भावातील ग्रह आणि त्यांच्या बलानुसार भविष्य", "Predictions based on planets and their strength in each house")}
+        {t("प्रत्येक भावातील ग्रह आणि त्यांच्या बलानुसार भविष्य", "Predictions based on planets and their strength in each house", "प्रत्येक भाव के ग्रह और उनके बल के आधार पर भविष्य")}
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {predictions.map((p) => (
@@ -858,7 +858,7 @@ function HousePredictionSection({ predictions }: { predictions: HousePredictionD
                 <span className="w-7 h-7 rounded bg-[#FFF8E7] text-[#5c1a1a] text-xs font-bold flex items-center justify-center shrink-0">{p.house}</span>
                 <div>
                   <h4 className="font-bold text-sm text-gray-900">
-                    {t(`${p.house}वा भाव`, `House ${p.house}`)} — {t(p.titleMr, p.titleEn)}
+                    {t(`${p.house}वा भाव`, `House ${p.house}`, `${p.house}वाँ भाव`)} — {t(p.titleMr, p.titleEn)}
                   </h4>
                 </div>
               </div>
@@ -880,7 +880,7 @@ function DashaInterpSection({ interp }: { interp: DashaInterpData | null }) {
   if (!interp) {
     return (
       <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 text-center text-gray-500">
-        {t("सध्याची दशा माहिती उपलब्ध नाही.", "Current dasha information not available.")}
+        {t("सध्याची दशा माहिती उपलब्ध नाही.", "Current dasha information not available.", "वर्तमान दशा जानकारी उपलब्ध नहीं.")}
       </div>
     );
   }
@@ -896,7 +896,7 @@ function DashaInterpSection({ interp }: { interp: DashaInterpData | null }) {
     <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
       <div className="bg-gradient-to-r from-stone-700 to-stone-800 text-white p-6">
         <h3 className="text-lg font-bold text-center">
-          {t(`चालू ${interp.lordMr} महादशा फल`, `Current ${interp.lordEn} Mahadasha Predictions`)}
+          {t(`चालू ${interp.lordMr} महादशा फल`, `Current ${interp.lordEn} Mahadasha Predictions`, `वर्तमान ${interp.lordMr} महादशा फल`)}
         </h3>
         <p className="text-center text-sm text-stone-300 mt-1">
           {t(interp.periodMr, interp.periodEn)}
@@ -913,7 +913,7 @@ function DashaInterpSection({ interp }: { interp: DashaInterpData | null }) {
         ))}
         <div className="bg-[#FFF8E7] rounded-xl p-4 border border-[#d4a843]/20">
           <h4 className="text-sm font-bold text-[#3d0c0c] mb-1">
-            {t("उपाय व सल्ला", "Remedies & Advice")}
+            {t("उपाय व सल्ला", "Remedies & Advice", "उपाय और सलाह")}
           </h4>
           <p className="text-sm text-gray-700">{t(interp.adviceMr, interp.adviceEn)}</p>
         </div>
@@ -927,7 +927,7 @@ function DashaTimelineSection({ dashas }: { dashas: DashaData[] }) {
   return (
     <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
       <h3 className="text-lg font-bold text-[#3d0c0c] mb-4">
-        {t("विंशोत्तरी दशा कालावधी", "Vimshottari Dasha Timeline")}
+        {t("विंशोत्तरी दशा कालावधी", "Vimshottari Dasha Timeline", "विंशोत्तरी दशा समयावधि")}
       </h3>
       <div className="space-y-2">
         {dashas.map((d, i) => {
@@ -948,18 +948,18 @@ function DashaTimelineSection({ dashas }: { dashas: DashaData[] }) {
               <div className="flex items-center gap-3">
                 {isCurrent && (
                   <span className="text-xs bg-[#d4a843] text-white px-2 py-0.5 rounded-full">
-                    {t("चालू", "Current")}
+                    {t("चालू", "Current", "वर्तमान")}
                   </span>
                 )}
                 <span className="font-bold text-gray-900">
-                  {t(PLANET_LORD_MR[d.lord] || d.lord, d.lord)} {t("महादशा", "Mahadasha")}
+                  {t(PLANET_LORD_MR[d.lord] || d.lord, d.lord)} {t("महादशा", "Mahadasha", "महादशा")}
                 </span>
               </div>
               <div className="text-right text-sm text-gray-600">
                 <p>
                   {start.toLocaleDateString(lang === "mr" ? "mr-IN" : "en-IN")} — {end.toLocaleDateString(lang === "mr" ? "mr-IN" : "en-IN")}
                 </p>
-                <p className="text-xs">{d.years.toFixed(1)} {t("वर्षे", "years")}</p>
+                <p className="text-xs">{d.years.toFixed(1)} {t("वर्षे", "years", "वर्ष")}</p>
               </div>
             </div>
           );
@@ -974,7 +974,7 @@ function RemedySection({ remedies }: { remedies: RemedyData[] }) {
   return (
     <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
       <h3 className="text-lg font-bold text-[#3d0c0c] mb-4">
-        {t("उपाय व रत्न सुचना", "Remedies & Gemstone Recommendations")}
+        {t("उपाय व रत्न सुचना", "Remedies & Gemstone Recommendations", "उपाय और रत्न सुझाव")}
       </h3>
       <div className="space-y-6">
         {remedies.map((r, i) => (
@@ -1135,7 +1135,7 @@ function NorthIndianChartNew({ planets }: { planets: PlanetData[] }) {
       const nm = count >= 4
         ? (lang === "mr" ? abbrMr[p.id] || p.nameMr : shortEn[p.id] || p.id)
         : (lang === "mr" ? shortMr[p.id] || p.nameMr : shortEn[p.id] || p.id);
-      const retro = p.isRetrograde ? t("(व)", "(R)") : "";
+      const retro = p.isRetrograde ? t("(व)", "(R)", "(व)") : "";
       return (
         <text key={p.id} x={c.x} y={startY + i * lh} textAnchor="middle" dominantBaseline="middle"
           fontSize={fs} fontWeight="bold" fill={p.isRetrograde ? "#dc2626" : "#1f2937"}>
@@ -1171,7 +1171,7 @@ function NorthIndianChartNew({ planets }: { planets: PlanetData[] }) {
 
         {/* Lagna label */}
         <text x={M} y={35} textAnchor="middle" fontSize="16" fontWeight="bold" fill="#dc2626">
-          {t("लग्न", "Asc")}
+          {t("लग्न", "Asc", "लग्न")}
         </text>
 
         {/* Planets */}
@@ -1237,7 +1237,7 @@ function NorthIndianChart({ planets }: { planets: PlanetData[] }) {
         }}>
           {z.id === 1 && (
             <span style={{ color: '#dc2626', fontWeight: 'bold', fontSize: 12, lineHeight: 1 }}>
-              {t("लग्न", "Asc")}
+              {t("लग्न", "Asc", "लग्न")}
             </span>
           )}
           {pl.map((p) => (
@@ -1248,7 +1248,7 @@ function NorthIndianChart({ planets }: { planets: PlanetData[] }) {
               color: p.isRetrograde ? '#dc2626' : '#1f2937',
               whiteSpace: 'nowrap',
             }}>
-              {t(p.nameMr, p.id)}{p.isRetrograde ? t("(व)", "(R)") : ""}
+              {t(p.nameMr, p.id)}{p.isRetrograde ? t("(व)", "(R)", "(व)") : ""}
             </span>
           ))}
         </div>
@@ -1558,7 +1558,7 @@ function NorthIndianChartNew2({ planets }: { planets: PlanetData[] }) {
       const nm = useShort
         ? (lang === "mr" ? shortMr[p.id] || p.nameMr : shortEn[p.id] || p.id)
         : t(p.nameMr, p.name || p.id);
-      const retro = p.isRetrograde ? t("(व)", "(R)") : "";
+      const retro = p.isRetrograde ? t("(व)", "(R)", "(व)") : "";
       return (
         <text key={p.id} x={c.x} y={startY + i * lh} textAnchor="middle" dominantBaseline="middle"
           fontSize={fontSize} fontWeight="bold" fill={p.isRetrograde ? "#dc2626" : "#1f2937"}>
@@ -1597,7 +1597,7 @@ function NorthIndianChartNew2({ planets }: { planets: PlanetData[] }) {
 
         {/* Lagna */}
         <text x={M} y={40} textAnchor="middle" fontSize="18" fontWeight="bold" fill="#dc2626">
-          {t("लग्न", "Asc")}
+          {t("लग्न", "Asc", "लग्न")}
         </text>
 
         {/* Planets */}
