@@ -30,6 +30,12 @@ interface RashifalData {
   predictions: Prediction[];
 }
 
+function localeCode(lang: string): string {
+  if (lang === "mr") return "mr-IN";
+  if (lang === "hi") return "hi-IN";
+  return "en-IN";
+}
+
 export default function RashifalPageClient() {
   const { t, lang } = useLang();
   const [selectedRashi, setSelectedRashi] = useState<number | null>(null);
@@ -62,13 +68,13 @@ export default function RashifalPageClient() {
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
           <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">
-            {t("आजचे राशीफल", "Today's Horoscope")}
+            {t("आजचे राशीफल", "Today's Horoscope", "आज का राशिफल")}
           </h1>
           <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            {new Date().toLocaleDateString(lang === "mr" ? "mr-IN" : "en-IN", { year: "numeric", month: "long", day: "numeric", weekday: "long" })}
+            {new Date().toLocaleDateString(localeCode(lang), { year: "numeric", month: "long", day: "numeric", weekday: "long" })}
           </p>
           <p className="text-white/40 text-xs mt-1">
-            {t("आजच्या वास्तविक ग्रह गोचरावर आधारित भविष्य", "Based on today's real planetary transits")}
+            {t("आजच्या वास्तविक ग्रह गोचरावर आधारित भविष्य", "Based on today's real planetary transits", "आज के वास्तविक ग्रह गोचर पर आधारित भविष्य")}
           </p>
         </div>
       </section>
@@ -79,12 +85,12 @@ export default function RashifalPageClient() {
       {data && (
         <div className="rounded-xl p-4 max-w-3xl mx-auto" style={{ background: "#FFF8E7", border: "1px solid rgba(212,168,67,0.2)" }}>
           <p className="text-xs font-semibold mb-2" style={{ color: "#5c1a1a" }}>
-            {t("आजची ग्रह स्थिती (गोचर)", "Today's Planetary Positions (Transit)")}
+            {t("आजची ग्रह स्थिती (गोचर)", "Today's Planetary Positions (Transit)", "आज की ग्रह स्थिति (गोचर)")}
           </p>
           <div className="flex flex-wrap gap-2">
             {data.transitPlanets.map((tp) => (
               <span key={tp.id} className="text-xs rounded-full px-3 py-1 font-medium" style={{ background: "white", color: "#3d0c0c", border: "1px solid rgba(212,168,67,0.15)" }}>
-                {t(tp.planetMr || tp.id, tp.id)} → {t(tp.rashiMr || tp.rashiEn, tp.rashiEn)}
+                {t((tp as { planetMr?: string }).planetMr || tp.id, tp.id, (tp as { planetMr?: string }).planetMr || tp.id)} → {t((tp as { rashiMr?: string }).rashiMr || tp.rashiEn, tp.rashiEn, (tp as { rashiMr?: string }).rashiMr || tp.rashiEn)}
               </span>
             ))}
           </div>
@@ -94,7 +100,7 @@ export default function RashifalPageClient() {
       {loading ? (
         <div className="text-center py-12">
           <div className="inline-block w-8 h-8 border-3 border-[#f0c040]/30 border-t-[#8b2c2c] rounded-full animate-spin" />
-          <p className="mt-4 text-stone-500">{t("गोचर गणना चालू...", "Calculating transits...")}</p>
+          <p className="mt-4 text-stone-500">{t("गोचर गणना चालू...", "Calculating transits...", "गोचर गणना चल रही...")}</p>
         </div>
       ) : data ? (
         <>
@@ -121,7 +127,7 @@ export default function RashifalPageClient() {
                   >
                     {rashi.symbol}
                   </span>
-                  <p className="font-bold text-sm" style={{ color: selectedRashi === rashi.id ? "#d4a843" : "#3d0c0c" }}>{t(rashi.mr, rashi.en)}</p>
+                  <p className="font-bold text-sm" style={{ color: selectedRashi === rashi.id ? "#d4a843" : "#3d0c0c" }}>{t(rashi.mr, rashi.en, rashi.mr)}</p>
                 </button>
             ))}
           </div>
@@ -137,7 +143,7 @@ export default function RashifalPageClient() {
           {selectedRashi === null && (
             <div className="space-y-4">
               <h2 className="text-xl font-bold text-center" style={{ color: "#3d0c0c" }}>
-                {t("सर्व राशींचे आजचे भविष्य", "Today's Horoscope for All Signs")}
+                {t("सर्व राशींचे आजचे भविष्य", "Today's Horoscope for All Signs", "सभी राशियों का आज का भविष्य")}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {RASHIS.map((rashi) => {
@@ -146,7 +152,7 @@ export default function RashifalPageClient() {
                   return (
                     <Link
                       key={rashi.id}
-                      href={`/rashifal/${rashi.slug}`}
+                      href={`/${lang}/rashifal/${rashi.slug}`}
                       className="bg-white rounded-xl p-4 text-left hover:shadow-md hover:-translate-y-0.5 transition-all block"
                       style={{ border: "1px solid rgba(212,168,67,0.15)" }}
                     >
@@ -155,14 +161,14 @@ export default function RashifalPageClient() {
                           {rashi.symbol}
                         </div>
                         <div>
-                          <p className="font-bold" style={{ color: "#3d0c0c" }}>{t(rashi.mr, rashi.en)}</p>
-                          <p className="text-xs" style={{ color: "#8b6914" }}>{lang === "mr" ? rashi.en : rashi.mr}</p>
+                          <p className="font-bold" style={{ color: "#3d0c0c" }}>{t(rashi.mr, rashi.en, rashi.mr)}</p>
+                          <p className="text-xs" style={{ color: "#8b6914" }}>{lang === "en" ? rashi.mr : rashi.en}</p>
                         </div>
                       </div>
                       <p className="text-sm leading-relaxed line-clamp-2" style={{ color: "#6b5b3e" }}>
-                        {t(pred.overall.mr, pred.overall.en)}
+                        {t(pred.overall.mr, pred.overall.en, pred.overall.mr)}
                       </p>
-                      <span className="text-xs font-semibold mt-2 inline-block" style={{ color: "#d4a843" }}>{t("सविस्तर पहा →", "Read more →")}</span>
+                      <span className="text-xs font-semibold mt-2 inline-block" style={{ color: "#d4a843" }}>{t("सविस्तर पहा →", "Read more →", "विस्तार से देखें →")}</span>
                     </Link>
                   );
                 })}
@@ -172,7 +178,7 @@ export default function RashifalPageClient() {
         </>
       ) : (
         <div className="text-center py-12 text-stone-500">
-          {t("राशीफल उपलब्ध नाही", "Horoscope not available")}
+          {t("राशीफल उपलब्ध नाही", "Horoscope not available", "राशिफल उपलब्ध नहीं")}
         </div>
       )}
     </div></div>
@@ -190,21 +196,21 @@ function RashiDetail({ rashi, pred }: { rashi: typeof RASHIS[number]; pred: Pred
           {rashi.symbol}
         </div>
         <h2 className="text-2xl font-bold">
-          {t(`${rashi.mr} — आजचे भविष्य`, `${rashi.en} — Today's Horoscope`)}
+          {t(`${rashi.mr} — आजचे भविष्य`, `${rashi.en} — Today's Horoscope`, `${rashi.mr} — आज का भविष्य`)}
         </h2>
         <p className="text-sm mt-1" style={{ color: "#d4a843" }}>
-          {new Date().toLocaleDateString(lang === "mr" ? "mr-IN" : "en-IN", { year: "numeric", month: "long", day: "numeric" })}
+          {new Date().toLocaleDateString(localeCode(lang), { year: "numeric", month: "long", day: "numeric" })}
         </p>
       </div>
 
       {/* Lucky info */}
       <div className="grid grid-cols-2" style={{ background: "#FFF8E7", borderBottom: "1px solid rgba(212,168,67,0.15)" }}>
         <div className="p-3 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.15)" }}>
-          <p className="text-[10px] uppercase tracking-wider" style={{ color: "#8b6914" }}>{t("भाग्यशाली रंग", "Lucky Color")}</p>
-          <p className="font-semibold text-sm mt-0.5" style={{ color: "#3d0c0c" }}>{t(pred.luckyColor.mr, pred.luckyColor.en)}</p>
+          <p className="text-[10px] uppercase tracking-wider" style={{ color: "#8b6914" }}>{t("भाग्यशाली रंग", "Lucky Color", "भाग्यशाली रंग")}</p>
+          <p className="font-semibold text-sm mt-0.5" style={{ color: "#3d0c0c" }}>{t(pred.luckyColor.mr, pred.luckyColor.en, pred.luckyColor.mr)}</p>
         </div>
         <div className="p-3 text-center">
-          <p className="text-[10px] uppercase tracking-wider" style={{ color: "#8b6914" }}>{t("भाग्यांक", "Lucky Number")}</p>
+          <p className="text-[10px] uppercase tracking-wider" style={{ color: "#8b6914" }}>{t("भाग्यांक", "Lucky Number", "भाग्यांक")}</p>
           <p className="font-semibold text-sm mt-0.5" style={{ color: "#3d0c0c" }}>{pred.luckyNumber}</p>
         </div>
       </div>
@@ -212,11 +218,11 @@ function RashiDetail({ rashi, pred }: { rashi: typeof RASHIS[number]; pred: Pred
       <div className="p-6 space-y-5 bg-white">
         {/* Prediction sections */}
         {[
-          { title: t("आजचे एकंदर भविष्य", "Overall Prediction"), text: t(pred.overall.mr, pred.overall.en) },
-          { title: t("करिअर व आर्थिक", "Career & Finance"), text: t(pred.career.mr, pred.career.en) },
-          { title: t("प्रेम व कुटुंब", "Love & Family"), text: t(pred.love.mr, pred.love.en) },
-          { title: t("आरोग्य", "Health"), text: t(pred.health.mr, pred.health.en) },
-          { title: t("सल्ला", "Advice"), text: t(pred.advice.mr, pred.advice.en) },
+          { title: t("आजचे एकंदर भविष्य", "Overall Prediction", "आज का समग्र भविष्य"), text: t(pred.overall.mr, pred.overall.en, pred.overall.mr) },
+          { title: t("करिअर व आर्थिक", "Career & Finance", "करियर और वित्त"), text: t(pred.career.mr, pred.career.en, pred.career.mr) },
+          { title: t("प्रेम व कुटुंब", "Love & Family", "प्रेम और परिवार"), text: t(pred.love.mr, pred.love.en, pred.love.mr) },
+          { title: t("आरोग्य", "Health", "स्वास्थ्य"), text: t(pred.health.mr, pred.health.en, pred.health.mr) },
+          { title: t("सल्ला", "Advice", "सलाह"), text: t(pred.advice.mr, pred.advice.en, pred.advice.mr) },
         ].map((sec, i) => (
           <div key={i} className={i > 0 ? "pt-4" : ""} style={i > 0 ? { borderTop: "1px solid rgba(212,168,67,0.1)" } : {}}>
             <h3 className="text-sm font-bold mb-1.5" style={{ color: "#5c1a1a" }}>{sec.title}</h3>
@@ -226,7 +232,7 @@ function RashiDetail({ rashi, pred }: { rashi: typeof RASHIS[number]; pred: Pred
 
         {/* Transit Details */}
         <div className="pt-4" style={{ borderTop: "1px solid rgba(212,168,67,0.1)" }}>
-          <h3 className="text-sm font-bold mb-2" style={{ color: "#5c1a1a" }}>{t("आजचे गोचर (ग्रह संचार)", "Today's Transits")}</h3>
+          <h3 className="text-sm font-bold mb-2" style={{ color: "#5c1a1a" }}>{t("आजचे गोचर (ग्रह संचार)", "Today's Transits", "आज का गोचर (ग्रह संचार)")}</h3>
           <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
             {pred.transits.map((tr) => (
               <div key={tr.planet} className="text-center p-2 rounded-lg text-xs"
@@ -234,27 +240,27 @@ function RashiDetail({ rashi, pred }: { rashi: typeof RASHIS[number]; pred: Pred
                   ? { background: "#FFF8E7", border: "1px solid rgba(212,168,67,0.2)", color: "#3d0c0c" }
                   : { background: "#fef2f2", border: "1px solid #fecaca", color: "#991b1b" }
                 }>
-                <p className="font-semibold">{t(tr.planetMr, tr.planet)}</p>
-                <p className="mt-0.5">{t(`${tr.house}वा भाव`, `House ${tr.house}`)}</p>
+                <p className="font-semibold">{t(tr.planetMr, tr.planet, tr.planetMr)}</p>
+                <p className="mt-0.5">{t(`${tr.house}वा भाव`, `House ${tr.house}`, `${tr.house}वाँ भाव`)}</p>
                 <p className="text-[10px] mt-0.5 font-semibold">
-                  {tr.effect === "good" ? t("शुभ", "Good") : t("सावध", "Caution")}
+                  {tr.effect === "good" ? t("शुभ", "Good", "शुभ") : t("सावध", "Caution", "सावधान")}
                 </p>
               </div>
             ))}
           </div>
           <p className="text-[10px] mt-2" style={{ color: "rgba(139,44,44,0.4)" }}>
-            {t("वरील भविष्य वास्तविक ग्रह गोचरावर आधारित आहे", "Based on real planetary transit positions")}
+            {t("वरील भविष्य वास्तविक ग्रह गोचरावर आधारित आहे", "Based on real planetary transit positions", "उपरोक्त भविष्य वास्तविक ग्रह गोचर पर आधारित है")}
           </p>
         </div>
 
         {/* Link to dedicated page */}
         <div className="pt-4 text-center" style={{ borderTop: "1px solid rgba(212,168,67,0.1)" }}>
           <Link
-            href={`/rashifal/${rashi.slug}`}
+            href={`/${lang}/rashifal/${rashi.slug}`}
             className="inline-block px-6 py-2.5 rounded-xl text-sm font-semibold text-[#3d0c0c] transition-all hover:scale-105"
             style={{ background: "linear-gradient(135deg, #d4a843, #e5bc5a)" }}
           >
-            {t(`${rashi.mr} राशीचे संपूर्ण भविष्य पहा`, `View Full ${rashi.en} Horoscope`)}
+            {t(`${rashi.mr} राशीचे संपूर्ण भविष्य पहा`, `View Full ${rashi.en} Horoscope`, `${rashi.mr} राशि का सम्पूर्ण भविष्य देखें`)}
           </Link>
         </div>
       </div>
@@ -264,17 +270,18 @@ function RashiDetail({ rashi, pred }: { rashi: typeof RASHIS[number]; pred: Pred
         <JsonLd data={faqSchema([
           { question: "What is Rashifal (Horoscope)?", answer: "Rashifal is a daily horoscope prediction based on your zodiac sign (Rashi) in Vedic astrology. It analyzes the current planetary transits (Gochar) and their effects on each of the 12 zodiac signs — Mesh (Aries) to Meen (Pisces). Predictions cover career, love, health, and finances." },
           { question: "राशीफल म्हणजे काय?", answer: "राशीफल हे वैदिक ज्योतिषशास्त्रातील तुमच्या राशीवर आधारित दैनिक भविष्य आहे. सध्याच्या ग्रह गोचराचे विश्लेषण करून मेष ते मीन अशा १२ राशींसाठी करिअर, प्रेम, आरोग्य आणि आर्थिक भविष्य सांगितले जाते." },
+          { question: "राशिफल क्या है?", answer: "राशिफल वैदिक ज्योतिष में आपकी राशि पर आधारित दैनिक भविष्य है. यह वर्तमान ग्रह गोचर का विश्लेषण करके मेष से मीन तक १२ राशियों के लिए करियर, प्रेम, स्वास्थ्य और वित्त की भविष्यवाणी करता है." },
           { question: "How is Vedic Rashifal different from Western Horoscope?", answer: "Vedic Rashifal uses the sidereal zodiac (actual star positions) while Western horoscope uses the tropical zodiac. This means your Vedic Rashi may differ from your Western sun sign by about 23 degrees. Vedic astrology also uses Moon sign (Chandra Rashi) as the primary reference, not Sun sign." },
           { question: "How often is the Rashifal updated?", answer: "Our Rashifal is generated daily based on real-time planetary transit calculations. The predictions change every day as planets move through different signs and nakshatras, affecting each Rashi differently." },
         ])} />
         <h2 className="text-xl font-bold mb-6" style={{ color: "#5c1a1a" }}>
-          {t("राशीफल बद्दल सामान्य प्रश्न", "Frequently Asked Questions about Rashifal")}
+          {t("राशीफल बद्दल सामान्य प्रश्न", "Frequently Asked Questions about Rashifal", "राशिफल के बारे में सामान्य प्रश्न")}
         </h2>
         <div className="space-y-4">
           {[
-            { q: t("राशीफल म्हणजे काय?", "What is Rashifal (Horoscope)?"), a: t("राशीफल हे तुमच्या राशीवर आधारित दैनिक भविष्य आहे. ग्रह गोचराचे विश्लेषण करून मेष ते मीन अशा १२ राशींसाठी करिअर, प्रेम, आरोग्य आणि आर्थिक भविष्य सांगितले जाते.", "Rashifal is a daily horoscope based on your zodiac sign. It analyzes planetary transits to predict career, love, health, and finances for all 12 signs from Aries to Pisces.") },
-            { q: t("वैदिक राशीफल आणि पाश्चात्य राशीभविष्य यात काय फरक आहे?", "How is Vedic Rashifal different from Western Horoscope?"), a: t("वैदिक राशीफल नक्षत्र-आधारित (सायडरियल) राशिचक्र वापरते तर पाश्चात्य ज्योतिष ट्रॉपिकल राशिचक्र वापरते. वैदिक ज्योतिषात चंद्र राशी प्रमुख आहे, सूर्य राशी नव्हे.", "Vedic uses the sidereal zodiac (actual star positions) while Western uses tropical. Vedic astrology uses Moon sign as the primary reference, not Sun sign.") },
-            { q: t("राशीफल किती वेळा अपडेट होते?", "How often is the Rashifal updated?"), a: t("आमचे राशीफल दररोज रिअल-टाइम ग्रह गोचर गणनेवर आधारित तयार होते. ग्रह वेगवेगळ्या राशींत संचार करतात तेव्हा भविष्य बदलते.", "Our Rashifal is generated daily based on real-time planetary transit calculations. Predictions change daily as planets move through different signs.") },
+            { q: t("राशीफल म्हणजे काय?", "What is Rashifal (Horoscope)?", "राशिफल क्या है?"), a: t("राशीफल हे तुमच्या राशीवर आधारित दैनिक भविष्य आहे. ग्रह गोचराचे विश्लेषण करून मेष ते मीन अशा १२ राशींसाठी करिअर, प्रेम, आरोग्य आणि आर्थिक भविष्य सांगितले जाते.", "Rashifal is a daily horoscope based on your zodiac sign. It analyzes planetary transits to predict career, love, health, and finances for all 12 signs from Aries to Pisces.", "राशिफल आपकी राशि पर आधारित दैनिक भविष्य है. ग्रह गोचर का विश्लेषण करके मेष से मीन तक १२ राशियों के लिए करियर, प्रेम, स्वास्थ्य और वित्त की भविष्यवाणी की जाती है.") },
+            { q: t("वैदिक राशीफल आणि पाश्चात्य राशीभविष्य यात काय फरक आहे?", "How is Vedic Rashifal different from Western Horoscope?", "वैदिक राशिफल और पाश्चात्य राशिफल में क्या अंतर है?"), a: t("वैदिक राशीफल नक्षत्र-आधारित (सायडरियल) राशिचक्र वापरते तर पाश्चात्य ज्योतिष ट्रॉपिकल राशिचक्र वापरते. वैदिक ज्योतिषात चंद्र राशी प्रमुख आहे, सूर्य राशी नव्हे.", "Vedic uses the sidereal zodiac (actual star positions) while Western uses tropical. Vedic astrology uses Moon sign as the primary reference, not Sun sign.", "वैदिक राशिफल नक्षत्र-आधारित (साइडरियल) राशिचक्र का उपयोग करता है जबकि पाश्चात्य ज्योतिष ट्रॉपिकल राशिचक्र का. वैदिक ज्योतिष में चंद्र राशि प्रमुख है, सूर्य राशि नहीं.") },
+            { q: t("राशीफल किती वेळा अपडेट होते?", "How often is the Rashifal updated?", "राशिफल कितनी बार अपडेट होता है?"), a: t("आमचे राशीफल दररोज रिअल-टाइम ग्रह गोचर गणनेवर आधारित तयार होते. ग्रह वेगवेगळ्या राशींत संचार करतात तेव्हा भविष्य बदलते.", "Our Rashifal is generated daily based on real-time planetary transit calculations. Predictions change daily as planets move through different signs.", "हमारा राशिफल प्रतिदिन रियल-टाइम ग्रह गोचर गणना के आधार पर तैयार होता है. जब ग्रह विभिन्न राशियों में संचार करते हैं तो भविष्य बदलता है.") },
           ].map((faq, i) => (
             <details key={i} className="bg-white rounded-xl border border-[#d4a843]/20 overflow-hidden">
               <summary className="px-5 py-4 cursor-pointer font-semibold text-sm text-[#5c1a1a] hover:bg-[#d4a843]/5">{faq.q}</summary>

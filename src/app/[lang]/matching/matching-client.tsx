@@ -26,12 +26,20 @@ interface MatchingData {
   girlDetails: { rashi: string; rashiMr: string; nakshatra: string; nakshatraMr: string; lagna: string; lagnaMr: string };
 }
 
-const TYPE_LABEL_M: Record<string, { en: string; mr: string }> = {
-  city: { en: "City", mr: "शहर" },
-  town: { en: "Town", mr: "नगर" },
-  taluka: { en: "Taluka", mr: "तालुका" },
-  village: { en: "Village", mr: "गाव" },
+const TYPE_LABEL_M: Record<string, { en: string; mr: string; hi: string }> = {
+  city: { en: "City", mr: "शहर", hi: "शहर" },
+  town: { en: "Town", mr: "नगर", hi: "नगर" },
+  taluka: { en: "Taluka", mr: "तालुका", hi: "तहसील" },
+  village: { en: "Village", mr: "गाव", hi: "गाँव" },
 };
+
+function typeLabel(type: string, lang: string): string {
+  const entry = TYPE_LABEL_M[type];
+  if (!entry) return type;
+  if (lang === "mr") return entry.mr;
+  if (lang === "hi") return entry.hi;
+  return entry.en;
+}
 
 function PersonForm({
   label,
@@ -76,6 +84,8 @@ function PersonForm({
 
   const monthNames = lang === "mr"
     ? ["जाने","फेब्रु","मार्च","एप्रि","मे","जून","जुलै","ऑग","सप्टें","ऑक्टो","नोव्हें","डिसें"]
+    : lang === "hi"
+    ? ["जन","फर","मार्च","अप्रै","मई","जून","जुला","अग","सित","अक्टू","नव","दिस"]
     : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
   return (
@@ -83,23 +93,23 @@ function PersonForm({
       <h3 className="text-lg font-bold text-[#3d0c0c] mb-4">{label}</h3>
       <div className="space-y-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t("नाव", "Name")}</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t("नाव", "Name", "नाम")}</label>
           <input
             type="text"
             value={values.name}
             onChange={(e) => onChange("name", e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4a843] text-sm"
-            placeholder={t("नाव", "Name")}
+            placeholder={t("नाव", "Name", "नाम")}
           />
         </div>
         <div className="grid grid-cols-3 gap-2">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">{t("दिवस", "Day")}</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1">{t("दिवस", "Day", "दिन")}</label>
             <input type="number" min="1" max="31" value={values.day} onChange={(e) => onChange("day", e.target.value)}
               className="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm" required />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">{t("महिना", "Month")}</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1">{t("महिना", "Month", "महीना")}</label>
             <select value={values.month} onChange={(e) => onChange("month", e.target.value)}
               className="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm" required>
               <option value="">—</option>
@@ -109,19 +119,19 @@ function PersonForm({
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">{t("वर्ष", "Year")}</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1">{t("वर्ष", "Year", "वर्ष")}</label>
             <input type="number" min="1940" max="2010" value={values.year} onChange={(e) => onChange("year", e.target.value)}
               className="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm" required />
           </div>
         </div>
         <div className="grid grid-cols-3 gap-2">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">{t("तास", "Hour")}</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1">{t("तास", "Hour", "घंटा")}</label>
             <input type="number" min="1" max="12" value={values.hour} onChange={(e) => onChange("hour", e.target.value)}
               className="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm" required />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">{t("मिनिटे", "Min")}</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1">{t("मिनिटे", "Min", "मिनट")}</label>
             <input type="number" min="0" max="59" value={values.minute} onChange={(e) => onChange("minute", e.target.value)}
               className="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm" required />
           </div>
@@ -129,42 +139,42 @@ function PersonForm({
             <label className="block text-xs font-medium text-gray-600 mb-1">AM/PM</label>
             <select value={values.ampm} onChange={(e) => onChange("ampm", e.target.value)}
               className="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm">
-              <option value="AM">{t("AM (सकाळ)", "AM")}</option>
-              <option value="PM">{t("PM (संध्या)", "PM")}</option>
+              <option value="AM">{t("AM (सकाळ)", "AM", "AM (सुबह)")}</option>
+              <option value="PM">{t("PM (संध्या)", "PM", "PM (शाम)")}</option>
             </select>
           </div>
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">{t("जन्मस्थान", "Birth Place")}</label>
+          <label className="block text-xs font-medium text-gray-600 mb-1">{t("जन्मस्थान", "Birth Place", "जन्मस्थान")}</label>
           <div ref={ref} className="relative">
             {selected && !showDrop ? (
               <div onClick={() => setShowDrop(true)}
                 className="w-full px-2 py-2 border border-gray-300 rounded-lg text-sm cursor-pointer hover:border-[#d4a843] flex items-center justify-between">
-                <span>{lang === "mr" ? `${selected.nameMr} (${selected.name})` : selected.name}</span>
+                <span>{lang === "en" ? selected.name : `${selected.nameMr} (${selected.name})`}</span>
                 <span className="text-[10px] px-1 py-0.5 rounded bg-[#FFF8E7] text-[#5c1a1a]">
-                  {lang === "mr" ? TYPE_LABEL_M[selected.type].mr : TYPE_LABEL_M[selected.type].en}
+                  {typeLabel(selected.type, lang)}
                 </span>
               </div>
             ) : (
               <input type="text" value={search}
                 onChange={(e) => { setSearch(e.target.value); setShowDrop(true); }}
                 onFocus={() => setShowDrop(true)}
-                placeholder={t("शोधा...", "Search place...")}
+                placeholder={t("शोधा...", "Search place...", "खोजें...")}
                 className="w-full px-2 py-2 border border-[#d4a843] rounded-lg text-sm outline-none focus:ring-2 focus:ring-[#d4a843]"
                 autoFocus />
             )}
             {showDrop && search.length >= 1 && (
               <div className="absolute z-50 w-full mt-1 max-h-48 overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-lg">
                 {filtered.length === 0 ? (
-                  <div className="px-3 py-2 text-xs text-gray-500">{t("सापडले नाही", "Not found")}</div>
+                  <div className="px-3 py-2 text-xs text-gray-500">{t("सापडले नाही", "Not found", "नहीं मिला")}</div>
                 ) : filtered.map((p) => (
                   <button key={`${p.name}-${p.lat}`} type="button" onClick={() => pick(p)}
                     className="w-full text-left px-3 py-1.5 hover:bg-[#FFF8E7] text-sm flex items-center justify-between border-b border-gray-50 last:border-0">
-                    <span>{lang === "mr" ? `${p.nameMr} (${p.name})` : p.name}
+                    <span>{lang === "en" ? p.name : `${p.nameMr} (${p.name})`}
                       {p.district && <span className="text-gray-400 text-xs ml-1">— {p.district}</span>}
                     </span>
                     <span className="text-[10px] px-1 py-0.5 rounded bg-gray-100 text-gray-500 ml-1 shrink-0">
-                      {lang === "mr" ? TYPE_LABEL_M[p.type].mr : TYPE_LABEL_M[p.type].en}
+                      {typeLabel(p.type, lang)}
                     </span>
                   </button>
                 ))}
@@ -228,7 +238,7 @@ export default function MatchingPageClient() {
       const data = await res.json();
       setResult(data);
     } catch {
-      setError(t("गणना करताना त्रुटी आली. कृपया माहिती तपासा.", "Error in calculation. Please check your details."));
+      setError(t("गणना करताना त्रुटी आली. कृपया माहिती तपासा.", "Error in calculation. Please check your details.", "गणना में त्रुटि हुई. कृपया जानकारी जाँचें."));
     } finally {
       setLoading(false);
     }
@@ -242,10 +252,10 @@ export default function MatchingPageClient() {
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
           <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">
-            {t("अष्टकूट गुण मिलान", "Ashtakoot Guna Milan")}
+            {t("अष्टकूट गुण मिलान", "Ashtakoot Guna Milan", "अष्टकूट गुण मिलान")}
           </h1>
           <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            {t("३६ गुणांवर आधारित विवाह जुळणी", "Marriage matching based on 36 Gunas")}
+            {t("३६ गुणांवर आधारित विवाह जुळणी", "Marriage matching based on 36 Gunas", "३६ गुणों पर आधारित विवाह मिलान")}
           </p>
         </div>
       </section>
@@ -253,8 +263,8 @@ export default function MatchingPageClient() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <PersonForm label={t("वराची माहिती", "Groom Details")} values={boy} onChange={updateBoy} />
-          <PersonForm label={t("वधूची माहिती", "Bride Details")} values={girl} onChange={updateGirl} />
+          <PersonForm label={t("वराची माहिती", "Groom Details", "वर की जानकारी")} values={boy} onChange={updateBoy} />
+          <PersonForm label={t("वधूची माहिती", "Bride Details", "वधू की जानकारी")} values={girl} onChange={updateGirl} />
         </div>
 
         <div className="text-center">
@@ -263,7 +273,7 @@ export default function MatchingPageClient() {
             disabled={loading}
             className="px-8 py-3 bg-gradient-to-r from-[#5c1a1a] to-[#3d0c0c] text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
           >
-            {loading ? t("गणना चालू आहे...", "Calculating...") : t("गुण मिलान करा", "Match Gunas")}
+            {loading ? t("गणना चालू आहे...", "Calculating...", "गणना चल रही है...") : t("गुण मिलान करा", "Match Gunas", "गुण मिलान करें")}
           </button>
         </div>
 
@@ -282,19 +292,19 @@ export default function MatchingPageClient() {
             <p className="text-6xl font-bold mb-2">
               {result.matching.totalPoints} / {result.matching.maxPoints}
             </p>
-            <p className="text-xl font-semibold">{t(result.matching.verdictMr, result.matching.verdict)}</p>
+            <p className="text-xl font-semibold">{t(result.matching.verdictMr, result.matching.verdict, result.matching.verdictMr)}</p>
             <p className="text-sm mt-1 opacity-80">{result.matching.percentage}%</p>
 
             <div className="grid grid-cols-2 gap-4 mt-6">
               <div className="bg-white/15 rounded-xl p-3">
-                <p className="text-xs opacity-75">{t("वर", "Groom")}</p>
-                <p className="font-bold">{t(result.boyDetails.rashiMr || result.boyDetails.rashi, result.boyDetails.rashi)}</p>
-                <p className="text-xs">{t(result.boyDetails.nakshatraMr || result.boyDetails.nakshatra, result.boyDetails.nakshatra)}</p>
+                <p className="text-xs opacity-75">{t("वर", "Groom", "वर")}</p>
+                <p className="font-bold">{t(result.boyDetails.rashiMr || result.boyDetails.rashi, result.boyDetails.rashi, result.boyDetails.rashiMr || result.boyDetails.rashi)}</p>
+                <p className="text-xs">{t(result.boyDetails.nakshatraMr || result.boyDetails.nakshatra, result.boyDetails.nakshatra, result.boyDetails.nakshatraMr || result.boyDetails.nakshatra)}</p>
               </div>
               <div className="bg-white/15 rounded-xl p-3">
-                <p className="text-xs opacity-75">{t("वधू", "Bride")}</p>
-                <p className="font-bold">{t(result.girlDetails.rashiMr || result.girlDetails.rashi, result.girlDetails.rashi)}</p>
-                <p className="text-xs">{t(result.girlDetails.nakshatraMr || result.girlDetails.nakshatra, result.girlDetails.nakshatra)}</p>
+                <p className="text-xs opacity-75">{t("वधू", "Bride", "वधू")}</p>
+                <p className="font-bold">{t(result.girlDetails.rashiMr || result.girlDetails.rashi, result.girlDetails.rashi, result.girlDetails.rashiMr || result.girlDetails.rashi)}</p>
+                <p className="text-xs">{t(result.girlDetails.nakshatraMr || result.girlDetails.nakshatra, result.girlDetails.nakshatra, result.girlDetails.nakshatraMr || result.girlDetails.nakshatra)}</p>
               </div>
             </div>
           </div>
@@ -302,13 +312,13 @@ export default function MatchingPageClient() {
           {/* Factor Breakdown */}
           <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
             <h3 className="text-lg font-bold text-[#3d0c0c] mb-4">
-              {t("गुण तपशील", "Guna Details")}
+              {t("गुण तपशील", "Guna Details", "गुण विवरण")}
             </h3>
             <div className="space-y-3">
               {result.matching.factors.map((f) => (
                 <div key={f.factor} className="flex items-center gap-4">
                   <div className="w-24 text-sm font-semibold text-gray-800">
-                    {t(f.factorMr, f.factor)}
+                    {t(f.factorMr, f.factor, f.factorMr)}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
@@ -341,16 +351,17 @@ export default function MatchingPageClient() {
           { question: "What is Gun Milaan (Kundli Matching)?", answer: "Gun Milaan or Kundli Matching is a Vedic astrology method to check marriage compatibility between two people. It compares 8 aspects (Ashtakoot) of both horoscopes — Varna, Vashya, Tara, Yoni, Graha Maitri, Gana, Bhakoot, and Nadi — totaling 36 points. A score of 18+ is considered compatible." },
           { question: "How many points are needed for a good match?", answer: "In Ashtakoot matching, the maximum score is 36 points. A score of 18 or above (50%+) is considered acceptable for marriage. 25-32 points is very good, and above 32 is excellent. However, Nadi Dosha (8 points) and Bhakoot Dosha (7 points) are considered especially important." },
           { question: "गुण मिलान म्हणजे काय?", answer: "गुण मिलान हे वैदिक ज्योतिषशास्त्रातील लग्न जुळवणीचे तंत्र आहे. यात ८ अष्टकूट गुणांची तुलना केली जाते — वर्ण, वश्य, तारा, योनी, ग्रह मैत्री, गण, भकूट आणि नाडी — एकूण ३६ गुण. १८+ गुण लग्नासाठी अनुकूल मानले जातात." },
+          { question: "गुण मिलान क्या है?", answer: "गुण मिलान वैदिक ज्योतिष में विवाह मिलान की तकनीक है. इसमें ८ अष्टकूट गुणों की तुलना की जाती है — वर्ण, वश्य, तारा, योनि, ग्रह मैत्री, गण, भकूट और नाड़ी — कुल ३६ गुण. १८+ गुण विवाह के लिए अनुकूल माने जाते हैं." },
           { question: "Is online Kundli matching reliable?", answer: "Yes, our online matching uses the same Ashtakoot method that traditional astrologers use. The calculations are based on precise astronomical data for accurate planetary positions. However, for important life decisions like marriage, we recommend also consulting an experienced astrologer for a comprehensive analysis." },
         ])} />
         <h2 className="text-xl font-bold mb-6" style={{ color: "#5c1a1a" }}>
-          {t("गुण मिलान बद्दल सामान्य प्रश्न", "Frequently Asked Questions about Gun Milaan")}
+          {t("गुण मिलान बद्दल सामान्य प्रश्न", "Frequently Asked Questions about Gun Milaan", "गुण मिलान के बारे में सामान्य प्रश्न")}
         </h2>
         <div className="space-y-4">
           {[
-            { q: t("गुण मिलान म्हणजे काय?", "What is Gun Milaan (Kundli Matching)?"), a: t("गुण मिलान हे लग्न जुळवणीचे वैदिक तंत्र आहे. ८ अष्टकूट गुणांची तुलना — वर्ण, वश्य, तारा, योनी, ग्रह मैत्री, गण, भकूट, नाडी — एकूण ३६ गुण. १८+ गुण लग्नासाठी अनुकूल.", "Gun Milaan is a Vedic method comparing 8 Ashtakoot aspects — Varna, Vashya, Tara, Yoni, Graha Maitri, Gana, Bhakoot, Nadi — totaling 36 points. 18+ is considered compatible.") },
-            { q: t("चांगल्या जुळणीसाठी किती गुण आवश्यक?", "How many points are needed for a good match?"), a: t("३६ पैकी १८+ गुण स्वीकार्य. २५-३२ गुण खूप चांगले, ३२+ उत्कृष्ट. नाडी दोष (८ गुण) आणि भकूट दोष (७ गुण) विशेष महत्त्वाचे.", "18+ out of 36 is acceptable. 25-32 is very good, 32+ is excellent. Nadi (8 points) and Bhakoot (7 points) are especially important.") },
-            { q: t("ऑनलाइन गुण मिलान विश्वसनीय आहे का?", "Is online Kundli matching reliable?"), a: t("होय, आमचे गुण मिलान पारंपरिक अष्टकूट पद्धत आणि अचूक खगोलीय डेटा वापरते. लग्नासारख्या महत्त्वाच्या निर्णयासाठी अनुभवी ज्योतिषांचा सल्लाही घ्या.", "Yes, we use the same Ashtakoot method with precise astronomical data. For important decisions like marriage, also consult an experienced astrologer.") },
+            { q: t("गुण मिलान म्हणजे काय?", "What is Gun Milaan (Kundli Matching)?", "गुण मिलान क्या है?"), a: t("गुण मिलान हे लग्न जुळवणीचे वैदिक तंत्र आहे. ८ अष्टकूट गुणांची तुलना — वर्ण, वश्य, तारा, योनी, ग्रह मैत्री, गण, भकूट, नाडी — एकूण ३६ गुण. १८+ गुण लग्नासाठी अनुकूल.", "Gun Milaan is a Vedic method comparing 8 Ashtakoot aspects — Varna, Vashya, Tara, Yoni, Graha Maitri, Gana, Bhakoot, Nadi — totaling 36 points. 18+ is considered compatible.", "गुण मिलान विवाह मिलान की वैदिक तकनीक है. ८ अष्टकूट गुणों की तुलना — वर्ण, वश्य, तारा, योनि, ग्रह मैत्री, गण, भकूट, नाड़ी — कुल ३६ गुण. १८+ गुण अनुकूल.") },
+            { q: t("चांगल्या जुळणीसाठी किती गुण आवश्यक?", "How many points are needed for a good match?", "अच्छे मिलान के लिए कितने गुण चाहिए?"), a: t("३६ पैकी १८+ गुण स्वीकार्य. २५-३२ गुण खूप चांगले, ३२+ उत्कृष्ट. नाडी दोष (८ गुण) आणि भकूट दोष (७ गुण) विशेष महत्त्वाचे.", "18+ out of 36 is acceptable. 25-32 is very good, 32+ is excellent. Nadi (8 points) and Bhakoot (7 points) are especially important.", "३६ में से १८+ गुण स्वीकार्य. २५-३२ गुण बहुत अच्छे, ३२+ उत्कृष्ट. नाड़ी दोष (८ गुण) और भकूट दोष (७ गुण) विशेष महत्वपूर्ण.") },
+            { q: t("ऑनलाइन गुण मिलान विश्वसनीय आहे का?", "Is online Kundli matching reliable?", "ऑनलाइन गुण मिलान विश्वसनीय है?"), a: t("होय, आमचे गुण मिलान पारंपरिक अष्टकूट पद्धत आणि अचूक खगोलीय डेटा वापरते. लग्नासारख्या महत्त्वाच्या निर्णयासाठी अनुभवी ज्योतिषांचा सल्लाही घ्या.", "Yes, we use the same Ashtakoot method with precise astronomical data. For important decisions like marriage, also consult an experienced astrologer.", "हाँ, हम पारंपरिक अष्टकूट पद्धति और सटीक खगोलीय डेटा का उपयोग करते हैं. विवाह जैसे महत्वपूर्ण निर्णय के लिए अनुभवी ज्योतिषी से भी परामर्श लें.") },
           ].map((faq, i) => (
             <details key={i} className="bg-white rounded-xl border border-[#d4a843]/20 overflow-hidden">
               <summary className="px-5 py-4 cursor-pointer font-semibold text-sm text-[#5c1a1a] hover:bg-[#d4a843]/5">{faq.q}</summary>
