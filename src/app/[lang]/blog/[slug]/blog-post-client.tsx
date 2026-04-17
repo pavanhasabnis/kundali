@@ -39,6 +39,10 @@ function formatDate(dateStr: string, lang: string): string {
     const months = ["जानेवारी", "फेब्रुवारी", "मार्च", "एप्रिल", "मे", "जून", "जुलै", "ऑगस्ट", "सप्टेंबर", "ऑक्टोबर", "नोव्हेंबर", "डिसेंबर"];
     return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
   }
+  if (lang === "hi") {
+    const months = ["जनवरी", "फ़रवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितम्बर", "अक्टूबर", "नवम्बर", "दिसम्बर"];
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  }
   return d.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" });
 }
 
@@ -48,40 +52,40 @@ export default function BlogPostClient({ slug, post }: { slug: string; post: Blo
   if (!post) {
     return (
       <div className="bg-[#FAFAF8] min-h-screen py-20 text-center">
-        <p className="text-xl font-bold text-stone-700">{t("लेख सापडला नाही", "Post not found")}</p>
+        <p className="text-xl font-bold text-stone-700">{t("लेख सापडला नाही", "Post not found", "लेख नहीं मिला")}</p>
         <Link href="/blog" className="text-sm mt-4 inline-block font-semibold" style={{ color: "#d4a843" }}>
-          {t("← सर्व लेख पहा", "← Back to all posts")}
+          {t("← सर्व लेख पहा", "← Back to all posts", "← सभी लेख देखें")}
         </Link>
       </div>
     );
   }
 
-  const content = t(post.content, post.contentEn);
+  const content = t(post.content, post.contentEn, post.content);
 
   // Dynamic SEO meta tags
-  const seoTitle = post.seo?.metaTitle || t(post.title, post.titleEn);
-  const seoDesc = post.seo?.metaDescription || t(post.summary, post.summaryEn);
+  const seoTitle = post.seo?.metaTitle || t(post.title, post.titleEn, post.title);
+  const seoDesc = post.seo?.metaDescription || t(post.summary, post.summaryEn, post.summary);
   const seoKeywords = post.seo ? [...post.seo.keywords, ...(post.seo.keywordsMr || [])].join(", ") : "";
   const postUrl = `https://bhaagyavedh.com/${lang}/blog/${slug}`;
 
   // Build FAQ schema from post data
   const faqItems = post.faq?.map(f => ({
-    question: t(f.questionMr, f.questionEn),
-    answer: t(f.answerMr, f.answerEn),
+    question: t(f.questionMr, f.questionEn, f.questionMr),
+    answer: t(f.answerMr, f.answerEn, f.answerMr),
   })) || [];
 
   return (
     <div className="bg-[#FAFAF8] min-h-screen py-6">
       {/* JSON-LD Structured Data */}
       <JsonLd data={articleSchema({ title: seoTitle, description: seoDesc, url: postUrl, datePublished: post.date, inLanguage: lang === "en" ? "en-IN" : lang === "hi" ? "hi-IN" : "mr-IN" })} />
-      <JsonLd data={breadcrumbSchema([{ name: "Home", url: `https://bhaagyavedh.com/${lang}` }, { name: "Blog", url: `https://bhaagyavedh.com/${lang}/blog` }, { name: t(post.title, post.titleEn), url: postUrl }])} />
+      <JsonLd data={breadcrumbSchema([{ name: "Home", url: `https://bhaagyavedh.com/${lang}` }, { name: "Blog", url: `https://bhaagyavedh.com/${lang}/blog` }, { name: t(post.title, post.titleEn, post.title), url: postUrl }])} />
       {faqItems.length > 0 && <JsonLd data={faqSchema(faqItems)} />}
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
 
         {/* Back link */}
         <Link href="/blog" className="text-xs font-semibold mb-6 inline-block" style={{ color: "#d4a843" }}>
-          {t("← सर्व लेख", "← All posts")}
+          {t("← सर्व लेख", "← All posts", "← सभी लेख")}
         </Link>
 
         <article className="bg-white rounded-xl border border-stone-200 overflow-hidden shadow-sm">
@@ -89,17 +93,17 @@ export default function BlogPostClient({ slug, post }: { slug: string; post: Blo
           <div className="p-6 pb-4" style={{ borderBottom: "1px solid #e5e0d5" }}>
             <div className="flex items-center gap-3 mb-3">
               <span className="text-[10px] font-bold px-2.5 py-1 rounded-full text-white" style={{ background: "#d4a843" }}>
-                {t(post.category, post.categoryEn)}
+                {t(post.category, post.categoryEn, post.category)}
               </span>
               <span className="text-xs text-stone-400">
                 {formatDate(post.date, lang)}
               </span>
             </div>
             <h1 className="text-2xl font-bold leading-tight" style={{ color: "#3d0c0c" }}>
-              {t(post.title, post.titleEn)}
+              {t(post.title, post.titleEn, post.title)}
             </h1>
             <p className="text-sm text-stone-500 mt-2">
-              {t(post.summary, post.summaryEn)}
+              {t(post.summary, post.summaryEn, post.summary)}
             </p>
           </div>
 
@@ -131,7 +135,7 @@ export default function BlogPostClient({ slug, post }: { slug: string; post: Blo
           {/* Footer */}
           <div className="p-6 text-center" style={{ borderTop: "1px solid #e5e0d5", background: "#f5efe0" }}>
             <p className="text-xs text-stone-500">
-              {t("भाग्यवेध — दररोज नवीन ज्योतिष ज्ञान", "Bhaagyavedh — Daily Vedic knowledge")}
+              {t("भाग्यवेध — दररोज नवीन ज्योतिष ज्ञान", "Bhaagyavedh — Daily Vedic knowledge", "भाग्यवेध — प्रतिदिन नया ज्योतिष ज्ञान")}
             </p>
           </div>
         </article>
@@ -140,16 +144,16 @@ export default function BlogPostClient({ slug, post }: { slug: string; post: Blo
         {post.faq && post.faq.length > 0 && (
           <section className="mt-8">
             <h2 className="text-lg font-bold mb-4" style={{ color: "#5c1a1a" }}>
-              {t("सामान्य प्रश्न", "Frequently Asked Questions")}
+              {t("सामान्य प्रश्न", "Frequently Asked Questions", "सामान्य प्रश्न")}
             </h2>
             <div className="space-y-3">
               {post.faq.map((faq, i) => (
                 <details key={i} className="bg-white rounded-xl border border-[#d4a843]/20 overflow-hidden">
                   <summary className="px-5 py-4 cursor-pointer font-semibold text-sm text-[#5c1a1a] hover:bg-[#d4a843]/5">
-                    {t(faq.questionMr, faq.questionEn)}
+                    {t(faq.questionMr, faq.questionEn, faq.questionMr)}
                   </summary>
                   <p className="px-5 pb-4 text-sm text-[#5c1a1a]/70 leading-relaxed">
-                    {t(faq.answerMr, faq.answerEn)}
+                    {t(faq.answerMr, faq.answerEn, faq.answerMr)}
                   </p>
                 </details>
               ))}

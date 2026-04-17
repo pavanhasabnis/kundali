@@ -78,13 +78,13 @@ export default function CategoryPageClient({ category, items }: Props) {
             href="/sangrah"
             className="inline-block text-white/50 hover:text-[#d4a843] text-sm mb-4 transition"
           >
-            ← {t("संग्रह", "Sangrah")}
+            ← {t("संग्रह", "Sangrah", "संग्रह")}
           </Link>
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-            {t(category.labelMr, category.labelEn)}
+            {t(category.labelMr, category.labelEn, category.labelMr)}
           </h1>
           <p className="text-white/60 text-sm">
-            {items.length} {t("पठणे उपलब्ध", "items available")}
+            {items.length} {t("पठणे उपलब्ध", "items available", "पाठ उपलब्ध")}
           </p>
 
           {/* Search */}
@@ -93,7 +93,7 @@ export default function CategoryPageClient({ category, items }: Props) {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={t("नावाने शोधा...", "Search by name...")}
+              placeholder={t("नावाने शोधा...", "Search by name...", "नाम से खोजें...")}
               className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:border-[#d4a843]/60 text-sm"
             />
           </div>
@@ -112,7 +112,7 @@ export default function CategoryPageClient({ category, items }: Props) {
                   : "bg-white text-gray-600 border-gray-200 hover:border-[#d4a843]/40"
               }`}
             >
-              {t("सर्व", "All")} ({items.length})
+              {t("सर्व", "All", "सभी")} ({items.length})
             </button>
             {deities.map((deity) => {
               const count = items.filter((i) => i.deity === deity.id).length;
@@ -126,7 +126,7 @@ export default function CategoryPageClient({ category, items }: Props) {
                       : "bg-white text-gray-600 border-gray-200 hover:border-[#d4a843]/40"
                   }`}
                 >
-                  {t(deity.mr, deity.en)} ({count})
+                  {t(deity.mr, deity.en, deity.mr)} ({count})
                 </button>
               );
             })}
@@ -150,20 +150,20 @@ export default function CategoryPageClient({ category, items }: Props) {
                 }}
               >
                 <span className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-sm font-bold text-[#d4a843] shrink-0">
-                  {t(item.deityMr[0], item.deityEn[0])}
+                  {t(item.deityMr[0], item.deityEn[0], item.deityMr[0])}
                 </span>
                 <div className="min-w-0">
                   <h3 className="text-white font-semibold text-sm truncate group-hover:text-[#d4a843] transition">
-                    {t(item.title, item.titleEn)}
+                    {t(item.title, item.titleEn, item.title)}
                   </h3>
                   <p className="text-white/50 text-xs">
-                    {t(item.deityMr, item.deityEn)}
+                    {t(item.deityMr, item.deityEn, item.deityMr)}
                   </p>
                 </div>
               </div>
               <div className="p-3">
                 <p className="text-gray-500 text-xs line-clamp-2">
-                  {t(item.content, item.transliteration).slice(0, 100)}...
+                  {t(item.content, item.transliteration, item.content).slice(0, 100)}...
                 </p>
                 <div className="flex items-center justify-between mt-2">
                   <div className="flex gap-1">
@@ -174,7 +174,7 @@ export default function CategoryPageClient({ category, items }: Props) {
                     ))}
                   </div>
                   <span className="text-xs text-[#5c1a1a] font-medium group-hover:text-[#d4a843] transition">
-                    {t("वाचा →", "Read →")}
+                    {t("वाचा →", "Read →", "पढ़ें →")}
                   </span>
                 </div>
               </div>
@@ -184,7 +184,7 @@ export default function CategoryPageClient({ category, items }: Props) {
 
         {filtered.length === 0 && (
           <p className="text-center text-gray-400 py-12">
-            {t("काहीही सापडले नाही", "No results found")}
+            {t("काहीही सापडले नाही", "No results found", "कुछ नहीं मिला")}
           </p>
         )}
       </section>
