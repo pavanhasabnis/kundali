@@ -1,40 +1,47 @@
-import type { Metadata } from "next";
 import { getBlogPost } from "@/lib/blog-reader";
-import { SITE_URL, OG_IMAGE } from "@/lib/seo";
+import { pageMetaI18n, type Lang } from "@/lib/seo";
 import BlogPostClient from "./blog-post-client";
 
-interface Props { params: Promise<{ slug: string }> }
+interface Props { params: Promise<{ lang: string; slug: string }> }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+export async function generateMetadata({ params }: Props) {
+  const { lang, slug } = await params;
   const post = getBlogPost(slug);
-  if (!post) {
-    return { title: "Post Not Found" };
-  }
-  const title = post.seo?.metaTitle || post.titleEn;
-  const description = post.seo?.metaDescription || post.summaryEn;
-  const url = `${SITE_URL}/blog/${slug}`;
-  const keywords = post.seo ? [...post.seo.keywords, ...(post.seo.keywordsMr || [])] : [];
-  return {
-    title,
-    description,
-    keywords: keywords.join(", "),
-    alternates: { canonical: url },
-    openGraph: {
-      title,
-      description,
-      url,
-      type: "article",
-      publishedTime: post.date,
-      images: [OG_IMAGE],
+  if (!post) return { title: "Post Not Found" };
+  const l: Lang = lang === "en" ? "en" : "mr";
+
+  const titleMr = post.title;
+  const titleEn = post.titleEn;
+  const descMr = (post.summary || post.titleMr || titleMr).substring(0, 160);
+  const descEn = (post.seo?.metaDescription || post.summaryEn || titleEn).substring(0, 160);
+  const tagsEn = post.seo?.keywords || [];
+  const tagsMr = post.seo?.keywordsMr || [];
+
+  return pageMetaI18n({
+    lang: l,
+    path: `/blog/${slug}`,
+    ogType: "article",
+    mr: {
+      title: `${titleMr} — ${titleEn} | भाग्यवेध ब्लॉग`,
+      description: descMr,
+      keywords: [
+        ...tagsMr,
+        ...tagsEn,
+        "मराठी ज्योतिष ब्लॉग", "ज्योतिष लेख",
+        "astrology blog marathi", "vedic blog",
+      ],
     },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [OG_IMAGE.url],
+    en: {
+      title: `${post.seo?.metaTitle || titleEn} — ${titleMr} | Bhaagyavedh Blog`,
+      description: descEn,
+      keywords: [
+        ...tagsEn,
+        ...tagsMr,
+        "astrology blog", "vedic astrology article",
+        "marathi astrology blog", "astrology article marathi",
+      ],
     },
-  };
+  });
 }
 
 export default async function BlogPostPage({ params }: Props) {

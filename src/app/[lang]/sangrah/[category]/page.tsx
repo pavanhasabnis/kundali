@@ -1,51 +1,47 @@
-import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAllSangrahItems, SANGRAH_CATEGORIES } from "@/lib/sangrah-reader";
-import { SITE_URL } from "@/lib/seo";
+import { pageMetaI18n, type Lang } from "@/lib/seo";
 import CategoryPageClient from "./category-client";
 
 export function generateStaticParams() {
-  return SANGRAH_CATEGORIES.map((cat) => ({ category: cat.id }));
+  return SANGRAH_CATEGORIES.flatMap((cat) => [
+    { lang: "mr", category: cat.id },
+    { lang: "en", category: cat.id },
+  ]);
 }
 
-const OG_IMAGE = {
-  url: `${SITE_URL}/logos/og-image.png`,
-  width: 1200,
-  height: 630,
-  alt: "Bhaagyavedh — भाग्यवेध | Vedic Astrology",
-};
+type Props = { params: Promise<{ lang: string; category: string }> };
 
-type Props = { params: Promise<{ category: string }> };
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { category } = await params;
+export async function generateMetadata({ params }: Props) {
+  const { lang, category } = await params;
   const cat = SANGRAH_CATEGORIES.find((c) => c.id === category);
   if (!cat) return {};
+  const l: Lang = lang === "en" ? "en" : "mr";
 
-  const title = `${cat.labelEn} — ${cat.labelMr}`;
-  const description = `${cat.descriptionEn}. ${cat.description}. Browse all ${cat.labelEn.toLowerCase()} with Sanskrit text, transliteration & meaning.`;
-  const url = `${SITE_URL}/sangrah/${category}`;
-
-  return {
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      title,
-      description,
-      url,
-      siteName: "Bhaagyavedh",
-      locale: "mr_IN",
-      type: "website",
-      images: [OG_IMAGE],
+  return pageMetaI18n({
+    lang: l,
+    path: `/sangrah/${category}`,
+    mr: {
+      title: `${cat.labelMr} संग्रह — ${cat.labelEn} Marathi | भाग्यवेध`,
+      description: `मराठी ${cat.labelMr} संग्रह — ${cat.description}. संस्कृत मुळ, मराठी लिप्यंतर आणि अर्थासह.`,
+      keywords: [
+        `${cat.labelMr}`, `मराठी ${cat.labelMr}`, `${cat.labelMr} संग्रह`,
+        `${cat.labelEn.toLowerCase()} marathi`, `marathi ${cat.labelEn.toLowerCase()}`,
+        `${cat.labelEn.toLowerCase()}`, `${cat.labelEn.toLowerCase()} collection`,
+        "sanskrit text", "hindu prayers",
+      ],
     },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [OG_IMAGE.url],
+    en: {
+      title: `${cat.labelEn} Collection — ${cat.labelMr} | Sanskrit + Marathi | Bhaagyavedh`,
+      description: `Complete ${cat.labelEn.toLowerCase()} collection in Sanskrit with Marathi transliteration and English meaning. ${cat.descriptionEn}.`,
+      keywords: [
+        `${cat.labelEn.toLowerCase()}`, `${cat.labelEn.toLowerCase()} collection`,
+        `${cat.labelEn.toLowerCase()} list`, `${cat.labelEn.toLowerCase()} lyrics`,
+        `${cat.labelEn.toLowerCase()} marathi`, `marathi ${cat.labelEn.toLowerCase()}`,
+        `${cat.labelMr}`, `मराठी ${cat.labelMr}`,
+      ],
     },
-  };
+  });
 }
 
 export default async function CategoryPage({ params }: Props) {

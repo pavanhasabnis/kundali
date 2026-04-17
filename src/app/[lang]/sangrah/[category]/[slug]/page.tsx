@@ -1,53 +1,56 @@
-import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getSangrahItem, getAllSangrahSlugs, SANGRAH_CATEGORIES } from "@/lib/sangrah-reader";
-import { SITE_URL } from "@/lib/seo";
+import { pageMetaI18n, type Lang } from "@/lib/seo";
 import SangrahDetailClient from "./detail-client";
 
 export function generateStaticParams() {
-  return getAllSangrahSlugs();
+  const base = getAllSangrahSlugs();
+  return base.flatMap((p) => [
+    { lang: "mr", ...p },
+    { lang: "en", ...p },
+  ]);
 }
 
-const OG_IMAGE = {
-  url: `${SITE_URL}/logos/og-image.png`,
-  width: 1200,
-  height: 630,
-  alt: "Bhaagyavedh — भाग्यवेध | Vedic Astrology",
-};
+type Props = { params: Promise<{ lang: string; category: string; slug: string }> };
 
-type Props = { params: Promise<{ category: string; slug: string }> };
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { category, slug } = await params;
+export async function generateMetadata({ params }: Props) {
+  const { lang, category, slug } = await params;
   const item = getSangrahItem(slug);
   if (!item) return {};
+  const l: Lang = lang === "en" ? "en" : "mr";
 
   const cat = SANGRAH_CATEGORIES.find((c) => c.id === category);
-  const title = `${item.titleEn} — ${item.title}`;
-  const description = `${item.titleEn} with Sanskrit text, transliteration & meaning. ${item.title} — ${cat?.labelMr || category}. Read, learn and recite.`;
-  const url = `${SITE_URL}/sangrah/${category}/${slug}`;
+  const catMr = cat?.labelMr || category;
+  const catEn = cat?.labelEn || category;
+  const deity = item.deityEn || "";
 
-  return {
-    title,
-    description,
-    keywords: item.tags.join(", "),
-    alternates: { canonical: url },
-    openGraph: {
-      title,
-      description,
-      url,
-      siteName: "Bhaagyavedh",
-      locale: "mr_IN",
-      type: "article",
-      images: [OG_IMAGE],
+  return pageMetaI18n({
+    lang: l,
+    path: `/sangrah/${category}/${slug}`,
+    ogType: "article",
+    mr: {
+      title: `${item.title} — ${item.titleEn} मराठी | ${catMr} | भाग्यवेध`,
+      description: `${item.title} (${item.titleEn}) — संपूर्ण संस्कृत पाठ, मराठी लिप्यंतर आणि अर्थ. ${catMr} संग्रह. ${deity} ${catMr.toLowerCase()}.`,
+      keywords: [
+        `${item.title}`, `${item.title} मराठी`, `${item.title} lyrics`,
+        `${item.titleEn} marathi`, `${item.titleEn} lyrics`,
+        `${item.titleEn}`, `${item.titleEn} sanskrit`,
+        ...(item.tags || []),
+        `${catMr}`, `मराठी ${catMr}`,
+      ],
     },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [OG_IMAGE.url],
+    en: {
+      title: `${item.titleEn} — ${item.title} Marathi ${catEn} Lyrics | Bhaagyavedh`,
+      description: `${item.titleEn} (${item.title}) ${catEn.toLowerCase()} — complete Sanskrit text with Marathi transliteration and English meaning. ${deity} prayer.`,
+      keywords: [
+        `${item.titleEn}`, `${item.titleEn} lyrics`, `${item.titleEn} sanskrit`,
+        `${item.titleEn} meaning`, `${item.titleEn} marathi`,
+        `${item.title}`, `${item.title} मराठी`,
+        ...(item.tags || []),
+        `${catEn.toLowerCase()} lyrics`, `${catEn.toLowerCase()} sanskrit`,
+      ],
     },
-  };
+  });
 }
 
 export default async function SangrahDetailPage({ params }: Props) {
