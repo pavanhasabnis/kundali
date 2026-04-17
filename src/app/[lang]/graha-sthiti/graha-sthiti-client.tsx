@@ -69,15 +69,15 @@ export default function CurrentPlanetsPageClient() {
     return () => clearInterval(id);
   }, [lang]);
 
-  const dateStr = new Date().toLocaleDateString(lang === "mr" ? "mr-IN" : "en-IN", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
+  const dateStr = new Date().toLocaleDateString(lang === "mr" ? "mr-IN" : lang === "hi" ? "hi-IN" : "en-IN", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
 
   return (
     <div className="min-h-screen bg-[#FAFAF8]">
       <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">{t("आत्ताचे ग्रह स्थिती", "Current Planet Positions")}</h1>
-          <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">{t("सध्या आकाशातील सर्व ९ ग्रहांची वास्तविक स्थिती", "Real-time positions of all 9 planets in the sky right now")}</p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">{t("आत्ताचे ग्रह स्थिती", "Current Planet Positions", "वर्तमान ग्रह स्थिति")}</h1>
+          <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">{t("सध्या आकाशातील सर्व ९ ग्रहांची वास्तविक स्थिती", "Real-time positions of all 9 planets in the sky right now", "अभी आकाश में सभी ९ ग्रहों की वास्तविक स्थिति")}</p>
         </div>
       </section>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-6 py-6">
@@ -90,48 +90,48 @@ export default function CurrentPlanetsPageClient() {
           </div>
           <p className="text-sm" style={{ color: "#d4a843" }}>{dateStr}</p>
           <p className="text-3xl font-bold text-white mt-1 font-mono tracking-wider">{liveClock}</p>
-          <p className="text-xs text-white/40 mt-1">IST | {t("दर ६० सेकंदांनी ग्रह स्थिती अपडेट होते", "Planet positions update every 60 seconds")}</p>
+          <p className="text-xs text-white/40 mt-1">IST | {t("दर ६० सेकंदांनी ग्रह स्थिती अपडेट होते", "Planet positions update every 60 seconds", "हर ६० सेकंड में ग्रह स्थिति अपडेट होती है")}</p>
         </div>
 
         {loading ? (
           <div className="text-center py-12">
             <div className="w-8 h-8 border-3 border-[#f0c040]/30 border-t-[#8b2c2c] rounded-full animate-spin mx-auto" />
-            <p className="text-sm text-stone-500 mt-3">{t("ग्रह स्थिती गणना चालू...", "Calculating planet positions...")}</p>
+            <p className="text-sm text-stone-500 mt-3">{t("ग्रह स्थिती गणना चालू...", "Calculating planet positions...", "ग्रह स्थिति गणना चल रही...")}</p>
           </div>
         ) : planets ? (
           <>
             {/* Lagna */}
             <div className="bg-white rounded-xl border border-stone-200 p-4 text-center">
-              <p className="text-xs text-stone-400 uppercase">{t("सध्याचे लग्न (उदय राशी)", "Current Ascendant (Rising Sign)")}</p>
+              <p className="text-xs text-stone-400 uppercase">{t("सध्याचे लग्न (उदय राशी)", "Current Ascendant (Rising Sign)", "वर्तमान लग्न (उदय राशि)")}</p>
               <p className="text-2xl font-bold mt-1" style={{ color: "#5c1a1a" }}>
-                {RASHI_SYMBOL[lagnaRashiMr] || ""} {t(lagnaRashiMr, lagnaRashi)}
+                {RASHI_SYMBOL[lagnaRashiMr] || ""} {t(lagnaRashiMr, lagnaRashi, lagnaRashiMr)}
               </p>
             </div>
 
             {/* Planet Table */}
             <div className="flex items-center justify-between mb-1 px-1">
-              <p className="text-xs text-stone-400">{t("शेवटचे अपडेट:", "Last updated:")} {time}</p>
-              <p className="text-[10px] text-stone-300">{t("पुढील अपडेट ६० सेकंदांत", "Next update in 60s")}</p>
+              <p className="text-xs text-stone-400">{t("शेवटचे अपडेट:", "Last updated:", "अंतिम अपडेट:")} {time}</p>
+              <p className="text-[10px] text-stone-300">{t("पुढील अपडेट ६० सेकंदांत", "Next update in 60s", "अगला अपडेट ६० सेकंड में")}</p>
             </div>
             <div className="bg-white rounded-xl border border-stone-200 overflow-hidden shadow-sm">
               <div className="grid grid-cols-5 text-xs font-bold py-3 px-4 text-white" style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}>
-                <div>{t("ग्रह", "Planet")}</div>
-                <div>{t("राशी", "Sign")}</div>
-                <div>{t("अंश", "Degree")}</div>
-                <div>{t("नक्षत्र", "Nakshatra")}</div>
-                <div className="text-center">{t("भाव", "House")}</div>
+                <div>{t("ग्रह", "Planet", "ग्रह")}</div>
+                <div>{t("राशी", "Sign", "राशि")}</div>
+                <div>{t("अंश", "Degree", "अंश")}</div>
+                <div>{t("नक्षत्र", "Nakshatra", "नक्षत्र")}</div>
+                <div className="text-center">{t("भाव", "House", "भाव")}</div>
               </div>
               {planets.map((p, i) => (
                 <div key={i} className={`grid grid-cols-5 text-sm py-3 px-4 border-b border-stone-50 ${i % 2 === 0 ? "bg-white" : "bg-stone-50/50"}`}>
                   <div className="font-semibold" style={{ color: p.isRetrograde ? "#dc2626" : "#3d0c0c" }}>
-                    {t(p.nameMr, p.name)} {p.isRetrograde ? t("(व)", "(R)") : ""}
+                    {t(p.nameMr, p.name, p.nameMr)} {p.isRetrograde ? t("(व)", "(R)", "(व)") : ""}
                   </div>
                   <div>
                     <span className="mr-1">{RASHI_SYMBOL[p.rashiMr] || ""}</span>
-                    {t(p.rashiMr, p.rashi)}
+                    {t(p.rashiMr, p.rashi, p.rashiMr)}
                   </div>
                   <div className="font-mono text-xs text-stone-600">{p.degreeDMS}</div>
-                  <div className="text-xs">{t(p.nakshatraMr, p.nakshatra)}</div>
+                  <div className="text-xs">{t(p.nakshatraMr, p.nakshatra, p.nakshatraMr)}</div>
                   <div className="text-center font-semibold">{p.house}</div>
                 </div>
               ))}
@@ -142,13 +142,14 @@ export default function CurrentPlanetsPageClient() {
               <p className="text-xs text-stone-500">
                 {t(
                   "सूचना: हे तुमचे जन्म कुंडली नाही. हे सध्याच्या क्षणातील ग्रहांची वास्तविक स्थिती आहे. तुमच्या वैयक्तिक कुंडलीसाठी जन्म माहिती भरा.",
-                  "Note: This is NOT your birth chart. These are real-time planetary positions right now. For your personal kundli, enter your birth details."
+                  "Note: This is NOT your birth chart. These are real-time planetary positions right now. For your personal kundli, enter your birth details.",
+                  "सूचना: यह आपकी जन्म कुंडली नहीं है. यह वर्तमान क्षण में ग्रहों की वास्तविक स्थिति है. अपनी व्यक्तिगत कुंडली के लिए जन्म जानकारी भरें."
                 )}
               </p>
             </div>
           </>
         ) : (
-          <div className="text-center py-12 text-stone-500">{t("ग्रह स्थिती उपलब्ध नाही", "Planet positions not available")}</div>
+          <div className="text-center py-12 text-stone-500">{t("ग्रह स्थिती उपलब्ध नाही", "Planet positions not available", "ग्रह स्थिति उपलब्ध नहीं")}</div>
         )}
       </div>
     </div>
