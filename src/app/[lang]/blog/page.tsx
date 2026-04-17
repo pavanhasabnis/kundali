@@ -9,9 +9,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/blog",
     mr: {
-      title: "दैनिक ब्लॉग — ज्योतिष, सण, व्रत लेख मराठी | Astrology Blog Marathi | भाग्यवेध",
+      title: "दैनिक ब्लॉग — ज्योतिष, सण, व्रत लेख मराठी",
       description:
-        "दैनिक मराठी ज्योतिष ब्लॉग — राशीभविष्य लेख, सण महत्व, व्रत कथा, उपाय, पंचांग विशेष. Marathi astrology blog.",
+        "दैनिक मराठी ज्योतिष ब्लॉग — राशीभविष्य लेख, सण महत्व, व्रत कथा, ज्योतिष उपाय, पंचांग विशेष. Marathi astrology blog, वैदिक लेख पुणे.",
       keywords: [
         "मराठी ज्योतिष ब्लॉग", "राशीभविष्य लेख", "सण माहिती मराठी", "व्रत कथा",
         "ज्योतिष उपाय लेख",
@@ -20,9 +20,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Astrology Blog — Marathi Vedic Articles, Festivals, Remedies | Bhaagyavedh",
+      title: "Astrology Blog — Marathi Vedic Articles | Bhaagyavedh",
       description:
-        "Daily astrology blog — Marathi vedic articles on horoscope, festivals, vrat, remedies, panchang. Read in Marathi and English.",
+        "Daily Marathi astrology blog — Vedic articles on horoscope, festivals, vrat katha, remedies, panchang. Read authentic Jyotish content in Marathi & English.",
       keywords: [
         "astrology blog", "vedic astrology articles", "daily astrology",
         "festival articles", "astrology remedies",

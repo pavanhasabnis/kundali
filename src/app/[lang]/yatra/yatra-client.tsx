@@ -133,7 +133,7 @@ const categories = [
 ];
 
 export default function YatraPageClient() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [packages, setPackages] = useState<TravelPkg[]>([]);
   const [loading, setLoading] = useState(true);
   const [popupOpen, setPopupOpen] = useState(false);
@@ -151,8 +151,19 @@ export default function YatraPageClient() {
 
   return (
     <div className="min-h-screen bg-[#FAFAF8]">
-      <JsonLd data={serviceSchema({ name: "Religious Yatra Packages — धार्मिक यात्रा", description: "Guided pilgrimage tours — Jyotirlinga Darshan, Char Dham Yatra, Ashtavinayak Tour, Shakti Peeth and more from Pune.", url: "https://bhaagyavedh.com/yatra" })} />
-      <JsonLd data={breadcrumbSchema([{ name: "Home", url: "https://bhaagyavedh.com" }, { name: "Yatra", url: "https://bhaagyavedh.com/yatra" }])} />
+      <JsonLd data={serviceSchema({ name: "Religious Yatra Packages — धार्मिक यात्रा", description: "Guided pilgrimage tours — Jyotirlinga Darshan, Char Dham Yatra, Ashtavinayak Tour, Shakti Peeth and more from Pune.", url: `https://bhaagyavedh.com/${lang}/yatra` })} />
+      <JsonLd data={breadcrumbSchema([{ name: "Home", url: `https://bhaagyavedh.com/${lang}` }, { name: "Yatra", url: `https://bhaagyavedh.com/${lang}/yatra` }])} />
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: [
+          { "@type": "Question", name: "१२ ज्योतिर्लिंग यात्रा किती दिवसांची असते?", acceptedAnswer: { "@type": "Answer", text: "संपूर्ण १२ ज्योतिर्लिंग दर्शन यात्रा साधारण १२ ते १६ दिवसांची असते. भाग्यवेध विभाजित पॅकेज ८-१० दिवसांत उत्तर भारत व ५-७ दिवसांत दक्षिण भारत ज्योतिर्लिंग पूर्ण करते." } },
+          { "@type": "Question", name: "How many days is the Jyotirlinga Yatra?", acceptedAnswer: { "@type": "Answer", text: "The complete 12 Jyotirlinga darshan yatra typically takes 12–16 days. Bhaagyavedh offers split packages — 8–10 days for North India Jyotirlingas and 5–7 days for South India." } },
+          { "@type": "Question", name: "Char Dham यात्रा पॅकेज मध्ये काय समाविष्ट आहे?", acceptedAnswer: { "@type": "Answer", text: "चारधाम पॅकेज मध्ये यमुनोत्री, गंगोत्री, केदारनाथ व बद्रीनाथ दर्शन, निवास, भोजन, प्रवास, अनुभवी गाइड व हेलिकॉप्टर सुविधा (पर्यायी) समाविष्ट आहे." } },
+          { "@type": "Question", name: "What is included in Char Dham Yatra package?", acceptedAnswer: { "@type": "Answer", text: "The Char Dham package covers darshan at Yamunotri, Gangotri, Kedarnath, and Badrinath with accommodation, meals, transport, guide, and optional helicopter service." } },
+          { "@type": "Question", name: "अष्टविनायक यात्रा पुण्यातून किती दिवसांची आहे?", acceptedAnswer: { "@type": "Answer", text: "अष्टविनायक यात्रा पुण्यातून २ ते ३ दिवसांची असते. सर्व ८ गणपती मंदिरे (मोरगाव, थेऊर, सिद्धटेक, रांजणगाव, ओझर, लेण्याद्री, महड, पाली) दर्शन पूर्ण होते." } },
+        ],
+      }} />
       {/* Hero */}
       <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />

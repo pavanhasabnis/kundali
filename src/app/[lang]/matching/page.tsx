@@ -21,9 +21,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Kundli Matching — 36 Gun Milan Ashtakoot | Guna Match Marathi | Bhaagyavedh",
+      title: "Kundli Matching — 36 Gun Milan Ashtakoot | Bhaagyavedh",
       description:
-        "Free 36 guna kundli matching for marriage. Ashtakoot method — Varna, Vashya, Tara, Yoni, Graha Maitri, Gana, Bhakoot, Nadi. Mangal dosh and Nadi dosh check in Marathi + English.",
+        "Free 36 guna kundli matching. Ashtakoot — Varna, Vashya, Tara, Yoni, Graha Maitri, Gana, Bhakoot, Nadi. Mangal & Nadi dosh check in Marathi + English.",
       keywords: [
         "kundli matching", "36 gun milan", "ashtakoot matching", "kundali matching free",
         "marriage matching vedic", "mangal dosh check", "nadi dosh",

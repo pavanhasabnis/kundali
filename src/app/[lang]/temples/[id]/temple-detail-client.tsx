@@ -54,7 +54,7 @@ export default function TempleDetailClient({ id, temple }: { id: string; temple:
     });
   }
 
-  const templeUrl = `https://bhaagyavedh.com/temples/${id}`;
+  const templeUrl = `https://bhaagyavedh.com/${lang}/temples/${id}`;
 
   return (
     <div className="bg-[#FAFAF8] py-6">
@@ -73,8 +73,8 @@ export default function TempleDetailClient({ id, temple }: { id: string; temple:
         tourBookingPage: "https://bhaagyavedh.com/yatra",
       }} />
       <JsonLd data={breadcrumbSchema([
-        { name: "Home", url: "https://bhaagyavedh.com" },
-        { name: "Temples", url: "https://bhaagyavedh.com/temples" },
+        { name: "Home", url: `https://bhaagyavedh.com/${lang}` },
+        { name: "Temples", url: `https://bhaagyavedh.com/${lang}/temples` },
         { name: temple.nameEn, url: templeUrl },
       ])} />
 

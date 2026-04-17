@@ -8,9 +8,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/",
     mr: {
-      title: "भाग्यवेध — मोफत कुंडली, राशीफल, पंचांग | Vedic Astrology Marathi",
+      title: "भाग्यवेध — मोफत कुंडली, राशीफल, पंचांग",
       description:
-        "मोफत जन्म कुंडली, आजचे राशीभविष्य, गुण मिलान, पंचांग, शुभ मुहूर्त आणि तीर्थयात्रा सेवा. Aajcha rashifal, mofat kundli, panchang Marathi. भाग्यवेध वर वैदिक ज्योतिष.",
+        "मोफत जन्म कुंडली, आजचे राशीभविष्य, गुण मिलान, पंचांग, शुभ मुहूर्त आणि तीर्थयात्रा. Aajcha rashifal, mofat kundli, panchang marathi. भाग्यवेध वैदिक ज्योतिष.",
       keywords: [
         "मोफत कुंडली", "जन्म कुंडली", "आजचे राशीभविष्य", "पंचांग आज", "गुण मिलान", "मुहूर्त",
         "तीर्थयात्रा", "मराठी ज्योतिष",
@@ -19,9 +19,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Bhaagyavedh — Free Kundli, Horoscope, Panchang | Vedic Astrology",
+      title: "Bhaagyavedh — Free Kundli, Horoscope & Panchang",
       description:
-        "Free janam kundli maker, daily horoscope, Ashtakoot matching, panchang, shubh muhurat, and pilgrimage services. Aajcha rashifal marathi, mofat kundali. Trusted Vedic astrology from Pune.",
+        "Free janam kundli, daily horoscope, Ashtakoot matching, panchang & shubh muhurat. Aajcha rashifal marathi, mofat kundali. Trusted Vedic astrology from Pune.",
       keywords: [
         "free kundli online", "janam kundli maker", "daily horoscope", "kundli matching",
         "panchang today", "shubh muhurat", "vedic astrology",

@@ -6,7 +6,17 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/admin", "/account", "/login", "/kundli/result", "/sangrah/download"],
+        disallow: [
+          "/api/",
+          "/admin", "/admin/",
+          "/account", "/account/",
+          "/login", "/login/",
+          "/*/admin", "/*/admin/",
+          "/*/account", "/*/account/",
+          "/*/login", "/*/login/",
+          "/*/kundli/result",
+          "/*/sangrah/download",
+        ],
       },
     ],
     sitemap: "https://bhaagyavedh.com/sitemap.xml",

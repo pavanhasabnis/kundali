@@ -8,9 +8,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/pooja-services",
     mr: {
-      title: "पूजा सेवा — ग्रह शांती, वास्तुशांती, नवग्रह पूजा पुणे | Pooja Services Marathi | भाग्यवेध",
+      title: "पूजा सेवा पुणे — ग्रह शांती, वास्तुशांती, नवग्रह",
       description:
-        "पुण्यात पूजा, पाठ, होम सेवा — ग्रह शांती पूजा, नवग्रह पूजा, वास्तुशांती, सत्यनारायण पूजा. Pooja services marathi pune. अनुभवी गुरुजी.",
+        "पुण्यात पूजा, पाठ, होम सेवा — ग्रह शांती, नवग्रह पूजा, वास्तुशांती, सत्यनारायण, महामृत्युंजय जप. Pooja services marathi pune — अनुभवी गुरुजी.",
       keywords: [
         "पूजा सेवा पुणे", "ग्रह शांती पूजा", "नवग्रह पूजा", "वास्तुशांती पूजा",
         "सत्यनारायण पूजा", "महामृत्युंजय जप", "मंगळ शांती",
@@ -20,9 +20,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Pooja Services Pune — Graha Shanti, Vastushanti, Navagraha | Bhaagyavedh",
+      title: "Pooja Services Pune — Graha Shanti, Vastushanti",
       description:
-        "Book authentic Vedic pooja services in Pune — graha shanti, navagraha pooja, vastushanti, satyanarayan pooja, mahamrityunjay jap. Experienced brahmin gurujis.",
+        "Book authentic Vedic pooja in Pune — graha shanti, navagraha pooja, vastushanti, satyanarayan, mahamrityunjay jap. Experienced brahmin gurujis.",
       keywords: [
         "pooja services pune", "graha shanti pooja", "navagraha pooja", "vastushanti",
         "satyanarayan pooja", "mahamrityunjay jap",

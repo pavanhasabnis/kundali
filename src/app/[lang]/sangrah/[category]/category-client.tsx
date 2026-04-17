@@ -21,7 +21,7 @@ interface Props {
 }
 
 export default function CategoryPageClient({ category, items }: Props) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [search, setSearch] = useState("");
   const [selectedDeity, setSelectedDeity] = useState<string>("all");
 
@@ -48,9 +48,9 @@ export default function CategoryPageClient({ category, items }: Props) {
     <>
       <JsonLd
         data={breadcrumbSchema([
-          { name: "Home", url: "https://bhaagyavedh.com" },
-          { name: "Sangrah", url: "https://bhaagyavedh.com/sangrah" },
-          { name: category.labelEn, url: `https://bhaagyavedh.com/sangrah/${category.id}` },
+          { name: "Home", url: `https://bhaagyavedh.com/${lang}` },
+          { name: "Sangrah", url: `https://bhaagyavedh.com/${lang}/sangrah` },
+          { name: category.labelEn, url: `https://bhaagyavedh.com/${lang}/sangrah/${category.id}` },
         ])}
       />
       <JsonLd
@@ -59,8 +59,9 @@ export default function CategoryPageClient({ category, items }: Props) {
           "@type": "CollectionPage",
           name: `${category.labelEn} — ${category.labelMr}`,
           description: category.descriptionEn,
-          url: `https://bhaagyavedh.com/sangrah/${category.id}`,
+          url: `https://bhaagyavedh.com/${lang}/sangrah/${category.id}`,
           numberOfItems: items.length,
+          inLanguage: lang === "en" ? "en-IN" : "mr-IN",
           publisher: { "@type": "Organization", name: "Bhaagyavedh" },
         }}
       />

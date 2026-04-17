@@ -33,12 +33,6 @@ export const organizationSchema = {
     postalCode: "411038",
     addressCountry: "IN",
   },
-  // TODO: replace with actual verified social profile URLs (required for entity grounding)
-  sameAs: [
-    "https://www.facebook.com/bhaagyavedh",
-    "https://www.instagram.com/bhaagyavedh",
-    "https://www.youtube.com/@bhaagyavedh",
-  ],
 };
 
 export const websiteSchema = {
@@ -48,7 +42,7 @@ export const websiteSchema = {
   url: "https://bhaagyavedh.com",
   description:
     "Accurate Vedic astrology — free kundli, rashifal, gun milaan, panchang, muhurat, and yatra services.",
-  inLanguage: ["mr", "en"],
+  inLanguage: "mr-IN",
   publisher: { "@type": "Organization", name: "Bhaagyavedh" },
   potentialAction: {
     "@type": "SearchAction",
@@ -172,6 +166,7 @@ export function articleSchema(opts: {
   datePublished: string;
   dateModified?: string;
   image?: string;
+  inLanguage?: string;
 }) {
   return {
     "@context": "https://schema.org",
@@ -191,7 +186,7 @@ export function articleSchema(opts: {
         url: "https://bhaagyavedh.com/logos/logo-dark.svg",
       },
     },
-    inLanguage: ["mr", "en"],
+    inLanguage: opts.inLanguage || "mr-IN",
     mainEntityOfPage: { "@type": "WebPage", "@id": opts.url },
   };
 }

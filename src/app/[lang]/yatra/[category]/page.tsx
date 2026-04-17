@@ -1,5 +1,6 @@
 import { pageMetaI18n, type Lang } from "@/lib/seo";
 import YatraCategoryPageClient from "./yatra-category-client";
+import { JsonLd, serviceSchema, breadcrumbSchema } from "@/components/json-ld";
 
 const CATEGORY_META: Record<string, { mrName: string; enName: string; mrDesc: string; enDesc: string; mrKeys: string[]; enKeys: string[] }> = {
   jyotirlinga: {
@@ -60,18 +61,40 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: `/yatra/${category}`,
     mr: {
-      title: `${cat.mrName} — दर्शन पॅकेज पुणे | ${cat.enName} Marathi | भाग्यवेध`,
+      title: `${cat.mrName} — दर्शन पॅकेज पुणे`,
       description: cat.mrDesc,
       keywords: cat.mrKeys,
     },
     en: {
-      title: `${cat.enName} — Pilgrimage Tour Package | Bhaagyavedh`,
+      title: `${cat.enName} — Pilgrimage Tour | Bhaagyavedh`,
       description: cat.enDesc,
       keywords: cat.enKeys,
     },
   });
 }
 
-export default function YatraCategoryPage() {
-  return <YatraCategoryPageClient />;
+export default async function YatraCategoryPage({ params }: { params: Promise<{ lang: string; category: string }> }) {
+  const { lang, category } = await params;
+  const cat = CATEGORY_META[category];
+  const base = `https://bhaagyavedh.com/${lang}`;
+  const url = `${base}/yatra/${category}`;
+  return (
+    <>
+      {cat && (
+        <>
+          <JsonLd data={serviceSchema({
+            name: `${cat.enName} — ${cat.mrName}`,
+            description: cat.enDesc,
+            url,
+          })} />
+          <JsonLd data={breadcrumbSchema([
+            { name: "Home", url: base },
+            { name: "Yatra", url: `${base}/yatra` },
+            { name: cat.enName, url },
+          ])} />
+        </>
+      )}
+      <YatraCategoryPageClient />
+    </>
+  );
 }

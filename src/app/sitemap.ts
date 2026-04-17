@@ -19,7 +19,7 @@ function withLangs(entries: Entry[]): MetadataRoute.Sitemap {
   for (const e of entries) {
     const mr = `${BASE}/mr${e.path === "/" ? "" : e.path}`;
     const en = `${BASE}/en${e.path === "/" ? "" : e.path}`;
-    const alternates = { languages: { "mr-IN": mr, en: en, "x-default": mr } };
+    const alternates = { languages: { "mr-IN": mr, "en-IN": en, "x-default": mr } };
     out.push({
       url: mr,
       lastModified: e.lastModified,
@@ -31,7 +31,7 @@ function withLangs(entries: Entry[]): MetadataRoute.Sitemap {
       url: en,
       lastModified: e.lastModified,
       changeFrequency: e.changeFrequency,
-      priority: e.priority ? Math.max(0.1, e.priority - 0.05) : undefined,
+      priority: e.priority,
       alternates,
     });
   }

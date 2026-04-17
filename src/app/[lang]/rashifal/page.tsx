@@ -12,8 +12,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/rashifal",
     mr: {
-      title: `आजचे राशीभविष्य ${dateMr} — 12 राशी | Aajcha Rashifal Marathi | भाग्यवेध`,
-      description: `आजचे राशीभविष्य ${dateMr} — मेष, वृषभ, मिथुन, कर्क, सिंह, कन्या, तुला, वृश्चिक, धनु, मकर, कुंभ, मीन. Aajcha rashi bhavishya marathi. वास्तविक ग्रह गोचरावर आधारित दैनिक राशीफल.`,
+      title: `आजचे राशीभविष्य — 12 राशी | Aajcha Rashifal`,
+      description: `आजचे राशीभविष्य ${dateMr} — मेष ते मीन सर्व 12 राशींचे दैनिक राशीफल. Aajcha rashi bhavishya marathi, ग्रह गोचरावर आधारित अचूक भविष्य.`,
       keywords: [
         "आजचे राशीभविष्य", "दैनिक राशीफल", "12 राशी भविष्य", "राशी भविष्य मराठी",
         "aajcha rashifal", "ajjcha rashi bhavishya", "aaj cha rashi bhavishya",
@@ -22,8 +22,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: `Today's Horoscope ${dateEn} — All 12 Zodiac Signs | Aajcha Rashifal Marathi`,
-      description: `Daily horoscope ${dateEn} for all 12 zodiac signs in Marathi and English. Aajcha rashi bhavishya based on real Vedic planetary transits. Get predictions for career, love, health, finance.`,
+      title: `Today's Horoscope — All 12 Zodiac Signs | Bhaagyavedh`,
+      description: `Daily horoscope ${dateEn} for all 12 zodiac signs in Marathi & English. Aajcha rashi bhavishya based on real Vedic planetary transits — career, love, health.`,
       keywords: [
         "daily horoscope", "today horoscope", "12 zodiac horoscope", "daily rashifal",
         "vedic horoscope", "horoscope today",

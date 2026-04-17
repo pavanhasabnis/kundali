@@ -8,9 +8,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/temples",
     mr: {
-      title: "भारतातील प्रसिद्ध मंदिरे — दर्शन माहिती | Temples Guide Marathi | भाग्यवेध",
+      title: "भारतातील प्रसिद्ध मंदिरे — दर्शन मार्गदर्शक",
       description:
-        "५०+ प्रसिद्ध हिंदू मंदिरांची माहिती — दर्शन वेळ, इतिहास, पोहोचण्याचा मार्ग. Famous mandir marathi, temples in india, hindu temple guide.",
+        "५०+ प्रसिद्ध हिंदू मंदिरांची मराठी माहिती — दर्शन वेळ, इतिहास, पोहोचण्याचा मार्ग, निवास. Famous mandir marathi, jyotirlinga, शक्तिपीठ, अष्टविनायक.",
       keywords: [
         "प्रसिद्ध मंदिरे", "हिंदू मंदिरे", "ज्योतिर्लिंग", "मंदिर दर्शन", "मंदिर माहिती मराठी",
         "famous mandir marathi", "hindu temples marathi", "jyotirlinga marathi",
@@ -19,9 +19,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Famous Hindu Temples Guide — Darshan, History, Travel | Bhaagyavedh",
+      title: "Famous Hindu Temples Guide — Darshan & Travel | Bhaagyavedh",
       description:
-        "Comprehensive guide to 50+ famous Hindu temples in India. Darshan timings, history, how to reach. Marathi and English info for Jyotirlingas, Shakti Peeths, Divya Desams.",
+        "Guide to 50+ famous Hindu temples in India — darshan timings, history, how to reach. Jyotirlingas, Shakti Peeths, Divya Desams with Marathi & English info.",
       keywords: [
         "hindu temples", "famous mandir india", "temple guide", "jyotirlinga temples",
         "shakti peeth", "divya desam",

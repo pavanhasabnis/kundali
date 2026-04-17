@@ -62,7 +62,7 @@ export default function BlogPostClient({ slug, post }: { slug: string; post: Blo
   const seoTitle = post.seo?.metaTitle || t(post.title, post.titleEn);
   const seoDesc = post.seo?.metaDescription || t(post.summary, post.summaryEn);
   const seoKeywords = post.seo ? [...post.seo.keywords, ...(post.seo.keywordsMr || [])].join(", ") : "";
-  const postUrl = `https://bhaagyavedh.com/blog/${slug}`;
+  const postUrl = `https://bhaagyavedh.com/${lang}/blog/${slug}`;
 
   // Build FAQ schema from post data
   const faqItems = post.faq?.map(f => ({
@@ -73,8 +73,8 @@ export default function BlogPostClient({ slug, post }: { slug: string; post: Blo
   return (
     <div className="bg-[#FAFAF8] min-h-screen py-6">
       {/* JSON-LD Structured Data */}
-      <JsonLd data={articleSchema({ title: seoTitle, description: seoDesc, url: postUrl, datePublished: post.date })} />
-      <JsonLd data={breadcrumbSchema([{ name: "Home", url: "https://bhaagyavedh.com" }, { name: "Blog", url: "https://bhaagyavedh.com/blog" }, { name: t(post.title, post.titleEn), url: postUrl }])} />
+      <JsonLd data={articleSchema({ title: seoTitle, description: seoDesc, url: postUrl, datePublished: post.date, inLanguage: lang === "en" ? "en-IN" : "mr-IN" })} />
+      <JsonLd data={breadcrumbSchema([{ name: "Home", url: `https://bhaagyavedh.com/${lang}` }, { name: "Blog", url: `https://bhaagyavedh.com/${lang}/blog` }, { name: t(post.title, post.titleEn), url: postUrl }])} />
       {faqItems.length > 0 && <JsonLd data={faqSchema(faqItems)} />}
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6">

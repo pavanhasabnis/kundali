@@ -44,8 +44,8 @@ export default function BlogPageClient({ initialPosts }: { initialPosts: BlogPos
 
   return (
     <div className="bg-[#FAFAF8] min-h-screen">
-      <JsonLd data={breadcrumbSchema([{ name: "Home", url: "https://bhaagyavedh.com" }, { name: "Blog", url: "https://bhaagyavedh.com/blog" }])} />
-      <JsonLd data={{ "@context": "https://schema.org", "@type": "Blog", name: "Bhaagyavedh Astrology Blog — ज्योतिष ब्लॉग", url: "https://bhaagyavedh.com/blog", description: "Daily Vedic astrology articles in Marathi & English — rashifal, panchang, festivals, remedies.", inLanguage: ["mr", "en"], publisher: { "@type": "Organization", name: "Bhaagyavedh" } }} />
+      <JsonLd data={breadcrumbSchema([{ name: "Home", url: `https://bhaagyavedh.com/${lang}` }, { name: "Blog", url: `https://bhaagyavedh.com/${lang}/blog` }])} />
+      <JsonLd data={{ "@context": "https://schema.org", "@type": "Blog", name: "Bhaagyavedh Astrology Blog — ज्योतिष ब्लॉग", url: `https://bhaagyavedh.com/${lang}/blog`, description: "Daily Vedic astrology articles in Marathi & English — rashifal, panchang, festivals, remedies.", inLanguage: lang === "en" ? "en-IN" : "mr-IN", publisher: { "@type": "Organization", name: "Bhaagyavedh" } }} />
       <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <div className="max-w-5xl mx-auto px-4 text-center relative z-10">

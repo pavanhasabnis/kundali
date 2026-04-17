@@ -54,9 +54,9 @@ export default function RashiPageClient({ rashiSlug, rashiId, initialPrediction 
       {/* Structured Data */}
       <JsonLd
         data={breadcrumbSchema([
-          { name: "Home", url: "https://bhaagyavedh.com" },
-          { name: t("राशीफल", "Rashifal"), url: "https://bhaagyavedh.com/rashifal" },
-          { name: t(rashi.mr, rashi.en), url: `https://bhaagyavedh.com/rashifal/${rashiSlug}` },
+          { name: "Home", url: `https://bhaagyavedh.com/${lang}` },
+          { name: t("राशीफल", "Rashifal"), url: `https://bhaagyavedh.com/${lang}/rashifal` },
+          { name: t(rashi.mr, rashi.en), url: `https://bhaagyavedh.com/${lang}/rashifal/${rashiSlug}` },
         ])}
       />
       <JsonLd
@@ -83,7 +83,7 @@ export default function RashiPageClient({ rashiSlug, rashiId, initialPrediction 
           headline: `${rashi.mr} राशीफल आज — ${rashi.en} Horoscope Today`,
           description: t(rashi.descMr, rashi.descEn),
           image: "https://bhaagyavedh.com/logos/og-image.png",
-          url: `https://bhaagyavedh.com/rashifal/${rashiSlug}`,
+          url: `https://bhaagyavedh.com/${lang}/rashifal/${rashiSlug}`,
           datePublished: new Date().toISOString().split("T")[0],
           dateModified: new Date().toISOString().split("T")[0],
           author: { "@type": "Organization", name: "Bhaagyavedh", url: "https://bhaagyavedh.com" },
@@ -93,8 +93,8 @@ export default function RashiPageClient({ rashiSlug, rashiId, initialPrediction 
             url: "https://bhaagyavedh.com",
             logo: { "@type": "ImageObject", url: "https://bhaagyavedh.com/logos/logo-dark.svg" },
           },
-          mainEntityOfPage: { "@type": "WebPage", "@id": `https://bhaagyavedh.com/rashifal/${rashiSlug}` },
-          inLanguage: ["mr", "en"],
+          mainEntityOfPage: { "@type": "WebPage", "@id": `https://bhaagyavedh.com/${lang}/rashifal/${rashiSlug}` },
+          inLanguage: lang === "en" ? "en-IN" : "mr-IN",
         }}
       />
 

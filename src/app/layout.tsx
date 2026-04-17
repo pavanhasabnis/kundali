@@ -104,7 +104,7 @@ export default async function RootLayout({
   else if (firstSeg === "en" || firstSeg === "mr") resolved = firstSeg;
   else if (cookieLang === "en" || cookieLang === "mr") resolved = cookieLang;
   const lang: Lang = resolved;
-  const htmlLang = lang === "en" ? "en" : "mr-IN";
+  const htmlLang = lang === "en" ? "en-IN" : "mr-IN";
 
   return (
     <html lang={htmlLang} className={outfit.variable}>

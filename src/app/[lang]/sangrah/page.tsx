@@ -9,9 +9,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/sangrah",
     mr: {
-      title: "संग्रह — आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा मराठी | Sangrah Marathi | भाग्यवेध",
+      title: "संग्रह — आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा",
       description:
-        "मराठी संग्रह — आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा, दैनिक प्रार्थना, नामावली. Marathi aarti, stotra, chalisa, vrat katha collection.",
+        "मराठी संग्रह — आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा, दैनिक प्रार्थना, नामावली. Marathi aarti sangrah, stotra, chalisa संग्रह मोफत डाउनलोड.",
       keywords: [
         "मराठी आरती", "मराठी स्तोत्र", "चालीसा मराठी", "मंत्र मराठी",
         "व्रत कथा मराठी", "दैनिक प्रार्थना",
@@ -21,9 +21,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Sangrah — Aarti, Stotra, Chalisa, Mantra, Vrat Katha in Sanskrit & Marathi | Bhaagyavedh",
+      title: "Sangrah — Aarti, Stotra, Chalisa, Mantra, Vrat Katha",
       description:
-        "Complete collection of aartis, stotras, chalisas, mantras, vrat kathas in Sanskrit and Marathi with English meaning. Marathi aarti sangrah.",
+        "Collection of aartis, stotras, chalisas, mantras & vrat kathas in Sanskrit and Marathi with English meaning. Marathi aarti sangrah — free download.",
       keywords: [
         "aarti collection", "sanskrit stotra", "hindu chalisa", "mantra list",
         "vrat katha english",

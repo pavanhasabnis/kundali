@@ -9,9 +9,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/panchang",
     mr: {
-      title: "आजचे पंचांग — तिथी, नक्षत्र, योग, करण | Panchang Marathi Today | भाग्यवेध",
+      title: "आजचे पंचांग — तिथी, नक्षत्र, राहू काळ | Panchang Marathi",
       description:
-        "आजचे पंचांग — तिथी, नक्षत्र, योग, करण, राहू काळ, सूर्योदय, सूर्यास्त. Aaj cha panchang marathi pune. मुंबई, नागपूर, औरंगाबाद साठी दैनिक पंचांग.",
+        "आजचे पंचांग — तिथी, नक्षत्र, योग, करण, राहू काळ, सूर्योदय, सूर्यास्त. Aaj cha panchang marathi — पुणे, मुंबई, नागपूर, औरंगाबादसाठी दैनिक पंचांग.",
       keywords: [
         "आजचे पंचांग", "पंचांग मराठी", "दैनिक पंचांग", "तिथी आज", "नक्षत्र आज",
         "राहू काळ", "सूर्योदय वेळ", "पुणे पंचांग", "मुंबई पंचांग",
@@ -21,9 +21,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Today's Panchang — Tithi, Nakshatra, Rahu Kaal | Panchang Marathi | Bhaagyavedh",
+      title: "Today's Panchang — Tithi, Nakshatra, Rahu Kaal | Bhaagyavedh",
       description:
-        "Daily Hindu Panchang with Tithi, Nakshatra, Yoga, Karana, Rahu Kaal, sunrise, sunset. Aaj cha panchang marathi for Pune, Mumbai, Nagpur. Based on precise astronomical calculations.",
+        "Daily Hindu Panchang — Tithi, Nakshatra, Yoga, Karana, Rahu Kaal, sunrise, sunset. Aaj cha panchang marathi for Pune, Mumbai & Nagpur. Precise astronomical data.",
       keywords: [
         "panchang today", "today panchang", "daily panchang", "hindu panchang",
         "vedic panchang", "rahu kaal today", "tithi today",
@@ -36,40 +36,69 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 
 const today = new Date().toISOString().split("T")[0];
 
-const panchangArticleSchema = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Today's Panchang — आजचे पंचांग",
-  description:
-    "Daily Hindu Panchang with Tithi, Nakshatra, Yoga, Karana, Rahu Kaal, sunrise, sunset — calculated using Lahiri Ayanamsa and precise astronomical data.",
-  url: "https://bhaagyavedh.com/panchang",
-  image: "https://bhaagyavedh.com/logos/og-image.png",
-  datePublished: today,
-  dateModified: today,
-  author: { "@type": "Organization", name: "Bhaagyavedh", url: "https://bhaagyavedh.com" },
-  publisher: {
-    "@type": "Organization",
-    name: "Bhaagyavedh",
-    url: "https://bhaagyavedh.com",
-    logo: { "@type": "ImageObject", url: "https://bhaagyavedh.com/logos/logo-dark.svg" },
-  },
-  mainEntityOfPage: { "@type": "WebPage", "@id": "https://bhaagyavedh.com/panchang" },
-  inLanguage: ["mr", "en"],
-};
-
-export default function PanchangPage() {
+export default async function PanchangPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const base = `https://bhaagyavedh.com/${lang}`;
+  const url = `${base}/panchang`;
+  const panchangArticleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: "Today's Panchang — आजचे पंचांग",
+    description:
+      "Daily Hindu Panchang with Tithi, Nakshatra, Yoga, Karana, Rahu Kaal, sunrise, sunset — calculated using Lahiri Ayanamsa and precise astronomical data.",
+    url,
+    image: "https://bhaagyavedh.com/logos/og-image.png",
+    datePublished: today,
+    dateModified: today,
+    author: { "@type": "Organization", name: "Bhaagyavedh", url: "https://bhaagyavedh.com" },
+    publisher: {
+      "@type": "Organization",
+      name: "Bhaagyavedh",
+      url: "https://bhaagyavedh.com",
+      logo: { "@type": "ImageObject", url: "https://bhaagyavedh.com/logos/logo-dark.svg" },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    inLanguage: lang === "en" ? "en-IN" : "mr-IN",
+  };
+  const panchangFaqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "आजचे पंचांग म्हणजे काय?",
+        acceptedAnswer: { "@type": "Answer", text: "आजचे पंचांग म्हणजे आजच्या तिथी, नक्षत्र, योग, करण आणि वाराची माहिती — दैनिक वैदिक दिनदर्शिकेचा पाया." },
+      },
+      {
+        "@type": "Question",
+        name: "What is Panchang and why is it important?",
+        acceptedAnswer: { "@type": "Answer", text: "Panchang is the Hindu Vedic calendar with five elements — Tithi, Nakshatra, Yoga, Karana, and Vara. It is used to determine auspicious timings (muhurat) for all activities." },
+      },
+      {
+        "@type": "Question",
+        name: "राहू काळ म्हणजे काय आणि कसा काढतात?",
+        acceptedAnswer: { "@type": "Answer", text: "राहू काळ हा दिवसातील १.५ तासांचा अशुभ कालावधी असतो. सूर्योदय ते सूर्यास्तामधला हा काल वारानुसार बदलतो — उदा. सोमवारी दुपार, शनिवारी सकाळ." },
+      },
+      {
+        "@type": "Question",
+        name: "How is Rahu Kaal calculated?",
+        acceptedAnswer: { "@type": "Answer", text: "Rahu Kaal is an inauspicious 90-minute period each day based on the weekday. The day length (sunrise to sunset) is divided into 8 parts and Rahu Kaal falls on a specific part per weekday." },
+      },
+    ],
+  };
   return (
     <>
       <JsonLd data={panchangArticleSchema} />
       <JsonLd data={serviceSchema({
         name: "Daily Panchang — दैनिक पंचांग",
         description: "Daily panchang with Tithi, Nakshatra, Yoga, Karana, and Rahu Kaal calculations.",
-        url: "https://bhaagyavedh.com/panchang",
+        url,
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: "Home", url: "https://bhaagyavedh.com" },
-        { name: "Panchang", url: "https://bhaagyavedh.com/panchang" },
+        { name: "Home", url: base },
+        { name: "Panchang", url },
       ])} />
+      <JsonLd data={panchangFaqSchema} />
       <PanchangPageClient />
     </>
   );

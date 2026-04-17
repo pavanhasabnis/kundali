@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function SangrahPageClient({ items, counts }: Props) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [search, setSearch] = useState("");
 
   const totalCount = items.length;
@@ -35,13 +35,13 @@ export default function SangrahPageClient({ items, counts }: Props) {
           name: "संग्रह — Devotional Content Library",
           description:
             "Complete collection of Hindu aartis, stotras, chalisas, mantras, vrat kathas, and daily prayers in Marathi and Sanskrit.",
-          url: "https://bhaagyavedh.com/sangrah",
+          url: `https://bhaagyavedh.com/${lang}/sangrah`,
         })}
       />
       <JsonLd
         data={breadcrumbSchema([
-          { name: "Home", url: "https://bhaagyavedh.com" },
-          { name: "Sangrah", url: "https://bhaagyavedh.com/sangrah" },
+          { name: "Home", url: `https://bhaagyavedh.com/${lang}` },
+          { name: "Sangrah", url: `https://bhaagyavedh.com/${lang}/sangrah` },
         ])}
       />
 

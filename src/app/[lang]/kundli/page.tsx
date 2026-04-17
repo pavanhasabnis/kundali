@@ -8,9 +8,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/kundli",
     mr: {
-      title: "मोफत जन्म कुंडली ऑनलाइन — Mofat Janam Kundli | भाग्यवेध",
+      title: "मोफत जन्म कुंडली ऑनलाइन — Mofat Janam Kundli",
       description:
-        "मोफत जन्म कुंडली तयार करा. जन्म तारीख, वेळ, ठिकाण टाका आणि अचूक लग्न कुंडली, ग्रह स्थिती, दशा, योग मिळवा. Mofat kundali online marathi. वैदिक पद्धत, लाहिरी अयनांश.",
+        "मोफत जन्म कुंडली तयार करा. जन्म तारीख, वेळ, ठिकाण टाका आणि अचूक लग्न कुंडली, ग्रह, दशा, योग मिळवा. Mofat kundali marathi, लाहिरी अयनांश.",
       keywords: [
         "मोफत कुंडली", "जन्म कुंडली", "जन्म पत्रिका", "ऑनलाइन कुंडली", "लग्न कुंडली",
         "कुंडली मराठी", "वैदिक कुंडली", "ग्रह स्थिती",
@@ -20,9 +20,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Free Kundli Online — Janam Kundali Maker in Marathi & English | Bhaagyavedh",
+      title: "Free Kundli Online — Janam Kundali Maker | Bhaagyavedh",
       description:
-        "Generate free janam kundli online. Enter birth date, time, place — get accurate lagna chart, planetary positions, dashas, yogas in Marathi or English. Mofat kundali marathi maker.",
+        "Free janam kundli online. Enter birth date, time, place — get accurate lagna chart, planetary positions, dashas & yogas. Mofat kundali marathi maker.",
       keywords: [
         "free kundli online", "free janam kundli", "kundli maker online", "birth chart free",
         "lagna chart", "vedic kundli",

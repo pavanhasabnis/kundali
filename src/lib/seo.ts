@@ -93,7 +93,7 @@ export function pageMetaI18n(opts: {
       canonical: url,
       languages: {
         "mr-IN": mrUrl,
-        en: enUrl,
+        "en-IN": enUrl,
         "x-default": mrUrl,
       },
     },

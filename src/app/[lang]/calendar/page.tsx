@@ -36,33 +36,35 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 
 const today = new Date().toISOString().split("T")[0];
 
-const calendarArticleSchema = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: `Hindu Vedic Calendar ${CURRENT_YEAR} — हिंदू कॅलेंडर`,
-  description: `Hindu Vedic calendar ${CURRENT_YEAR} — daily tithis, nakshatras, festivals, shubh muhurat, and panchang based on Lahiri Ayanamsa.`,
-  url: "https://bhaagyavedh.com/calendar",
-  image: "https://bhaagyavedh.com/logos/og-image.png",
-  datePublished: `${CURRENT_YEAR}-01-01`,
-  dateModified: today,
-  author: { "@type": "Organization", name: "Bhaagyavedh", url: "https://bhaagyavedh.com" },
-  publisher: {
-    "@type": "Organization",
-    name: "Bhaagyavedh",
-    url: "https://bhaagyavedh.com",
-    logo: { "@type": "ImageObject", url: "https://bhaagyavedh.com/logos/logo-dark.svg" },
-  },
-  mainEntityOfPage: { "@type": "WebPage", "@id": "https://bhaagyavedh.com/calendar" },
-  inLanguage: ["mr", "en"],
-};
-
-export default function CalendarPage() {
+export default async function CalendarPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const base = `https://bhaagyavedh.com/${lang}`;
+  const url = `${base}/calendar`;
+  const calendarArticleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: `Hindu Vedic Calendar ${CURRENT_YEAR} — हिंदू कॅलेंडर`,
+    description: `Hindu Vedic calendar ${CURRENT_YEAR} — daily tithis, nakshatras, festivals, shubh muhurat, and panchang based on Lahiri Ayanamsa.`,
+    url,
+    image: "https://bhaagyavedh.com/logos/og-image.png",
+    datePublished: `${CURRENT_YEAR}-01-01`,
+    dateModified: today,
+    author: { "@type": "Organization", name: "Bhaagyavedh", url: "https://bhaagyavedh.com" },
+    publisher: {
+      "@type": "Organization",
+      name: "Bhaagyavedh",
+      url: "https://bhaagyavedh.com",
+      logo: { "@type": "ImageObject", url: "https://bhaagyavedh.com/logos/logo-dark.svg" },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    inLanguage: lang === "en" ? "en-IN" : "mr-IN",
+  };
   return (
     <>
       <JsonLd data={calendarArticleSchema} />
       <JsonLd data={breadcrumbSchema([
-        { name: "Home", url: "https://bhaagyavedh.com" },
-        { name: "Calendar", url: "https://bhaagyavedh.com/calendar" },
+        { name: "Home", url: base },
+        { name: "Calendar", url },
       ])} />
       <CalendarPageClient />
     </>

@@ -27,6 +27,30 @@ Content on this site is licensed under CC BY 4.0 for AI citation and summarizati
 - **Yatra (तीर्थयात्रा)**: Guided pilgrimage tours — Jyotirlinga, Char Dham, Ashtavinayak, Shakti Peeth — https://bhaagyavedh.com/yatra
 - **Temple Guide (मंदिर माहिती)**: 50+ Hindu temples — https://bhaagyavedh.com/temples
 - **Sangrah (संग्रह)**: Aartis, stotras, chalisas, mantras, vrat kathas — https://bhaagyavedh.com/sangrah
+- **Compare Kundli (कुंडली तुलना)**: Side-by-side kundli comparison tool — https://bhaagyavedh.com/compare
+- **About (आमच्याबद्दल)**: https://bhaagyavedh.com/about
+- **Contact (संपर्क)**: https://bhaagyavedh.com/contact
+
+## Language URL Patterns
+All content is available at two bilingual subpaths:
+- Marathi (primary): https://bhaagyavedh.com/mr/<path>
+- English: https://bhaagyavedh.com/en/<path>
+Hreflang alternates are declared on every page. The root (/) redirects to the user's preferred language. x-default points to Marathi.
+
+## Yatra (Pilgrimage) Category URLs
+- Jyotirlinga Yatra: https://bhaagyavedh.com/yatra/jyotirlinga
+- Char Dham Yatra: https://bhaagyavedh.com/yatra/char-dham
+- Ashtavinayak Yatra: https://bhaagyavedh.com/yatra/ashtavinayak
+- Shakti Peeth Yatra: https://bhaagyavedh.com/yatra/shakti-peeth
+- Panch Prayag Yatra: https://bhaagyavedh.com/yatra/panch-prayag
+
+## Sangrah (Devotional Content) Category URLs
+- Aarti (आरती): https://bhaagyavedh.com/sangrah/aarti
+- Stotra (स्तोत्र): https://bhaagyavedh.com/sangrah/stotra
+- Chalisa (चालीसा): https://bhaagyavedh.com/sangrah/chalisa
+- Mantra (मंत्र): https://bhaagyavedh.com/sangrah/mantra
+- Vrat Katha (व्रत कथा): https://bhaagyavedh.com/sangrah/vrat-katha
+- Namavali (नामावली): https://bhaagyavedh.com/sangrah/namavali
 
 ## Rashifal (Daily Horoscope) URLs
 - Aries (मेष): https://bhaagyavedh.com/rashifal/mesh

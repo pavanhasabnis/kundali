@@ -45,8 +45,8 @@ export async function generateMetadata({ params }: Props) {
     path: `/rashifal/${slug}`,
     ogType: "article",
     mr: {
-      title: `${rashi.mr} राशीफल आज ${dateMr} — ${roman} Rashi Bhavishya | ${rashi.en} Horoscope Today | भाग्यवेध`,
-      description: `${rashi.mr} राशीचे आजचे भविष्य — करिअर, प्रेम, आरोग्य, आर्थिक. ${roman} rashi aaj cha bhavishya marathi. वास्तविक ग्रह गोचरावर आधारित अचूक दैनिक भविष्य.`,
+      title: `${rashi.mr} राशीफल आज — ${roman} Rashi Bhavishya`,
+      description: `${rashi.mr} राशीचे आजचे भविष्य (${dateMr}) — करिअर, प्रेम, आरोग्य, आर्थिक. ${roman} rashi aaj cha bhavishya — ग्रह गोचरावर आधारित अचूक दैनिक भविष्य.`,
       keywords: [
         `${rashi.mr} राशी`,
         `${rashi.mr} राशीफल`,
@@ -65,8 +65,8 @@ export async function generateMetadata({ params }: Props) {
       ],
     },
     en: {
-      title: `${rashi.en} Horoscope Today ${dateEn} — ${rashi.mr} राशीफल | ${roman} Rashi Bhavishya | Bhaagyavedh`,
-      description: `${rashi.en} daily horoscope — career, love, health, finance. ${roman} rashi bhavishya in Marathi. Based on real Vedic planetary transits, updated daily.`,
+      title: `${rashi.en} Horoscope Today — ${roman} Rashi Bhavishya`,
+      description: `${rashi.en} daily horoscope ${dateEn} — career, love, health, finance. ${roman} rashi bhavishya (${rashi.mr}) marathi — real Vedic transits, daily.`,
       keywords: [
         `${rashi.en} horoscope`,
         `${rashi.en} horoscope today`,

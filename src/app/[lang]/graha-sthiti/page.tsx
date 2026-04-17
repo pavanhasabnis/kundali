@@ -33,17 +33,20 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   });
 }
 
-export default function GrahaSthitiPage() {
+export default async function GrahaSthitiPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const base = `https://bhaagyavedh.com/${lang}`;
+  const url = `${base}/graha-sthiti`;
   return (
     <>
       <JsonLd data={serviceSchema({
         name: "Planetary Positions — ग्रह स्थिती",
         description: "Live positions of 9 Navagraha — Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, Ketu — in rashi and nakshatra (Lahiri Ayanamsa).",
-        url: "https://bhaagyavedh.com/graha-sthiti",
+        url,
       })} />
       <JsonLd data={breadcrumbSchema([
-        { name: "Home", url: "https://bhaagyavedh.com" },
-        { name: "Graha Sthiti", url: "https://bhaagyavedh.com/graha-sthiti" },
+        { name: "Home", url: base },
+        { name: "Graha Sthiti", url },
       ])} />
       <CurrentPlanetsPageClient />
     </>
