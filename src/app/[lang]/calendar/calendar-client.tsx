@@ -22,8 +22,10 @@ interface CalendarData {
 
 const MONTH_NAMES_MR = ["", "जानेवारी", "फेब्रुवारी", "मार्च", "एप्रिल", "मे", "जून", "जुलै", "ऑगस्ट", "सप्टेंबर", "ऑक्टोबर", "नोव्हेंबर", "डिसेंबर"];
 const MONTH_NAMES_EN = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const MONTH_NAMES_HI = ["", "जनवरी", "फ़रवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितम्बर", "अक्टूबर", "नवम्बर", "दिसम्बर"];
 const DAY_HEADERS_MR = ["रवि", "सोम", "मंगळ", "बुध", "गुरु", "शुक्र", "शनि"];
 const DAY_HEADERS_EN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const DAY_HEADERS_HI = ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"];
 
 // Convert to Devanagari digits: 14 → १४
 function toDevanagari(n: number): string {
@@ -91,8 +93,8 @@ export default function CalendarPageClient() {
     else setMonth(month + 1);
   }
 
-  const monthNames = lang === "mr" ? MONTH_NAMES_MR : MONTH_NAMES_EN;
-  const dayHeaders = lang === "mr" ? DAY_HEADERS_MR : DAY_HEADERS_EN;
+  const monthNames = lang === "mr" ? MONTH_NAMES_MR : lang === "hi" ? MONTH_NAMES_HI : MONTH_NAMES_EN;
+  const dayHeaders = lang === "mr" ? DAY_HEADERS_MR : lang === "hi" ? DAY_HEADERS_HI : DAY_HEADERS_EN;
 
   const dayTypeBg = (d: CalendarDay, isToday: boolean) => {
     if (isToday) return "#5c1a1a";
@@ -116,8 +118,8 @@ export default function CalendarPageClient() {
       <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">{t("वैदिक दिनदर्शिका", "Vedic Calendar")}</h1>
-          <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">{t("सण, मुहूर्त, शुभ-अशुभ दिवस — वास्तविक पंचांग गणनेवर आधारित", "Festivals, Muhurat, Auspicious days — based on real Panchang calculations")}</p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">{t("वैदिक दिनदर्शिका", "Vedic Calendar", "वैदिक कैलेंडर")}</h1>
+          <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">{t("सण, मुहूर्त, शुभ-अशुभ दिवस — वास्तविक पंचांग गणनेवर आधारित", "Festivals, Muhurat, Auspicious days — based on real Panchang calculations", "त्यौहार, मुहूर्त, शुभ-अशुभ दिन — वास्तविक पंचांग गणना पर आधारित")}</p>
         </div>
       </section>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
@@ -125,7 +127,7 @@ export default function CalendarPageClient() {
         {/* Month Navigation */}
         <div className="flex items-center justify-center gap-4 mb-6">
           <button onClick={prevMonth} className="px-4 py-2 rounded-lg font-bold text-sm" style={{ background: "#FFF3D6", color: "#3d0c0c" }}>
-            {t("← मागील", "← Prev")}
+            {t("← मागील", "← Prev", "← पिछला")}
           </button>
           <div className="text-center min-w-[200px]">
             <h2 className="text-xl font-bold" style={{ color: "#3d0c0c" }}>
@@ -133,16 +135,16 @@ export default function CalendarPageClient() {
             </h2>
           </div>
           <button onClick={nextMonth} className="px-4 py-2 rounded-lg font-bold text-sm" style={{ background: "#FFF3D6", color: "#3d0c0c" }}>
-            {t("पुढील →", "Next →")}
+            {t("पुढील →", "Next →", "अगला →")}
           </button>
         </div>
 
         {/* Legend */}
         <div className="flex flex-wrap items-center justify-center gap-4 mb-6 text-xs">
-          <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full" style={{ background: "#5c1a1a" }} /><span>{t("आज", "Today")}</span></div>
-          <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full" style={{ background: "#d4a843" }} /><span>{t("सण/उत्सव", "Festival")}</span></div>
-          <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full" style={{ background: "#2d6b2d" }} /><span>{t("शुभ दिवस", "Auspicious")}</span></div>
-          <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full" style={{ background: "#b91c1c" }} /><span>{t("अशुभ", "Inauspicious")}</span></div>
+          <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full" style={{ background: "#5c1a1a" }} /><span>{t("आज", "Today", "आज")}</span></div>
+          <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full" style={{ background: "#d4a843" }} /><span>{t("सण/उत्सव", "Festival", "त्यौहार/उत्सव")}</span></div>
+          <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full" style={{ background: "#2d6b2d" }} /><span>{t("शुभ दिवस", "Auspicious", "शुभ दिन")}</span></div>
+          <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full" style={{ background: "#b91c1c" }} /><span>{t("अशुभ", "Inauspicious", "अशुभ")}</span></div>
         </div>
 
         {loading ? (
@@ -247,7 +249,7 @@ export default function CalendarPageClient() {
                       {selectedDay.festivals.map((f, i) => (
                         <div key={i} className="px-3 py-1.5 rounded-md text-xs font-bold text-white"
                           style={{ background: f.type === "national" || f.type === "state" ? "#2563eb" : f.type === "major" ? "#d4a843" : "#6b7280" }}>
-                          {t(f.nameMr, f.name)}
+                          {t(f.nameMr, f.name, f.nameMr)}
                         </div>
                       ))}
                     </div>
@@ -259,7 +261,7 @@ export default function CalendarPageClient() {
                       {toDevanagari(selectedDay.day)}
                     </p>
                     <p className="text-sm mt-1 font-semibold" style={{ color: "#5c1a1a" }}>
-                      {lang === "mr" ? `${MONTH_NAMES_MR[month]} ${toDevanagari(year)}` : `${MONTH_NAMES_EN[month]} ${year}`}
+                      {lang === "mr" ? `${MONTH_NAMES_MR[month]} ${toDevanagari(year)}` : lang === "hi" ? `${MONTH_NAMES_HI[month]} ${toDevanagari(year)}` : `${MONTH_NAMES_EN[month]} ${year}`}
                     </p>
                   </div>
 
@@ -282,12 +284,12 @@ export default function CalendarPageClient() {
                   {/* ── Panchang Details (Kalnirnay style) ── */}
                   <div className="px-4 py-3 space-y-2" style={{ borderTop: "1px solid #e5e0d5" }}>
                     {[
-                      { l: t("तिथी:", "Tithi:"), v: `${shortPaksha(selectedDay.paksha)} ${selectedDay.tithi}` },
-                      { l: t("नक्षत्र:", "Nakshatra:"), v: selectedDay.nakshatra },
-                      { l: t("योग:", "Yoga:"), v: selectedDay.yoga },
-                      { l: t("करण:", "Karana:"), v: selectedDay.karana },
-                      { l: t("राहुकाळ:", "Rahu Kaal:"), v: formatTimeRangeMarathi(selectedDay.rahuKaal, lang) },
-                      { l: t("राष्ट्रीय:", "National:"), v: toDevanagari(getSakaYear(year, month, selectedDay.day)) + " शक" },
+                      { l: t("तिथी:", "Tithi:", "तिथि:"), v: `${shortPaksha(selectedDay.paksha)} ${selectedDay.tithi}` },
+                      { l: t("नक्षत्र:", "Nakshatra:", "नक्षत्र:"), v: selectedDay.nakshatra },
+                      { l: t("योग:", "Yoga:", "योग:"), v: selectedDay.yoga },
+                      { l: t("करण:", "Karana:", "करण:"), v: selectedDay.karana },
+                      { l: t("राहुकाळ:", "Rahu Kaal:", "राहुकाल:"), v: formatTimeRangeMarathi(selectedDay.rahuKaal, lang) },
+                      { l: t("राष्ट्रीय:", "National:", "राष्ट्रीय:"), v: toDevanagari(getSakaYear(year, month, selectedDay.day)) + " शक" },
                     ].map((item, i) => (
                       <div key={i} className="flex items-baseline gap-2">
                         <span className="text-xs font-bold shrink-0" style={{ color: "#5c1a1a" }}>{item.l}</span>
@@ -299,11 +301,11 @@ export default function CalendarPageClient() {
                   {/* ── Muhurat Tags ── */}
                   {selectedDay.muhuratTags.length > 0 && (
                     <div className="px-4 pb-3" style={{ borderTop: "1px solid #e5e0d5" }}>
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400 mt-2 mb-2">{t("मुहूर्त", "Muhurat")}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400 mt-2 mb-2">{t("मुहूर्त", "Muhurat", "मुहूर्त")}</p>
                       <div className="flex flex-wrap gap-1.5">
                         {selectedDay.muhuratTags.map((tag, i) => (
                           <span key={i} className="text-[10px] font-semibold px-2 py-1 rounded-full" style={{ background: "#dcfce7", color: "#166534" }}>
-                            {t(tag.nameMr, tag.name)}
+                            {t(tag.nameMr, tag.name, tag.nameMr)}
                           </span>
                         ))}
                       </div>
@@ -316,16 +318,16 @@ export default function CalendarPageClient() {
                       background: selectedDay.dayType === "shubh" ? "#dcfce7" : selectedDay.dayType === "ashubh" ? "#fef2f2" : selectedDay.dayType === "festival" ? "#FFF8E7" : "#f5f5f5",
                       color: selectedDay.dayType === "shubh" ? "#166534" : selectedDay.dayType === "ashubh" ? "#991b1b" : selectedDay.dayType === "festival" ? "#92400e" : "#6b7280",
                     }}>
-                      {selectedDay.dayType === "shubh" && t("शुभ दिवस", "Auspicious Day")}
-                      {selectedDay.dayType === "ashubh" && t("अशुभ दिवस — शुभ कार्य टाळावे", "Inauspicious — Avoid")}
-                      {selectedDay.dayType === "festival" && t("सण / उत्सव दिवस", "Festival Day")}
-                      {selectedDay.dayType === "neutral" && t("सामान्य दिवस", "Normal Day")}
+                      {selectedDay.dayType === "shubh" && t("शुभ दिवस", "Auspicious Day", "शुभ दिन")}
+                      {selectedDay.dayType === "ashubh" && t("अशुभ दिवस — शुभ कार्य टाळावे", "Inauspicious — Avoid", "अशुभ दिन — शुभ कार्य से बचें")}
+                      {selectedDay.dayType === "festival" && t("सण / उत्सव दिवस", "Festival Day", "त्यौहार / उत्सव दिन")}
+                      {selectedDay.dayType === "neutral" && t("सामान्य दिवस", "Normal Day", "सामान्य दिन")}
                     </div>
                   </div>
                 </div>
               ) : (
                 <div className="bg-white rounded-xl border border-stone-200 p-8 text-center text-stone-400 text-sm">
-                  {t("तारीख निवडा", "Select a date")}
+                  {t("तारीख निवडा", "Select a date", "तारीख चुनें")}
                 </div>
               )}
 
@@ -333,7 +335,7 @@ export default function CalendarPageClient() {
               {monthFestivals.length > 0 && (
                 <div className="bg-white rounded-xl border border-stone-200 overflow-hidden shadow-sm mt-4">
                   <div className="p-3 text-center" style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}>
-                    <p className="text-xs font-bold" style={{ color: "#d4a843" }}>{t("या महिन्यातील सण", "This Month's Festivals")}</p>
+                    <p className="text-xs font-bold" style={{ color: "#d4a843" }}>{t("या महिन्यातील सण", "This Month's Festivals", "इस महीने के त्यौहार")}</p>
                   </div>
                   <div className="p-3 space-y-2">
                     {monthFestivals.map((d) =>
@@ -342,7 +344,7 @@ export default function CalendarPageClient() {
                           className="w-full flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-[#FFF8E7] transition text-left">
                           <div className="flex items-center gap-2">
                             <span className="text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center" style={{ background: "#d4a843", color: "#fff" }}>{d.day}</span>
-                            <span className="text-xs font-semibold" style={{ color: "#3d0c0c" }}>{t(f.nameMr, f.name)}</span>
+                            <span className="text-xs font-semibold" style={{ color: "#3d0c0c" }}>{t(f.nameMr, f.name, f.nameMr)}</span>
                           </div>
                           <span className="text-[10px] text-stone-400">{d.dayName}</span>
                         </button>
@@ -355,7 +357,7 @@ export default function CalendarPageClient() {
             </div>
           </div>
         ) : (
-          <div className="text-center py-20 text-stone-500">{t("दिनदर्शिका उपलब्ध नाही", "Calendar not available")}</div>
+          <div className="text-center py-20 text-stone-500">{t("दिनदर्शिका उपलब्ध नाही", "Calendar not available", "कैलेंडर उपलब्ध नहीं")}</div>
         )}
       </div>
     </div>

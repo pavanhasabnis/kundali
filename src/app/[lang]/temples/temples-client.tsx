@@ -1588,12 +1588,13 @@ export default function TemplesPageClient() {
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
           <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">
-            {t("भारतातील प्रसिद्ध मंदिरे", "Famous Temples of India")}
+            {t("भारतातील प्रसिद्ध मंदिरे", "Famous Temples of India", "भारत के प्रसिद्ध मंदिर")}
           </h1>
           <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
             {t(
               "१२ ज्योतिर्लिंग, अष्टविनायक, शक्तीपीठ, दत्तक्षेत्र आणि भारतभरातील प्रसिद्ध मंदिरांची संपूर्ण माहिती.",
-              "Complete information about 12 Jyotirlingas, Ashtavinayak, Shakti Peethas, Datta Kshetras and famous temples across India."
+              "Complete information about 12 Jyotirlingas, Ashtavinayak, Shakti Peethas, Datta Kshetras and famous temples across India.",
+              "१२ ज्योतिर्लिंग, अष्टविनायक, शक्तिपीठ, दत्तक्षेत्र और भारत भर के प्रसिद्ध मंदिरों की सम्पूर्ण जानकारी."
             )}
           </p>
         </div>
@@ -1607,7 +1608,7 @@ export default function TemplesPageClient() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={t("मंदिर किंवा देवता शोधा...", "Search temple or deity...")}
+              placeholder={t("मंदिर किंवा देवता शोधा...", "Search temple or deity...", "मंदिर या देवता खोजें...")}
               className="w-full rounded-lg border border-[#d4a843]/30 bg-white px-4 py-2.5 text-sm text-[#3d0c0c] placeholder:text-[#5c1a1a]/40 focus:border-[#d4a843] focus:outline-none focus:ring-1 focus:ring-[#d4a843]/50"
             />
           </div>
@@ -1616,9 +1617,9 @@ export default function TemplesPageClient() {
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="rounded-lg border border-[#d4a843]/30 bg-white px-4 py-2.5 text-sm text-[#3d0c0c] focus:border-[#d4a843] focus:outline-none focus:ring-1 focus:ring-[#d4a843]/50"
           >
-            <option value="">{t("सर्व प्रकार", "All Types")}</option>
+            <option value="">{t("सर्व प्रकार", "All Types", "सभी प्रकार")}</option>
             {TEMPLE_CATEGORIES.map((cat) => (
-              <option key={cat.id} value={cat.id}>{t(cat.mr, cat.en)}</option>
+              <option key={cat.id} value={cat.id}>{t(cat.mr, cat.en, cat.mr)}</option>
             ))}
           </select>
           <select
@@ -1626,9 +1627,9 @@ export default function TemplesPageClient() {
             onChange={(e) => setDistrictFilter(e.target.value)}
             className="rounded-lg border border-[#d4a843]/30 bg-white px-4 py-2.5 text-sm text-[#3d0c0c] focus:border-[#d4a843] focus:outline-none focus:ring-1 focus:ring-[#d4a843]/50"
           >
-            <option value="">{t("सर्व जिल्हे", "All Districts")}</option>
+            <option value="">{t("सर्व जिल्हे", "All Districts", "सभी जिले")}</option>
             {TEMPLE_DISTRICTS.map((d) => (
-              <option key={d} value={d}>{t(TEMPLE_DISTRICTS_MR[d], d)}</option>
+              <option key={d} value={d}>{t(TEMPLE_DISTRICTS_MR[d], d, TEMPLE_DISTRICTS_MR[d])}</option>
             ))}
           </select>
         </div>
@@ -1639,7 +1640,7 @@ export default function TemplesPageClient() {
             onClick={() => setCategoryFilter("")}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${!categoryFilter ? "bg-[#3d0c0c] text-[#d4a843]" : "bg-white text-[#5c1a1a]/70 border border-[#d4a843]/20 hover:bg-[#FFF8E7]"}`}
           >
-            {t("सर्व", "All")} ({TEMPLES.length})
+            {t("सर्व", "All", "सभी")} ({TEMPLES.length})
           </button>
           {TEMPLE_CATEGORIES.map((cat) => {
             const count = TEMPLES.filter(temple => temple.category === cat.id).length;
@@ -1649,7 +1650,7 @@ export default function TemplesPageClient() {
                 onClick={() => setCategoryFilter(cat.id === categoryFilter ? "" : cat.id)}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${categoryFilter === cat.id ? "bg-[#3d0c0c] text-[#d4a843]" : "bg-white text-[#5c1a1a]/70 border border-[#d4a843]/20 hover:bg-[#FFF8E7]"}`}
               >
-                {t(cat.mr, cat.en)} ({count})
+                {t(cat.mr, cat.en, cat.mr)} ({count})
               </button>
             );
           })}
@@ -1657,7 +1658,7 @@ export default function TemplesPageClient() {
 
         {/* Results */}
         <p className="text-sm text-[#5c1a1a]/60 mb-4">
-          {t(`${filtered.length} मंदिरे`, `${filtered.length} temples`)}
+          {t(`${filtered.length} मंदिरे`, `${filtered.length} temples`, `${filtered.length} मंदिर`)}
         </p>
 
         {/* Temple Cards */}
@@ -1698,7 +1699,7 @@ export default function TemplesPageClient() {
               {/* Significance */}
               <div className="px-5 pb-3">
                 <div className="p-2.5 rounded-lg bg-[#FFF8E7] border border-[#d4a843]/10">
-                  <p className="text-xs font-semibold text-[#3d0c0c] mb-1">{t("महत्व", "Significance")}</p>
+                  <p className="text-xs font-semibold text-[#3d0c0c] mb-1">{t("महत्व", "Significance", "महत्व")}</p>
                   <p className="text-xs text-[#5c1a1a]/60">{t(temple.significanceMr, temple.significanceEn)}</p>
                 </div>
               </div>
@@ -1719,7 +1720,7 @@ export default function TemplesPageClient() {
                   href={`/temples/${temple.id}`}
                   className="inline-flex items-center gap-1 text-sm font-medium text-[#d4a843] hover:text-[#3d0c0c] transition"
                 >
-                  {t("संपूर्ण माहिती वाचा →", "Read full details →")}
+                  {t("संपूर्ण माहिती वाचा →", "Read full details →", "सम्पूर्ण जानकारी पढ़ें →")}
                 </Link>
               </div>
             </div>
@@ -1730,7 +1731,7 @@ export default function TemplesPageClient() {
           <div className="text-center py-16">
             <p className="text-4xl mb-3">🔍</p>
             <p className="text-[#5c1a1a]/60">
-              {t("कोणतेही मंदिर सापडले नाही. शोध बदला.", "No temple found. Try a different search.")}
+              {t("कोणतेही मंदिर सापडले नाही. शोध बदला.", "No temple found. Try a different search.", "कोई मंदिर नहीं मिला. खोज बदलें.")}
             </p>
           </div>
         )}
@@ -1745,7 +1746,7 @@ export default function TemplesPageClient() {
             { question: "How to plan an Ashtavinayak darshan tour?", answer: "An Ashtavinayak tour typically takes 2-3 days from Pune. The traditional order starts from Morgaon and ends at Ranjangaon. You can hire a cab or join an organized tour package. The route covers approximately 500 km across Pune district. Best time is during Ganesh Chaturthi or any auspicious day." },
           ])} />
           <h2 className="text-xl font-bold mb-6" style={{ color: "#5c1a1a" }}>
-            {t("मंदिरांबद्दल सामान्य प्रश्न", "Frequently Asked Questions about Temples")}
+            {t("मंदिरांबद्दल सामान्य प्रश्न", "Frequently Asked Questions about Temples", "मंदिरों के बारे में सामान्य प्रश्न")}
           </h2>
           <div className="space-y-4">
             {[
