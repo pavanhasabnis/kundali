@@ -62,12 +62,13 @@ export default function DisclaimerPageClient() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-[#3d0c0c]">
-            {t("अस्वीकरण", "Disclaimer")}
+            {t("अस्वीकरण", "Disclaimer", "अस्वीकरण")}
           </h1>
           <p className="text-[#5c1a1a]/70 mt-2 text-sm">
             {t(
               "भाग्यवेध — कृपया आमच्या सेवा वापरण्यापूर्वी हे वाचा",
-              "Bhaagyavedh — Please read this before using our services"
+              "Bhaagyavedh — Please read this before using our services",
+              "भाग्यवेध — कृपया हमारी सेवाओं का उपयोग करने से पहले इसे पढ़ें"
             )}
           </p>
         </div>
@@ -77,7 +78,8 @@ export default function DisclaimerPageClient() {
           <p className="text-sm text-[#3d0c0c] font-medium leading-relaxed">
             {t(
               "⚠ महत्त्वाची सूचना: या वेबसाइटवरील सर्व ज्योतिष सेवा आणि माहिती केवळ मार्गदर्शन आणि शैक्षणिक उद्देशांसाठी आहे. कोणत्याही महत्त्वपूर्ण निर्णयासाठी कृपया तज्ञांचा सल्ला घ्या.",
-              "Important Notice: All astrology services and information on this website are for guidance and educational purposes only. Please consult experts for any important decisions."
+              "Important Notice: All astrology services and information on this website are for guidance and educational purposes only. Please consult experts for any important decisions.",
+              "⚠ महत्वपूर्ण सूचना: इस वेबसाइट की सभी ज्योतिष सेवाएँ और जानकारी केवल मार्गदर्शन और शैक्षिक उद्देश्यों के लिए है. किसी भी महत्वपूर्ण निर्णय के लिए कृपया विशेषज्ञों से परामर्श लें."
             )}
           </p>
         </div>
@@ -96,10 +98,10 @@ export default function DisclaimerPageClient() {
                 >
                   {i + 1}
                 </span>
-                {t(section.titleMr, section.titleEn)}
+                {t(section.titleMr, section.titleEn, section.titleMr)}
               </h2>
               <p className="text-sm text-[#5c1a1a]/80 leading-relaxed">
-                {t(section.contentMr, section.contentEn)}
+                {t(section.contentMr, section.contentEn, section.contentMr)}
               </p>
             </div>
           ))}
@@ -110,7 +112,8 @@ export default function DisclaimerPageClient() {
           <p className="text-xs text-[#5c1a1a]/50">
             {t(
               "या वेबसाइटचा वापर करून तुम्ही वरील अस्वीकरण स्वीकारता.",
-              "By using this website, you accept the above disclaimer."
+              "By using this website, you accept the above disclaimer.",
+              "इस वेबसाइट का उपयोग करके आप उपरोक्त अस्वीकरण स्वीकार करते हैं."
             )}
           </p>
         </div>

@@ -54,16 +54,17 @@ export default function SangrahPageClient({ items, counts }: Props) {
       >
         <div className="max-w-4xl mx-auto px-4 relative z-10">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-            {t("संपूर्ण संग्रह", "Complete Sangrah")}
+            {t("संपूर्ण संग्रह", "Complete Sangrah", "सम्पूर्ण संग्रह")}
           </h1>
           <p className="text-white/70 text-base md:text-lg mb-6 max-w-2xl mx-auto">
             {t(
               "आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा, नित्य पठण आणि नामावली — सर्व एकाच ठिकाणी",
-              "Aartis, Stotras, Chalisas, Mantras, Vrat Kathas, Daily Prayers & Namavalis — all in one place"
+              "Aartis, Stotras, Chalisas, Mantras, Vrat Kathas, Daily Prayers & Namavalis — all in one place",
+              "आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा, नित्य पाठ और नामावली — सब एक ही जगह"
             )}
           </p>
           <p className="text-[#d4a843] font-semibold text-lg">
-            {totalCount}+ {t("श्लोक आणि मंत्र", "Shlokas & Mantras")}
+            {totalCount}+ {t("श्लोक आणि मंत्र", "Shlokas & Mantras", "श्लोक और मंत्र")}
           </p>
 
           {/* Search */}
@@ -72,7 +73,7 @@ export default function SangrahPageClient({ items, counts }: Props) {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={t("शोधा... (आरती, स्तोत्र, मंत्र)", "Search... (aarti, stotra, mantra)")}
+              placeholder={t("शोधा... (आरती, स्तोत्र, मंत्र)", "Search... (aarti, stotra, mantra)", "खोजें... (आरती, स्तोत्र, मंत्र)")}
               className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:border-[#d4a843]/60 text-sm"
             />
           </div>
@@ -96,19 +97,19 @@ export default function SangrahPageClient({ items, counts }: Props) {
               >
                 <div>
                   <h2 className="text-white font-bold text-base leading-tight">
-                    {t(cat.labelMr, cat.labelEn)}
+                    {t(cat.labelMr, cat.labelEn, cat.labelMr)}
                   </h2>
                   <p className="text-white/50 text-xs mt-0.5">
-                    {counts[cat.id] || 0} {t("पठणे", "items")}
+                    {counts[cat.id] || 0} {t("पठणे", "items", "पाठ")}
                   </p>
                 </div>
               </div>
               <div className="p-4">
                 <p className="text-gray-600 text-sm">
-                  {t(cat.description, cat.descriptionEn)}
+                  {t(cat.description, cat.descriptionEn, cat.description)}
                 </p>
                 <span className="inline-block mt-3 text-xs font-medium text-[#5c1a1a] group-hover:text-[#d4a843] transition">
-                  {t("पहा →", "View →")}
+                  {t("पहा →", "View →", "देखें →")}
                 </span>
               </div>
             </Link>
@@ -117,7 +118,7 @@ export default function SangrahPageClient({ items, counts }: Props) {
 
         {filteredCategories.length === 0 && (
           <p className="text-center text-gray-400 py-12">
-            {t("काहीही सापडले नाही", "No results found")}
+            {t("काहीही सापडले नाही", "No results found", "कुछ नहीं मिला")}
           </p>
         )}
       </section>
@@ -130,12 +131,13 @@ export default function SangrahPageClient({ items, counts }: Props) {
         >
           <div className="px-6 md:px-10 pt-8 pb-4 text-center">
             <h2 className="text-xl md:text-2xl font-bold text-white mb-2">
-              {t("संग्रह PDF डाउनलोड", "Download Sangrah PDF")}
+              {t("संग्रह PDF डाउनलोड", "Download Sangrah PDF", "संग्रह PDF डाउनलोड")}
             </h2>
             <p className="text-white/50 text-sm max-w-lg mx-auto">
               {t(
                 "आरती, स्तोत्र, चालीसा, मंत्र — एका PDF मध्ये डाउनलोड करा. ऑफलाइन वाचनासाठी उत्तम.",
-                "Download aartis, stotras, chalisas, mantras — in a single PDF. Perfect for offline reading."
+                "Download aartis, stotras, chalisas, mantras — in a single PDF. Perfect for offline reading.",
+                "आरती, स्तोत्र, चालीसा, मंत्र — एक ही PDF में डाउनलोड करें. ऑफ़लाइन पठन के लिए उत्तम."
               )}
             </p>
           </div>
@@ -143,7 +145,7 @@ export default function SangrahPageClient({ items, counts }: Props) {
           {/* Category-wise download buttons */}
           <div className="px-6 md:px-10 pb-4">
             <p className="text-[#d4a843] text-xs font-semibold mb-3 text-center tracking-wider uppercase">
-              {t("श्रेणीनुसार डाउनलोड", "Download by Category")}
+              {t("श्रेणीनुसार डाउनलोड", "Download by Category", "श्रेणीवार डाउनलोड")}
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
               {SANGRAH_CATEGORIES.map((cat) => {
@@ -157,7 +159,7 @@ export default function SangrahPageClient({ items, counts }: Props) {
                   >
                     <div className="min-w-0">
                       <p className="text-white text-xs font-medium truncate group-hover:text-[#d4a843] transition">
-                        {t(cat.labelMr, cat.labelEn)}
+                        {t(cat.labelMr, cat.labelEn, cat.labelMr)}
                       </p>
                       <p className="text-white/30 text-[10px]">
                         {count} {t("पठणे", "items")}
@@ -178,11 +180,11 @@ export default function SangrahPageClient({ items, counts }: Props) {
                 className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-[#3d0c0c] transition-all hover:scale-105"
                 style={{ background: "linear-gradient(135deg, #d4a843, #e5bc5a)" }}
               >
-                {t("संपूर्ण संग्रह डाउनलोड करा", "Download Complete Sangrah")}
+                {t("संपूर्ण संग्रह डाउनलोड करा", "Download Complete Sangrah", "सम्पूर्ण संग्रह डाउनलोड करें")}
                 <span className="text-[#3d0c0c]/60 text-sm font-normal">({totalCount}+)</span>
               </Link>
               <p className="text-white/30 text-xs mt-3">
-                {t("सर्व आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा, नित्य पठण एकाच PDF मध्ये", "All aartis, stotras, chalisas, mantras, vrat kathas, daily prayers in one PDF")}
+                {t("सर्व आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा, नित्य पठण एकाच PDF मध्ये", "All aartis, stotras, chalisas, mantras, vrat kathas, daily prayers in one PDF", "सभी आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा, नित्य पाठ एक ही PDF में")}
               </p>
             </div>
           </div>
@@ -193,7 +195,7 @@ export default function SangrahPageClient({ items, counts }: Props) {
       {items.length > 0 && (
         <section className="max-w-6xl mx-auto px-4 pb-12">
           <h2 className="text-xl font-bold text-[#3d0c0c] mb-5">
-            {t("लोकप्रिय पठणे", "Popular Recitations")}
+            {t("लोकप्रिय पठणे", "Popular Recitations", "लोकप्रिय पाठ")}
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {items
@@ -209,16 +211,17 @@ export default function SangrahPageClient({ items, counts }: Props) {
                   <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
                     style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}
                   >
-                    {t(item.deityMr[0], item.deityEn[0])}
+                    {t(item.deityMr[0], item.deityEn[0], item.deityMr[0])}
                   </span>
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-gray-800 truncate group-hover:text-[#5c1a1a]">
-                      {t(item.title, item.titleEn)}
+                      {t(item.title, item.titleEn, item.title)}
                     </p>
                     <p className="text-xs text-gray-400 capitalize">
                       {t(
                         SANGRAH_CATEGORIES.find((c) => c.id === item.category)?.labelMr || item.category,
-                        SANGRAH_CATEGORIES.find((c) => c.id === item.category)?.labelEn || item.category
+                        SANGRAH_CATEGORIES.find((c) => c.id === item.category)?.labelEn || item.category,
+                        SANGRAH_CATEGORIES.find((c) => c.id === item.category)?.labelMr || item.category
                       )}
                     </p>
                   </div>

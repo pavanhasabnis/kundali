@@ -62,16 +62,17 @@ export default function PrivacyPageClient() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-[#3d0c0c]">
-            {t("गोपनीयता धोरण", "Privacy Policy")}
+            {t("गोपनीयता धोरण", "Privacy Policy", "गोपनीयता नीति")}
           </h1>
           <p className="text-[#5c1a1a]/70 mt-2 text-sm">
             {t(
               "भाग्यवेध — तुमच्या माहितीची काळजी आम्हाला आहे",
-              "Bhaagyavedh — We care about your data privacy"
+              "Bhaagyavedh — We care about your data privacy",
+              "भाग्यवेध — हम आपकी जानकारी की परवाह करते हैं"
             )}
           </p>
           <p className="text-[#5c1a1a]/50 mt-1 text-xs">
-            {t("शेवटचे अद्ययावत: एप्रिल २०२६", "Last updated: April 2026")}
+            {t("शेवटचे अद्ययावत: एप्रिल २०२६", "Last updated: April 2026", "अंतिम अद्यतन: अप्रैल २०२६")}
           </p>
         </div>
 
@@ -80,7 +81,8 @@ export default function PrivacyPageClient() {
           <p className="text-sm text-[#5c1a1a]/80 leading-relaxed">
             {t(
               "भाग्यवेध (\"आम्ही\") तुमच्या गोपनीयतेचा आदर करतो. हे गोपनीयता धोरण आमच्या वेबसाइट आणि सेवा वापरताना तुमची माहिती कशी संकलित, वापरली आणि संरक्षित केली जाते हे स्पष्ट करते.",
-              "Bhaagyavedh (\"we\") respects your privacy. This privacy policy explains how your information is collected, used, and protected when you use our website and services."
+              "Bhaagyavedh (\"we\") respects your privacy. This privacy policy explains how your information is collected, used, and protected when you use our website and services.",
+              "भाग्यवेध (\"हम\") आपकी गोपनीयता का सम्मान करते हैं. यह गोपनीयता नीति बताती है कि हमारी वेबसाइट और सेवाओं का उपयोग करते समय आपकी जानकारी कैसे एकत्र, उपयोग और संरक्षित की जाती है."
             )}
           </p>
         </div>
@@ -99,10 +101,10 @@ export default function PrivacyPageClient() {
                 >
                   {i + 1}
                 </span>
-                {t(section.titleMr, section.titleEn)}
+                {t(section.titleMr, section.titleEn, section.titleMr)}
               </h2>
               <p className="text-sm text-[#5c1a1a]/80 leading-relaxed">
-                {t(section.contentMr, section.contentEn)}
+                {t(section.contentMr, section.contentEn, section.contentMr)}
               </p>
             </div>
           ))}
@@ -113,7 +115,8 @@ export default function PrivacyPageClient() {
           <p className="text-sm text-[#3d0c0c] font-medium">
             {t(
               "गोपनीयतेबद्दल प्रश्न असल्यास आमच्याशी संपर्क साधा:",
-              "For privacy-related questions, contact us:"
+              "For privacy-related questions, contact us:",
+              "गोपनीयता से सम्बंधित प्रश्नों के लिए हमसे सम्पर्क करें:"
             )}
           </p>
           <p className="text-sm text-[#5c1a1a]/70 mt-1">info@bhaagyavedh.com</p>

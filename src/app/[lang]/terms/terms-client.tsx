@@ -78,16 +78,17 @@ export default function TermsPageClient() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-[#3d0c0c]">
-            {t("अटी व शर्ती", "Terms & Conditions")}
+            {t("अटी व शर्ती", "Terms & Conditions", "नियम व शर्तें")}
           </h1>
           <p className="text-[#5c1a1a]/70 mt-2 text-sm">
             {t(
               "भाग्यवेध — सेवा वापराच्या अटी",
-              "Bhaagyavedh — Terms of Service"
+              "Bhaagyavedh — Terms of Service",
+              "भाग्यवेध — सेवा उपयोग की शर्तें"
             )}
           </p>
           <p className="text-[#5c1a1a]/50 mt-1 text-xs">
-            {t("शेवटचे अद्ययावत: एप्रिल २०२६", "Last updated: April 2026")}
+            {t("शेवटचे अद्ययावत: एप्रिल २०२६", "Last updated: April 2026", "अंतिम अद्यतन: अप्रैल २०२६")}
           </p>
         </div>
 
@@ -105,10 +106,10 @@ export default function TermsPageClient() {
                 >
                   {i + 1}
                 </span>
-                {t(section.titleMr, section.titleEn)}
+                {t(section.titleMr, section.titleEn, section.titleMr)}
               </h2>
               <p className="text-sm text-[#5c1a1a]/80 leading-relaxed">
-                {t(section.contentMr, section.contentEn)}
+                {t(section.contentMr, section.contentEn, section.contentMr)}
               </p>
             </div>
           ))}
