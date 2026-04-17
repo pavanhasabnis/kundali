@@ -7,22 +7,22 @@ import { LangToggle } from "./lang-toggle";
 import { useEffect, useState } from "react";
 
 const navLinks = [
-  { href: "/", labelMr: "मुख्यपृष्ठ", labelEn: "Home" },
-  { href: "/kundli", labelMr: "कुंडली", labelEn: "Kundli" },
-  { href: "/matching", labelMr: "गुण मिलान", labelEn: "Matching" },
-  { href: "/panchang", labelMr: "पंचांग", labelEn: "Panchang" },
-  { href: "/rashifal", labelMr: "राशीफल", labelEn: "Rashifal" },
-  { href: "/calendar", labelMr: "दिनदर्शिका", labelEn: "Calendar" },
-  { href: "/pooja-services", labelMr: "पूजा सेवा", labelEn: "Pooja Services" },
-  { href: "/temples", labelMr: "मंदिरे", labelEn: "Temples" },
-  { href: "/yatra", labelMr: "यात्रा सेवा", labelEn: "Yatra" },
-  { href: "/consultation", labelMr: "सल्ला सेवा", labelEn: "Consult" },
-  { href: "/muhurat", labelMr: "मुहूर्त", labelEn: "Muhurat" },
-  { href: "/graha-sthiti", labelMr: "ग्रह स्थिती", labelEn: "Planets Now" },
-  { href: "/sangrah", labelMr: "संग्रह", labelEn: "Sangrah" },
-  { href: "/blog", labelMr: "दैनिक लेख", labelEn: "Daily Blog" },
-  { href: "/about", labelMr: "आमच्याबद्दल", labelEn: "About" },
-  { href: "/contact", labelMr: "संपर्क", labelEn: "Contact" },
+  { href: "/", labelMr: "मुख्यपृष्ठ", labelEn: "Home", labelHi: "मुख्य पृष्ठ" },
+  { href: "/kundli", labelMr: "कुंडली", labelEn: "Kundli", labelHi: "कुंडली" },
+  { href: "/matching", labelMr: "गुण मिलान", labelEn: "Matching", labelHi: "गुण मिलान" },
+  { href: "/panchang", labelMr: "पंचांग", labelEn: "Panchang", labelHi: "पंचांग" },
+  { href: "/rashifal", labelMr: "राशीफल", labelEn: "Rashifal", labelHi: "राशिफल" },
+  { href: "/calendar", labelMr: "दिनदर्शिका", labelEn: "Calendar", labelHi: "कैलेंडर" },
+  { href: "/pooja-services", labelMr: "पूजा सेवा", labelEn: "Pooja Services", labelHi: "पूजा सेवा" },
+  { href: "/temples", labelMr: "मंदिरे", labelEn: "Temples", labelHi: "मंदिर" },
+  { href: "/yatra", labelMr: "यात्रा सेवा", labelEn: "Yatra", labelHi: "यात्रा" },
+  { href: "/consultation", labelMr: "सल्ला सेवा", labelEn: "Consult", labelHi: "परामर्श" },
+  { href: "/muhurat", labelMr: "मुहूर्त", labelEn: "Muhurat", labelHi: "मुहूर्त" },
+  { href: "/graha-sthiti", labelMr: "ग्रह स्थिती", labelEn: "Planets Now", labelHi: "ग्रह स्थिति" },
+  { href: "/sangrah", labelMr: "संग्रह", labelEn: "Sangrah", labelHi: "संग्रह" },
+  { href: "/blog", labelMr: "दैनिक लेख", labelEn: "Daily Blog", labelHi: "दैनिक लेख" },
+  { href: "/about", labelMr: "आमच्याबद्दल", labelEn: "About", labelHi: "हमारे बारे में" },
+  { href: "/contact", labelMr: "संपर्क", labelEn: "Contact", labelHi: "सम्पर्क" },
 ];
 
 interface UserSession {
@@ -66,7 +66,7 @@ export function NavBar() {
       <div className="max-w-[1400px] mx-auto px-3 sm:px-4 py-1.5">
         <div className="flex items-center justify-between">
           <Link href={langPrefix} className="flex items-center shrink-0">
-            <img src={lang === "mr" ? "/logos/navbar-dark-mr.svg" : "/logos/navbar-dark.svg"} alt="Bhaagyavedh" className="h-10 w-auto" />
+            <img src={lang === "en" ? "/logos/navbar-dark.svg" : "/logos/navbar-dark-mr.svg"} alt="Bhaagyavedh" className="h-10 w-auto" />
           </Link>
 
           {/* Desktop: nav links in one line, scroll on overflow */}
@@ -77,7 +77,7 @@ export function NavBar() {
                 href={withLang(link.href)}
                 className="shrink-0 px-1.5 xl:px-2 py-1 text-[11px] xl:text-[12px] font-medium text-white/70 hover:text-[#d4a843] transition-colors whitespace-nowrap"
               >
-                {t(link.labelMr, link.labelEn)}
+                {t(link.labelMr, link.labelEn, link.labelHi)}
               </Link>
             ))}
           </nav>
@@ -106,7 +106,7 @@ export function NavBar() {
                       <p className="px-4 py-1 text-xs text-[#5c1a1a]/60 truncate">{user.email}</p>
                       <hr className="my-1 border-[#d4a843]/10" />
                       <Link href={withLang("/account")} className="block px-4 py-2 text-sm text-[#3d0c0c] hover:bg-[#FFF8E7] transition" onClick={() => setShowMenu(false)}>
-                        {t("माझे खाते", "My Account")}
+                        {t("माझे खाते", "My Account", "मेरा खाता")}
                       </Link>
                       <button
                         onClick={() => {
@@ -115,7 +115,7 @@ export function NavBar() {
                         }}
                         className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition"
                       >
-                        {t("लॉग आउट", "Sign Out")}
+                        {t("लॉग आउट", "Sign Out", "लॉग आउट")}
                       </button>
                     </div>
                   )}
@@ -125,7 +125,7 @@ export function NavBar() {
                   href={withLang("/login")}
                   className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#d4a843] text-[#3d0c0c] hover:bg-[#e5bc5a] transition"
                 >
-                  {t("लॉग इन", "Login")}
+                  {t("लॉग इन", "Login", "लॉग इन")}
                 </Link>
               )}
             </div>
@@ -140,7 +140,7 @@ export function NavBar() {
             href={withLang(link.href)}
             className="flex-shrink-0 px-2.5 py-1 rounded-full text-[11px] font-medium text-white/60 hover:text-[#d4a843] hover:bg-white/10 transition-all whitespace-nowrap"
           >
-            {t(link.labelMr, link.labelEn)}
+            {t(link.labelMr, link.labelEn, link.labelHi)}
           </Link>
         ))}
       </nav>

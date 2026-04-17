@@ -15,7 +15,6 @@ const colorMap: Record<string, { bg: string; text: string; border: string }> = {
 export function SiteBanner() {
   const { lang } = useLang();
   const pathname = usePathname();
-  const isMr = lang === "mr";
   const [banner, setBanner] = useState<{ active: boolean; textMr: string; textEn: string; link: string; color: string } | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
@@ -41,7 +40,7 @@ export function SiteBanner() {
   if (!banner || !banner.active || dismissed) return null;
 
   const colors = colorMap[banner.color] || colorMap.gold;
-  const text = isMr ? banner.textMr : banner.textEn;
+  const text = lang === "en" ? banner.textEn : banner.textMr;
   if (!text) return null;
 
   const content = (

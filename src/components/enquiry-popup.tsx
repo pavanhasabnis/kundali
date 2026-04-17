@@ -79,7 +79,7 @@ export function EnquiryPopup({ open, onClose, subject }: EnquiryPopupProps) {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-bold text-[#d4a843]">
-                {t("चौकशी फॉर्म", "Enquiry Form")}
+                {t("चौकशी फॉर्म", "Enquiry Form", "पूछताछ फ़ॉर्म")}
               </h2>
               {subject && (
                 <p className="text-xs text-white/50 mt-0.5">{subject}</p>
@@ -102,24 +102,24 @@ export function EnquiryPopup({ open, onClose, subject }: EnquiryPopupProps) {
                 <span className="text-3xl text-green-600">&#10003;</span>
               </div>
               <h3 className="text-lg font-bold text-[#3d0c0c] mb-2">
-                {t("चौकशी प्राप्त झाली!", "Enquiry Received!")}
+                {t("चौकशी प्राप्त झाली!", "Enquiry Received!", "पूछताछ प्राप्त हुई!")}
               </h3>
               <p className="text-sm text-[#5c1a1a]/60 mb-6">
-                {t("आम्ही लवकरच तुमच्याशी संपर्क करू.", "We will contact you soon.")}
+                {t("आम्ही लवकरच तुमच्याशी संपर्क करू.", "We will contact you soon.", "हम जल्द ही आपसे सम्पर्क करेंगे.")}
               </p>
               <button
                 onClick={onClose}
                 className="px-6 py-2 rounded-lg text-sm font-semibold text-white transition hover:opacity-90"
                 style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}
               >
-                {t("बंद करा", "Close")}
+                {t("बंद करा", "Close", "बंद करें")}
               </button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-[#3d0c0c] mb-1">
-                  {t("नाव", "Name")} *
+                  {t("नाव", "Name", "नाम")} *
                 </label>
                 <input
                   type="text"
@@ -127,12 +127,12 @@ export function EnquiryPopup({ open, onClose, subject }: EnquiryPopupProps) {
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   className="w-full rounded-lg border border-[#d4a843]/30 bg-[#FFF8E7]/30 px-4 py-2.5 text-sm text-[#3d0c0c] placeholder:text-[#5c1a1a]/40 focus:border-[#d4a843] focus:outline-none focus:ring-1 focus:ring-[#d4a843]/50"
-                  placeholder={t("तुमचे नाव", "Your name")}
+                  placeholder={t("तुमचे नाव", "Your name", "आपका नाम")}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-[#3d0c0c] mb-1">
-                  {t("फोन नंबर", "Phone Number")} *
+                  {t("फोन नंबर", "Phone Number", "फ़ोन नंबर")} *
                 </label>
                 <input
                   type="tel"
@@ -140,31 +140,31 @@ export function EnquiryPopup({ open, onClose, subject }: EnquiryPopupProps) {
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   className="w-full rounded-lg border border-[#d4a843]/30 bg-[#FFF8E7]/30 px-4 py-2.5 text-sm text-[#3d0c0c] placeholder:text-[#5c1a1a]/40 focus:border-[#d4a843] focus:outline-none focus:ring-1 focus:ring-[#d4a843]/50"
-                  placeholder={t("तुमचा फोन नंबर", "Your phone number")}
+                  placeholder={t("तुमचा फोन नंबर", "Your phone number", "आपका फ़ोन नंबर")}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-[#3d0c0c] mb-1">
-                  {t("ई-मेल", "Email")} <span className="text-[#5c1a1a]/40 text-xs">({t("ऐच्छिक", "optional")})</span>
+                  {t("ई-मेल", "Email", "ई-मेल")} <span className="text-[#5c1a1a]/40 text-xs">({t("ऐच्छिक", "optional", "वैकल्पिक")})</span>
                 </label>
                 <input
                   type="email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   className="w-full rounded-lg border border-[#d4a843]/30 bg-[#FFF8E7]/30 px-4 py-2.5 text-sm text-[#3d0c0c] placeholder:text-[#5c1a1a]/40 focus:border-[#d4a843] focus:outline-none focus:ring-1 focus:ring-[#d4a843]/50"
-                  placeholder={t("तुमचा ई-मेल", "Your email")}
+                  placeholder={t("तुमचा ई-मेल", "Your email", "आपका ई-मेल")}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-[#3d0c0c] mb-1">
-                  {t("संदेश", "Message")} <span className="text-[#5c1a1a]/40 text-xs">({t("ऐच्छिक", "optional")})</span>
+                  {t("संदेश", "Message", "संदेश")} <span className="text-[#5c1a1a]/40 text-xs">({t("ऐच्छिक", "optional", "वैकल्पिक")})</span>
                 </label>
                 <textarea
                   rows={3}
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
                   className="w-full rounded-lg border border-[#d4a843]/30 bg-[#FFF8E7]/30 px-4 py-2.5 text-sm text-[#3d0c0c] placeholder:text-[#5c1a1a]/40 focus:border-[#d4a843] focus:outline-none focus:ring-1 focus:ring-[#d4a843]/50 resize-none"
-                  placeholder={t("तुमचा संदेश लिहा...", "Write your message...")}
+                  placeholder={t("तुमचा संदेश लिहा...", "Write your message...", "अपना संदेश लिखें...")}
                 />
               </div>
               <button
@@ -173,7 +173,7 @@ export function EnquiryPopup({ open, onClose, subject }: EnquiryPopupProps) {
                 className="w-full rounded-lg py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
                 style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}
               >
-                {submitting ? t("पाठवत आहे...", "Sending...") : t("चौकशी पाठवा", "Submit Enquiry")}
+                {submitting ? t("पाठवत आहे...", "Sending...", "भेज रहे हैं...") : t("चौकशी पाठवा", "Submit Enquiry", "पूछताछ भेजें")}
               </button>
             </form>
           )}
