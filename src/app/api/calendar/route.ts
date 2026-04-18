@@ -79,16 +79,16 @@ export async function GET(req: NextRequest) {
       const tithiIdx = sunriseView.tithiIdx;
       const dayOfWeek = date.getDay();
 
-      // Festival match rules:
-      // - Pratipada (tithi=1) festivals use noon-tithi rule. Pratipada often begins after
-      //   sunrise when Amavasya/Purnima ends; classical tradition celebrates on the day
-      //   when Pratipada is dominant during daytime (Gudi Padwa, Ghatasthapana, Padwa).
-      // - All other tithi festivals use sunrise-vyapini rule (standard).
+      // Festival match: use मध्याह्न-व्यापिनी (noon-tithi) rule.
+      // Classical tradition for most festivals — Akshaya Tritiya, Gudi Padwa, Hartalika,
+      // Ganesh Chaturthi, Navratri — celebrates on the day when the target tithi is
+      // dominant during daytime (midday) rather than strictly at sunrise. This handles
+      // cases like Akshaya Tritiya 2026 where Tritiya begins 10:49 AM April 19 (after
+      // sunrise Dwitiya), but the festival is observed on April 19 per classical rule.
       const matchedNames = new Set<string>();
       const lunarFestivals: { name: string; nameMr: string; type: string }[] = [];
       for (const f of FESTIVAL_RULES) {
-        const view = f.tithi === 1 ? noonView : sunriseView;
-        const matched = f.masa === view.sunMasa && f.paksha === view.pakshaType && f.tithi === view.pakshaTithi;
+        const matched = f.masa === noonView.sunMasa && f.paksha === noonView.pakshaType && f.tithi === noonView.pakshaTithi;
         if (matched && !matchedNames.has(f.name)) {
           matchedNames.add(f.name);
           lunarFestivals.push({ name: f.name, nameMr: f.nameMr, type: f.type });
