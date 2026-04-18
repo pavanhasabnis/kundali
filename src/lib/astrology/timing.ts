@@ -112,6 +112,9 @@ function scanDashas(dashas: DashaPeriod[], k: KundliResult, area: "marriage" | "
       const ageAtStart = Math.floor((new Date(ad.startDate).getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25));
       if (ageAtStart < 18 && area === "marriage") continue;  // skip pre-marriage-age windows
       if (ageAtStart < 20 && area === "career") continue;
+      // Cap upper age — periods beyond typical active life are not meaningful
+      if (area === "marriage" && ageAtStart > 60) continue;
+      if (area === "career" && ageAtStart > 65) continue;
 
       const startStr = new Date(ad.startDate).toISOString().slice(0, 10);
       const endStr = new Date(ad.endDate).toISOString().slice(0, 10);
@@ -146,9 +149,11 @@ function scanDashas(dashas: DashaPeriod[], k: KundliResult, area: "marriage" | "
     }
   }
 
-  // Sort by score desc then by start date
+  // First pick top 8 by score (strongest astrological windows), then present chronologically.
   out.sort((a, b) => b.score - a.score || a.startDate.localeCompare(b.startDate));
-  return out.slice(0, 8); // top 8 windows
+  const top = out.slice(0, 8);
+  top.sort((a, b) => a.startDate.localeCompare(b.startDate));
+  return top;
 }
 
 function analyze7thLordStrength(k: KundliResult): { mr: string; en: string; house: number; strength: "good" | "moderate" | "weak" } {
