@@ -471,11 +471,22 @@ export interface BirthPanchang {
   karana: string;
   masa: string;
   shakaSamvat: number;
+  nakshatraPayaMr: string;   // metal per pada: सुवर्ण/चांदी/ताम्र/लोह
+  nakshatraPayaEn: string;   // Gold/Silver/Copper/Iron
 }
 
-export function calculateBirthPanchang(year: number, month: number, day: number, lat: number, lng: number, tz: number): BirthPanchang {
+// Pada to metal mapping (simplified Maharashtrian tradition)
+const PAYA_MR = ["सुवर्ण", "चांदी", "ताम्र", "लोह"];
+const PAYA_EN = ["Gold", "Silver", "Copper", "Iron"];
+
+function getNakshatraPaya(moonPada: number): { mr: string; en: string } {
+  const idx = Math.max(0, Math.min(3, moonPada - 1));
+  return { mr: PAYA_MR[idx], en: PAYA_EN[idx] };
+}
+
+export function calculateBirthPanchang(year: number, month: number, day: number, lat: number, lng: number, tz: number, hour = 0, minute = 0, moonPada = 1): BirthPanchang {
   const date = new Date(year, month - 1, day);
-  const panchang = calculatePanchang(date, lat, lng, tz);
+  const panchang = calculatePanchang(date, lat, lng, tz, hour, minute);
 
   // Calculate dinman (day duration)
   const sunriseMinutes = parseInt(panchang.sunrise.split(":")[0]) * 60 + parseInt(panchang.sunrise.split(":")[1]);
@@ -488,6 +499,8 @@ export function calculateBirthPanchang(year: number, month: number, day: number,
   // Shaka Samvat: year - 78 (after Chaitra), year - 79 (before Chaitra March)
   const shakaSamvat = month >= 3 ? year - 78 : year - 79;
 
+  const paya = getNakshatraPaya(moonPada);
+
   return {
     day: panchang.day,
     sunrise: panchang.sunrise,
@@ -499,6 +512,8 @@ export function calculateBirthPanchang(year: number, month: number, day: number,
     karana: panchang.karana,
     masa: panchang.masa,
     shakaSamvat,
+    nakshatraPayaMr: paya.mr,
+    nakshatraPayaEn: paya.en,
   };
 }
 
@@ -532,6 +547,72 @@ export function calculateBalanceDasha(moonNakshatraIndex: number, moonSiderealLo
     years,
     months,
     days,
+  };
+}
+
+// ─── Ashtottari Dasha (108-year alternate system) ─────────────
+// Used in Maharashtrian/Kerala tradition alongside Vimshottari.
+// Lords: Sun(6), Moon(15), Mars(8), Mercury(17), Saturn(10), Jupiter(19), Rahu(12), Venus(21) = 108 years
+// Nakshatra mapping (Nirnaya Sindhu tradition):
+//   Sun     — Ardra, Punarvasu, Pushya, Ashlesha           (idx 5-8)
+//   Moon    — Magha, P.Phalguni, U.Phalguni                (idx 9-11)
+//   Mars    — Hasta, Chitra, Swati, Vishakha               (idx 12-15)
+//   Mercury — Anuradha, Jyeshtha, Moola                    (idx 16-18)
+//   Saturn  — P.Ashadha, U.Ashadha, Shravana, Dhanishtha   (idx 19-22)
+//   Jupiter — Shatabhisha, P.Bhadra, U.Bhadra              (idx 23-25)
+//   Rahu    — Revati, Ashwini, Bharani                     (idx 26, 0, 1)
+//   Venus   — Krittika, Rohini, Mrigashira                 (idx 2, 3, 4)
+
+interface AshtottariLord { lord: string; years: number; nakshatras: number[] }
+const ASHTOTTARI_ORDER: AshtottariLord[] = [
+  { lord: "Sun",     years: 6,  nakshatras: [5, 6, 7, 8] },
+  { lord: "Moon",    years: 15, nakshatras: [9, 10, 11] },
+  { lord: "Mars",    years: 8,  nakshatras: [12, 13, 14, 15] },
+  { lord: "Mercury", years: 17, nakshatras: [16, 17, 18] },
+  { lord: "Saturn",  years: 10, nakshatras: [19, 20, 21, 22] },
+  { lord: "Jupiter", years: 19, nakshatras: [23, 24, 25] },
+  { lord: "Rahu",    years: 12, nakshatras: [26, 0, 1] },
+  { lord: "Venus",   years: 21, nakshatras: [2, 3, 4] },
+];
+
+export interface AshtottariBalance {
+  lordMr: string;
+  lordEn: string;
+  years: number;
+  months: number;
+  days: number;
+  totalYears: number;
+}
+
+export function calculateAshtottariBalance(moonNakshatraIndex: number, moonSiderealLongitude: number): AshtottariBalance {
+  const entry = ASHTOTTARI_ORDER.find(e => e.nakshatras.includes(moonNakshatraIndex));
+  if (!entry) return { lordMr: "—", lordEn: "—", years: 0, months: 0, days: 0, totalYears: 0 };
+
+  // Compute group span on ecliptic
+  const nakSpan = 360 / 27;
+  const groupStart = entry.nakshatras[0] * nakSpan;
+  const groupSpan = entry.nakshatras.length * nakSpan;
+
+  // Moon's position relative to group start, handling wrap (Rahu crosses 27→0)
+  let rel = moonSiderealLongitude - groupStart;
+  if (rel < 0) rel += 360;
+  if (rel > groupSpan) rel -= 360;  // wrap for Rahu group
+  if (rel < 0) rel += groupSpan;    // ensure positive
+
+  const fractionElapsed = rel / groupSpan;
+  const totalYears = entry.years * (1 - fractionElapsed);
+  const years = Math.floor(totalYears);
+  const remainMonths = (totalYears - years) * 12;
+  const months = Math.floor(remainMonths);
+  const days = Math.floor((remainMonths - months) * 30);
+
+  return {
+    lordMr: PLANET_MR[entry.lord] || entry.lord,
+    lordEn: entry.lord,
+    years,
+    months,
+    days,
+    totalYears: entry.years,
   };
 }
 
@@ -760,6 +841,7 @@ export interface KundliEnhancements {
   birthPanchang: BirthPanchang;
   rashiAkshar: string;
   balanceDasha: BalanceDasha;
+  ashtottariBalance: AshtottariBalance;
   sadeSati: SadeSatiStatus;
   pitraDosha: PitraDosha;
   luckyItems: LuckyItems;
@@ -783,10 +865,12 @@ export function calculateAllEnhancements(
 ): KundliEnhancements {
   const { birthInput } = kundli;
 
+  const moonSidLong = kundli.planets.find(p => p.id === "Moon")!.siderealLongitude;
   return {
-    birthPanchang: calculateBirthPanchang(birthInput.year, birthInput.month, birthInput.day, birthInput.latitude, birthInput.longitude, birthInput.timezone),
+    birthPanchang: calculateBirthPanchang(birthInput.year, birthInput.month, birthInput.day, birthInput.latitude, birthInput.longitude, birthInput.timezone, birthInput.hour, birthInput.minute, kundli.moonPada),
     rashiAkshar: getRashiAkshar(kundli.moonNakshatra, kundli.moonPada),
-    balanceDasha: calculateBalanceDasha(kundli.moonNakshatraIndex, kundli.planets.find(p => p.id === "Moon")!.siderealLongitude),
+    balanceDasha: calculateBalanceDasha(kundli.moonNakshatraIndex, moonSidLong),
+    ashtottariBalance: calculateAshtottariBalance(kundli.moonNakshatraIndex, moonSidLong),
     sadeSati: detectSadeSati(kundli.moonRashiIndex, kundli.planets),
     pitraDosha: detectPitraDosha(kundli.planets),
     luckyItems: getLuckyItems(kundli.lagnaRashiIndex),

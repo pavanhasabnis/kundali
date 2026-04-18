@@ -18,9 +18,10 @@ interface HousePredictionData { house: number; titleMr: string; titleEn: string;
 interface DashaInterpData { lordMr: string; lordEn: string; periodMr: string; periodEn: string; careerMr: string; careerEn: string; financeMr: string; financeEn: string; healthMr: string; healthEn: string; relationshipMr: string; relationshipEn: string; adviceMr: string; adviceEn: string; }
 interface RemedyData { categoryMr: string; categoryEn: string; items: { mr: string; en: string }[]; }
 interface EnhancementsData {
-  birthPanchang: { day: string; sunrise: string; sunset: string; dinman: string; tithi: string; paksha: string; yoga: string; karana: string; masa: string; shakaSamvat: number };
+  birthPanchang: { day: string; sunrise: string; sunset: string; dinman: string; tithi: string; paksha: string; yoga: string; karana: string; masa: string; shakaSamvat: number; nakshatraPayaMr: string; nakshatraPayaEn: string };
   rashiAkshar: string;
   balanceDasha: { lordMr: string; lordEn: string; years: number; months: number; days: number };
+  ashtottariBalance: { lordMr: string; lordEn: string; years: number; months: number; days: number; totalYears: number };
   sadeSati: { active: boolean; phase: string; phaseMr: string; phaseEn: string; descriptionMr: string; descriptionEn: string };
   pitraDosha: { present: boolean; reasonMr: string; reasonEn: string };
   luckyItems: { gemstone: { mr: string; en: string; planet: string }; color: { mr: string; en: string }; number: number; day: { mr: string; en: string }; direction: { mr: string; en: string }; metal: { mr: string; en: string } };
@@ -818,7 +819,7 @@ function KundliResultContent() {
               {activeTab === "shadbala" && <ShadBalaSection data={result.shadBala} />}
               {activeTab === "ashtakvarga" && <AshtakvargaSection data={result.ashtakvarga} />}
               {activeTab === "sarvatobhadra" && <SarvatobhadraSection data={result.sarvatobhadra} />}
-              {activeTab === "birth-panchang" && <BirthPanchangSection data={result.enhancements?.birthPanchang} balance={result.enhancements?.balanceDasha} />}
+              {activeTab === "birth-panchang" && <BirthPanchangSection data={result.enhancements?.birthPanchang} balance={result.enhancements?.balanceDasha} ashtottari={result.enhancements?.ashtottariBalance} />}
               {activeTab === "jaimini" && <JaiminiSection data={result.jaimini} />}
               {activeTab === "mitra-shatru" && <MitraShatruSection data={result.mitraShatru} />}
               {activeTab === "asta-yuddha" && <AstaYuddhaSection combustion={result.combustionDetails} yuddha={result.grahaYuddha} />}
@@ -992,6 +993,7 @@ function KundliResultContent() {
                           [t("नक्षत्र", "Nakshatra"), `${t(result.moonNakshatraMr, result.moonNakshatra)} — ${t("चरण", "Pada")} ${m(result.moonPada)}`],
                           [t("योग", "Yoga"), panch?.yoga || "—"],
                           [t("करण", "Karana"), panch?.karana || "—"],
+                          [t("नक्षत्र पाया", "Nakshatra Paya"), panch ? (lang === "en" ? panch.nakshatraPayaEn : panch.nakshatraPayaMr) : "—"],
                         ],
                       },
                       {
@@ -1661,12 +1663,15 @@ function KundliResultContent() {
           <DoshaSection doshas={result.analysis.doshas} />
         </PrintPage>
 
-        {/* ══════ Predictions: split into 2 pages of 6 ══════ */}
+        {/* ══════ Predictions: split 4/page (3 pages) ══════ */}
         <PrintPage>
-          <PredictionSection predictions={result.analysis.housePredictions.slice(0, 6)} />
+          <PredictionSection predictions={result.analysis.housePredictions.slice(0, 4)} />
         </PrintPage>
         <PrintPage>
-          <PredictionSection predictions={result.analysis.housePredictions.slice(6)} />
+          <PredictionSection predictions={result.analysis.housePredictions.slice(4, 8)} />
+        </PrintPage>
+        <PrintPage>
+          <PredictionSection predictions={result.analysis.housePredictions.slice(8, 12)} />
         </PrintPage>
 
         {/* ══════ PAGE 8: Current Dasha ══════ */}
@@ -1743,7 +1748,7 @@ function KundliResultContent() {
         {/* ══════ Birth Panchang ══════ */}
         {result.enhancements?.birthPanchang && (
           <PrintPage>
-            <BirthPanchangSection data={result.enhancements.birthPanchang} balance={result.enhancements.balanceDasha} />
+            <BirthPanchangSection data={result.enhancements.birthPanchang} balance={result.enhancements.balanceDasha} ashtottari={result.enhancements.ashtottariBalance} />
           </PrintPage>
         )}
 
@@ -1754,11 +1759,23 @@ function KundliResultContent() {
           </PrintPage>
         )}
 
-        {/* ══════ Kalsarp Dosh (detail) ══════ */}
+        {/* ══════ Kalsarp Dosh (detail) — split top/bottom, paginate remedies ══════ */}
         {result.kalsarpDosh && (
-          <PrintPage>
-            <KalsarpDoshSection data={result.kalsarpDosh} />
-          </PrintPage>
+          <>
+            <PrintPage>
+              <KalsarpDoshSection data={result.kalsarpDosh} chunk="top" />
+            </PrintPage>
+            {result.kalsarpDosh.present && (() => {
+              const rem = result.kalsarpDosh!.remediesMr || [];
+              const perPage = 7;
+              const pages = Math.max(1, Math.ceil(rem.length / perPage));
+              return Array.from({ length: pages }, (_, i) => (
+                <PrintPage key={`kalsarp-rem-${i}`}>
+                  <KalsarpDoshSection data={result.kalsarpDosh} chunk="bottom" remedySlice={[i * perPage, (i + 1) * perPage]} />
+                </PrintPage>
+              ));
+            })()}
+          </>
         )}
 
         {/* ══════ Shadbala (split: table+balakrama / remedies paginated 2/page) ══════ */}
@@ -2579,84 +2596,96 @@ function MangalDoshSection({ data }: { data?: MangalDoshData }) {
   );
 }
 
-function KalsarpDoshSection({ data }: { data?: KalsarpDoshData }) {
+function KalsarpDoshSection({ data, chunk = "full", remedySlice }: { data?: KalsarpDoshData; chunk?: "full" | "top" | "bottom"; remedySlice?: [number, number] }) {
   const { t, lang } = useLang();
   if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
   const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
   const pickArr = (mr: string[], en: string[], hi: string[]) => (lang === "en" ? en : lang === "hi" ? hi : mr);
   const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+  const showTop = chunk === "full" || chunk === "top";
+  const showBottom = chunk === "full" || chunk === "bottom";
+  const fullRemedies = pickArr(data.remediesMr, data.remediesEn, data.remediesHi);
+  const [startIdx, endIdx] = remedySlice ?? [0, fullRemedies.length];
+  const remedies = fullRemedies.slice(startIdx, endIdx);
   return (
     <div className="print-avoid-break">
-      <OrnateHeader
-        title={t("काळसर्प दोष विचार", "Kalasarpa Dosha Vichara", "कालसर्प दोष विचार")}
-        subtitle={t("राहू-केतू अक्षात ग्रहस्थिती · १२ प्रकार · त्र्यंबकेश्वर शांती", "Planets between Rahu-Ketu axis · 12 types · Trimbakeshwar shanti", "राहु-केतु अक्ष में ग्रह · 12 प्रकार · त्र्यंबकेश्वर शांति")}
-      />
-
-      <div className="p-4 rounded-xl mb-4" style={{
-        background: data.present ? "linear-gradient(180deg, #F5EFFA, #EEE2F5)" : "linear-gradient(180deg, #F5FBEE, #EAF5D8)",
-        border: "2px double #d4a843",
-      }}>
-        <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
-          <p className="font-bold text-sm" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
-            {pick(data.summaryMr, data.summaryEn, data.summaryHi)}
-          </p>
-          <span className="text-[12px] font-bold italic px-3 py-1 rounded" style={{
-            color: data.present ? "#6b21a8" : "#1d7d3a",
-            background: "#FFFDF5",
-            border: `1px solid ${data.present ? "#6b21a840" : "#1d7d3a40"}`,
-            fontFamily: "serif",
-          }}>
-            {data.present ? `॥ ${data.partial ? t("आंशिक", "Anshika", "आंशिक") : t("पूर्ण", "Purna", "पूर्ण")} ॥` : `॥ ${t("निर्दोष", "Nirdosha", "निर्दोष")} ॥`}
-          </span>
-        </div>
-        {data.present && (
-          <div className="text-xs mt-3 pt-2 grid grid-cols-2 md:grid-cols-4 gap-2" style={{ color: "#5c1a1a", borderTop: "1px dotted #d4a843" }}>
-            <span><b>{t("प्रकार", "Prakara", "प्रकार")}:</b> <span style={{ fontFamily: "serif", color: "#3d0c0c" }}>{pick(data.typeMr, data.typeEn, data.typeHi)}</span></span>
-            <span><b>{t("राहू स्थान", "Rahu Bhava", "राहु भाव")}:</b> {num(data.rahuHouse)}</span>
-            <span><b>{t("केतू स्थान", "Ketu Bhava", "केतु भाव")}:</b> {num(data.ketuHouse)}</span>
-            <span><b>{t("दिशा", "Disha", "दिशा")}:</b> {data.udit ? t("उदित", "Udita", "उदित") : t("अनुदित", "Anudita", "अनुदित")}</span>
-          </div>
-        )}
-      </div>
-
-      {data.present && (
+      {showTop && (
         <>
-          <div className="p-4 rounded-xl mb-4" style={{ background: "#FFFDF5", border: "1.5px solid #d4a843" }}>
-            <h4 className="text-[13px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
-              ॥ {t("फल", "Phala (Effects)", "फल")} ॥
-            </h4>
-            <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a" }}>
-              {pick(data.effectsMr, data.effectsEn, data.effectsHi)}
-            </p>
+          <OrnateHeader
+            title={t("काळसर्प दोष विचार", "Kalasarpa Dosha Vichara", "कालसर्प दोष विचार")}
+            subtitle={t("राहू-केतू अक्षात ग्रहस्थिती · १२ प्रकार · त्र्यंबकेश्वर शांती", "Planets between Rahu-Ketu axis · 12 types · Trimbakeshwar shanti", "राहु-केतु अक्ष में ग्रह · 12 प्रकार · त्र्यंबकेश्वर शांति")}
+          />
+
+          <div className="p-4 rounded-xl mb-4" style={{
+            background: data.present ? "linear-gradient(180deg, #F5EFFA, #EEE2F5)" : "linear-gradient(180deg, #F5FBEE, #EAF5D8)",
+            border: "2px double #d4a843",
+          }}>
+            <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+              <p className="font-bold text-sm" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                {pick(data.summaryMr, data.summaryEn, data.summaryHi)}
+              </p>
+              <span className="text-[12px] font-bold italic px-3 py-1 rounded" style={{
+                color: data.present ? "#6b21a8" : "#1d7d3a",
+                background: "#FFFDF5",
+                border: `1px solid ${data.present ? "#6b21a840" : "#1d7d3a40"}`,
+                fontFamily: "serif",
+              }}>
+                {data.present ? `॥ ${data.partial ? t("आंशिक", "Anshika", "आंशिक") : t("पूर्ण", "Purna", "पूर्ण")} ॥` : `॥ ${t("निर्दोष", "Nirdosha", "निर्दोष")} ॥`}
+              </span>
+            </div>
+            {data.present && (
+              <div className="text-xs mt-3 pt-2 grid grid-cols-2 md:grid-cols-4 gap-2" style={{ color: "#5c1a1a", borderTop: "1px dotted #d4a843" }}>
+                <span><b>{t("प्रकार", "Prakara", "प्रकार")}:</b> <span style={{ fontFamily: "serif", color: "#3d0c0c" }}>{pick(data.typeMr, data.typeEn, data.typeHi)}</span></span>
+                <span><b>{t("राहू स्थान", "Rahu Bhava", "राहु भाव")}:</b> {num(data.rahuHouse)}</span>
+                <span><b>{t("केतू स्थान", "Ketu Bhava", "केतु भाव")}:</b> {num(data.ketuHouse)}</span>
+                <span><b>{t("दिशा", "Disha", "दिशा")}:</b> {data.udit ? t("उदित", "Udita", "उदित") : t("अनुदित", "Anudita", "अनुदित")}</span>
+              </div>
+            )}
           </div>
 
-          <div className="p-4 rounded-xl mb-4" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843" }}>
-            <h4 className="text-[13px] font-bold mb-2 italic text-center" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
-              ॥ {t("शिफारस केलेले तीर्थक्षेत्र", "Sifarasu Tirthakshetra", "अनुशंसित तीर्थक्षेत्र")} ॥
-            </h4>
-            <p className="text-sm text-center leading-relaxed mb-3" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
-              {pick(data.yatraRecommendationMr, data.yatraRecommendationEn, data.yatraRecommendationHi)}
-            </p>
-            <div className="text-center">
-              <a href="/temples/trimbakeshwar" className="inline-block text-xs font-bold px-4 py-2 rounded text-white" style={{ background: "#3d0c0c", border: "1px solid #d4a843", fontFamily: "serif" }}>
-                ॥ {t("त्र्यंबकेश्वर दर्शन →", "Trimbakeshwar Darshan →", "त्र्यंबकेश्वर दर्शन →")} ॥
-              </a>
-            </div>
-          </div>
-          <div className="p-4 rounded-xl" style={{ background: "#FFFDF5", border: "2px double #d4a843" }}>
-            <h4 className="text-[13px] font-bold mb-3 italic text-center" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
-              ॥ {t("शांती उपाय", "Shanti Upaya", "शांति उपाय")} ॥
-            </h4>
-            <ul className="space-y-2">
-              {pickArr(data.remediesMr, data.remediesEn, data.remediesHi).map((r, i) => (
-                <li key={i} className="text-sm flex gap-2" style={{ color: "#5c1a1a" }}>
-                  <span className="font-bold flex-shrink-0" style={{ color: "#d4a843", fontFamily: "serif" }}>{num(i + 1)}.</span>
-                  <span>{r}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {data.present && (
+            <>
+              <div className="p-4 rounded-xl mb-4" style={{ background: "#FFFDF5", border: "1.5px solid #d4a843" }}>
+                <h4 className="text-[13px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                  ॥ {t("फल", "Phala (Effects)", "फल")} ॥
+                </h4>
+                <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a" }}>
+                  {pick(data.effectsMr, data.effectsEn, data.effectsHi)}
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl mb-4" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843" }}>
+                <h4 className="text-[13px] font-bold mb-2 italic text-center" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                  ॥ {t("शिफारस केलेले तीर्थक्षेत्र", "Sifarasu Tirthakshetra", "अनुशंसित तीर्थक्षेत्र")} ॥
+                </h4>
+                <p className="text-sm text-center leading-relaxed mb-3" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+                  {pick(data.yatraRecommendationMr, data.yatraRecommendationEn, data.yatraRecommendationHi)}
+                </p>
+                <div className="text-center">
+                  <a href="/temples/trimbakeshwar" className="inline-block text-xs font-bold px-4 py-2 rounded text-white" style={{ background: "#3d0c0c", border: "1px solid #d4a843", fontFamily: "serif" }}>
+                    ॥ {t("त्र्यंबकेश्वर दर्शन →", "Trimbakeshwar Darshan →", "त्र्यंबकेश्वर दर्शन →")} ॥
+                  </a>
+                </div>
+              </div>
+            </>
+          )}
         </>
+      )}
+
+      {showBottom && data.present && remedies.length > 0 && (
+        <div className="p-4 rounded-xl" style={{ background: "#FFFDF5", border: "2px double #d4a843" }}>
+          <h4 className="text-[13px] font-bold mb-3 italic text-center" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+            ॥ {t("शांती उपाय", "Shanti Upaya", "शांति उपाय")}{remedySlice && fullRemedies.length > endIdx - startIdx ? ` (${num(startIdx + 1)}–${num(Math.min(endIdx, fullRemedies.length))})` : ""} ॥
+          </h4>
+          <ul className="space-y-2">
+            {remedies.map((r, i) => (
+              <li key={i} className="text-sm flex gap-2" style={{ color: "#5c1a1a" }}>
+                <span className="font-bold flex-shrink-0" style={{ color: "#d4a843", fontFamily: "serif" }}>{num(startIdx + i + 1)}.</span>
+                <span>{r}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );
@@ -3161,7 +3190,7 @@ function SarvatobhadraSection({ data, chunk = "full" }: { data?: SarvatobhadraDa
   );
 }
 
-function BirthPanchangSection({ data, balance }: { data?: EnhancementsData["birthPanchang"]; balance?: EnhancementsData["balanceDasha"] }) {
+function BirthPanchangSection({ data, balance, ashtottari }: { data?: EnhancementsData["birthPanchang"]; balance?: EnhancementsData["balanceDasha"]; ashtottari?: EnhancementsData["ashtottariBalance"] }) {
   const { t, lang } = useLang();
   if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
   const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
@@ -3176,6 +3205,7 @@ function BirthPanchangSection({ data, balance }: { data?: EnhancementsData["birt
     { labelMr: "योग", labelEn: "Yoga", value: data.yoga },
     { labelMr: "करण", labelEn: "Karana", value: data.karana },
     { labelMr: "मास", labelEn: "Masa (Month)", value: data.masa },
+    { labelMr: "नक्षत्र पाया", labelEn: "Nakshatra Paya", value: lang === "en" ? data.nakshatraPayaEn : data.nakshatraPayaMr },
     { labelMr: "शक संवत्", labelEn: "Shaka Samvat", value: num(data.shakaSamvat) },
   ];
 
@@ -3202,19 +3232,40 @@ function BirthPanchangSection({ data, balance }: { data?: EnhancementsData["birt
         </table>
       </div>
 
-      {balance && balance.lordMr !== "—" && (
-        <div className="mt-5 p-4 rounded-xl" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843" }}>
-          <h4 className="text-center text-[13px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
-            ॥ {t("जन्मकालीन शेष विम्शोत्तरी दशा", "Balance of Dasha at Birth", "जन्मकालीन शेष विंशोत्तरी दशा")} ॥
-          </h4>
-          <p className="text-center text-sm" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
-            {t(`${balance.lordMr} महादशा शेष`, `${balance.lordEn} Mahadasha balance`, `${balance.lordMr} महादशा शेष`)} —
-            <span className="font-bold mx-2" style={{ color: "#3d0c0c" }}>
-              {num(balance.years)} {t("वर्षे", "years", "वर्ष")} · {num(balance.months)} {t("महिने", "months", "माह")} · {num(balance.days)} {t("दिवस", "days", "दिन")}
-            </span>
-          </p>
-        </div>
-      )}
+      <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+        {balance && balance.lordMr !== "—" && (
+          <div className="p-4 rounded-xl" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843" }}>
+            <h4 className="text-center text-[13px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+              ॥ {t("विंशोत्तरी भोग्यदशा", "Vimshottari Balance", "विंशोत्तरी भोग्यदशा")} ॥
+            </h4>
+            <p className="text-center text-[11px] italic mb-2" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>
+              {t("१२० वर्षे चक्र · जन्म नक्षत्र स्वामी", "120-year cycle · Moon nakshatra lord", "120 वर्ष चक्र · जन्म नक्षत्र स्वामी")}
+            </p>
+            <p className="text-center text-sm" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+              {t(`${balance.lordMr} महादशा`, `${balance.lordEn} Mahadasha`, `${balance.lordMr} महादशा`)}
+              <span className="font-bold block mt-1" style={{ color: "#3d0c0c" }}>
+                {num(balance.years)} {t("वर्षे", "y", "वर्ष")} · {num(balance.months)} {t("महिने", "m", "माह")} · {num(balance.days)} {t("दिवस", "d", "दिन")}
+              </span>
+            </p>
+          </div>
+        )}
+        {ashtottari && ashtottari.lordMr !== "—" && (
+          <div className="p-4 rounded-xl" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843" }}>
+            <h4 className="text-center text-[13px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+              ॥ {t("अष्टोत्तरी भोग्यदशा", "Ashtottari Balance", "अष्टोत्तरी भोग्यदशा")} ॥
+            </h4>
+            <p className="text-center text-[11px] italic mb-2" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>
+              {t("१०८ वर्षे चक्र · महाराष्ट्रीय परंपरा", "108-year cycle · Maharashtrian tradition", "108 वर्ष चक्र · महाराष्ट्रीय परंपरा")}
+            </p>
+            <p className="text-center text-sm" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+              {t(`${ashtottari.lordMr} महादशा`, `${ashtottari.lordEn} Mahadasha`, `${ashtottari.lordMr} महादशा`)}
+              <span className="font-bold block mt-1" style={{ color: "#3d0c0c" }}>
+                {num(ashtottari.years)} {t("वर्षे", "y", "वर्ष")} · {num(ashtottari.months)} {t("महिने", "m", "माह")} · {num(ashtottari.days)} {t("दिवस", "d", "दिन")}
+              </span>
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

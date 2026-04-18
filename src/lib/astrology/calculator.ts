@@ -192,7 +192,7 @@ export function calculateKundli(input: BirthInput): KundliResult {
   }
 
   // Rahu (True Node)
-  const rahuResult = swisseph.swe_calc_ut(jd, swisseph.SE_TRUE_NODE, swisseph.SEFLG_SWIEPH | swisseph.SEFLG_SPEED);
+  const rahuResult = swisseph.swe_calc_ut(jd, swisseph.SE_MEAN_NODE, swisseph.SEFLG_SWIEPH | swisseph.SEFLG_SPEED);
   const rahuSid = getSiderealLong(rahuResult.longitude, ayanamsa);
   const rahuRashi = getRashiIndex(rahuSid);
   const rahuNak = getNakshatraIndex(rahuSid);
@@ -353,7 +353,7 @@ function calculateDasha(
 // Calculate Panchang for a given date and location
 // Uses SUNRISE time (not noon) — this is the standard in Indian panchang tradition
 // Kalnirnay, Tilak Panchang, and all official panchangs use sunrise as the reference
-export function calculatePanchang(date: Date, latitude: number, longitude: number, timezone: number) {
+export function calculatePanchang(date: Date, latitude: number, longitude: number, timezone: number, birthHour?: number, birthMinute?: number) {
   // First calculate JD at approximate sunrise (6 AM local) to find actual sunrise
   const approxSunriseUTC = 6 - timezone; // ~6 AM local in UTC
   const jdApprox = swisseph.swe_julday(
@@ -424,11 +424,16 @@ export function calculatePanchang(date: Date, latitude: number, longitude: numbe
   const sunsetM = Math.floor((sunsetLocal - sunsetH) * 60);
 
   swisseph.swe_set_sid_mode(swisseph.SE_SIDM_LAHIRI, 0, 0);
-  const ayanamsa = swisseph.swe_get_ayanamsa_ut(jd);
+  // For tithi/karana/yoga/nakshatra at birth, use birth-moment JD if provided.
+  // Panchang elements change during day — tradition uses birth moment for natal chart.
+  const jdForPositions = (birthHour !== undefined && birthMinute !== undefined)
+    ? swisseph.swe_julday(date.getFullYear(), date.getMonth() + 1, date.getDate(), birthHour + birthMinute / 60 - timezone, swisseph.SE_GREG_CAL)
+    : jd;
+  const ayanamsa = swisseph.swe_get_ayanamsa_ut(jdForPositions);
 
-  // Sun and Moon positions
-  const sunResult = swisseph.swe_calc_ut(jd, swisseph.SE_SUN, swisseph.SEFLG_SWIEPH);
-  const moonResult = swisseph.swe_calc_ut(jd, swisseph.SE_MOON, swisseph.SEFLG_SWIEPH);
+  // Sun and Moon positions at birth moment (not sunrise)
+  const sunResult = swisseph.swe_calc_ut(jdForPositions, swisseph.SE_SUN, swisseph.SEFLG_SWIEPH);
+  const moonResult = swisseph.swe_calc_ut(jdForPositions, swisseph.SE_MOON, swisseph.SEFLG_SWIEPH);
 
   const sunSid = getSiderealLong(sunResult.longitude, ayanamsa);
   const moonSid = getSiderealLong(moonResult.longitude, ayanamsa);

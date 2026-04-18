@@ -42,16 +42,17 @@ export async function POST(req: NextRequest) {
       timezone: Number(timezone || 5.5),
     });
 
+    // Calculate all divisional charts first (needed for yoga detection + shadbala)
+    const divisionalCharts = calculateAllDivisionalCharts(result);
+    const navamshaForYogas = divisionalCharts.find((c) => c.id === "navamsha");
+
     // Run all analysis
     const planetaryStrength = analyzePlanetaryStrength(result);
-    const yogas = detectYogas(result);
+    const yogas = detectYogas(result, navamshaForYogas);
     const doshas = detectDoshas(result);
     const housePredictions = generateHousePredictions(result);
     const currentDasha = interpretCurrentDasha(result);
     const remedies = generateRemedies(result);
-
-    // Calculate all divisional charts
-    const divisionalCharts = calculateAllDivisionalCharts(result);
 
     // Calculate all enhancements (panchang, aspects, house lords, etc.)
     const enhancements = calculateAllEnhancements(result, divisionalCharts);
@@ -59,7 +60,7 @@ export async function POST(req: NextRequest) {
     // Maharashtra dosha detectors
     const mangalDosh = detectMangalDosh(result);
     const kalsarpDosh = detectKalsarpDosh(result);
-    const shadBala = calculateShadBala(result);
+    const shadBala = calculateShadBala(result, divisionalCharts);
     const ashtakvarga = calculateAshtakvarga(result);
     const sarvatobhadra = calculateSarvatobhadra(result);
     const navamshaChart = divisionalCharts.find((c) => c.id === "navamsha");

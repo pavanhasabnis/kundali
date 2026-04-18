@@ -261,7 +261,7 @@ function calcCurrentPlanets(): Record<string, { long: number; rashi: number }> {
   const planetCodes: Record<string, number> = {
     Sun: swisseph.SE_SUN, Moon: swisseph.SE_MOON, Mars: swisseph.SE_MARS,
     Mercury: swisseph.SE_MERCURY, Jupiter: swisseph.SE_JUPITER,
-    Venus: swisseph.SE_VENUS, Saturn: swisseph.SE_SATURN, Rahu: swisseph.SE_TRUE_NODE,
+    Venus: swisseph.SE_VENUS, Saturn: swisseph.SE_SATURN, Rahu: swisseph.SE_MEAN_NODE,
   };
 
   const out: Record<string, { long: number; rashi: number }> = {};

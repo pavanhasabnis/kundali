@@ -4,6 +4,7 @@
  */
 
 import type { PlanetPosition, KundliResult } from "./calculator";
+import type { DivisionalChart } from "./divisional";
 
 // ─── Planetary Dignity ───────────────────────────────────────────────
 
@@ -206,7 +207,7 @@ export interface Yoga {
   strength: "strong" | "moderate" | "weak";
 }
 
-export function detectYogas(kundli: KundliResult): Yoga[] {
+export function detectYogas(kundli: KundliResult, navamsha?: DivisionalChart): Yoga[] {
   const yogas: Yoga[] = [];
   const planets = kundli.planets;
   const getP = (id: string) => planets.find((p) => p.id === id)!;
@@ -464,6 +465,88 @@ export function detectYogas(kundli: KundliResult): Yoga[] {
     }
   }
 
+  // ── Neecha Bhanga Raja Yoga (BPHS Ch. 35) ──
+  // 4 classical cancellations of debilitation create Raja Yoga
+  const DEBIL: Record<string, number> = {
+    Sun: 6, Moon: 7, Mars: 3, Mercury: 11, Jupiter: 9, Venus: 5, Saturn: 0,
+  };
+  const EXALT: Record<string, number> = {
+    Sun: 0, Moon: 1, Mars: 9, Mercury: 5, Jupiter: 3, Venus: 11, Saturn: 6,
+  };
+  const LORDS: Record<number, string> = {
+    0: "Mars", 1: "Venus", 2: "Mercury", 3: "Moon", 4: "Sun", 5: "Mercury",
+    6: "Venus", 7: "Mars", 8: "Jupiter", 9: "Saturn", 10: "Saturn", 11: "Jupiter",
+  };
+  const PLANET_MR_NB: Record<string, string> = {
+    Sun: "सूर्य", Moon: "चंद्र", Mars: "मंगळ", Mercury: "बुध",
+    Jupiter: "गुरु", Venus: "शुक्र", Saturn: "शनि",
+  };
+  const kendraHouses = [1, 4, 7, 10];
+  const moonRashi = moon.rashiIndex;
+  for (const pp of planets) {
+    if (pp.id === "Rahu" || pp.id === "Ketu") continue;
+    if (DEBIL[pp.id] !== pp.rashiIndex) continue;
+    const reasonsMr: string[] = [];
+    const reasonsEn: string[] = [];
+    const debLord = LORDS[pp.rashiIndex];
+    const exLord = LORDS[EXALT[pp.id]];
+    const debLordP = planets.find((x) => x.id === debLord);
+    const exLordP = planets.find((x) => x.id === exLord);
+    if (debLordP) {
+      const fromLagna = debLordP.house;
+      const fromMoon = ((debLordP.rashiIndex - moonRashi + 12) % 12) + 1;
+      if (kendraHouses.includes(fromLagna) || kendraHouses.includes(fromMoon)) {
+        reasonsMr.push(`${PLANET_MR_NB[debLord]} (नीचराशी स्वामी) केंद्रात`);
+        reasonsEn.push(`${debLord} (debilitation lord) in kendra`);
+      }
+    }
+    if (exLordP && exLordP.id !== debLordP?.id) {
+      const fromLagna = exLordP.house;
+      const fromMoon = ((exLordP.rashiIndex - moonRashi + 12) % 12) + 1;
+      if (kendraHouses.includes(fromLagna) || kendraHouses.includes(fromMoon)) {
+        reasonsMr.push(`${PLANET_MR_NB[exLord]} (उच्चराशी स्वामी) केंद्रात`);
+        reasonsEn.push(`${exLord} (exaltation lord) in kendra`);
+      }
+    }
+    if (exLordP) {
+      const aspectDiff = ((pp.rashiIndex - exLordP.rashiIndex + 12) % 12);
+      // 7th aspect for all; special aspects: Jupiter 5/9, Mars 4/8, Saturn 3/10
+      let aspects = false;
+      let aspectMr = "";
+      let aspectEn = "";
+      if (aspectDiff === 6) { aspects = true; aspectMr = "७ वी"; aspectEn = "7th"; }
+      else if (exLordP.id === "Jupiter" && (aspectDiff === 4 || aspectDiff === 8)) {
+        aspects = true; aspectMr = aspectDiff === 4 ? "५ वी" : "९ वी"; aspectEn = aspectDiff === 4 ? "5th" : "9th";
+      } else if (exLordP.id === "Mars" && (aspectDiff === 3 || aspectDiff === 7)) {
+        aspects = true; aspectMr = aspectDiff === 3 ? "४ थी" : "८ वी"; aspectEn = aspectDiff === 3 ? "4th" : "8th";
+      } else if (exLordP.id === "Saturn" && (aspectDiff === 2 || aspectDiff === 9)) {
+        aspects = true; aspectMr = aspectDiff === 2 ? "३ री" : "१० वी"; aspectEn = aspectDiff === 2 ? "3rd" : "10th";
+      }
+      if (aspects) {
+        reasonsMr.push(`उच्चराशी स्वामीची ${aspectMr} दृष्टी`);
+        reasonsEn.push(`exaltation lord's ${aspectEn} aspect`);
+      }
+    }
+    // Rule 4: planet exalted in Navamsha while debilitated in D1
+    if (navamsha) {
+      const navPlanet = navamsha.planets.find((x) => x.id === pp.id);
+      if (navPlanet && navPlanet.rashiIndex === EXALT[pp.id]) {
+        reasonsMr.push(`नवमांशात उच्च राशीत`);
+        reasonsEn.push(`exalted in Navamsha (D9)`);
+      }
+    }
+    if (reasonsMr.length > 0) {
+      yogas.push({
+        nameMr: `${PLANET_MR_NB[pp.id]} नीचभंग राजयोग`,
+        nameEn: `${pp.id} Neecha Bhanga Raja Yoga`,
+        descriptionMr: `${PLANET_MR_NB[pp.id]} नीच राशीत असूनही भंग — ${reasonsMr.join(", ")}. राजयोग — प्रारंभी अडथळा, नंतर अनपेक्षित उन्नती व यश.`,
+        descriptionEn: `${pp.id} is debilitated but cancellation triggered — ${reasonsEn.join(", ")}. Raja Yoga: early struggle, later unexpected rise and success.`,
+        type: "benefic",
+        strength: reasonsMr.length >= 2 ? "strong" : "moderate",
+      });
+    }
+  }
+
   return yogas;
 }
 
@@ -511,8 +594,8 @@ export function detectDoshas(kundli: KundliResult): Dosha[] {
     if (mars.house === 12 && [1, 6].includes(mars.rashiIndex)) manglikCancelled = true;
     // 6. Mars is conjunct with Jupiter (same rashi)
     if (mars.rashiIndex === jupiter.rashiIndex) manglikCancelled = true;
-    // 7. Mars in 1st/4th/7th/8th in Aries, Leo, Sagittarius, Aquarius, or Capricorn
-    if ([1, 4, 7, 8].includes(mars.house) && [0, 4, 8, 10, 9].includes(mars.rashiIndex)) manglikCancelled = true;
+    // 7. Mars in kendra/8th in friendly sign of Sun/Jupiter (Leo or Sagittarius) — mitigates dosha
+    if ([1, 4, 7, 8].includes(mars.house) && [4, 8].includes(mars.rashiIndex)) manglikCancelled = true;
   }
 
   doshas.push({

@@ -12,6 +12,7 @@
  */
 
 import type { KundliResult, PlanetPosition } from "./calculator";
+import type { DivisionalChart } from "./divisional";
 
 const PLANET_IDS = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"] as const;
 type PlanetId = typeof PLANET_IDS[number];
@@ -41,13 +42,51 @@ const DIG_BALA_HOUSE: Record<PlanetId, number> = {
   Saturn: 7,
 };
 
-// Minimum required strength in rupa (BPHS)
+// Minimum required strength in virupa (BPHS)
 const REQUIRED_RUPA: Record<PlanetId, number> = {
   Sun: 390, Moon: 360, Mars: 300, Mercury: 420,
   Jupiter: 390, Venus: 330, Saturn: 300,
 };
 
 const BENEFICS_NATURAL = new Set(["Jupiter", "Venus", "Moon", "Mercury"]);
+
+// ─── Saptavargaja support tables ─────────────────────────────
+
+const OWN_SIGNS: Record<PlanetId, number[]> = {
+  Sun: [4], Moon: [3], Mars: [0, 7], Mercury: [2, 5],
+  Jupiter: [8, 11], Venus: [1, 6], Saturn: [9, 10],
+};
+const MT_SIGN: Record<PlanetId, number> = {
+  Sun: 4, Moon: 1, Mars: 0, Mercury: 5, Jupiter: 8, Venus: 6, Saturn: 10,
+};
+const SIGN_LORDS: Record<number, PlanetId> = {
+  0: "Mars", 1: "Venus", 2: "Mercury", 3: "Moon", 4: "Sun", 5: "Mercury",
+  6: "Venus", 7: "Mars", 8: "Jupiter", 9: "Saturn", 10: "Saturn", 11: "Jupiter",
+};
+const FRIENDS_NAT: Record<PlanetId, PlanetId[]> = {
+  Sun: ["Moon", "Mars", "Jupiter"],
+  Moon: ["Sun", "Mercury"],
+  Mars: ["Sun", "Moon", "Jupiter"],
+  Mercury: ["Sun", "Venus"],
+  Jupiter: ["Sun", "Moon", "Mars"],
+  Venus: ["Mercury", "Saturn"],
+  Saturn: ["Mercury", "Venus"],
+};
+const ENEMIES_NAT: Record<PlanetId, PlanetId[]> = {
+  Sun: ["Venus", "Saturn"],
+  Moon: [],
+  Mars: ["Mercury"],
+  Mercury: ["Moon"],
+  Jupiter: ["Mercury", "Venus"],
+  Venus: ["Sun", "Moon"],
+  Saturn: ["Sun", "Moon", "Mars"],
+};
+
+// Mean daily motion (degrees/day) — used for Chesta Bala motion state
+const AVG_SPEED: Record<PlanetId, number> = {
+  Sun: 0.9856, Moon: 13.176, Mars: 0.524, Mercury: 1.383,
+  Jupiter: 0.0831, Venus: 1.2, Saturn: 0.0335,
+};
 
 // ─── Helpers ────────────────────────────────────────────────
 
@@ -96,9 +135,38 @@ function drekkanaBala(p: PlanetPosition, id: PlanetId): number {
   return drekkana === 2 ? 15 : 0; // Mercury, Saturn
 }
 
-function sthanaBala(p: PlanetPosition, id: PlanetId): number {
-  // Simplified: Uchcha + Ojha + Kendra + Drekkana (skip Saptavargaja — needs all 7 vargas)
-  return uchchaBala(p, id) + ojhaYugmaBala(p, id) + kendraBala(p.house) + drekkanaBala(p, id);
+function signDignityVirupa(id: PlanetId, signIdx: number): number {
+  // Returns virupa per BPHS Ch. 27 dignity scale
+  if (MT_SIGN[id] === signIdx) return 45;       // Moolatrikona
+  if (OWN_SIGNS[id].includes(signIdx)) return 30; // Swakshetra
+  const lord = SIGN_LORDS[signIdx];
+  if (lord === id) return 30;
+  if (FRIENDS_NAT[id].includes(lord)) return 15; // Mitra
+  if (ENEMIES_NAT[id].includes(lord)) return 3.75; // Shatru
+  return 7.5;                                     // Sama
+}
+
+function saptavargajaBala(p: PlanetPosition, id: PlanetId, divCharts?: DivisionalChart[]): number {
+  // Sum dignity virupa across Rashi, Hora, Drekkana, Saptamsha, Navamsha, Dwadashamsha, Trimshamsha
+  let total = signDignityVirupa(id, p.rashiIndex); // D1
+  const vargaIds = ["hora", "drekkana", "saptamsha", "navamsha", "dwadashamsha", "trimshamsha"];
+  for (const vId of vargaIds) {
+    const chart = divCharts?.find((c) => c.id === vId);
+    const planet = chart?.planets.find((pp) => pp.id === id);
+    if (planet) total += signDignityVirupa(id, planet.rashiIndex);
+    else total += 7.5; // neutral fallback when chart missing
+  }
+  return total;
+}
+
+function sthanaBala(p: PlanetPosition, id: PlanetId, divCharts?: DivisionalChart[]): number {
+  return (
+    uchchaBala(p, id) +
+    saptavargajaBala(p, id, divCharts) +
+    ojhaYugmaBala(p, id) +
+    kendraBala(p.house) +
+    drekkanaBala(p, id)
+  );
 }
 
 // ─── 2. Dig Bala ────────────────────────────────────────────
@@ -145,23 +213,42 @@ function kalaBala(p: PlanetPosition, id: PlanetId, k: KundliResult): number {
     }
   }
 
-  // Ayana Bala: based on planet's declination (simplified — use house-based proxy)
-  // Planets in upper hemisphere (houses 7-12) get more Ayana bala for some planets
-  // Skipped detailed — add small constant
-  total += 30;
+  // Ayana Bala: declination-based. Kranti = arcsin(sin(obliquity) × sin(tropical_long))
+  total += ayanaBala(p, id);
 
   return total;
+}
+
+function ayanaBala(p: PlanetPosition, id: PlanetId): number {
+  if (id === "Mercury") return 30; // Mercury always half
+  const OBLIQUITY = 23.4367;
+  const rad = (x: number) => (x * Math.PI) / 180;
+  const sinDecl = Math.sin(rad(OBLIQUITY)) * Math.sin(rad(p.tropicalLongitude));
+  const decl = (Math.asin(sinDecl) * 180) / Math.PI;
+  // Nocturnal planets (Moon, Saturn) gain with negative declination; diurnal with positive
+  const nocturnal = id === "Moon" || id === "Saturn";
+  const effDecl = nocturnal ? -decl : decl;
+  // Linear: 0 at extreme adverse declination, 60 at extreme favorable
+  let bala = (60 * (OBLIQUITY + effDecl)) / (2 * OBLIQUITY);
+  bala = Math.max(0, Math.min(60, bala));
+  return bala;
 }
 
 // ─── 4. Chesta Bala ─────────────────────────────────────────
 
 function chestaBala(p: PlanetPosition, id: PlanetId): number {
-  // Sun/Moon don't retrograde — use Ayana (approximate with 30)
+  // Sun uses Ayana (returned as Kala component); Moon uses Paksha. Return mid-value.
   if (id === "Sun" || id === "Moon") return 30;
-  if (p.isRetrograde) return 60;
-  // Based on speed relative to average — planets slower than avg get some, faster get less
-  // Simplified: 20 rupa for direct motion
-  return 20;
+  if (p.isRetrograde) return 60; // Vakra
+  const avg = AVG_SPEED[id];
+  const ratio = Math.abs(p.speed) / avg;
+  // BPHS 8 motion states (Santhanam/Raman virupa values)
+  if (ratio < 0.1) return 15;   // Vikala (near stationary)
+  if (ratio < 0.5) return 30;   // Mandatara
+  if (ratio < 0.9) return 15;   // Manda
+  if (ratio < 1.1) return 7.5;  // Sama
+  if (ratio < 1.5) return 30;   // Chara
+  return 45;                    // Atichara
 }
 
 // ─── 5. Naisargika Bala ─────────────────────────────────────
@@ -423,14 +510,14 @@ const PLANET_REMEDIES: Record<PlanetId, { mr: string[]; en: string[]; hi: string
   },
 };
 
-export function calculateShadBala(k: KundliResult): ShadBalaResult {
+export function calculateShadBala(k: KundliResult, divCharts?: DivisionalChart[]): ShadBalaResult {
   const results: ShadBalaPlanet[] = [];
 
   for (const id of PLANET_IDS) {
     const p = k.planets.find((pp) => pp.id === id);
     if (!p) continue;
 
-    const sthana = sthanaBala(p, id);
+    const sthana = sthanaBala(p, id, divCharts);
     const dig = digBala(p, id);
     const kala = kalaBala(p, id, k);
     const chesta = chestaBala(p, id);

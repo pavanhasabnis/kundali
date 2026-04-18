@@ -166,7 +166,7 @@ const PLANET_META: Record<string, { mr: string; en: string; hi: string; benefic:
   Jupiter: { mr: "गुरु", en: "Jupiter", hi: "गुरु",  benefic: true,  sweCode: swisseph.SE_JUPITER },
   Venus:   { mr: "शुक्र", en: "Venus",   hi: "शुक्र", benefic: true,  sweCode: swisseph.SE_VENUS },
   Saturn:  { mr: "शनि",  en: "Saturn",  hi: "शनि",  benefic: false, sweCode: swisseph.SE_SATURN },
-  Rahu:    { mr: "राहु", en: "Rahu",    hi: "राहु",  benefic: false, sweCode: swisseph.SE_TRUE_NODE },
+  Rahu:    { mr: "राहु", en: "Rahu",    hi: "राहु",  benefic: false, sweCode: swisseph.SE_MEAN_NODE },
 };
 
 // Vedha positions from Janma nakshatra (1-indexed offset)
@@ -210,7 +210,7 @@ function currentTransitNakshatras(): Record<string, number> {
   }
   // Ketu = Rahu + 180°
   if ("Rahu" in out) {
-    const rahuRes = swisseph.swe_calc_ut(jd, swisseph.SE_TRUE_NODE, swisseph.SEFLG_SIDEREAL);
+    const rahuRes = swisseph.swe_calc_ut(jd, swisseph.SE_MEAN_NODE, swisseph.SEFLG_SIDEREAL);
     if ("longitude" in rahuRes) {
       const ketuLong = (rahuRes.longitude + 180) % 360;
       out["Ketu"] = nakshatraFromSidereal(ketuLong);
