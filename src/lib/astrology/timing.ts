@@ -4,6 +4,7 @@
  */
 
 import type { KundliResult, PlanetPosition, DashaPeriod } from "./calculator";
+import { CAREER_MD_AD, MARRIAGE_MD_AD } from "./content/dasha-timing";
 
 const SIGN_LORDS: Record<number, string> = {
   0: "Mars", 1: "Venus", 2: "Mercury", 3: "Moon", 4: "Sun", 5: "Mercury",
@@ -15,126 +16,7 @@ const PLANET_MR: Record<string, string> = {
   Jupiter: "गुरु", Venus: "शुक्र", Saturn: "शनि", Rahu: "राहु", Ketu: "केतु",
 };
 
-// Per-planet career flavor text — BPHS-based dasha effects on karma-bhava.
-const CAREER_MD_TEXT: Record<string, { mr: string; en: string; hi: string }> = {
-  Sun: {
-    mr: "अधिकारपद, शासकीय सेवा व नेतृत्वास अनुकूल काळ. पदोन्नती व सन्मान.",
-    en: "Favourable for authority, govt service and leadership. Promotions and honors.",
-    hi: "अधिकार पद, सरकारी सेवा व नेतृत्व अनुकूल. पदोन्नति व सम्मान.",
-  },
-  Moon: {
-    mr: "जनसंपर्क, हॉस्पिटॅलिटी, मीडिया क्षेत्रात प्रगती. लोकप्रियता वाढेल.",
-    en: "Progress in public relations, hospitality, media. Popularity increases.",
-    hi: "जनसंपर्क, आतिथ्य, मीडिया में प्रगति. लोकप्रियता बढ़ेगी.",
-  },
-  Mars: {
-    mr: "पराक्रमातून उन्नती — सैन्य, पोलिस, अभियांत्रिकी, मालमत्ता क्षेत्र. धाडसी निर्णयांचे फल.",
-    en: "Rise through valor — military, police, engineering, real estate. Rewards for bold decisions.",
-    hi: "पराक्रम से उन्नति — सेना, पुलिस, अभियांत्रिकी, रियल एस्टेट. साहसी निर्णयों का फल.",
-  },
-  Mercury: {
-    mr: "व्यवसाय, IT, लेखन, शिक्षण, वाणिज्यात चमक. बुद्धिमत्तेचा वापर कामी येईल.",
-    en: "Shine in business, IT, writing, education, commerce. Intellect pays off.",
-    hi: "व्यापार, IT, लेखन, शिक्षा, वाणिज्य में चमक. बुद्धि का लाभ मिलेगा.",
-  },
-  Jupiter: {
-    mr: "शिक्षण, सल्लागार, न्याय, अर्थ क्षेत्रात विस्तार. गुरुकृपेने पदोन्नती.",
-    en: "Expansion in education, advisory, law, finance. Promotion via guru-grace.",
-    hi: "शिक्षा, सलाहकार, न्याय, वित्त में विस्तार. गुरु कृपा से पदोन्नति.",
-  },
-  Venus: {
-    mr: "कला, मनोरंजन, फॅशन, सौंदर्य, भागीदारी-व्यवसायात यश. विलासी जीवनशैली.",
-    en: "Success in arts, entertainment, fashion, beauty, partnership business. Luxurious lifestyle.",
-    hi: "कला, मनोरंजन, फैशन, सौंदर्य, साझेदारी व्यवसाय में सफलता. विलासी जीवनशैली.",
-  },
-  Saturn: {
-    mr: "दीर्घ-कर्मातून स्थायी उन्नती — प्रशासन, खाण, बांधकाम, सरकारी पदे. कष्टाने सत्ता.",
-    en: "Lasting rise through long labor — administration, mining, construction, govt posts. Power through hardship.",
-    hi: "दीर्घ कर्म से स्थायी उन्नति — प्रशासन, खनन, निर्माण, सरकारी पद. परिश्रम से सत्ता.",
-  },
-  Rahu: {
-    mr: "परदेशी संधी, तंत्रज्ञान, राजकारण, असामान्य क्षेत्रात चमत्कारी झेप. अनपेक्षित लाभ.",
-    en: "Foreign opportunities, technology, politics, unusual fields — miraculous leap. Unexpected gains.",
-    hi: "विदेशी अवसर, तकनीक, राजनीति, असामान्य क्षेत्रों में चमत्कारी छलांग. अप्रत्याशित लाभ.",
-  },
-  Ketu: {
-    mr: "संशोधन, आध्यात्म, गूढविद्या, सल्ला क्षेत्रात यश. आतील शक्ती प्रकट होईल.",
-    en: "Success in research, spirituality, occult, consulting. Inner power emerges.",
-    hi: "अनुसंधान, अध्यात्म, गूढ विद्या, परामर्श में सफलता. आंतरिक शक्ति प्रकट होगी.",
-  },
-};
-
-const CAREER_AD_FLAVOR: Record<string, { mr: string; en: string; hi: string }> = {
-  Sun: { mr: "सरकारी मान्यता-पदोन्नती संभव", en: "Govt recognition/promotion likely", hi: "सरकारी मान्यता-पदोन्नति संभव" },
-  Moon: { mr: "जनसंपर्कातून नव संधी", en: "New opportunities via public contact", hi: "जनसंपर्क से नए अवसर" },
-  Mars: { mr: "साहसी कृतीला फल", en: "Bold action rewarded", hi: "साहसी कार्य को फल" },
-  Mercury: { mr: "बौद्धिक कार्यात यश", en: "Intellectual work succeeds", hi: "बौद्धिक कार्य में सफलता" },
-  Jupiter: { mr: "गुरुजनांचे मार्गदर्शन लाभेल", en: "Mentor/guide's guidance helps", hi: "गुरुजनों का मार्गदर्शन मिलेगा" },
-  Venus: { mr: "भागीदारी-कलेतून उत्पन्न", en: "Income via partnership/arts", hi: "साझेदारी-कला से आय" },
-  Saturn: { mr: "दीर्घ प्रकल्पांना गती", en: "Long projects gain momentum", hi: "दीर्घ परियोजनाओं को गति" },
-  Rahu: { mr: "परदेशी वा तांत्रिक संपर्क लाभ", en: "Foreign/technical contacts benefit", hi: "विदेशी/तकनीकी संपर्क लाभ" },
-  Ketu: { mr: "गुप्त प्रकल्पांना यश", en: "Hidden projects succeed", hi: "गुप्त परियोजनाओं में सफलता" },
-};
-
-const MARRIAGE_MD_TEXT: Record<string, { mr: string; en: string; hi: string }> = {
-  Sun: {
-    mr: "उच्च-प्रतिष्ठित जोडीदाराचा योग. सरकारी-व्यावसायिक कुटुंबातून संबंध शक्य.",
-    en: "High-prestige spouse yoga. Alliance from govt/professional family possible.",
-    hi: "उच्च प्रतिष्ठित जीवनसाथी का योग. सरकारी/व्यावसायिक परिवार से संबंध संभव.",
-  },
-  Moon: {
-    mr: "भावनिक, सौम्य, कौटुंबिक जोडीदार. माता-पक्षातून सुचवणी.",
-    en: "Emotional, gentle, family-oriented spouse. Suggestion from maternal side.",
-    hi: "भावुक, सौम्य, पारिवारिक जीवनसाथी. मातृ पक्ष से सुझाव.",
-  },
-  Mars: {
-    mr: "धाडसी-स्वतंत्र जोडीदार. मंगळदोष असल्यास सांभाळ आवश्यक.",
-    en: "Bold-independent spouse. Mangal-dosh care needed if present.",
-    hi: "साहसी-स्वतंत्र जीवनसाथी. मंगल दोष हो तो सावधानी आवश्यक.",
-  },
-  Mercury: {
-    mr: "बुद्धिमान-विनोदी जोडीदार. नातेवाईकांकडून सुचवणी, प्रेमविवाह शक्य.",
-    en: "Intelligent-witty spouse. Suggestion from relatives, love marriage possible.",
-    hi: "बुद्धिमान-विनोदी जीवनसाथी. रिश्तेदारों से सुझाव, प्रेम विवाह संभव.",
-  },
-  Jupiter: {
-    mr: "धार्मिक-विद्वान जोडीदार, भाग्यशाली विवाह. गुरुकृपेने निर्णय.",
-    en: "Religious-scholarly spouse, fortunate marriage. Decision under guru-grace.",
-    hi: "धार्मिक-विद्वान जीवनसाथी, भाग्यशाली विवाह. गुरु कृपा से निर्णय.",
-  },
-  Venus: {
-    mr: "सुंदर-कलात्मक जोडीदार. अत्यंत शुभ विवाहयोग — प्रेम व भोगसौख्य.",
-    en: "Beautiful-artistic spouse. Highly auspicious marriage yoga — love and sensual joy.",
-    hi: "सुंदर-कलात्मक जीवनसाथी. अत्यंत शुभ विवाह योग — प्रेम व भोग सुख.",
-  },
-  Saturn: {
-    mr: "गंभीर, वयस्कर वा प्रौढ जोडीदार. विवाहात विलंब पण स्थिर सहचर.",
-    en: "Serious, older or mature spouse. Marriage delays but stable partnership.",
-    hi: "गंभीर, वयस्क या प्रौढ जीवनसाथी. विवाह में विलंब पर स्थिर सहचर.",
-  },
-  Rahu: {
-    mr: "असामान्य, परदेशी किंवा आंतरजातीय जोडीदार. अनपेक्षित संबंध.",
-    en: "Unusual, foreign or inter-caste spouse. Unexpected alliance.",
-    hi: "असामान्य, विदेशी या अंतरजातीय जीवनसाथी. अप्रत्याशित संबंध.",
-  },
-  Ketu: {
-    mr: "आध्यात्मिक-विरक्त जोडीदार. पूर्वजन्म-ऋणबंध संभव.",
-    en: "Spiritual-detached spouse. Past-life karmic bond possible.",
-    hi: "आध्यात्मिक-विरक्त जीवनसाथी. पूर्व जन्म का ऋण संबंध संभव.",
-  },
-};
-
-const MARRIAGE_AD_FLAVOR: Record<string, { mr: string; en: string; hi: string }> = {
-  Sun: { mr: "पित्याच्या संमतीने निर्णय", en: "Decision with father's consent", hi: "पिता की सहमति से निर्णय" },
-  Moon: { mr: "माता-कृपेने सुचवणी", en: "Suggestion via mother's grace", hi: "माता कृपा से सुझाव" },
-  Mars: { mr: "धाडसी निर्णय, साखरपुड्यात वेग", en: "Bold decision, engagement hastens", hi: "साहसी निर्णय, सगाई में तेज़ी" },
-  Mercury: { mr: "नातेवाईकांमार्फत प्रस्ताव", en: "Proposal via relatives", hi: "रिश्तेदारों के माध्यम से प्रस्ताव" },
-  Jupiter: { mr: "शुभ मुहूर्त व आशीर्वाद", en: "Auspicious muhurta and blessings", hi: "शुभ मुहूर्त व आशीर्वाद" },
-  Venus: { mr: "प्रेम-आकर्षण चरमावर", en: "Peak attraction/love", hi: "प्रेम-आकर्षण चरम पर" },
-  Saturn: { mr: "विचारपूर्वक पण टिकाऊ निर्णय", en: "Considered, lasting decision", hi: "विचारपूर्वक, टिकाऊ निर्णय" },
-  Rahu: { mr: "असामान्य मार्गाने संबंध", en: "Alliance through unusual route", hi: "असामान्य मार्ग से संबंध" },
-  Ketu: { mr: "गूढ/पूर्वनिर्धारित बंधन", en: "Karmic/predestined bond", hi: "गूढ/पूर्वनिर्धारित संबंध" },
-};
+// 9×9=81 combo texts moved to ./content/dasha-timing.ts (CAREER_MD_AD, MARRIAGE_MD_AD).
 
 export interface TimingWindow {
   startDate: string;
@@ -243,22 +125,15 @@ function scanDashas(dashas: DashaPeriod[], k: KundliResult, area: "marriage" | "
       const mdMr = PLANET_MR[md.lord] ?? md.lord;
       const adMr = PLANET_MR[ad.lord] ?? ad.lord;
 
-      let reasonMr = "";
-      let reasonEn = "";
-      let reasonHi = "";
-      if (area === "marriage") {
-        const mdText = MARRIAGE_MD_TEXT[md.lord] ?? { mr: "वैवाहिक योग अनुकूल.", en: "Favourable for marriage.", hi: "विवाह हेतु अनुकूल." };
-        const adFlav = MARRIAGE_AD_FLAVOR[ad.lord] ?? { mr: "अंतर्दशा पोषक", en: "antardasha supportive", hi: "अंतर्दशा पोषक" };
-        reasonMr = `${mdMr} महादशा — ${mdText.mr} ${adMr} अंतर्दशा: ${adFlav.mr}. शक्ती ${combinedScore}/१०.`;
-        reasonEn = `${md.lord} mahadasha — ${mdText.en} ${ad.lord} antardasha: ${adFlav.en}. Strength ${combinedScore}/10.`;
-        reasonHi = `${mdMr} महादशा — ${mdText.hi} ${adMr} अंतर्दशा: ${adFlav.hi}. शक्ति ${combinedScore}/10.`;
-      } else {
-        const mdText = CAREER_MD_TEXT[md.lord] ?? { mr: "करिअरमध्ये उन्नती संभव.", en: "Career advancement likely.", hi: "करियर में उन्नति संभव." };
-        const adFlav = CAREER_AD_FLAVOR[ad.lord] ?? { mr: "अंतर्दशा पोषक", en: "antardasha supportive", hi: "अंतर्दशा पोषक" };
-        reasonMr = `${mdMr} महादशा — ${mdText.mr} ${adMr} अंतर्दशा: ${adFlav.mr}. शक्ती ${combinedScore}/१०.`;
-        reasonEn = `${md.lord} mahadasha — ${mdText.en} ${ad.lord} antardasha: ${adFlav.en}. Strength ${combinedScore}/10.`;
-        reasonHi = `${mdMr} महादशा — ${mdText.hi} ${adMr} अंतर्दशा: ${adFlav.hi}. शक्ति ${combinedScore}/10.`;
-      }
+      const matrix = area === "marriage" ? MARRIAGE_MD_AD : CAREER_MD_AD;
+      const snippet = matrix[md.lord]?.[ad.lord];
+      const fallback = area === "marriage"
+        ? { mr: "वैवाहिक योग अनुकूल.", en: "Favourable for marriage.", hi: "विवाह हेतु अनुकूल." }
+        : { mr: "करिअरमध्ये उन्नती संभव.", en: "Career advancement likely.", hi: "करियर में उन्नति संभव." };
+      const text = snippet ?? fallback;
+      const reasonMr = `${text.mr} शक्ती ${combinedScore}/१०.`;
+      const reasonEn = `${text.en} Strength ${combinedScore}/10.`;
+      const reasonHi = `${text.hi} शक्ति ${combinedScore}/10.`;
 
       out.push({
         startDate: startStr,
