@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Outfit } from "next/font/google";
 import { cookies, headers } from "next/headers";
 import "./globals.css";
@@ -87,6 +87,13 @@ export const metadata: Metadata = {
   category: "Astrology",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#5c1a1a",
+};
+
 export default async function RootLayout({
   children,
 }: {
@@ -113,7 +120,6 @@ export default async function RootLayout({
       <head>
         <link rel="icon" href="/logos/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/logos/apple-touch-icon.png" />
-        <meta name="theme-color" content="#5c1a1a" />
         <meta httpEquiv="content-language" content={htmlLang} />
         <JsonLd data={organizationSchema} />
         <JsonLd data={websiteSchema} />

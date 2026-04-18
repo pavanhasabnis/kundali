@@ -37,17 +37,17 @@ export default function ComparePageClient() {
   function PersonForm({ form, setForm, name, setName, onSubmit, which }: { form: typeof form1; setForm: (f: typeof form1) => void; name: string; setName: (n: string) => void; onSubmit: () => void; which: 1 | 2 }) {
     return (
       <div className="bg-white rounded-xl border border-stone-200 p-4 space-y-3">
-        <input type="text" placeholder={t("नाव", "Name", "नाम")} value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+        <input type="text" placeholder={t("नाव", "Name", "नाम")} value={name} onChange={e => setName(e.target.value)} className="w-full min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg text-base" autoComplete="name" />
         <div className="grid grid-cols-3 gap-2">
-          <input type="number" placeholder="DD" value={form.day} onChange={e => setForm({ ...form, day: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg text-sm" />
-          <input type="number" placeholder="MM" value={form.month} onChange={e => setForm({ ...form, month: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg text-sm" />
-          <input type="number" placeholder="YYYY" value={form.year} onChange={e => setForm({ ...form, year: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+          <input type="number" placeholder="DD" value={form.day} onChange={e => setForm({ ...form, day: e.target.value })} className="min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg text-base" />
+          <input type="number" placeholder="MM" value={form.month} onChange={e => setForm({ ...form, month: e.target.value })} className="min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg text-base" />
+          <input type="number" placeholder="YYYY" value={form.year} onChange={e => setForm({ ...form, year: e.target.value })} className="min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg text-base" />
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <input type="number" placeholder={t("तास", "Hour", "घंटा")} value={form.hour} onChange={e => setForm({ ...form, hour: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg text-sm" />
-          <input type="number" placeholder={t("मिनिटे", "Min", "मिनट")} value={form.minute} onChange={e => setForm({ ...form, minute: e.target.value })} className="px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+          <input type="number" placeholder={t("तास", "Hour", "घंटा")} value={form.hour} onChange={e => setForm({ ...form, hour: e.target.value })} className="min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg text-base" />
+          <input type="number" placeholder={t("मिनिटे", "Min", "मिनट")} value={form.minute} onChange={e => setForm({ ...form, minute: e.target.value })} className="min-h-[44px] px-3 py-2 border border-gray-300 rounded-lg text-base" />
         </div>
-        <button onClick={onSubmit} disabled={loading === which || !form.year} className="w-full py-2 rounded-lg text-sm font-bold text-white disabled:opacity-50" style={{ background: "linear-gradient(135deg, #5c1a1a, #3d0c0c)" }}>
+        <button onClick={onSubmit} disabled={loading === which || !form.year} className="w-full min-h-[44px] py-2.5 rounded-lg text-sm font-bold text-white disabled:opacity-50" style={{ background: "linear-gradient(135deg, #5c1a1a, #3d0c0c)" }}>
           {loading === which ? t("गणना...", "Calculating...", "गणना...") : t("कुंडली बनवा", "Generate", "कुंडली बनाएँ")}
         </button>
       </div>
@@ -78,7 +78,8 @@ export default function ComparePageClient() {
 
         {/* Comparison Table */}
         {kundli1 && kundli2 && (
-          <div className="bg-white rounded-xl border border-stone-200 overflow-hidden shadow-sm">
+          <div className="bg-white rounded-xl border border-stone-200 overflow-hidden shadow-sm overflow-x-auto">
+            <div className="min-w-[480px]">
             <div className="grid grid-cols-3 text-center text-sm font-bold py-3" style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)", color: "#d4a843" }}>
               <div>{t("ग्रह", "Planet", "ग्रह")}</div>
               <div>{name1 || t("पहिली", "First", "पहली")}</div>
@@ -121,6 +122,7 @@ export default function ComparePageClient() {
                 </div>
               );
             })}
+            </div>
           </div>
         )}
       </div>

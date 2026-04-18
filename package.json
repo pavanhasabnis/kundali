@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='--max-old-space-size=2048' next dev --webpack -p 6630",
+    "dev": "NODE_OPTIONS='--max-old-space-size=2048' next dev -p 6630",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -12,8 +12,11 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.71",
+    "@ai-sdk/react": "^3.0.170",
     "@base-ui/react": "^1.4.0",
     "@fal-ai/client": "^1.9.5",
+    "ai": "^6.0.168",
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.9.0",
     "class-variance-authority": "^0.7.1",
@@ -46,6 +49,9 @@
   },
   "overrides": {
     "node-gyp": "^10"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["swisseph", "better-sqlite3", "bcryptjs"]
   },
   "engines": {
     "node": "22.x"

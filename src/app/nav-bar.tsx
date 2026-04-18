@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 const navLinks = [
   { href: "/", labelMr: "मुख्यपृष्ठ", labelEn: "Home", labelHi: "मुख्य पृष्ठ" },
   { href: "/kundli", labelMr: "कुंडली", labelEn: "Kundli", labelHi: "कुंडली" },
+  { href: "/prashna", labelMr: "प्रश्न कुंडली", labelEn: "Prashna", labelHi: "प्रश्न कुंडली" },
   { href: "/matching", labelMr: "गुण मिलान", labelEn: "Matching", labelHi: "गुण मिलान" },
   { href: "/panchang", labelMr: "पंचांग", labelEn: "Panchang", labelHi: "पंचांग" },
   { href: "/rashifal", labelMr: "राशीफल", labelEn: "Rashifal", labelHi: "राशिफल" },
@@ -58,7 +59,7 @@ export function NavBar() {
   }, []);
 
   // Hide navbar on admin/account pages — they have their own sidebar
-  if (pathname.startsWith("/admin") || pathname.startsWith("/account")) return null;
+  if (/^\/(?:mr|en|hi)\/(?:admin|account)(?:\/|$)/.test(pathname) || pathname.startsWith("/admin") || pathname.startsWith("/account")) return null;
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md border-b border-[#d4a843]/20 shadow-sm" style={{ background: "rgba(61,12,12,0.95)" }}>
@@ -91,12 +92,13 @@ export function NavBar() {
                 <>
                   <button
                     onClick={() => setShowMenu(!showMenu)}
-                    className="flex items-center gap-2 px-1.5 py-1 rounded-lg hover:bg-white/10 transition"
+                    aria-label="Account menu"
+                    className="flex items-center justify-center gap-2 min-w-[44px] min-h-[44px] p-2 rounded-lg hover:bg-white/10 transition"
                   >
                     {user.image ? (
-                      <img src={user.image} alt="" className="w-7 h-7 rounded-full border border-[#d4a843]/40" />
+                      <img src={user.image} alt="" className="w-8 h-8 rounded-full border border-[#d4a843]/40" />
                     ) : (
-                      <span className="w-7 h-7 rounded-full bg-[#d4a843]/20 flex items-center justify-center text-[#d4a843] text-xs font-bold">
+                      <span className="w-8 h-8 rounded-full bg-[#d4a843]/20 flex items-center justify-center text-[#d4a843] text-sm font-bold">
                         {(user.name || "U")[0].toUpperCase()}
                       </span>
                     )}
@@ -123,7 +125,7 @@ export function NavBar() {
               ) : (
                 <Link
                   href={withLang("/login")}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#d4a843] text-[#3d0c0c] hover:bg-[#e5bc5a] transition"
+                  className="inline-flex items-center justify-center min-h-[44px] px-4 py-2 rounded-lg text-sm font-medium bg-[#d4a843] text-[#3d0c0c] hover:bg-[#e5bc5a] transition"
                 >
                   {t("लॉग इन", "Login", "लॉग इन")}
                 </Link>
@@ -133,12 +135,12 @@ export function NavBar() {
         </div>
       </div>
       {/* Mobile / Tablet Nav — scrollable row */}
-      <nav className="lg:hidden flex overflow-x-auto border-t border-white/10 px-3 py-1.5 gap-0.5 scrollbar-hide">
+      <nav className="lg:hidden flex overflow-x-auto border-t border-white/10 px-3 py-2 gap-1 scrollbar-hide">
         {navLinks.map((link) => (
           <Link
             key={link.href}
             href={withLang(link.href)}
-            className="flex-shrink-0 px-2.5 py-1 rounded-full text-[11px] font-medium text-white/60 hover:text-[#d4a843] hover:bg-white/10 transition-all whitespace-nowrap"
+            className="flex-shrink-0 inline-flex items-center min-h-[40px] px-3 py-2 rounded-full text-xs font-medium text-white/70 hover:text-[#d4a843] hover:bg-white/10 transition-all whitespace-nowrap"
           >
             {t(link.labelMr, link.labelEn, link.labelHi)}
           </Link>

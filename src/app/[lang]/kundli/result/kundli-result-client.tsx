@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useLang } from "@/lib/astrology/language-context";
+import { KundliChatDrawer } from "@/components/kundli-chat-drawer";
 
 // Re-use all the same interfaces
 interface PlanetData { id: string; nameMr: string; name: string; rashiMr: string; rashi: string; degreeDMS: string; nakshatraMr: string; nakshatra: string; nakshatraLord: string; pada: number; house: number; isRetrograde: boolean; }
@@ -123,7 +124,7 @@ interface ShadBalaData {
 interface KundliData {
   lagnaRashiIndex: number;
   lagnaRashiMr: string; lagnaRashi: string; lagnaDMS: string; lagnaNakshatraMr: string; lagnaNakshatra: string;
-  moonRashiMr: string; moonRashi: string; moonNakshatraMr: string; moonNakshatra: string; moonNakshatraLord: string; moonPada: number; ayanamsa: number;
+  moonRashiMr: string; moonRashi: string; moonRashiIndex: number; moonNakshatraMr: string; moonNakshatra: string; moonNakshatraIndex: number; moonNakshatraLord: string; moonPada: number; ayanamsa: number;
   planets: PlanetData[]; dashas: DashaData[];
   analysis: { planetaryStrength: PlanetStrengthData[]; yogas: YogaData[]; doshas: DoshaData[]; housePredictions: HousePredictionData[]; currentDasha: DashaInterpData | null; remedies: RemedyData[]; };
   divisionalCharts: DivisionalChartData[];
@@ -290,6 +291,18 @@ interface MitraShatruData {
 }
 
 const PLANET_LORD_MR: Record<string, string> = { Sun: "सूर्य", Moon: "चंद्र", Mars: "मंगळ", Mercury: "बुध", Jupiter: "गुरु", Venus: "शुक्र", Saturn: "शनि", Rahu: "राहु", Ketu: "केतु" };
+
+// Rashi → ruling planet (English id)
+const RASHI_LORD_EN = ["Mars","Venus","Mercury","Moon","Sun","Mercury","Venus","Mars","Jupiter","Saturn","Saturn","Jupiter"];
+// Nakshatra-indexed attribute tables (0..26). Mirrors lib/astrology/constants.ts.
+const NAK_VARNA = [1,1,2,2,2,3,3,0,0, 1,1,1,2,2,3,3,0,0, 1,1,1,2,2,3,3,0,0];
+const NAK_YONI = [0,1,2,3,3,4,5,2,5, 6,6,7,8,9,8,9,10,10, 4,11,12,11,13,0,13,7,1];
+const NAK_GANA = [0,1,2,1,0,1,0,0,2, 2,1,1,0,2,0,2,0,2, 2,1,1,0,2,2,1,1,0];
+const NAK_NADI = [0,1,2,2,1,0,0,1,2, 0,1,2,2,1,0,0,1,2, 0,1,2,2,1,0,0,1,2];
+const VARNA_MR = ["ब्राह्मण","क्षत्रिय","वैश्य","शूद्र"];
+const YONI_MR = ["अश्व","गज","मेष","सर्प","श्वान","मार्जार","मूषक","गो","महिष","व्याघ्र","मृग","वानर","नकुल","सिंह"];
+const GANA_MR = ["देव","मनुष्य","राक्षस"];
+const NADI_MR = ["आदि","मध्य","अंत्य"];
 
 const MARATHI_DIGITS = ["०", "१", "२", "३", "४", "५", "६", "७", "८", "९"];
 function toMr(val: string | number): string {
@@ -476,6 +489,12 @@ function KundliResultContent() {
   // Auth + limit check
   useEffect(() => {
     async function check() {
+      // Admin preview flow: skip auth + limit entirely
+      if (searchParams.get("admin") === "1") {
+        setUserPlan("admin");
+        setAuthChecked(true);
+        return;
+      }
       try {
         const sRes = await fetch("/api/user");
         const sData = await sRes.json();
@@ -502,7 +521,7 @@ function KundliResultContent() {
       }
     }
     check();
-  }, [router]);
+  }, [router, searchParams]);
 
   const name = searchParams.get("name") || "";
 
@@ -551,8 +570,10 @@ function KundliResultContent() {
         const data = await res.json();
         setResult(data);
 
-        // Auto-save kundli to DB (once per mount)
-        if (!savedRef.current) {
+        // Auto-save kundli to DB (once per mount). Skip for admin-generated runs and when no name given.
+        const isAdminRun = searchParams.get("admin") === "1";
+        const hasName = !!searchParams.get("name");
+        if (!savedRef.current && !isAdminRun && hasName) {
           savedRef.current = true;
           try {
             const day = searchParams.get("day") || "1";
@@ -729,7 +750,7 @@ function KundliResultContent() {
         {/* Left Sidebar */}
         <div className="w-56 shrink-0 hidden md:block no-print">
           <div className="sticky top-20 bg-white rounded-xl border border-stone-200 overflow-hidden py-1 mb-6">
-            <p className="px-4 py-1.5 text-[9px] font-bold text-stone-400 uppercase tracking-wider">{t("कुंडली","Charts")}</p>
+            <p className="px-4 py-1.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider">{t("कुंडली","Charts")}</p>
             {TABS.filter(tab => tab.group === "charts").map((tab) => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                 className={`w-full text-left px-4 py-1.5 text-xs transition-all ${
@@ -741,7 +762,7 @@ function KundliResultContent() {
               </button>
             ))}
             <div className="border-t border-stone-200 my-1" />
-            <p className="px-4 py-1.5 text-[9px] font-bold text-stone-400 uppercase tracking-wider">{t("विश्लेषण","Analysis")}</p>
+            <p className="px-4 py-1.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider">{t("विश्लेषण","Analysis")}</p>
             {TABS.filter(tab => tab.group === "analysis").map((tab) => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                 className={`w-full text-left px-4 py-1.5 text-xs transition-all ${
@@ -847,8 +868,29 @@ function KundliResultContent() {
           const tzM = Math.round((tz - tzH) * 60);
           const ampm = hour >= 12 ? "PM" : "AM";
           const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-          const timeStr = `${String(h12).padStart(2,"0")}:${String(minute).padStart(2,"0")} ${ampm}`;
-          const dateStr = `${day}/${month}/${year}`;
+          // Marathi time-of-day period (replaces AM/PM when lang=mr)
+          const marathiPeriod =
+            hour === 0 ? "रात्री" :
+            hour < 6 ? "पहाटे" :
+            hour < 12 ? "सकाळी" :
+            hour < 16 ? "दुपारी" :
+            hour < 19 ? "सायंकाळी" : "रात्री";
+          const timeStr = lang === "mr"
+            ? `${marathiPeriod} ${String(h12).padStart(2,"0")}:${String(minute).padStart(2,"0")}`
+            : `${String(h12).padStart(2,"0")}:${String(minute).padStart(2,"0")} ${ampm}`;
+          const MONTHS_MR = ["जानेवारी","फेब्रुवारी","मार्च","एप्रिल","मे","जून","जुलै","ऑगस्ट","सप्टेंबर","ऑक्टोबर","नोव्हेंबर","डिसेंबर"];
+          const monthIdx = parseInt(month) - 1;
+          const dateStr = lang === "mr" && monthIdx >= 0 && monthIdx < 12
+            ? `${toMr(day)} ${MONTHS_MR[monthIdx]} ${toMr(year)}`
+            : `${day}/${month}/${year}`;
+          const placeMrParam = searchParams.get("placeMr") || "";
+          const placeEn = searchParams.get("place") || "";
+          const placeDisplay = lang === "mr"
+            ? (placeMrParam || (placeEn ? toDevanagari(placeEn) : ""))
+            : placeEn;
+          const nameDisplay = lang === "mr"
+            ? (nameMr || (name ? toDevanagari(name) : ""))
+            : (name || nameMr);
           // Marathi number helper — converts all digits when lang is "mr"
           const m = (v: string | number) => lang === "mr" ? toMr(v) : String(v);
 
@@ -865,179 +907,232 @@ function KundliResultContent() {
 
           return (
             <>
-            <div className="print-page">
-              {/* BIG cover header */}
-              <div style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a, #3d0c0c)", padding: "30px 40px", textAlign: "center", position: "relative" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <img src="/logos/logo-transparent.svg" alt="भाग्यवेध" style={{ height: "60px", width: "auto" }} />
+            <div className="print-page" style={{ position: "relative", background: "#FFF8E7", overflow: "hidden" }}>
+              {/* Decorative borders */}
+              <div style={{ position: "absolute", inset: "12px", border: "3px solid #8B0000", pointerEvents: "none" }} />
+              <div style={{ position: "absolute", inset: "20px", border: "1px solid #8B0000", pointerEvents: "none" }} />
+              <div style={{ position: "absolute", inset: "28px", border: "1.5px solid #8B0000", pointerEvents: "none" }} />
+
+              {/* Corner rosettes */}
+              {([
+                { top: "22px", left: "22px" },
+                { top: "22px", right: "22px" },
+                { bottom: "22px", left: "22px" },
+                { bottom: "22px", right: "22px" },
+              ] as const).map((pos, i) => (
+                <div key={i} style={{ position: "absolute", ...pos, zIndex: 2, background: "#FFF8E7", padding: "3px" }}>
+                  <svg viewBox="0 0 40 40" width="36" height="36">
+                    <g fill="none" stroke="#8B0000" strokeWidth="1.2">
+                      <circle cx="20" cy="20" r="16" />
+                      <circle cx="20" cy="20" r="10" />
+                      <circle cx="20" cy="20" r="4" fill="#8B0000" />
+                      {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => {
+                        const a = (deg * Math.PI) / 180;
+                        return (
+                          <line key={deg} x1={20 + Math.cos(a) * 10} y1={20 + Math.sin(a) * 10} x2={20 + Math.cos(a) * 16} y2={20 + Math.sin(a) * 16} />
+                        );
+                      })}
+                      <polygon points="20,2 38,20 20,38 2,20" strokeWidth="1" />
+                    </g>
+                  </svg>
                 </div>
-                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "4px", background: "linear-gradient(90deg, #3d0c0c, #d4a843, #3d0c0c)" }} />
+              ))}
+
+              {/* Content */}
+              <div style={{ position: "relative", zIndex: 1, padding: "56px 70px 20px", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", flex: 1 }}>
+                {/* Medallion top */}
+                <div style={{ width: 72, height: 72, borderRadius: "50%", border: "2px solid #8B0000", background: "#FFFDF5", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", marginBottom: "10px" }}>
+                  <img src="/images/kundli/ganesha-classic.svg" alt="Ganesha" style={{ width: "54px", height: "54px", filter: "brightness(0) saturate(100%) invert(8%) sepia(85%) saturate(5000%) hue-rotate(355deg) brightness(95%) contrast(115%)" }} />
+                </div>
+
+                {/* Invocation */}
+                <div style={{ fontSize: "14px", fontWeight: 700, color: "#8B0000", marginBottom: "6px", letterSpacing: "1px" }}>॥ अथ श्रीगणेशाय नमः ॥</div>
+
+                {/* Shloka */}
+                <div style={{ fontSize: "10px", color: "#8B0000", lineHeight: 1.6, marginBottom: "12px", fontStyle: "italic" }}>
+                  गजवदनमचिन्त्यं तीक्ष्णदृष्टं गणेशं,<br />
+                  बृहत्तुरम्यमेशं भूतराजं पुराणम्।<br />
+                  अमरवरसुपूज्यं रक्तवर्णं धरेशं,<br />
+                  पशुपतिसुतमीशं विघ्नराजं नमामि॥
+                </div>
+
+                {/* Subtitle */}
+                <div style={{ fontSize: "12px", fontWeight: 600, color: "#8B0000", letterSpacing: "4px", marginBottom: "2px" }}>सम्पूर्ण षडवर्गीय</div>
+
+                {/* Title */}
+                <div style={{ fontSize: "52px", fontWeight: 900, color: "#8B0000", letterSpacing: "3px", marginBottom: "10px", fontFamily: "serif", textShadow: "2px 2px 0 #d4a843" }}>जन्म पत्रिका</div>
+
+                {/* Center Ganesha */}
+                <div style={{ width: 150, height: 150, borderRadius: "50%", border: "3px solid #8B0000", background: "radial-gradient(circle, #FFFDF5 0%, #FFF8E7 100%)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", marginBottom: "14px" }}>
+                  <img src="/images/kundli/ganesha-classic.svg" alt="Lord Ganesha" style={{ width: "120px", height: "120px", filter: "brightness(0) saturate(100%) invert(8%) sepia(85%) saturate(5000%) hue-rotate(355deg) brightness(95%) contrast(115%)" }} />
+                </div>
+
+                {/* Field sections */}
+                <div style={{ width: "100%", maxWidth: "520px", textAlign: "left" }}>
+                  {(() => {
+                    const nakIdx = result.moonNakshatraIndex ?? 0;
+                    const moonLord = PLANET_LORD_MR[RASHI_LORD_EN[result.moonRashiIndex ?? 0]] || "—";
+                    const lagnaLord = PLANET_LORD_MR[RASHI_LORD_EN[result.lagnaRashiIndex]] || "—";
+                    const panch = result.enhancements?.birthPanchang;
+                    const sections = [
+                      {
+                        title: t("जातक माहिती", "Native Info"),
+                        rows: [
+                          [t("जातकाचे नाव", "Name"), nameDisplay || "—"],
+                          [t("जन्मतारीख", "Date"), m(dateStr)],
+                          [t("जन्मवेळ", "Time"), m(timeStr)],
+                          [t("जन्मस्थळ", "Place"), placeDisplay || `${m(lat)}°N, ${m(lng)}°E`],
+                        ],
+                      },
+                      {
+                        title: t("पंचांग", "Panchanga"),
+                        rows: [
+                          [t("तिथी", "Tithi"), panch ? `${panch.tithi} (${panch.paksha})` : "—"],
+                          [t("वार", "Weekday"), panch?.day || "—"],
+                          [t("नक्षत्र", "Nakshatra"), `${t(result.moonNakshatraMr, result.moonNakshatra)} — ${t("चरण", "Pada")} ${m(result.moonPada)}`],
+                          [t("योग", "Yoga"), panch?.yoga || "—"],
+                          [t("करण", "Karana"), panch?.karana || "—"],
+                        ],
+                      },
+                      {
+                        title: t("ज्योतिष सार", "Astro Summary"),
+                        rows: [
+                          [t("जन्म राशी (चंद्र)", "Moon Sign"), `${t(result.moonRashiMr, result.moonRashi)} — ${t("स्वामी", "Lord")} ${moonLord}`],
+                          [t("जन्म लग्न", "Ascendant"), `${t(result.lagnaRashiMr, result.lagnaRashi)} — ${t("स्वामी", "Lord")} ${lagnaLord}`],
+                          [t("नाडी", "Nadi"), NADI_MR[NAK_NADI[nakIdx]] || "—"],
+                          [t("गण", "Gana"), GANA_MR[NAK_GANA[nakIdx]] || "—"],
+                          [t("योनी", "Yoni"), YONI_MR[NAK_YONI[nakIdx]] || "—"],
+                          [t("वर्ण", "Varna"), VARNA_MR[NAK_VARNA[nakIdx]] || "—"],
+                          [t("अयनांश", "Ayanamsha"), ayanStr],
+                        ],
+                      },
+                    ];
+                    return sections.map((section, si) => (
+                      <div key={si} style={{ marginBottom: si < sections.length - 1 ? "8px" : "0" }}>
+                        <div style={{ fontSize: "10px", fontWeight: 700, color: "#d4a843", background: "#8B0000", padding: "3px 12px", letterSpacing: "3px", textAlign: "center", marginBottom: "4px" }}>
+                          {section.title}
+                        </div>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", columnGap: "18px" }}>
+                          {section.rows.map(([label, value], i) => (
+                            <div key={i} style={{ display: "flex", borderBottom: "1px dotted #8B0000", padding: "3px 0", fontSize: "10px" }}>
+                              <span style={{ color: "#8B0000", fontWeight: 700, minWidth: "95px" }}>{label}</span>
+                              <span style={{ color: "#3d0c0c", flex: 1, wordBreak: "break-word" }}>{value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ));
+                  })()}
+                </div>
               </div>
 
-              {/* Person name */}
-              <div style={{ textAlign: "center", padding: "24px 40px 16px", borderBottom: "2px solid #f5efe0" }}>
-                <div style={{ fontSize: "30px", fontWeight: 700, color: "#3d0c0c" }}>{nameMr || name || t("कुंडली पत्रिका", "Kundli Patrika")}</div>
-                <div style={{ fontSize: "13px", color: "#8b6b4a", marginTop: "4px" }}>{t("जन्म पत्रिका", "Birth Chart")} — {name}</div>
-              </div>
-
-              {/* Birth details — row 1 */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", borderBottom: "1px solid #f5efe0", margin: "0 30px" }}>
-                <div style={{ padding: "14px 16px", textAlign: "center", borderRight: "1px solid #f5efe0" }}>
-                  <div style={{ fontSize: "8px", color: "#8b6b4a", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 600 }}>{t("जन्म तारीख", "DATE OF BIRTH")}</div>
-                  <div style={{ fontSize: "15px", fontWeight: 600, color: "#3d0c0c", marginTop: "4px" }}>{m(dateStr)}</div>
-                </div>
-                <div style={{ padding: "14px 16px", textAlign: "center", borderRight: "1px solid #f5efe0" }}>
-                  <div style={{ fontSize: "8px", color: "#8b6b4a", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 600 }}>{t("जन्म वेळ", "BIRTH TIME")}</div>
-                  <div style={{ fontSize: "15px", fontWeight: 600, color: "#3d0c0c", marginTop: "4px" }}>{m(timeStr)}</div>
-                </div>
-                <div style={{ padding: "14px 16px", textAlign: "center" }}>
-                  <div style={{ fontSize: "8px", color: "#8b6b4a", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 600 }}>{t("जन्म ठिकाण", "BIRTH PLACE")}</div>
-                  <div style={{ fontSize: "15px", fontWeight: 600, color: "#3d0c0c", marginTop: "4px" }}>{searchParams.get("place") || `${m(lat)}°N, ${m(lng)}°E`}</div>
-                  {searchParams.get("place") && <div style={{ fontSize: "9px", color: "#8b6b4a", marginTop: "2px" }}>{m(lat)}°N, {m(lng)}°E</div>}
-                </div>
-              </div>
-
-              {/* Birth details — row 2 */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", borderBottom: "2px solid #f5efe0", margin: "0 30px" }}>
-                <div style={{ padding: "14px 16px", textAlign: "center", borderRight: "1px solid #f5efe0" }}>
-                  <div style={{ fontSize: "8px", color: "#8b6b4a", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 600 }}>{t("अक्षांश / रेखांश", "LAT / LNG")}</div>
-                  <div style={{ fontSize: "15px", fontWeight: 600, color: "#3d0c0c", marginTop: "4px" }}>{m(lat)}°N, {m(lng)}°E</div>
-                </div>
-                <div style={{ padding: "14px 16px", textAlign: "center", borderRight: "1px solid #f5efe0" }}>
-                  <div style={{ fontSize: "8px", color: "#8b6b4a", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 600 }}>{t("अयनांश (लाहिरी)", "AYANAMSHA")}</div>
-                  <div style={{ fontSize: "15px", fontWeight: 600, color: "#3d0c0c", marginTop: "4px" }}>{ayanStr}</div>
-                </div>
-                <div style={{ padding: "14px 16px", textAlign: "center" }}>
-                  <div style={{ fontSize: "8px", color: "#8b6b4a", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 600 }}>{t("टाइमझोन", "TIMEZONE")}</div>
-                  <div style={{ fontSize: "15px", fontWeight: 600, color: "#3d0c0c", marginTop: "4px" }}>IST (+{m(tzH)}:{m(String(tzM).padStart(2,"0"))})</div>
-                </div>
-              </div>
-
-              {/* Birth details — row 3 (Panchang) */}
-              {result.enhancements?.birthPanchang && (
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", borderBottom: "1px solid #f5efe0", margin: "0 30px" }}>
-                  <div style={{ padding: "10px 12px", textAlign: "center", borderRight: "1px solid #f5efe0" }}>
-                    <div style={{ fontSize: "8px", color: "#8b6b4a", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 600 }}>{t("वार", "DAY")}</div>
-                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#3d0c0c", marginTop: "3px" }}>{result.enhancements.birthPanchang.day}</div>
-                  </div>
-                  <div style={{ padding: "10px 12px", textAlign: "center", borderRight: "1px solid #f5efe0" }}>
-                    <div style={{ fontSize: "8px", color: "#8b6b4a", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 600 }}>{t("सूर्योदय / सूर्यास्त", "SUNRISE / SUNSET")}</div>
-                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#3d0c0c", marginTop: "3px" }}>{m(result.enhancements.birthPanchang.sunrise)} / {m(result.enhancements.birthPanchang.sunset)}</div>
-                  </div>
-                  <div style={{ padding: "10px 12px", textAlign: "center", borderRight: "1px solid #f5efe0" }}>
-                    <div style={{ fontSize: "8px", color: "#8b6b4a", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 600 }}>{t("दिनमान", "DAY DURATION")}</div>
-                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#3d0c0c", marginTop: "3px" }}>{m(result.enhancements.birthPanchang.dinman)}</div>
-                  </div>
-                  <div style={{ padding: "10px 12px", textAlign: "center" }}>
-                    <div style={{ fontSize: "8px", color: "#8b6b4a", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 600 }}>{t("तिथी", "TITHI")}</div>
-                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#3d0c0c", marginTop: "3px" }}>{result.enhancements.birthPanchang.tithi} ({result.enhancements.birthPanchang.paksha})</div>
-                  </div>
-                </div>
-              )}
-
-              {/* Birth details — row 4 (Panchang contd.) */}
-              {result.enhancements?.birthPanchang && (
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", borderBottom: "2px solid #f5efe0", margin: "0 30px" }}>
-                  <div style={{ padding: "10px 12px", textAlign: "center", borderRight: "1px solid #f5efe0" }}>
-                    <div style={{ fontSize: "8px", color: "#8b6b4a", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 600 }}>{t("योग / करण", "YOGA / KARANA")}</div>
-                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#3d0c0c", marginTop: "3px" }}>{result.enhancements.birthPanchang.yoga} / {result.enhancements.birthPanchang.karana}</div>
-                  </div>
-                  <div style={{ padding: "10px 12px", textAlign: "center", borderRight: "1px solid #f5efe0" }}>
-                    <div style={{ fontSize: "8px", color: "#8b6b4a", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 600 }}>{t("राशी अक्षर", "RASHI AKSHAR")}</div>
-                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#3d0c0c", marginTop: "3px" }}>{result.enhancements?.rashiAkshar || "—"}</div>
-                  </div>
-                  <div style={{ padding: "10px 12px", textAlign: "center", borderRight: "1px solid #f5efe0" }}>
-                    <div style={{ fontSize: "8px", color: "#8b6b4a", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 600 }}>{t("शक संवत", "SHAKA SAMVAT")}</div>
-                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#3d0c0c", marginTop: "3px" }}>{m(result.enhancements.birthPanchang.shakaSamvat)}</div>
-                  </div>
-                  <div style={{ padding: "10px 12px", textAlign: "center" }}>
-                    <div style={{ fontSize: "8px", color: "#8b6b4a", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 600 }}>{t("पद्धती", "SYSTEM")}</div>
-                    <div style={{ fontSize: "13px", fontWeight: 600, color: "#3d0c0c", marginTop: "3px" }}>{t("लाहिरी", "Lahiri")}</div>
-                  </div>
-                </div>
-              )}
-
-              {/* मूलभूत माहिती section */}
-              <div style={{ padding: "20px 30px" }}>
-                <div style={{ fontSize: "11px", fontWeight: 700, color: "#d4a843", letterSpacing: "2px", marginBottom: "8px", paddingBottom: "4px", borderBottom: "1px solid #f5efe0" }}>{t("मूलभूत माहिती", "BASIC INFORMATION")}</div>
-                {[
-                  [t("लग्न (Ascendant)", "Ascendant"), `${t(result.lagnaRashiMr, result.lagnaRashi)} — ${m(result.lagnaDMS)}`],
-                  [t("राशी (Moon Sign)", "Moon Sign"), t(result.moonRashiMr, result.moonRashi)],
-                  [t("नक्षत्र", "Nakshatra"), `${t(result.moonNakshatraMr, result.moonNakshatra)} — ${t("पद", "Pada")} ${m(result.moonPada)}`],
-                  [t("नक्षत्र स्वामी", "Nakshatra Lord"), t(PLANET_LORD_MR[result.moonNakshatraLord] || result.moonNakshatraLord, result.moonNakshatraLord)],
-                ].map(([label, value], i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #faf5eb", fontSize: "12px" }}>
-                    <span style={{ color: "#8b6b4a", fontWeight: 500 }}>{label}</span>
-                    <span style={{ color: "#3d0c0c", fontWeight: 600 }}>{value}</span>
-                  </div>
-                ))}
-
-                {/* विंशोत्तरी दशा */}
-                <div style={{ fontSize: "11px", fontWeight: 700, color: "#d4a843", letterSpacing: "2px", marginTop: "20px", marginBottom: "8px", paddingBottom: "4px", borderBottom: "1px solid #f5efe0" }}>{t("विंशोत्तरी दशा", "VIMSHOTTARI DASHA")}</div>
-                {[
-                  [t("सध्याची महादशा", "Current Mahadasha"), currentDasha ? `${t(PLANET_LORD_MR[currentDasha.lord] || currentDasha.lord, currentDasha.lord)} ${t("दशा", "Dasha")}` : "—"],
-                  [t("कालावधी", "Period"), currentDasha ? `${m(new Date(currentDasha.startDate).getFullYear())} - ${m(new Date(currentDasha.endDate).getFullYear())}` : "—"],
-                  [t("अंतर्दशा", "Antardasha"), currentDasha && currentAntardasha ? `${t(PLANET_LORD_MR[currentDasha.lord] || currentDasha.lord, currentDasha.lord)}-${t(PLANET_LORD_MR[currentAntardasha.lord] || currentAntardasha.lord, currentAntardasha.lord)}` : "—"],
-                  [t("भोग्य दशा (जन्मवेळी शिल्लक)", "Balance Dasha at Birth"), result.enhancements?.balanceDasha ? `${t(result.enhancements.balanceDasha.lordMr, result.enhancements.balanceDasha.lordEn)}: ${m(result.enhancements.balanceDasha.years)} ${t("वर्षे", "Y")} ${m(result.enhancements.balanceDasha.months)} ${t("महिने", "M")} ${m(result.enhancements.balanceDasha.days)} ${t("दिवस", "D")}` : "—"],
-                ].map(([label, value], i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #faf5eb", fontSize: "12px" }}>
-                    <span style={{ color: "#8b6b4a", fontWeight: 500 }}>{label}</span>
-                    <span style={{ color: "#3d0c0c", fontWeight: 600 }}>{value}</span>
-                  </div>
-                ))}
-
-              </div>
-
-              {/* Footer */}
-              <PrintFooterContent />
+              {/* Page number */}
+              <div style={{ position: "relative", zIndex: 1, textAlign: "center", paddingBottom: "40px", fontSize: "11px", color: "#8B0000", fontWeight: 700 }}>॥ १ ॥</div>
             </div>
 
-            {/* ══════ PAGE 2: दोष स्थिती + शुभ माहिती ══════ */}
+            {/* ══════ PAGE 2: दोष स्थिती + शुभ माहिती + ग्रह स्थानं ══════ */}
             <PrintPage>
               <div style={{ padding: "0" }}>
-                {/* दोष स्थिती section */}
+                {/* दोष स्थिती — 2-col with color-coded status */}
                 <div style={{ fontSize: "11px", fontWeight: 700, color: "#d4a843", letterSpacing: "2px", marginBottom: "8px", paddingBottom: "4px", borderBottom: "1px solid #f5efe0" }}>{t("दोष स्थिती", "DOSHA STATUS")}</div>
-                {[
-                  ...(result.analysis.doshas.filter(d => d.nameEn.toLowerCase().includes("mangal") || d.nameEn.toLowerCase().includes("manglik")).map(d => [t(d.nameMr, d.nameEn), d.present ? t("उपस्थित", "Present") : t("अनुपस्थित", "Absent")]) || []),
-                  ...(result.analysis.doshas.filter(d => d.nameEn.toLowerCase().includes("kaal") || d.nameEn.toLowerCase().includes("sarp") || d.nameMr?.includes("काळ")).map(d => [t(d.nameMr, d.nameEn), d.present ? t("उपस्थित", "Present") : t("अनुपस्थित", "Absent")]) || []),
-                  [t("साडेसाती", "Sade Sati"), result.enhancements?.sadeSati ? (result.enhancements.sadeSati.active ? `${t("चालू", "Active")} — ${t(result.enhancements.sadeSati.phaseMr, result.enhancements.sadeSati.phaseEn)}` : t("नाही", "Not Active")) : "—"],
-                  [t("पितृ दोष", "Pitra Dosha"), result.enhancements?.pitraDosha ? (result.enhancements.pitraDosha.present ? `${t("उपस्थित", "Present")} — ${t(result.enhancements.pitraDosha.reasonMr, result.enhancements.pitraDosha.reasonEn)}` : t("अनुपस्थित", "Absent")) : "—"],
-                ].map(([label, value], i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #faf5eb", fontSize: "12px" }}>
-                    <span style={{ color: "#8b6b4a", fontWeight: 500 }}>{label}</span>
-                    <span style={{ color: "#3d0c0c", fontWeight: 600 }}>{value}</span>
-                  </div>
-                ))}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px", marginBottom: "4px" }}>
+                  {(() => {
+                    const doshRows: { label: string; value: string; present: boolean }[] = [];
+                    result.analysis.doshas.filter(d => d.nameEn.toLowerCase().includes("mangal") || d.nameEn.toLowerCase().includes("manglik")).forEach(d => doshRows.push({ label: t(d.nameMr, d.nameEn), value: d.present ? t("उपस्थित", "Present") : t("अनुपस्थित", "Absent"), present: d.present }));
+                    result.analysis.doshas.filter(d => d.nameEn.toLowerCase().includes("kaal") || d.nameEn.toLowerCase().includes("sarp") || d.nameMr?.includes("काळ")).forEach(d => doshRows.push({ label: t(d.nameMr, d.nameEn), value: d.present ? t("उपस्थित", "Present") : t("अनुपस्थित", "Absent"), present: d.present }));
+                    if (result.enhancements?.sadeSati) {
+                      const ss = result.enhancements.sadeSati;
+                      doshRows.push({ label: t("साडेसाती", "Sade Sati"), value: ss.active ? `${t("चालू", "Active")} — ${t(ss.phaseMr, ss.phaseEn)}` : t("नाही", "Not Active"), present: ss.active });
+                    }
+                    if (result.enhancements?.pitraDosha) {
+                      const pd = result.enhancements.pitraDosha;
+                      doshRows.push({ label: t("पितृ दोष", "Pitra Dosha"), value: pd.present ? t("उपस्थित", "Present") : t("अनुपस्थित", "Absent"), present: pd.present });
+                    }
+                    return doshRows.map((d, i) => (
+                      <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 10px", background: "#FFFDF5", border: "1px solid #f5efe0", borderLeft: `3px solid ${d.present ? "#c62828" : "#2e7d32"}`, borderRadius: "4px", fontSize: "10px" }}>
+                        <span style={{ color: "#3d0c0c", fontWeight: 600 }}>{d.label}</span>
+                        <span style={{ color: d.present ? "#c62828" : "#2e7d32", fontWeight: 600, fontSize: "9px" }}>{d.value}</span>
+                      </div>
+                    ));
+                  })()}
+                </div>
 
-                {/* शुभ माहिती section */}
+                {/* शुभ माहिती — 6-col pill row */}
                 {result.enhancements?.luckyItems && (
                   <>
-                    <div style={{ fontSize: "11px", fontWeight: 700, color: "#d4a843", letterSpacing: "2px", marginTop: "24px", marginBottom: "10px", paddingBottom: "4px", borderBottom: "1px solid #f5efe0" }}>{t("शुभ माहिती", "LUCKY ITEMS")}</div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: 700, color: "#d4a843", letterSpacing: "2px", marginTop: "18px", marginBottom: "8px", paddingBottom: "4px", borderBottom: "1px solid #f5efe0" }}>{t("शुभ माहिती", "LUCKY ITEMS")}</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: "6px" }}>
                       {[
-                        [t("रत्न", "Gemstone"), t(result.enhancements.luckyItems.gemstone.mr, result.enhancements.luckyItems.gemstone.en), `(${result.enhancements.luckyItems.gemstone.planet})`],
-                        [t("रंग", "Color"), t(result.enhancements.luckyItems.color.mr, result.enhancements.luckyItems.color.en), ""],
-                        [t("अंक", "Number"), m(result.enhancements.luckyItems.number), ""],
-                        [t("वार", "Day"), t(result.enhancements.luckyItems.day.mr, result.enhancements.luckyItems.day.en), ""],
-                        [t("दिशा", "Direction"), t(result.enhancements.luckyItems.direction.mr, result.enhancements.luckyItems.direction.en), ""],
-                        [t("धातू", "Metal"), t(result.enhancements.luckyItems.metal.mr, result.enhancements.luckyItems.metal.en), ""],
-                      ].map(([label, value, extra], i) => (
-                        <div key={i} style={{ background: "#FFF8E7", border: "1px solid #f5efe0", borderRadius: "8px", padding: "12px 14px", textAlign: "center" }}>
-                          <div style={{ fontSize: "9px", color: "#8b6b4a", fontWeight: 600, letterSpacing: "1px", marginBottom: "4px" }}>{label}</div>
-                          <div style={{ fontSize: "16px", fontWeight: 700, color: "#3d0c0c" }}>{value}</div>
-                          {extra && <div style={{ fontSize: "9px", color: "#8b6b4a", marginTop: "2px" }}>{extra}</div>}
+                        [t("रत्न", "Gemstone"), t(result.enhancements.luckyItems.gemstone.mr, result.enhancements.luckyItems.gemstone.en)],
+                        [t("रंग", "Color"), t(result.enhancements.luckyItems.color.mr, result.enhancements.luckyItems.color.en)],
+                        [t("अंक", "Number"), m(result.enhancements.luckyItems.number)],
+                        [t("वार", "Day"), t(result.enhancements.luckyItems.day.mr, result.enhancements.luckyItems.day.en)],
+                        [t("दिशा", "Direction"), t(result.enhancements.luckyItems.direction.mr, result.enhancements.luckyItems.direction.en)],
+                        [t("धातू", "Metal"), t(result.enhancements.luckyItems.metal.mr, result.enhancements.luckyItems.metal.en)],
+                      ].map(([label, value], i) => (
+                        <div key={i} style={{ background: "#FFF8E7", border: "1px solid #d4a843", borderRadius: "6px", padding: "8px 4px", textAlign: "center" }}>
+                          <div style={{ fontSize: "8px", color: "#8b6b4a", fontWeight: 600, letterSpacing: "1px", marginBottom: "3px" }}>{label}</div>
+                          <div style={{ fontSize: "12px", fontWeight: 700, color: "#3d0c0c", lineHeight: 1.2 }}>{value}</div>
                         </div>
                       ))}
                     </div>
                   </>
                 )}
+
+                {/* वर्तमान दशा — fills mid space */}
+                {currentDasha && (
+                  <>
+                    <div style={{ fontSize: "11px", fontWeight: 700, color: "#d4a843", letterSpacing: "2px", marginTop: "18px", marginBottom: "8px", paddingBottom: "4px", borderBottom: "1px solid #f5efe0" }}>{t("वर्तमान दशा", "CURRENT DASHA")}</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
+                      <div style={{ background: "#FFFDF5", border: "1px solid #f5efe0", borderLeft: "3px solid #d4a843", borderRadius: "4px", padding: "8px 12px", fontSize: "10px" }}>
+                        <div style={{ fontSize: "8px", color: "#8b6b4a", fontWeight: 600, marginBottom: "2px" }}>{t("महादशा", "Mahadasha")}</div>
+                        <div style={{ fontSize: "11px", fontWeight: 700, color: "#3d0c0c" }}>{t(PLANET_LORD_MR[currentDasha.lord] || currentDasha.lord, currentDasha.lord)}</div>
+                        <div style={{ fontSize: "8px", color: "#8b6b4a", marginTop: "2px" }}>{m(new Date(currentDasha.startDate).getFullYear())} — {m(new Date(currentDasha.endDate).getFullYear())}</div>
+                      </div>
+                      {currentAntardasha && (
+                        <div style={{ background: "#FFFDF5", border: "1px solid #f5efe0", borderLeft: "3px solid #d4a843", borderRadius: "4px", padding: "8px 12px", fontSize: "10px" }}>
+                          <div style={{ fontSize: "8px", color: "#8b6b4a", fontWeight: 600, marginBottom: "2px" }}>{t("अंतर्दशा", "Antardasha")}</div>
+                          <div style={{ fontSize: "11px", fontWeight: 700, color: "#3d0c0c" }}>{t(PLANET_LORD_MR[currentAntardasha.lord] || currentAntardasha.lord, currentAntardasha.lord)}</div>
+                          <div style={{ fontSize: "8px", color: "#8b6b4a", marginTop: "2px" }}>{m(new Date(currentAntardasha.startDate).toISOString().slice(0, 10))} — {m(new Date(currentAntardasha.endDate).toISOString().slice(0, 10))}</div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {/* ग्रह स्थानं — full planet table fills remaining space */}
+                <div style={{ fontSize: "11px", fontWeight: 700, color: "#d4a843", letterSpacing: "2px", marginTop: "18px", marginBottom: "8px", paddingBottom: "4px", borderBottom: "1px solid #f5efe0" }}>{t("ग्रह स्थानं — लग्न कुंडली (D1)", "PLANET POSITIONS — LAGNA KUNDALI (D1)")}</div>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "9px" }}>
+                  <thead>
+                    <tr style={{ background: "#3d0c0c", color: "#d4a843" }}>
+                      <th style={{ padding: "4px 6px", textAlign: "left", fontWeight: 600, fontSize: "8px" }}>{t("ग्रह", "Graha")}</th>
+                      <th style={{ padding: "4px 6px", textAlign: "left", fontWeight: 600, fontSize: "8px" }}>{t("राशी", "Rashi")}</th>
+                      <th style={{ padding: "4px 6px", textAlign: "center", fontWeight: 600, fontSize: "8px" }}>{t("भाव", "House")}</th>
+                      <th style={{ padding: "4px 6px", textAlign: "left", fontWeight: 600, fontSize: "8px" }}>{t("अंश", "Degree")}</th>
+                      <th style={{ padding: "4px 6px", textAlign: "left", fontWeight: 600, fontSize: "8px" }}>{t("नक्षत्र", "Nakshatra")}</th>
+                      <th style={{ padding: "4px 6px", textAlign: "center", fontWeight: 600, fontSize: "8px" }}>{t("पद", "Pada")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {result.planets.map((p, i) => (
+                      <tr key={p.id} style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7" }}>
+                        <td style={{ padding: "3px 6px", fontWeight: 600, color: "#3d0c0c", borderBottom: "1px solid #f5efe0" }}>{t(p.nameMr, p.name)}{p.isRetrograde ? t(" (व)", " (R)") : ""}</td>
+                        <td style={{ padding: "3px 6px", color: "#3d0c0c", borderBottom: "1px solid #f5efe0" }}>{t(p.rashiMr, p.rashi)}</td>
+                        <td style={{ padding: "3px 6px", textAlign: "center", fontWeight: 600, color: "#3d0c0c", borderBottom: "1px solid #f5efe0" }}>{m(p.house)}</td>
+                        <td style={{ padding: "3px 6px", color: "#3d0c0c", borderBottom: "1px solid #f5efe0" }}>{m(p.degreeDMS)}</td>
+                        <td style={{ padding: "3px 6px", color: "#3d0c0c", borderBottom: "1px solid #f5efe0" }}>{t(p.nakshatraMr, p.nakshatra)}</td>
+                        <td style={{ padding: "3px 6px", textAlign: "center", color: "#3d0c0c", borderBottom: "1px solid #f5efe0" }}>{m(p.pada)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </PrintPage>
             </>
           );
         })()}
 
-        {/* ══════ CHARTS: 1 chart per page + analysis below ══════ */}
+        {/* ══════ CHARTS: 2-col layout (chart+placement left, analysis right) ══════ */}
         {(() => {
           const buildHouseMap = (planetList: { id: string; nameMr: string; name?: string; house: number; isRetrograde: boolean }[]) => {
             const map: Record<number, typeof planetList> = {};
@@ -1046,31 +1141,75 @@ function KundliResultContent() {
             return map;
           };
           const enh = result.enhancements;
-          const interpBox = { background: "#FFF8E7", border: "1px solid #f5efe0", borderLeft: "3px solid #d4a843", borderRadius: "0 8px 8px 0" as const, padding: "12px 16px", marginTop: "12px" };
-          const interpLabel = { fontSize: "10px", color: "#8b6b4a", fontWeight: 600 as const, marginBottom: "3px" };
-          const interpText = { fontSize: "11px", color: "#3d0c0c", lineHeight: 1.5 };
-          const badgeGreen = { display: "inline-block" as const, background: "#e8f5e9", color: "#2e7d32", fontSize: "10px", padding: "2px 8px", borderRadius: "4px", fontWeight: 600 as const, marginRight: "6px" };
-          const badgeRed = { display: "inline-block" as const, background: "#fce4ec", color: "#c62828", fontSize: "10px", padding: "2px 8px", borderRadius: "4px", fontWeight: 600 as const, marginRight: "6px" };
+          const interpBox = { background: "#FFF8E7", border: "1px solid #f5efe0", borderLeft: "3px solid #d4a843", borderRadius: "0 8px 8px 0" as const, padding: "10px 12px", marginTop: "8px" };
+          const interpLabel = { fontSize: "9px", color: "#8b6b4a", fontWeight: 600 as const, marginBottom: "3px" };
+          const interpText = { fontSize: "10px", color: "#3d0c0c", lineHeight: 1.5 };
+          const badgeGreen = { display: "inline-block" as const, background: "#e8f5e9", color: "#2e7d32", fontSize: "9px", padding: "2px 7px", borderRadius: "4px", fontWeight: 600 as const, marginRight: "5px" };
+          const badgeRed = { display: "inline-block" as const, background: "#fce4ec", color: "#c62828", fontSize: "9px", padding: "2px 7px", borderRadius: "4px", fontWeight: 600 as const, marginRight: "5px" };
+          const chartM = (v: string | number) => lang === "mr" ? toMr(v) : String(v);
 
-          const allCharts = [
-            { id: "lagna", name: t("लग्न कुंडली", "Lagna Kundli"), houseMap: buildHouseMap(result.planets), label: t("लग्न", "Asc"), lagnaRashi: result.lagnaRashiIndex },
+          const D_CHART_SIGNIFICANCE: Record<string, { mr: string; en: string }> = {
+            lagna: { mr: "शरीर, व्यक्तिमत्त्व आणि मूलभूत जीवन पथ — सर्व विश्लेषणाचा पाया.", en: "Body, personality and life path — foundation of all analysis." },
+            chandra: { mr: "मन, भावना, मानसिक स्वभाव आणि मातेचा आशीर्वाद.", en: "Mind, emotions, mental disposition, mother's blessings." },
+            hora: { mr: "संपत्ती, द्रव्य सुख आणि आर्थिक भाग्य — सूर्य/चंद्र होरा वर्गीकरण.", en: "Wealth and finance — Sun/Moon hora classification." },
+            drekkana: { mr: "भावंडे, साहस, परिश्रम आणि जीवनदिशा.", en: "Siblings, courage, effort and life direction." },
+            chaturthamsha: { mr: "सुख, घर, वाहन आणि स्थावर मालमत्ता.", en: "Happiness, home, vehicles and fixed assets." },
+            saptamsha: { mr: "संतती, मुले आणि सर्जनशीलता.", en: "Children, progeny and creativity." },
+            navamsha: { mr: "विवाह, जोडीदार, भाग्य आणि दशाफल — सर्वात महत्त्वाची वर्ग कुंडली.", en: "Marriage, spouse, destiny — the most important varga." },
+            dashamsha: { mr: "कर्म, व्यवसाय, कीर्ती आणि सामाजिक प्रतिष्ठा.", en: "Career, profession, fame, social standing." },
+            dwadashamsha: { mr: "पितृ-मातृ, पूर्वज आणि कौटुंबिक वारसा.", en: "Parents, ancestry, family heritage." },
+            shodashamsha: { mr: "वाहने, भौतिक सुख आणि आनंद.", en: "Vehicles, luxuries, material comforts." },
+            vimshamsha: { mr: "उपासना, अध्यात्म आणि देव-उपासना.", en: "Spiritual practice, worship, devotion." },
+            siddhamsha: { mr: "विद्या, ज्ञान, शिक्षण आणि कौशल्ये.", en: "Education, knowledge, learning, skills." },
+            bhamsha: { mr: "बलाबल, सामर्थ्य, दुर्बलता आणि स्ट्रेस क्षमता.", en: "Strength, weakness, stress tolerance." },
+            trimshamsha: { mr: "अरिष्ट, आरोग्य जोखीम आणि अडचणी.", en: "Misfortunes, health risks, obstacles." },
+            khavedamsha: { mr: "शुभ/अशुभ फल आणि सामान्य जीवनातील योग.", en: "General auspicious/inauspicious life effects." },
+            akshavedamsha: { mr: "सर्वांगीण जीवन फल आणि समग्र विश्लेषण.", en: "Overall life effects — holistic view." },
+            shashtiamsha: { mr: "अत्यंत सूक्ष्म विश्लेषण आणि कर्म ऋणानुबंध.", en: "Subtle holistic analysis, karmic bonds." },
+            "bhav-chalit": { mr: "भाव संधी आणि ग्रह भाव बदल — अचूक फलित विश्लेषणासाठी.", en: "House cusps and planet-house shifts for accurate predictions." },
+          };
+
+          const allCharts: {
+            id: string;
+            name: string;
+            houseMap: Record<number, Array<{ id: string; nameMr: string; name?: string; house: number; isRetrograde: boolean }>>;
+            label?: string;
+            lagnaRashi: number;
+            planets: Array<{ id: string; nameMr: string; name?: string; house: number; isRetrograde: boolean; rashi?: string; rashiMr?: string; degreeDMS?: string; degreeInSign?: number }>;
+          }[] = [
+            { id: "lagna", name: t("लग्न कुंडली", "Lagna Kundli"), houseMap: buildHouseMap(result.planets), label: t("लग्न", "Asc"), lagnaRashi: result.lagnaRashiIndex, planets: result.planets },
             ...result.divisionalCharts.map(c => ({
               id: c.id, name: t(c.nameMr, c.name), houseMap: buildHouseMap(c.planets),
               label: c.id === "chandra" ? t("चंद्र", "Moon") : undefined,
               lagnaRashi: getChartLagnaRashi(c.planets),
+              planets: c.planets,
             })),
           ];
 
-          return allCharts.map((chart) => (
+          const hasSpecificAnalysisSet = new Set(["lagna","chandra","navamsha","bhav-chalit","dashamsha","saptamsha","dwadashamsha","shodashamsha","trimshamsha"]);
+
+          return allCharts.map((chart) => {
+            const sig = D_CHART_SIGNIFICANCE[chart.id];
+            const hasSpecificAnalysis = hasSpecificAnalysisSet.has(chart.id);
+            const occupiedHouses = Object.entries(chart.houseMap).filter(([, list]) => list.length > 0).sort((a, b) => Number(a[0]) - Number(b[0]));
+
+            return (
             <PrintPage key={chart.id}>
-              <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#1c1917", marginBottom: "10px" }}>{chart.name}</h2>
-              <div style={{ maxWidth: "320px", margin: "0 auto" }}>
-                <NorthIndianChartSVG houseMap={chart.houseMap} label={chart.label} lagnaRashi={chart.lagnaRashi} />
-              </div>
+              <h2 style={{ fontSize: "15px", fontWeight: 700, color: "#1c1917", marginBottom: "3px" }}>{chart.name}</h2>
+              {sig && <div style={{ fontSize: "9px", color: "#8b6b4a", marginBottom: "8px", lineHeight: 1.4 }}>{t(sig.mr, sig.en)}</div>}
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", alignItems: "start" }}>
+                {/* LEFT: chart SVG */}
+                <div style={{ maxWidth: "300px", margin: "0 auto" }}>
+                  <NorthIndianChartSVG houseMap={chart.houseMap} label={chart.label} lagnaRashi={chart.lagnaRashi} />
+                </div>
+
+                {/* RIGHT: chart-specific analysis */}
+                <div>
 
               {/* ── Lagna Analysis ── */}
               {chart.id === "lagna" && enh && (
-                <div style={{ marginTop: "16px" }}>
+                <div>
                   <div style={interpBox}>
                     <div style={interpLabel}>{t("लग्न राशी", "Ascendant Sign")}</div>
                     <div style={interpText}>{t(enh.lagnaAnalysis.rashiDescMr, enh.lagnaAnalysis.rashiDescEn)}</div>
@@ -1236,8 +1375,64 @@ function KundliResultContent() {
                   </div>
                 </div>
               )}
+
+              {/* ── Fallback: generic significance (for D-charts without specific analysis) ── */}
+              {!hasSpecificAnalysis && sig && (
+                <div style={interpBox}>
+                  <div style={interpLabel}>{chart.name} — {t("महत्त्व", "Significance")}</div>
+                  <div style={interpText}>{t(sig.mr, sig.en)}</div>
+                </div>
+              )}
+
+                </div>
+              </div>
+
+              {/* ── Full-width planet-placement table (below 2-col grid) ── */}
+              <div style={{ marginTop: "12px" }}>
+                <div style={{ fontSize: "9px", fontWeight: 700, color: "#d4a843", letterSpacing: "2px", marginBottom: "4px", paddingBottom: "2px", borderBottom: "1px solid #f5efe0" }}>{t("ग्रह स्थानं — " + chart.name, "PLANET PLACEMENTS — " + chart.name)}</div>
+                <table style={{ width: "100%", borderCollapse: "collapse" as const, fontSize: "9px" }}>
+                  <thead>
+                    <tr style={{ background: "#3d0c0c", color: "#d4a843" }}>
+                      <th style={{ padding: "3px 6px", textAlign: "left" as const, fontWeight: 600 as const, fontSize: "8px" }}>{t("ग्रह", "Graha")}</th>
+                      <th style={{ padding: "3px 6px", textAlign: "left" as const, fontWeight: 600 as const, fontSize: "8px" }}>{t("राशी", "Rashi")}</th>
+                      <th style={{ padding: "3px 6px", textAlign: "center" as const, fontWeight: 600 as const, fontSize: "8px" }}>{t("भाव", "House")}</th>
+                      <th style={{ padding: "3px 6px", textAlign: "left" as const, fontWeight: 600 as const, fontSize: "8px" }}>{t("अंश", "Degree")}</th>
+                      <th style={{ padding: "3px 6px", textAlign: "center" as const, fontWeight: 600 as const, fontSize: "8px" }}>{t("वक्री", "Retro")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {chart.planets.map((p, i) => {
+                      const deg = p.degreeDMS ?? (p.degreeInSign !== undefined ? `${Math.floor(p.degreeInSign)}°` : "—");
+                      return (
+                        <tr key={p.id} style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7" }}>
+                          <td style={{ padding: "3px 6px", fontWeight: 600 as const, color: "#3d0c0c", borderBottom: "1px solid #f5efe0" }}>{t(p.nameMr, p.name || p.id)}</td>
+                          <td style={{ padding: "3px 6px", color: "#3d0c0c", borderBottom: "1px solid #f5efe0" }}>{t(p.rashiMr || "", p.rashi || "")}</td>
+                          <td style={{ padding: "3px 6px", textAlign: "center" as const, fontWeight: 600 as const, color: "#3d0c0c", borderBottom: "1px solid #f5efe0" }}>{chartM(p.house)}</td>
+                          <td style={{ padding: "3px 6px", color: "#3d0c0c", borderBottom: "1px solid #f5efe0" }}>{chartM(deg)}</td>
+                          <td style={{ padding: "3px 6px", textAlign: "center" as const, color: p.isRetrograde ? "#c62828" : "#8b6b4a", borderBottom: "1px solid #f5efe0", fontWeight: 600 as const }}>{p.isRetrograde ? t("वक्री", "R") : "—"}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* ── Full-width house-wise summary (only for generic D-charts) ── */}
+              {!hasSpecificAnalysis && occupiedHouses.length > 0 && (
+                <div style={{ marginTop: "10px" }}>
+                  <div style={{ fontSize: "9px", fontWeight: 700, color: "#d4a843", letterSpacing: "2px", marginBottom: "4px", paddingBottom: "2px", borderBottom: "1px solid #f5efe0" }}>{t("भावनिहाय स्थान", "HOUSE-WISE PLACEMENT")}</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "4px" }}>
+                    {occupiedHouses.map(([h, list]) => (
+                      <div key={h} style={{ fontSize: "9px", background: "#FFFDF5", border: "1px solid #f5efe0", borderLeft: "2px solid #d4a843", borderRadius: "3px", padding: "4px 8px" }}>
+                        <strong style={{ color: "#5c1a1a" }}>{t("भाव", "H")} {chartM(Number(h))}:</strong>{" "}
+                        <span style={{ color: "#3d0c0c" }}>{list.map(p => t(p.nameMr, p.name || p.id) + (p.isRetrograde ? t(" (व)", " (R)") : "")).join(", ")}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </PrintPage>
-          ));
+          );});
         })()}
 
         {/* ══════ CHART ANALYSIS (now merged into chart pages above) ══════ */}
@@ -1545,20 +1740,248 @@ function KundliResultContent() {
           );
         })()}
 
-        {/* ══════ Remedies: split into 2 pages ══════ */}
-        <PrintPage>
-          <RemedySection remedies={result.analysis.remedies.slice(0, Math.ceil(result.analysis.remedies.length / 2))} />
-        </PrintPage>
-        <PrintPage>
-          <RemedySection remedies={result.analysis.remedies.slice(Math.ceil(result.analysis.remedies.length / 2))} />
-          <div style={{ margin: "20px 0", padding: "14px 18px", borderLeft: "3px solid #d4a843" }}>
-            <p style={{ fontSize: "9px", color: "#8b6b4a", lineHeight: 1.6 }}>
-              <strong>{t("अस्वीकरण:", "Disclaimer:")}</strong> {t("ही पत्रिका लाहिरी अयनांश पद्धतीवर आधारित अचूक खगोलीय गणनेद्वारे तयार केली आहे. ज्योतिषशास्त्र हे मार्गदर्शनासाठी आहे, अंतिम निर्णयासाठी नाही.", "This patrika is generated using precise astronomical calculations (Lahiri Ayanamsha). Astrology is for guidance, not final decisions.")} — Bhaagyavedh
-            </p>
-          </div>
-        </PrintPage>
+        {/* ══════ Birth Panchang ══════ */}
+        {result.enhancements?.birthPanchang && (
+          <PrintPage>
+            <BirthPanchangSection data={result.enhancements.birthPanchang} balance={result.enhancements.balanceDasha} />
+          </PrintPage>
+        )}
+
+        {/* ══════ Mangal Dosh (detail) ══════ */}
+        {result.mangalDosh && (
+          <PrintPage>
+            <MangalDoshSection data={result.mangalDosh} />
+          </PrintPage>
+        )}
+
+        {/* ══════ Kalsarp Dosh (detail) ══════ */}
+        {result.kalsarpDosh && (
+          <PrintPage>
+            <KalsarpDoshSection data={result.kalsarpDosh} />
+          </PrintPage>
+        )}
+
+        {/* ══════ Shadbala (split: table+balakrama / remedies paginated 2/page) ══════ */}
+        {result.shadBala && (
+          <>
+            <PrintPage>
+              <ShadBalaSection data={result.shadBala} chunk="top" />
+            </PrintPage>
+            {(() => {
+              const weakPlanets = result.shadBala.planets.filter(p => !p.isStrong && p.remediesMr && p.remediesMr.length);
+              const pages = Math.ceil(weakPlanets.length / 2);
+              return Array.from({ length: pages }, (_, i) => (
+                <PrintPage key={`shadbala-rem-${i}`}>
+                  <ShadBalaSection data={result.shadBala} chunk="bottom" planetSlice={[i * 2, (i + 1) * 2]} />
+                </PrintPage>
+              ));
+            })()}
+          </>
+        )}
+
+        {/* ══════ Ashtakvarga (split: SAV+houses / bhinnashtaka+remedies) ══════ */}
+        {result.ashtakvarga && (
+          <>
+            <PrintPage>
+              <AshtakvargaSection data={result.ashtakvarga} chunk="top" />
+            </PrintPage>
+            <PrintPage>
+              <AshtakvargaSection data={result.ashtakvarga} chunk="bottom" />
+            </PrintPage>
+          </>
+        )}
+
+        {/* ══════ Sarvatobhadra (split: table / chakra+remedies) ══════ */}
+        {result.sarvatobhadra && (
+          <>
+            <PrintPage>
+              <SarvatobhadraSection data={result.sarvatobhadra} chunk="top" />
+            </PrintPage>
+            <PrintPage>
+              <SarvatobhadraSection data={result.sarvatobhadra} chunk="bottom" />
+            </PrintPage>
+          </>
+        )}
+
+        {/* ══════ Jaimini (split: atma+ishta / karakamsha+charakarakas) ══════ */}
+        {result.jaimini && (
+          <>
+            <PrintPage>
+              <JaiminiSection data={result.jaimini} chunk="top" />
+            </PrintPage>
+            <PrintPage>
+              <JaiminiSection data={result.jaimini} chunk="bottom" />
+            </PrintPage>
+          </>
+        )}
+
+        {/* ══════ Mitra-Shatru Chakra ══════ */}
+        {result.mitraShatru && (
+          <PrintPage>
+            <MitraShatruSection data={result.mitraShatru} />
+          </PrintPage>
+        )}
+
+        {/* ══════ Asta-Yuddha (Combustion & Planetary War) ══════ */}
+        {(result.combustionDetails || result.grahaYuddha) && (
+          <PrintPage>
+            <AstaYuddhaSection combustion={result.combustionDetails} yuddha={result.grahaYuddha} />
+          </PrintPage>
+        )}
+
+        {/* ══════ Bhava Bala ══════ */}
+        {result.bhavaBala && (
+          <PrintPage>
+            <BhavaBalaSection data={result.bhavaBala} />
+          </PrintPage>
+        )}
+
+        {/* ══════ Marriage Timing (header / windows 5/page / remedies) ══════ */}
+        {result.marriageTiming && (
+          <>
+            <PrintPage>
+              <MarriageTimingSection data={result.marriageTiming} chunk="header" />
+            </PrintPage>
+            {(() => {
+              const windowsPerPage = 5;
+              const totalWindows = result.marriageTiming.windows.length;
+              const pages = Math.max(1, Math.ceil(totalWindows / windowsPerPage));
+              return Array.from({ length: pages }, (_, i) => (
+                <PrintPage key={`mar-win-${i}`}>
+                  <MarriageTimingSection data={result.marriageTiming} chunk="windows" windowSlice={[i * windowsPerPage, (i + 1) * windowsPerPage]} />
+                </PrintPage>
+              ));
+            })()}
+            <PrintPage>
+              <MarriageTimingSection data={result.marriageTiming} chunk="remedies" />
+            </PrintPage>
+          </>
+        )}
+
+        {/* ══════ Career Timing (header / windows 5/page) ══════ */}
+        {result.careerTiming && (
+          <>
+            <PrintPage>
+              <CareerTimingSection data={result.careerTiming} chunk="header" />
+            </PrintPage>
+            {(() => {
+              const windowsPerPage = 5;
+              const totalWindows = result.careerTiming.windows.length;
+              const pages = Math.max(1, Math.ceil(totalWindows / windowsPerPage));
+              return Array.from({ length: pages }, (_, i) => (
+                <PrintPage key={`car-win-${i}`}>
+                  <CareerTimingSection data={result.careerTiming} chunk="windows" windowSlice={[i * windowsPerPage, (i + 1) * windowsPerPage]} />
+                </PrintPage>
+              ));
+            })()}
+          </>
+        )}
+
+        {/* ══════ Deep Dasha (split: pratyantars / sookshmas) ══════ */}
+        {result.deepDasha && (
+          <>
+            <PrintPage>
+              <DeepDashaSection data={result.deepDasha} chunk="top" />
+            </PrintPage>
+            {((result.deepDasha.currentPratyantar?.sookshmas?.length ?? 0) > 0 || result.deepDasha.nextMilestoneMr) && (
+              <PrintPage>
+                <DeepDashaSection data={result.deepDasha} chunk="bottom" />
+              </PrintPage>
+            )}
+          </>
+        )}
+
+        {/* ══════ Names Suggestion (Nakshatra Letters) ══════ */}
+        {result.namesSuggestion && (
+          <PrintPage>
+            <NamesSection data={result.namesSuggestion} />
+          </PrintPage>
+        )}
+
+        {/* ══════ Upagrahas (split: table / descriptions) ══════ */}
+        {result.upagrahas && (
+          <>
+            <PrintPage>
+              <UpagrahaSection data={result.upagrahas} chunk="top" />
+            </PrintPage>
+            <PrintPage>
+              <UpagrahaSection data={result.upagrahas} chunk="bottom" />
+            </PrintPage>
+          </>
+        )}
+
+        {/* ══════ Gochar Naadi (split: table / descriptions) ══════ */}
+        {result.gocharNaadi && (
+          <>
+            <PrintPage>
+              <GocharNaadiSection data={result.gocharNaadi} chunk="top" />
+            </PrintPage>
+            <PrintPage>
+              <GocharNaadiSection data={result.gocharNaadi} chunk="bottom" />
+            </PrintPage>
+          </>
+        )}
+
+        {/* ══════ Vimshopak Bala ══════ */}
+        {result.vimshopakBala && (
+          <PrintPage>
+            <VimshopakBalaSection data={result.vimshopakBala} />
+          </PrintPage>
+        )}
+
+        {/* ══════ Remedies: 2 categories per page ══════ */}
+        {(() => {
+          const cats = result.analysis.remedies;
+          const perPage = 2;
+          const pages = Math.max(1, Math.ceil(cats.length / perPage));
+          return Array.from({ length: pages }, (_, i) => {
+            const chunk = cats.slice(i * perPage, (i + 1) * perPage);
+            const isLast = i === pages - 1;
+            return (
+              <PrintPage key={`rem-${i}`}>
+                <RemedySection remedies={chunk} />
+                {isLast && (
+                  <div style={{ margin: "20px 0", padding: "14px 18px", borderLeft: "3px solid #d4a843" }}>
+                    <p style={{ fontSize: "9px", color: "#8b6b4a", lineHeight: 1.6 }}>
+                      <strong>{t("अस्वीकरण:", "Disclaimer:")}</strong> {t("ही पत्रिका लाहिरी अयनांश पद्धतीवर आधारित अचूक खगोलीय गणनेद्वारे तयार केली आहे. ज्योतिषशास्त्र हे मार्गदर्शनासाठी आहे, अंतिम निर्णयासाठी नाही.", "This patrika is generated using precise astronomical calculations (Lahiri Ayanamsha). Astrology is for guidance, not final decisions.")} — Bhaagyavedh
+                    </p>
+                  </div>
+                )}
+              </PrintPage>
+            );
+          });
+        })()}
 
       </div>
+
+      <KundliChatDrawer chartContext={{
+        lagnaRashi: result.lagnaRashi,
+        lagnaRashiMr: result.lagnaRashiMr,
+        lagnaDMS: result.lagnaDMS,
+        moonRashi: result.moonRashi,
+        moonRashiMr: result.moonRashiMr,
+        moonNakshatra: result.moonNakshatra,
+        moonPada: result.moonPada,
+        ayanamsa: result.ayanamsa,
+        planets: result.planets.map((p) => ({
+          id: p.id,
+          rashi: p.rashi,
+          rashiMr: p.rashiMr,
+          degreeDMS: p.degreeDMS,
+          house: p.house,
+          nakshatra: p.nakshatra,
+          pada: p.pada,
+          isRetrograde: p.isRetrograde,
+        })),
+        yogaSummary: result.analysis.yogas.filter((y) => y.strength !== "weak").slice(0, 8).map((y) => ({ name: y.nameEn, type: y.type })),
+        doshaSummary: result.analysis.doshas.filter((d) => d.present).map((d) => ({ name: d.nameEn, severity: d.severity })),
+        currentDashaSummary: (() => {
+          const now = new Date();
+          const d = result.dashas.find((d) => now >= new Date(d.startDate) && now <= new Date(d.endDate));
+          const ad = d?.antardashas?.find((a) => now >= new Date(a.startDate) && now <= new Date(a.endDate));
+          return d ? { mahadasha: d.lord, antardasha: ad?.lord, endsAt: d.endDate } : null;
+        })(),
+      }} />
     </div>
   );
 }
@@ -2239,7 +2662,7 @@ function KalsarpDoshSection({ data }: { data?: KalsarpDoshData }) {
   );
 }
 
-function ShadBalaSection({ data }: { data?: ShadBalaData }) {
+function ShadBalaSection({ data, chunk = "full", planetSlice }: { data?: ShadBalaData; chunk?: "full" | "top" | "bottom"; planetSlice?: [number, number] }) {
   const { t, lang } = useLang();
   if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
   const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
@@ -2252,8 +2675,12 @@ function ShadBalaSection({ data }: { data?: ShadBalaData }) {
     v === "weak" ? "#c97226" :
     "#b91c1c";
 
+  const showTop = chunk === "full" || chunk === "top";
+  const showBottom = chunk === "full" || chunk === "bottom";
+
   return (
     <div className="print-avoid-break">
+      {showTop && <>
       {/* Ornate traditional header */}
       <div className="text-center mb-5" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843", borderRadius: "12px", padding: "14px 12px" }}>
         <div className="text-[10px] tracking-widest text-[#5c1a1a]/70 mb-1">॥ श्रीगणेशाय नमः ॥</div>
@@ -2343,15 +2770,16 @@ function ShadBalaSection({ data }: { data?: ShadBalaData }) {
           ))}
         </div>
       </div>
+      </>}
 
       {/* Remedies for weak planets */}
-      {data.planets.filter(p => !p.isStrong).length > 0 && (
+      {showBottom && data.planets.filter(p => !p.isStrong).length > 0 && (
         <div className="mt-6">
           <h3 className="text-center text-[14px] font-bold mb-3 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
             ॥ {t("क्षीण ग्रहांसाठी शांती उपाय", "Shanti Upaya for Weak Planets", "क्षीण ग्रहों के लिए शांति उपाय")} ॥
           </h3>
           <div className="space-y-4">
-            {data.planets.filter(p => !p.isStrong && p.remediesMr && p.remediesMr.length).map((p) => {
+            {data.planets.filter(p => !p.isStrong && p.remediesMr && p.remediesMr.length).slice(planetSlice?.[0] ?? 0, planetSlice?.[1]).map((p) => {
               const remedies = lang === "en" ? p.remediesEn : lang === "hi" ? p.remediesHi : p.remediesMr;
               return (
                 <div key={p.id} className="p-4 rounded-xl" style={{
@@ -2382,7 +2810,7 @@ function ShadBalaSection({ data }: { data?: ShadBalaData }) {
   );
 }
 
-function AshtakvargaSection({ data }: { data?: AshtakvargaData }) {
+function AshtakvargaSection({ data, chunk = "full" }: { data?: AshtakvargaData; chunk?: "full" | "top" | "bottom" }) {
   const { t, lang } = useLang();
   if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
   const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
@@ -2394,8 +2822,12 @@ function AshtakvargaSection({ data }: { data?: AshtakvargaData }) {
     b >= 25 ? "#b8860b" :
     "#b91c1c";
 
+  const showTop = chunk === "full" || chunk === "top";
+  const showBottom = chunk === "full" || chunk === "bottom";
+
   return (
     <div className="print-avoid-break space-y-5">
+      {showTop && <>
       <OrnateHeader
         title={t("अष्टकवर्ग", "Ashtakavarga", "अष्टकवर्ग")}
         subtitle={t("भिन्नाष्टक + सर्वाष्टक · ८ स्त्रोतांचे बिंदू", "Bhinnashtaka + Sarvashtaka · 8-source bindu (points)", "भिन्नाष्टक + सर्वाष्टक · 8 स्रोतों के बिंदु")}
@@ -2475,6 +2907,8 @@ function AshtakvargaSection({ data }: { data?: AshtakvargaData }) {
         </div>
       </div>
 
+      </>}
+      {showBottom && <>
       {/* Bhinnashtakvarga — per-planet bindu table */}
       <div>
         <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
@@ -2552,11 +2986,12 @@ function AshtakvargaSection({ data }: { data?: AshtakvargaData }) {
           </div>
         </div>
       )}
+      </>}
     </div>
   );
 }
 
-function SarvatobhadraSection({ data }: { data?: SarvatobhadraData }) {
+function SarvatobhadraSection({ data, chunk = "full" }: { data?: SarvatobhadraData; chunk?: "full" | "top" | "bottom" }) {
   const { t, lang } = useLang();
   if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
   const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
@@ -2572,8 +3007,12 @@ function SarvatobhadraSection({ data }: { data?: SarvatobhadraData }) {
     data.rating === 3 ? "#b8860b" :
     data.rating === 2 ? "#c97226" : "#b91c1c";
 
+  const showTop = chunk === "full" || chunk === "top";
+  const showBottom = chunk === "full" || chunk === "bottom";
+
   return (
     <div className="print-avoid-break space-y-5">
+      {showTop && <>
       <OrnateHeader
         title={t("सर्वतोभद्र चक्र", "Sarvatobhadra Chakra", "सर्वतोभद्र चक्र")}
         subtitle={t("जन्म नक्षत्रापासून गोचर वेध · सध्याच्या शुभाशुभाचे निदान", "Transit vedha from Janma nakshatra · current auspiciousness", "जन्म नक्षत्र से गोचर वेध · वर्तमान शुभाशुभ")}
@@ -2641,6 +3080,8 @@ function SarvatobhadraSection({ data }: { data?: SarvatobhadraData }) {
         </div>
       </div>
 
+      </>}
+      {showBottom && <>
       {/* 27-cell nakshatra wheel */}
       <div>
         <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
@@ -2674,14 +3115,14 @@ function SarvatobhadraSection({ data }: { data?: SarvatobhadraData }) {
                   {lang === "mr" ? cell.nakshatraMr : cell.nakshatraEn}
                 </div>
                 {cell.vedhaType && (
-                  <div className="text-[8px] italic leading-tight" style={{ color: isAuspicious ? "#1d7d3a" : isInauspicious ? "#b91c1c" : "rgba(92,26,26,0.6)" }}>
+                  <div className="text-[10px] italic leading-tight" style={{ color: isAuspicious ? "#1d7d3a" : isInauspicious ? "#b91c1c" : "rgba(92,26,26,0.6)" }}>
                     {cell.vedhaType}
                   </div>
                 )}
                 {cell.transitPlanets.length > 0 && (
                   <div className="absolute bottom-0.5 right-0.5 flex flex-wrap gap-0.5 max-w-[40px] justify-end">
                     {cell.transitPlanets.map((p) => (
-                      <span key={p} className="text-[9px] font-bold px-1 rounded leading-tight" style={{
+                      <span key={p} className="text-[10px] font-bold px-1 rounded leading-tight" style={{
                         background: "#3d0c0c", color: "#d4a843", border: "1px solid #d4a843", fontFamily: "serif",
                       }}>
                         {PLANET_ABBR[p] ?? p.slice(0, 2)}
@@ -2715,6 +3156,7 @@ function SarvatobhadraSection({ data }: { data?: SarvatobhadraData }) {
           </ul>
         </div>
       )}
+      </>}
     </div>
   );
 }
@@ -2777,13 +3219,16 @@ function BirthPanchangSection({ data, balance }: { data?: EnhancementsData["birt
   );
 }
 
-function JaiminiSection({ data }: { data?: JaiminiData }) {
+function JaiminiSection({ data, chunk = "full" }: { data?: JaiminiData; chunk?: "full" | "top" | "bottom" }) {
   const { t, lang } = useLang();
   if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
   const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
   const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+  const showTop = chunk === "full" || chunk === "top";
+  const showBottom = chunk === "full" || chunk === "bottom";
   return (
     <div className="print-avoid-break space-y-5">
+      {showTop && <>
       <OrnateHeader
         title={t("आत्मकारक व इष्टदेवता", "Atmakaraka & Ishta Devata", "आत्मकारक व इष्टदेवता")}
         subtitle={t("जैमिनी सूत्रानुसार आत्म्याचा कारक व उपास्य देव", "Per Jaimini Sutras — soul significator and personal deity", "जैमिनी सूत्र — आत्मा कारक व उपास्य देव")}
@@ -2831,6 +3276,8 @@ function JaiminiSection({ data }: { data?: JaiminiData }) {
         </p>
       </div>
 
+      </>}
+      {showBottom && <>
       {/* Karakamsha */}
       <div className="p-4 rounded-xl text-center" style={{ background: "#FFFDF5", border: "1.5px solid #d4a843" }}>
         <h4 className="text-[13px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
@@ -2880,6 +3327,7 @@ function JaiminiSection({ data }: { data?: JaiminiData }) {
           </table>
         </div>
       </div>
+      </>}
     </div>
   );
 }
@@ -3201,14 +3649,19 @@ function TimingWindowsTable({ windows, lang, t }: { windows: TimingWindowData[];
   );
 }
 
-function MarriageTimingSection({ data }: { data?: MarriageTimingData }) {
+function MarriageTimingSection({ data, chunk = "full", windowSlice }: { data?: MarriageTimingData; chunk?: "full" | "header" | "windows" | "remedies"; windowSlice?: [number, number] }) {
   const { t, lang } = useLang();
   if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
   const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
   const pickArr = (mr: string[], en: string[], hi: string[]) => (lang === "en" ? en : lang === "hi" ? hi : mr);
   const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+  const showHeader = chunk === "full" || chunk === "header";
+  const showWindows = chunk === "full" || chunk === "windows";
+  const showRemedies = chunk === "full" || chunk === "remedies";
+  const windowsToShow = windowSlice ? data.windows.slice(windowSlice[0], windowSlice[1]) : data.windows;
   return (
     <div className="print-avoid-break space-y-5">
+      {showHeader && <>
       <OrnateHeader
         title={t("विवाह काल विचार", "Marriage Timing (Vivaha Kala)", "विवाह काल विचार")}
         subtitle={t("शुक्र + सप्तमेश दशा विश्लेषणातून अनुकूल वेळा", "Favourable periods from Venus + 7th-lord dasha analysis", "शुक्र + सप्तमेश दशा विश्लेषण")}
@@ -3224,14 +3677,18 @@ function MarriageTimingSection({ data }: { data?: MarriageTimingData }) {
           <span><b>{t("अनुमानित वय", "Predicted age", "अनुमानित आयु")}:</b> <span className="text-[#3d0c0c] font-bold">{lang === "mr" ? data.predictedAgeRange : data.predictedAgeRangeEn}</span></span>
         </div>
       </div>
+      </>}
 
+      {showWindows && (
       <div>
         <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
           ॥ {t("शुभ दशा काळ", "Favourable Dasha Windows", "शुभ दशा काल")} ॥
         </h3>
-        <TimingWindowsTable windows={data.windows} lang={lang} t={t} />
+        <TimingWindowsTable windows={windowsToShow} lang={lang} t={t} />
       </div>
+      )}
 
+      {showRemedies && (
       <div className="p-4 rounded-xl" style={{ background: "#FFFDF5", border: "2px double #d4a843" }}>
         <h3 className="text-center text-[14px] font-bold mb-3 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
           ॥ {t("विवाह उपाय", "Vivaha Upaya", "विवाह उपाय")} ॥
@@ -3245,18 +3702,23 @@ function MarriageTimingSection({ data }: { data?: MarriageTimingData }) {
           ))}
         </ul>
       </div>
+      )}
     </div>
   );
 }
 
-function CareerTimingSection({ data }: { data?: CareerTimingData }) {
+function CareerTimingSection({ data, chunk = "full", windowSlice }: { data?: CareerTimingData; chunk?: "full" | "header" | "windows"; windowSlice?: [number, number] }) {
   const { t, lang } = useLang();
   if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
   const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
   const pickArr = (mr: string[], en: string[], hi: string[]) => (lang === "en" ? en : lang === "hi" ? hi : mr);
   const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+  const showHeader = chunk === "full" || chunk === "header";
+  const showWindows = chunk === "full" || chunk === "windows";
+  const windowsToShow = windowSlice ? data.windows.slice(windowSlice[0], windowSlice[1]) : data.windows;
   return (
     <div className="print-avoid-break space-y-5">
+      {showHeader && <>
       <OrnateHeader
         title={t("करिअर काल विचार", "Career Timing (Karma Kala)", "करियर काल विचार")}
         subtitle={t("दशमेश + कर्म कारक दशा विश्लेषणातून उन्नती काळ", "Ascent periods from 10th-lord + karma karaka dasha", "दशमेश + कर्म कारक दशा")}
@@ -3284,26 +3746,32 @@ function CareerTimingSection({ data }: { data?: CareerTimingData }) {
           ))}
         </ul>
       </div>
+      </>}
 
+      {showWindows && (
       <div>
         <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
           ॥ {t("करिअर उन्नती दशा काळ", "Career Ascent Dasha Windows", "करियर उन्नति दशा काल")} ॥
         </h3>
-        <TimingWindowsTable windows={data.windows} lang={lang} t={t} />
+        <TimingWindowsTable windows={windowsToShow} lang={lang} t={t} />
       </div>
+      )}
     </div>
   );
 }
 
-function DeepDashaSection({ data }: { data?: DeepDashaData }) {
+function DeepDashaSection({ data, chunk = "full" }: { data?: DeepDashaData; chunk?: "full" | "top" | "bottom" }) {
   const { t, lang } = useLang();
   if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
   const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
   const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
   const formatDate = (s: string) => new Date(s).toLocaleDateString(lang === "mr" ? "mr-IN" : "en-IN", { year: "numeric", month: "short", day: "numeric" });
+  const showTop = chunk === "full" || chunk === "top";
+  const showBottom = chunk === "full" || chunk === "bottom";
 
   return (
     <div className="print-avoid-break space-y-5">
+      {showTop && <>
       <OrnateHeader
         title={t("प्रत्यंतर व सूक्ष्म दशा", "Pratyantar & Sookshma Dasha", "प्रत्यंतर व सूक्ष्म दशा")}
         subtitle={t("सध्याच्या अंतर्दशेतील तिसरा व चौथा स्तर दशा विश्लेषण", "Level 3 & 4 sub-periods within current antardasha", "वर्तमान अंतर्दशा में 3rd व 4th स्तर")}
@@ -3385,6 +3853,8 @@ function DeepDashaSection({ data }: { data?: DeepDashaData }) {
         </div>
       </div>
 
+      </>}
+      {showBottom && <>
       {/* Current pratyantar's sookshma breakdown */}
       {data.currentPratyantar?.sookshmas && data.currentPratyantar.sookshmas.length > 0 && (
         <div>
@@ -3418,6 +3888,7 @@ function DeepDashaSection({ data }: { data?: DeepDashaData }) {
           ॥ {pick(data.nextMilestoneMr, data.nextMilestoneEn, data.nextMilestoneHi)} ॥
         </p>
       )}
+      </>}
     </div>
   );
 }
@@ -3511,15 +3982,18 @@ function NamesSection({ data }: { data?: NamesSuggestionData }) {
   );
 }
 
-function UpagrahaSection({ data }: { data?: UpagrahaData[] }) {
+function UpagrahaSection({ data, chunk = "full" }: { data?: UpagrahaData[]; chunk?: "full" | "top" | "bottom" }) {
   const { t, lang } = useLang();
   if (!data || data.length === 0) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
   const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
   const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
   const dayBirth = data[0]?.isDayBirth;
+  const showTop = chunk === "full" || chunk === "top";
+  const showBottom = chunk === "full" || chunk === "bottom";
 
   return (
     <div className="print-avoid-break space-y-5">
+      {showTop && <>
       <OrnateHeader
         title={t("उपग्रह", "Upagrahas (Sub-planets)", "उपग्रह")}
         subtitle={t("गुलिक, मांदी, यमकंटक, काल व इतर उपग्रहांची राशी व भाव स्थिती", "Gulika, Mandi, Yamakantaka, Kala and other sub-planets — rashi and house positions", "गुलिक, मांदी, यमकंटक आदि उपग्रह")}
@@ -3570,7 +4044,9 @@ function UpagrahaSection({ data }: { data?: UpagrahaData[] }) {
         </table>
       </div>
 
-      {/* Upagraha descriptions */}
+      </>}
+      {showBottom && (
+      /* Upagraha descriptions */
       <div className="space-y-3">
         {data.map((u) => (
           <div key={`desc-${u.id}`} className="p-3 rounded-xl" style={{
@@ -3587,11 +4063,12 @@ function UpagrahaSection({ data }: { data?: UpagrahaData[] }) {
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 }
 
-function GocharNaadiSection({ data }: { data?: GocharTransitData[] }) {
+function GocharNaadiSection({ data, chunk = "full" }: { data?: GocharTransitData[]; chunk?: "full" | "top" | "bottom" }) {
   const { t, lang } = useLang();
   if (!data || data.length === 0) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
   const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
@@ -3606,9 +4083,12 @@ function GocharNaadiSection({ data }: { data?: GocharTransitData[] }) {
   const neuCount = data.length - favCount - chalCount;
 
   const today = new Date().toLocaleDateString(lang === "mr" ? "mr-IN" : "en-IN", { year: "numeric", month: "long", day: "numeric" });
+  const showTop = chunk === "full" || chunk === "top";
+  const showBottom = chunk === "full" || chunk === "bottom";
 
   return (
     <div className="print-avoid-break space-y-5">
+      {showTop && <>
       <OrnateHeader
         title={t("गोचर नाडी — सध्याचे संक्रमण", "Gochar Naadi — Current Transits", "गोचर नाडी — वर्तमान संक्रमण")}
         subtitle={t("सध्याच्या ग्रहस्थितीचा जन्म लग्न व चंद्र यांवरील प्रभाव", "Current planetary positions overlaid on natal Lagna and Moon", "वर्तमान ग्रह स्थिति का जन्म लग्न व चंद्र पर प्रभाव")}
@@ -3662,7 +4142,9 @@ function GocharNaadiSection({ data }: { data?: GocharTransitData[] }) {
         </table>
       </div>
 
-      {/* Per-planet descriptions */}
+      </>}
+      {showBottom && (
+      /* Per-planet descriptions */
       <div className="space-y-2">
         {data.map((tp) => (
           <div key={`desc-${tp.id}`} className="p-3 rounded-xl" style={{
@@ -3679,6 +4161,7 @@ function GocharNaadiSection({ data }: { data?: GocharTransitData[] }) {
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 }

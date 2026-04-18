@@ -99,6 +99,7 @@ function AdminKundliGenerator() {
     const params = new URLSearchParams({
       name: form.name, year: form.year, month: form.month, day: form.day,
       hour: String(hour), minute: form.minute, lat: form.latitude, lng: form.longitude, tz: "5.5", place: form.city,
+      admin: "1",
     });
     window.open(`/kundli/result?${params.toString()}`, "_blank");
   };

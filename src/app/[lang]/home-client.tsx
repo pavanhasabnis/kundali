@@ -277,7 +277,7 @@ export default function PreviewHomeClient() {
             </div>
 
             {/* Stats — expanded to cover all services */}
-            <div className="grid grid-cols-5 gap-4 max-w-2xl mx-auto">
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 sm:gap-4 max-w-2xl mx-auto">
               {[
                 { v: 9, l: t("ग्रह", "Planets", "ग्रह") },
                 { v: 12, l: t("राशी", "Rashis", "राशि") },

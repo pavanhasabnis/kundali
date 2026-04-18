@@ -51,6 +51,7 @@
     break-after: avoid;
   }
 
+
   /* Header on each page */
   .print-page-header {
     background: linear-gradient(135deg, #3d0c0c, #5c1a1a, #3d0c0c) !important;

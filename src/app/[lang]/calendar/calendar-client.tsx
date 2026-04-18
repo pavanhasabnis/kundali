@@ -196,18 +196,18 @@ export default function CalendarPageClient() {
                         </div>
 
                         {/* Tithi */}
-                        <p className="text-[9px] mt-1 leading-tight truncate" style={{ color: isSunday ? "#b91c1c" : "#6b5b3e" }}>
+                        <p className="text-[10px] mt-1 leading-tight truncate" style={{ color: isSunday ? "#b91c1c" : "#6b5b3e" }}>
                           {d.tithi}
                         </p>
 
                         {/* Nakshatra */}
-                        <p className="text-[8px] leading-tight truncate text-stone-400">
+                        <p className="text-[10px] leading-tight truncate text-stone-400">
                           {d.nakshatra}
                         </p>
 
                         {/* Festival name */}
                         {d.festivals.length > 0 && (
-                          <p className="text-[8px] font-bold mt-0.5 truncate" style={{ color: "#d4a843" }}>
+                          <p className="text-[10px] font-bold mt-0.5 truncate" style={{ color: "#d4a843" }}>
                             {d.festivals[0].nameMr}
                           </p>
                         )}
