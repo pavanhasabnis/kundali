@@ -37,6 +37,17 @@ interface EnhancementsData {
   marriageAnalysis: { venusMr: string; venusEn: string; seventhMr: string; seventhEn: string; timingMr: string; timingEn: string };
   careerAnalysis: { careerTypeMr: string; careerTypeEn: string; jobOrBusinessMr: string; jobOrBusinessEn: string };
   childrenAnalysis: { yogaMr: string; yogaEn: string; timingMr: string; timingEn: string };
+  housePredictions?: { titleMr: string; titleEn: string; bodyMr: string; bodyEn: string }[];
+  planetBhavaPredictions?: { titleMr: string; titleEn: string; bodyMr: string; bodyEn: string }[];
+  planetRashiPredictions?: { titleMr: string; titleEn: string; bodyMr: string; bodyEn: string }[];
+  nakshatraDeep?: { mr: string; en: string } | null;
+  lagnaLifeAreas?: { titleMr: string; titleEn: string; bodyMr: string; bodyEn: string }[];
+  panchangFal?: {
+    tithi: { mr: string; en: string } | null;
+    vaar: { mr: string; en: string } | null;
+    masa: { mr: string; en: string } | null;
+    ritu: { mr: string; en: string } | null;
+  };
 }
 
 interface MangalDoshData {
@@ -831,7 +842,7 @@ function KundliResultContent() {
               {activeTab === "upagrahas" && <UpagrahaSection data={result.upagrahas} />}
               {activeTab === "gochar-naadi" && <GocharNaadiSection data={result.gocharNaadi} />}
               {activeTab === "vimshopak-bala" && <VimshopakBalaSection data={result.vimshopakBala} />}
-              {activeTab === "predictions" && <PredictionSection predictions={result.analysis.housePredictions} />}
+              {activeTab === "predictions" && <PredictionSection predictions={result.analysis.housePredictions} deepPredictions={result.enhancements?.housePredictions} planetBhava={result.enhancements?.planetBhavaPredictions} planetRashi={result.enhancements?.planetRashiPredictions} nakshatraDeep={result.enhancements?.nakshatraDeep} lagnaLifeAreas={result.enhancements?.lagnaLifeAreas} panchangFal={result.enhancements?.panchangFal} />}
               {activeTab === "dasha" && <DashaSection interp={result.analysis.currentDasha} />}
               {activeTab === "timeline" && <TimelineSection dashas={result.dashas} />}
               {activeTab === "remedies" && <RemedySection remedies={result.analysis.remedies} />}
@@ -1673,6 +1684,59 @@ function KundliResultContent() {
         <PrintPage>
           <PredictionSection predictions={result.analysis.housePredictions.slice(8, 12)} />
         </PrintPage>
+
+        {/* ══════ Deep BPHS House-Lord predictions: 4/page ══════ */}
+        {result.enhancements?.housePredictions && result.enhancements.housePredictions.length > 0 && (
+          <>
+            <PrintPage>
+              <DeepPredictionSection predictions={result.enhancements.housePredictions.slice(0, 4)} />
+            </PrintPage>
+            <PrintPage>
+              <DeepPredictionSection predictions={result.enhancements.housePredictions.slice(4, 8)} />
+            </PrintPage>
+            <PrintPage>
+              <DeepPredictionSection predictions={result.enhancements.housePredictions.slice(8, 12)} />
+            </PrintPage>
+          </>
+        )}
+
+        {/* ══════ Planet-in-Bhava predictions: 5/page ══════ */}
+        {result.enhancements?.planetBhavaPredictions && result.enhancements.planetBhavaPredictions.length > 0 && (
+          <>
+            <PrintPage>
+              <DeepPredictionSection predictions={result.enhancements.planetBhavaPredictions.slice(0, 5)} title="ग्रहांच्या भाव-स्थिती फल" subtitle="Planets in Bhavas (BPHS)" />
+            </PrintPage>
+            <PrintPage>
+              <DeepPredictionSection predictions={result.enhancements.planetBhavaPredictions.slice(5, 9)} title="ग्रहांच्या भाव-स्थिती फल" subtitle="Planets in Bhavas (BPHS)" />
+            </PrintPage>
+          </>
+        )}
+
+        {/* ══════ Planet-in-Rashi predictions: 5/page ══════ */}
+        {result.enhancements?.planetRashiPredictions && result.enhancements.planetRashiPredictions.length > 0 && (
+          <>
+            <PrintPage>
+              <DeepPredictionSection predictions={result.enhancements.planetRashiPredictions.slice(0, 5)} title="ग्रहांच्या राशी-स्थिती फल" subtitle="Planets in Rashis (BPHS)" />
+            </PrintPage>
+            <PrintPage>
+              <DeepPredictionSection predictions={result.enhancements.planetRashiPredictions.slice(5, 9)} title="ग्रहांच्या राशी-स्थिती फल" subtitle="Planets in Rashis (BPHS)" />
+            </PrintPage>
+          </>
+        )}
+
+        {/* ══════ Lagna Life Areas: 6 per page ══════ */}
+        {result.enhancements?.lagnaLifeAreas && result.enhancements.lagnaLifeAreas.length > 0 && (
+          <PrintPage>
+            <DeepPredictionSection predictions={result.enhancements.lagnaLifeAreas} title="लग्नानुसार जीवन क्षेत्रे" subtitle="Lagna Life Areas (6 areas)" />
+          </PrintPage>
+        )}
+
+        {/* ══════ Nakshatra Deep + Panchang Fal: combined page ══════ */}
+        {(result.enhancements?.nakshatraDeep || result.enhancements?.panchangFal) && (
+          <PrintPage>
+            <PanchangNakshatraFalPage nakshatraDeep={result.enhancements?.nakshatraDeep} panchangFal={result.enhancements?.panchangFal} />
+          </PrintPage>
+        )}
 
         {/* ══════ PAGE 8: Current Dasha ══════ */}
         <PrintPage>
@@ -4355,7 +4419,20 @@ function VimshopakBalaSection({ data }: { data?: VimshopakPlanetData[] }) {
   );
 }
 
-function PredictionSection({ predictions }: { predictions: HousePredictionData[] }) {
+function PredictionSection({ predictions, deepPredictions, planetBhava, planetRashi, nakshatraDeep, lagnaLifeAreas, panchangFal }: {
+  predictions: HousePredictionData[];
+  deepPredictions?: { titleMr: string; titleEn: string; bodyMr: string; bodyEn: string }[];
+  planetBhava?: { titleMr: string; titleEn: string; bodyMr: string; bodyEn: string }[];
+  planetRashi?: { titleMr: string; titleEn: string; bodyMr: string; bodyEn: string }[];
+  nakshatraDeep?: { mr: string; en: string } | null;
+  lagnaLifeAreas?: { titleMr: string; titleEn: string; bodyMr: string; bodyEn: string }[];
+  panchangFal?: {
+    tithi: { mr: string; en: string } | null;
+    vaar: { mr: string; en: string } | null;
+    masa: { mr: string; en: string } | null;
+    ritu: { mr: string; en: string } | null;
+  };
+}) {
   const { t, lang } = useLang();
   const n = (v: string | number) => lang === "mr" ? toMr(v) : String(v);
   return (
@@ -4386,6 +4463,176 @@ function PredictionSection({ predictions }: { predictions: HousePredictionData[]
             </div>
             <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a" }}>
               {t(p.predictionMr, p.predictionEn)}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {deepPredictions && deepPredictions.length > 0 && (
+        <div className="mt-8">
+          <DeepPredictionSection predictions={deepPredictions} title={t("भाव-स्वामींचे फल", "House-Lord Placements", "भाव-स्वामी फल")} subtitle={t("शास्त्राधारित भविष्यवाणी (बृ.पा.हो.)", "BPHS-based per house lord", "बृ.पा.हो. आधारित")} />
+        </div>
+      )}
+
+      {planetBhava && planetBhava.length > 0 && (
+        <div className="mt-8">
+          <DeepPredictionSection predictions={planetBhava} title={t("ग्रहांच्या भाव-स्थिती फल", "Planets in Bhavas", "ग्रहों की भाव स्थिति")} subtitle={t("नवग्रहांचे प्रत्येक भावात फल", "Each planet's bhava placement", "प्रत्येक ग्रह का भाव फल")} />
+        </div>
+      )}
+
+      {planetRashi && planetRashi.length > 0 && (
+        <div className="mt-8">
+          <DeepPredictionSection predictions={planetRashi} title={t("ग्रहांच्या राशी-स्थिती फल", "Planets in Rashis", "ग्रहों की राशि स्थिति")} subtitle={t("नवग्रहांची राशी स्थिती व फल", "Each planet's sign placement", "प्रत्येक ग्रह का राशि फल")} />
+        </div>
+      )}
+
+      {nakshatraDeep && (
+        <div className="mt-8 print-avoid-break">
+          <OrnateHeader
+            title={t("जन्म नक्षत्र फल", "Janma Nakshatra Phala", "जन्म नक्षत्र फल")}
+            subtitle={t("शास्त्रानुसार सखोल व्यक्तिमत्त्व विश्लेषण", "Classical in-depth personality analysis", "गहन व्यक्तित्व विश्लेषण")}
+          />
+          <div className="p-4 rounded-lg" style={{
+            background: "linear-gradient(180deg, #FFFDF5, #FFF4E0)",
+            border: "1px solid #d4a843",
+          }}>
+            <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a" }}>
+              {t(nakshatraDeep.mr, nakshatraDeep.en)}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {lagnaLifeAreas && lagnaLifeAreas.length > 0 && (
+        <div className="mt-8">
+          <DeepPredictionSection predictions={lagnaLifeAreas} title={t("लग्नानुसार जीवन क्षेत्रे", "Lagna Life Areas", "लग्नानुसार जीवन क्षेत्र")} subtitle={t("शारीरिक, मानसिक, शिक्षण, करिअर, विवाह, आर्थिक", "Physical, mental, education, career, marriage, finance", "६ क्षेत्रांचे विश्लेषण")} />
+        </div>
+      )}
+
+      {panchangFal && (panchangFal.tithi || panchangFal.vaar || panchangFal.masa || panchangFal.ritu) && (
+        <div className="mt-8 print-avoid-break">
+          <OrnateHeader
+            title={t("जन्म पंचांग फल", "Birth Panchang Phala", "जन्म पंचांग फल")}
+            subtitle={t("तिथि, वार, मास, ऋतू अनुसार फल", "Per tithi, day, month, season", "पंचांग-आधारित विश्लेषण")}
+          />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            {panchangFal.tithi && (
+              <div className="p-4 rounded-lg" style={{ background: "linear-gradient(180deg, #FFFDF5, #FFF4E0)", border: "1px solid #d4a843" }}>
+                <h5 className="font-bold text-sm mb-2" style={{ color: "#3d0c0c", fontFamily: "serif" }}>{t("जन्म तिथि फल", "Tithi")}</h5>
+                <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a" }}>{t(panchangFal.tithi.mr, panchangFal.tithi.en)}</p>
+              </div>
+            )}
+            {panchangFal.vaar && (
+              <div className="p-4 rounded-lg" style={{ background: "linear-gradient(180deg, #FFFDF5, #FFF4E0)", border: "1px solid #d4a843" }}>
+                <h5 className="font-bold text-sm mb-2" style={{ color: "#3d0c0c", fontFamily: "serif" }}>{t("जन्म वार फल", "Vaar")}</h5>
+                <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a" }}>{t(panchangFal.vaar.mr, panchangFal.vaar.en)}</p>
+              </div>
+            )}
+            {panchangFal.masa && (
+              <div className="p-4 rounded-lg" style={{ background: "linear-gradient(180deg, #FFFDF5, #FFF4E0)", border: "1px solid #d4a843" }}>
+                <h5 className="font-bold text-sm mb-2" style={{ color: "#3d0c0c", fontFamily: "serif" }}>{t("जन्म मास फल", "Masa")}</h5>
+                <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a" }}>{t(panchangFal.masa.mr, panchangFal.masa.en)}</p>
+              </div>
+            )}
+            {panchangFal.ritu && (
+              <div className="p-4 rounded-lg" style={{ background: "linear-gradient(180deg, #FFFDF5, #FFF4E0)", border: "1px solid #d4a843" }}>
+                <h5 className="font-bold text-sm mb-2" style={{ color: "#3d0c0c", fontFamily: "serif" }}>{t("जन्म ऋतू फल", "Ritu")}</h5>
+                <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a" }}>{t(panchangFal.ritu.mr, panchangFal.ritu.en)}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PanchangNakshatraFalPage({ nakshatraDeep, panchangFal }: {
+  nakshatraDeep?: { mr: string; en: string } | null;
+  panchangFal?: {
+    tithi: { mr: string; en: string } | null;
+    vaar: { mr: string; en: string } | null;
+    masa: { mr: string; en: string } | null;
+    ritu: { mr: string; en: string } | null;
+  };
+}) {
+  const { t } = useLang();
+  return (
+    <div className="print-avoid-break">
+      {nakshatraDeep && (
+        <>
+          <OrnateHeader
+            title={t("जन्म नक्षत्र फल", "Janma Nakshatra Phala", "जन्म नक्षत्र फल")}
+            subtitle={t("शास्त्रानुसार सखोल व्यक्तिमत्त्व विश्लेषण", "Classical in-depth personality analysis")}
+          />
+          <div className="p-4 rounded-lg mb-6" style={{ background: "linear-gradient(180deg, #FFFDF5, #FFF4E0)", border: "1px solid #d4a843" }}>
+            <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a" }}>
+              {t(nakshatraDeep.mr, nakshatraDeep.en)}
+            </p>
+          </div>
+        </>
+      )}
+      {panchangFal && (panchangFal.tithi || panchangFal.vaar || panchangFal.masa || panchangFal.ritu) && (
+        <>
+          <OrnateHeader
+            title={t("जन्म पंचांग फल", "Birth Panchang Phala", "जन्म पंचांग फल")}
+            subtitle={t("तिथि, वार, मास, ऋतू अनुसार फल", "Per tithi, day, month, season")}
+          />
+          <div className="space-y-3">
+            {panchangFal.tithi && (
+              <div className="p-3 rounded-lg" style={{ background: "#FFFDF5", border: "1px solid #d4a843" }}>
+                <h5 className="font-bold text-sm mb-1" style={{ color: "#3d0c0c", fontFamily: "serif" }}>{t("तिथि फल", "Tithi")}</h5>
+                <p className="text-xs leading-relaxed" style={{ color: "#5c1a1a" }}>{t(panchangFal.tithi.mr, panchangFal.tithi.en)}</p>
+              </div>
+            )}
+            {panchangFal.vaar && (
+              <div className="p-3 rounded-lg" style={{ background: "#FFFDF5", border: "1px solid #d4a843" }}>
+                <h5 className="font-bold text-sm mb-1" style={{ color: "#3d0c0c", fontFamily: "serif" }}>{t("वार फल", "Vaar")}</h5>
+                <p className="text-xs leading-relaxed" style={{ color: "#5c1a1a" }}>{t(panchangFal.vaar.mr, panchangFal.vaar.en)}</p>
+              </div>
+            )}
+            {panchangFal.masa && (
+              <div className="p-3 rounded-lg" style={{ background: "#FFFDF5", border: "1px solid #d4a843" }}>
+                <h5 className="font-bold text-sm mb-1" style={{ color: "#3d0c0c", fontFamily: "serif" }}>{t("मास फल", "Masa")}</h5>
+                <p className="text-xs leading-relaxed" style={{ color: "#5c1a1a" }}>{t(panchangFal.masa.mr, panchangFal.masa.en)}</p>
+              </div>
+            )}
+            {panchangFal.ritu && (
+              <div className="p-3 rounded-lg" style={{ background: "#FFFDF5", border: "1px solid #d4a843" }}>
+                <h5 className="font-bold text-sm mb-1" style={{ color: "#3d0c0c", fontFamily: "serif" }}>{t("ऋतू फल", "Ritu")}</h5>
+                <p className="text-xs leading-relaxed" style={{ color: "#5c1a1a" }}>{t(panchangFal.ritu.mr, panchangFal.ritu.en)}</p>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function DeepPredictionSection({ predictions, title, subtitle }: {
+  predictions: { titleMr: string; titleEn: string; bodyMr: string; bodyEn: string }[];
+  title?: string;
+  subtitle?: string;
+}) {
+  const { t } = useLang();
+  return (
+    <div className="print-avoid-break">
+      <OrnateHeader
+        title={title || t("भाव-स्वामींचे फल", "House-Lord Placements", "भाव-स्वामी फल")}
+        subtitle={subtitle || t("बृहत् पराशर होरा शास्त्रानुसार", "Per Brihat Parashara Hora Shastra", "बृ.पा.हो. आधारित")}
+      />
+      <div className="space-y-3">
+        {predictions.map((dp, i) => (
+          <div key={i} className="print-avoid-break p-4 rounded-lg" style={{
+            background: "linear-gradient(180deg, #FFFDF5, #FFF4E0)",
+            border: "1px solid #d4a843",
+          }}>
+            <h5 className="font-bold text-sm mb-2" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+              {t(dp.titleMr, dp.titleEn)}
+            </h5>
+            <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a" }}>
+              {t(dp.bodyMr, dp.bodyEn)}
             </p>
           </div>
         ))}

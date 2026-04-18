@@ -9,6 +9,19 @@ import { RASHIS, NAKSHATRAS, DASHA_ORDER, TOTAL_DASHA_YEARS } from "./constants"
 import type { KundliResult, PlanetPosition } from "./calculator";
 import { calculatePanchang } from "./calculator";
 import type { DivisionalChart } from "./divisional";
+import {
+  renderHouseLordPrediction,
+  renderPlanetInBhava,
+  renderPlanetInRashi,
+  getNakshatraDeep,
+  getYogaText,
+  renderLagnaLifeAreas,
+  getTithiFal,
+  getVaarFal,
+  getMasaFal,
+  getRituFal,
+} from "./content";
+import type { RenderedPrediction, BilingualSnippet } from "./content";
 
 // ─── Rashi Akshar (Name Letters) ───────────────────────────────
 // Based on Moon nakshatra + pada — standard Vedic naming convention
@@ -438,6 +451,111 @@ const RASHI_PERSONALITY: Record<number, { mr: string; en: string }> = {
   11: { mr: "अंतर्ज्ञानी, कलात्मक, आध्यात्मिक, दयाळू.", en: "Intuitive, artistic, spiritual, compassionate." },
 };
 
+/** Build 12 house-lord predictions for a kundli (one per house). */
+export function buildHousePredictions(kundli: KundliResult): RenderedPrediction[] {
+  const predictions: RenderedPrediction[] = [];
+  for (let h = 0; h < 12; h++) {
+    const rashiIdx = (kundli.lagnaRashiIndex + h) % 12;
+    const lord = RASHIS[rashiIdx].lord;
+    const lordPlanet = kundli.planets.find(p => p.id === lord);
+    if (!lordPlanet) continue;
+    const rendered = renderHouseLordPrediction(h + 1, lordPlanet.house, lord);
+    if (rendered) predictions.push(rendered);
+  }
+  return predictions;
+}
+
+const PREDICTION_PLANET_ORDER = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Rahu", "Ketu"];
+
+/** Build planet-in-bhava predictions (9 planets). */
+export function buildPlanetBhavaPredictions(kundli: KundliResult): RenderedPrediction[] {
+  const out: RenderedPrediction[] = [];
+  for (const id of PREDICTION_PLANET_ORDER) {
+    const p = kundli.planets.find(pp => pp.id === id);
+    if (!p) continue;
+    const rendered = renderPlanetInBhava(id, p.house);
+    if (rendered) out.push(rendered);
+  }
+  return out;
+}
+
+/** Build planet-in-rashi predictions (9 planets). */
+export function buildPlanetRashiPredictions(kundli: KundliResult): RenderedPrediction[] {
+  const out: RenderedPrediction[] = [];
+  for (const id of PREDICTION_PLANET_ORDER) {
+    const p = kundli.planets.find(pp => pp.id === id);
+    if (!p) continue;
+    const rendered = renderPlanetInRashi(id, p.rashiIndex);
+    if (rendered) out.push(rendered);
+  }
+  return out;
+}
+
+/** Build nakshatra deep-dive for native's moon nakshatra. */
+export function buildNakshatraDeep(kundli: KundliResult): BilingualSnippet | null {
+  return getNakshatraDeep(kundli.moonNakshatraIndex);
+}
+
+/** Build yoga text map keyed by slug for every detected yoga. */
+export interface YogaWithText {
+  slug: string;
+  nameMr: string;
+  nameEn: string;
+  textMr: string;
+  textEn: string;
+}
+
+export function buildYogaTexts(detectedYogaSlugs: string[], yogaMeta: { slug: string; nameMr: string; nameEn: string }[]): YogaWithText[] {
+  const out: YogaWithText[] = [];
+  for (const slug of detectedYogaSlugs) {
+    const text = getYogaText(slug);
+    const meta = yogaMeta.find(y => y.slug === slug);
+    if (!text || !meta) continue;
+    out.push({ slug, nameMr: meta.nameMr, nameEn: meta.nameEn, textMr: text.mr, textEn: text.en });
+  }
+  return out;
+}
+
+/** Build lagna life-areas predictions (6 per kundli). */
+export function buildLagnaLifeAreas(kundli: KundliResult): RenderedPrediction[] {
+  return renderLagnaLifeAreas(kundli.lagnaRashiIndex);
+}
+
+/** Build panchang-fal: tithi/vaar/masa/ritu commentary. */
+export interface PanchangFal {
+  tithi: BilingualSnippet | null;
+  vaar: BilingualSnippet | null;
+  masa: BilingualSnippet | null;
+  ritu: BilingualSnippet | null;
+}
+
+export function buildPanchangFal(kundli: KundliResult, birthPanchang: BirthPanchang): PanchangFal {
+  const { birthInput } = kundli;
+  const date = new Date(birthInput.year, birthInput.month - 1, birthInput.day);
+  const vaarIdx = date.getDay(); // 0=Sun..6=Sat
+  const sunRashi = kundli.planets.find(p => p.id === "Sun")?.rashiIndex ?? 0;
+  const masaIdx = sunRashi + 1; // 1..12
+  const rituIdx = Math.ceil(masaIdx / 2); // 1..6
+
+  // Extract tithi index from birthPanchang.tithi string (already 1-15 in shukla, or 1-15 of krishna)
+  // Note: birthPanchang.tithi has format "शुक्ल पक्ष सप्तमी" — strip paksha prefix
+  const tithiNamesOrdered = ["प्रतिपदा", "द्वितीया", "तृतीया", "चतुर्थी", "पंचमी", "षष्ठी", "सप्तमी", "अष्टमी", "नवमी", "दशमी", "एकादशी", "द्वादशी", "त्रयोदशी", "चतुर्दशी", "पूर्णिमा", "अमावस्या"];
+  let tithiIdx = 1;
+  for (let i = 0; i < tithiNamesOrdered.length; i++) {
+    if (birthPanchang.tithi.includes(tithiNamesOrdered[i])) {
+      tithiIdx = i === 15 ? 15 : i + 1; // Amavasya maps to same key as Purnima (15)
+      break;
+    }
+  }
+
+  return {
+    tithi: getTithiFal(Math.min(tithiIdx, 15)),
+    vaar: getVaarFal(vaarIdx),
+    masa: getMasaFal(masaIdx),
+    ritu: getRituFal(rituIdx),
+  };
+}
+
 export function analyzeLagna(kundli: KundliResult): LagnaAnalysis {
   const personality = RASHI_PERSONALITY[kundli.lagnaRashiIndex] || { mr: "—", en: "—" };
   const lagnaLord = RASHIS[kundli.lagnaRashiIndex].lord;
@@ -857,6 +975,12 @@ export interface KundliEnhancements {
   marriageAnalysis: MarriageAnalysis;
   careerAnalysis: CareerAnalysis;
   childrenAnalysis: ChildrenAnalysis;
+  housePredictions: RenderedPrediction[];
+  planetBhavaPredictions: RenderedPrediction[];
+  planetRashiPredictions: RenderedPrediction[];
+  nakshatraDeep: BilingualSnippet | null;
+  lagnaLifeAreas: RenderedPrediction[];
+  panchangFal: PanchangFal;
 }
 
 export function calculateAllEnhancements(
@@ -866,8 +990,9 @@ export function calculateAllEnhancements(
   const { birthInput } = kundli;
 
   const moonSidLong = kundli.planets.find(p => p.id === "Moon")!.siderealLongitude;
+  const birthPanchang = calculateBirthPanchang(birthInput.year, birthInput.month, birthInput.day, birthInput.latitude, birthInput.longitude, birthInput.timezone, birthInput.hour, birthInput.minute, kundli.moonPada);
   return {
-    birthPanchang: calculateBirthPanchang(birthInput.year, birthInput.month, birthInput.day, birthInput.latitude, birthInput.longitude, birthInput.timezone, birthInput.hour, birthInput.minute, kundli.moonPada),
+    birthPanchang,
     rashiAkshar: getRashiAkshar(kundli.moonNakshatra, kundli.moonPada),
     balanceDasha: calculateBalanceDasha(kundli.moonNakshatraIndex, moonSidLong),
     ashtottariBalance: calculateAshtottariBalance(kundli.moonNakshatraIndex, moonSidLong),
@@ -886,5 +1011,11 @@ export function calculateAllEnhancements(
     marriageAnalysis: analyzeMarriage(kundli, divisionalCharts),
     careerAnalysis: analyzeCareer(kundli, divisionalCharts),
     childrenAnalysis: analyzeChildren(kundli),
+    housePredictions: buildHousePredictions(kundli),
+    planetBhavaPredictions: buildPlanetBhavaPredictions(kundli),
+    planetRashiPredictions: buildPlanetRashiPredictions(kundli),
+    nakshatraDeep: buildNakshatraDeep(kundli),
+    lagnaLifeAreas: buildLagnaLifeAreas(kundli),
+    panchangFal: buildPanchangFal(kundli, birthPanchang),
   };
 }
