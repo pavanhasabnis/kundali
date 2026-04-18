@@ -110,7 +110,9 @@ function scanDashas(dashas: DashaPeriod[], k: KundliResult, area: "marriage" | "
       if (!adPlanet) continue;
       const adScore = scorePlanetForArea(adPlanet, area, k);
       const combinedScore = Math.round((mdScore * 0.6 + adScore * 0.4) * 10) / 10;
-      if (combinedScore < minScore) continue;
+      // No score filter — show all age-eligible windows with color-coded strength.
+      // minScore retained for backward compatibility but treated as 0.
+      void minScore;
 
       const ageAtStart = Math.floor((new Date(ad.startDate).getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25));
       if (ageAtStart < 18 && area === "marriage") continue;  // skip pre-marriage-age windows

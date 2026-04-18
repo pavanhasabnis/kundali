@@ -3719,7 +3719,10 @@ function BhavaBalaSection({ data }: { data?: BhavaBalaData[] }) {
 
 function TimingWindowsTable({ windows, lang, t }: { windows: TimingWindowData[]; lang: string; t: (mr: string, en: string, hi?: string) => string }) {
   const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
-  const scoreColor = (s: number) => s >= 8 ? "#1d7d3a" : s >= 7 ? "#2d6b2d" : "#b8860b";
+  // Green 7+ = strong/favorable. Yellow 5-7 = moderate/mixed. Red <5 = weak/challenging.
+  const scoreColor = (s: number) => s >= 7 ? "#1d7d3a" : s >= 5 ? "#b8860b" : "#c0392b";
+  const scoreBg = (s: number) => s >= 7 ? "#e8f5e9" : s >= 5 ? "#fff8e1" : "#fdecea";
+  const scoreLabel = (s: number) => s >= 7 ? { mr: "अनुकूल", en: "Favourable", hi: "अनुकूल" } : s >= 5 ? { mr: "मध्यम", en: "Moderate", hi: "मध्यम" } : { mr: "आव्हान", en: "Challenging", hi: "चुनौतीपूर्ण" };
   const formatDate = (s: string) => {
     const d = new Date(s);
     return d.toLocaleDateString(lang === "mr" ? "mr-IN" : "en-IN", { year: "numeric", month: "short", day: "numeric" });
@@ -3734,32 +3737,51 @@ function TimingWindowsTable({ windows, lang, t }: { windows: TimingWindowData[];
     );
   }
   return (
-    <div className="space-y-3">
-      {windows.map((w, i) => (
-        <div key={i} className="p-3 rounded-xl" style={{
-          background: "linear-gradient(180deg, #FFFDF5, #FFF8E7)",
-          border: "1.5px solid #d4a843",
-          borderLeft: `4px solid ${scoreColor(w.score)}`,
-        }}>
-          <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
-            <p className="font-bold text-sm" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
-              ॥ {num(w.mahadashaLordMr)} – {num(w.antardashaLordMr)} ॥
-            </p>
-            <span className="text-[12px] font-bold italic px-2 py-0.5 rounded" style={{
-              color: scoreColor(w.score), background: "#FFFDF5", border: `1px solid ${scoreColor(w.score)}40`,
-              fontFamily: "serif",
+    <div>
+      {/* Legend */}
+      <div className="flex flex-wrap gap-3 text-[10px] mb-3 px-2" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+        <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded" style={{ background: "#1d7d3a" }} />{t("अनुकूल (७+)", "Favourable (7+)", "अनुकूल (7+)")}</span>
+        <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded" style={{ background: "#b8860b" }} />{t("मध्यम (५-७)", "Moderate (5-7)", "मध्यम (5-7)")}</span>
+        <span className="flex items-center gap-1"><span className="inline-block w-3 h-3 rounded" style={{ background: "#c0392b" }} />{t("आव्हान (<५)", "Challenging (<5)", "चुनौतीपूर्ण (<5)")}</span>
+      </div>
+      <div className="space-y-3">
+        {windows.map((w, i) => {
+          const lbl = scoreLabel(w.score);
+          return (
+            <div key={i} className="p-3 rounded-xl" style={{
+              background: scoreBg(w.score),
+              border: "1.5px solid #d4a843",
+              borderLeft: `4px solid ${scoreColor(w.score)}`,
             }}>
-              {num(w.score)}/{num(10)}
-            </span>
-          </div>
-          <p className="text-xs mb-1" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
-            {formatDate(w.startDate)} → {formatDate(w.endDate)} · {t("वय", "age", "आयु")} {num(w.ageAtStart)}
-          </p>
-          <p className="text-[12px] italic" style={{ color: "rgba(92,26,26,0.8)", fontFamily: "serif" }}>
-            {lang === "en" ? w.reasonEn : lang === "hi" ? w.reasonHi : w.reasonMr}
-          </p>
-        </div>
-      ))}
+              <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
+                <p className="font-bold text-sm" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                  ॥ {num(w.mahadashaLordMr)} – {num(w.antardashaLordMr)} ॥
+                </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold italic px-2 py-0.5 rounded-full" style={{
+                    color: "#FFFDF5", background: scoreColor(w.score),
+                    fontFamily: "serif",
+                  }}>
+                    {t(lbl.mr, lbl.en, lbl.hi)}
+                  </span>
+                  <span className="text-[12px] font-bold italic px-2 py-0.5 rounded" style={{
+                    color: scoreColor(w.score), background: "#FFFDF5", border: `1px solid ${scoreColor(w.score)}40`,
+                    fontFamily: "serif",
+                  }}>
+                    {num(w.score)}/{num(10)}
+                  </span>
+                </div>
+              </div>
+              <p className="text-xs mb-1" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+                {formatDate(w.startDate)} → {formatDate(w.endDate)} · {t("वय", "age", "आयु")} {num(w.ageAtStart)}
+              </p>
+              <p className="text-[12px] italic" style={{ color: "rgba(92,26,26,0.8)", fontFamily: "serif" }}>
+                {lang === "en" ? w.reasonEn : lang === "hi" ? w.reasonHi : w.reasonMr}
+              </p>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
