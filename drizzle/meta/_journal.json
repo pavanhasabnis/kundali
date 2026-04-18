@@ -8,6 +8,13 @@
       "when": 1776259805495,
       "tag": "0000_harsh_marten_broadcloak",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1776515646043,
+      "tag": "0001_vengeful_captain_america",
+      "breakpoints": true
     }
   ]
 }

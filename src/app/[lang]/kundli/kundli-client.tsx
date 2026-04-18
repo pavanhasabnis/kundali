@@ -249,6 +249,7 @@ export default function KundliPageClient() {
         lng: form.longitude,
         tz: "5.5",
         place: form.city,
+        placeMr: selectedPlace?.nameMr || "",
       });
       router.push(`/kundli/result?${params.toString()}`);
     } catch {
@@ -266,18 +267,218 @@ export default function KundliPageClient() {
     <div className="min-h-screen bg-[#FAFAF8]">
       <JsonLd data={serviceSchema({ name: "Free Kundli Generator — मोफत कुंडली", description: "Generate accurate Vedic birth chart (kundli) with planetary positions, dashas, yogas, and doshas. Free online janam kundali.", url: `https://bhaagyavedh.com/${lang}/kundli` })} />
       <JsonLd data={breadcrumbSchema([{ name: "Home", url: `https://bhaagyavedh.com/${lang}` }, { name: "Kundli", url: `https://bhaagyavedh.com/${lang}/kundli` }])} />
-      <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
+      {/* Hero — Conversion focused */}
+      <section className="relative py-12 sm:py-20 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">
-            {t("कुंडली निर्मिती", "Kundli Generation", "कुंडली निर्माण")}
+          <div className="inline-block px-4 py-1 rounded-full text-[11px] font-bold tracking-widest mb-4" style={{ background: "rgba(212,168,67,0.15)", border: "1px solid rgba(212,168,67,0.4)", color: "#d4a843" }}>
+            ॥ {t("श्रीगणेशाय नमः", "SHRI GANESHAYA NAMAH", "श्रीगणेशाय नमः")} ॥
+          </div>
+          <h1 className="text-3xl sm:text-5xl font-bold text-[#d4a843] mb-4" style={{  }}>
+            {t("मोफत जन्म कुंडली", "Free Janam Kundli", "मुफ्त जन्म कुंडली")}
           </h1>
-          <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            {t("जन्म माहिती भरा आणि अचूक कुंडली मिळवा", "Enter birth details to get accurate Kundli", "जन्म जानकारी भरें और सटीक कुंडली पाएँ")}
+          <p className="text-white/80 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed mb-6" style={{  }}>
+            {t(
+              "४० हून अधिक वैदिक विश्लेषणे · महाराष्ट्रीय परंपरेनुसार · त्र्यंबकेश्वर, शनि शिंगणापूर, कोल्हापूर महालक्ष्मी यांच्यासह उपाय — फक्त जन्मतारीख, वेळ व ठिकाण भरा.",
+              "40+ Vedic analyses · Traditional Maharashtrian jyotish · Remedies linked to Trimbakeshwar, Shani Shingnapur, Kolhapur Mahalaxmi — just enter date, time, place.",
+              "40+ वैदिक विश्लेषण · महाराष्ट्रीय परंपरा · त्र्यंबकेश्वर, शनि शिंगणापुर, कोल्हापुर महालक्ष्मी उपाय — बस जन्म तिथि, समय, स्थान भरें."
+            )}
           </p>
+          {/* Stats row */}
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-center mb-6">
+            {[
+              { num: "40+", labelMr: "विश्लेषणे", labelEn: "Analyses", labelHi: "विश्लेषण" },
+              { num: "16", labelMr: "वर्ग कुंडल्या", labelEn: "Divisional Charts", labelHi: "वर्ग कुंडलियाँ" },
+              { num: "3", labelMr: "भाषा", labelEn: "Languages", labelHi: "भाषाएँ" },
+              { num: "₹0", labelMr: "मोफत", labelEn: "Free", labelHi: "मुफ्त" },
+            ].map((s, i) => (
+              <div key={i}>
+                <div className="text-2xl sm:text-3xl font-bold text-[#d4a843]" style={{  }}>{s.num}</div>
+                <div className="text-[11px] text-white/60" style={{  }}>{t(s.labelMr, s.labelEn, s.labelHi)}</div>
+              </div>
+            ))}
+          </div>
+          <a href="#kundli-form" className="inline-block px-6 py-3 rounded-lg font-bold text-sm" style={{ background: "linear-gradient(135deg, #d4a843, #c49535)", color: "#1a0505" }}>
+            ॥ {t("आत्ताच कुंडली बनवा →", "Generate My Kundli Now →", "अभी कुंडली बनाएँ →")} ॥
+          </a>
         </div>
       </section>
-      <div className="space-y-8 max-w-4xl mx-auto px-4 sm:px-6 py-6">
+
+      {/* Quick value props */}
+      <section className="max-w-6xl mx-auto px-4 py-8 -mt-6 relative z-20">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            { titleMr: "परंपरागत मराठी शैली", titleEn: "Traditional Marathi Style", titleHi: "पारंपरिक मराठी शैली",
+              descMr: "कागदाचा पोत, सुवर्ण सीमा, देवनागरी अंक व संस्कृत संज्ञा — पारंपरिक पंचांगाच्या धर्तीवर.",
+              descEn: "Parchment texture, gold borders, Devanagari numerals and Sanskrit terms — in the spirit of classical panchang.",
+              descHi: "कागज़ बनावट, स्वर्ण सीमा, देवनागरी अंक व संस्कृत संज्ञा." },
+            { titleMr: "महाराष्ट्रीय तीर्थ उपाय", titleEn: "MH Temple Remedies", titleHi: "महाराष्ट्र तीर्थ उपाय",
+              descMr: "त्र्यंबकेश्वर काळसर्प शांती, शनि शिंगणापूर तेलाभिषेक, अष्टविनायक व शक्तिपीठ यात्रा.",
+              descEn: "Trimbakeshwar Kalsarp Shanti, Shani Shingnapur oil abhishek, Ashtavinayak and Shakti Peetha yatras.",
+              descHi: "त्र्यंबकेश्वर कालसर्प शांति, शनि शिंगणापुर तेलाभिषेक, अष्टविनायक यात्रा." },
+            { titleMr: "सखोल विश्लेषणे", titleEn: "Deep Analysis", titleHi: "गहन विश्लेषण",
+              descMr: "षड्बल, अष्टकवर्ग, सर्वतोभद्र, विंशोपक, आत्मकारक, उपग्रह — १६ वर्ग कुंडल्यांसह.",
+              descEn: "ShadBala, Ashtakvarga, Sarvatobhadra, Vimshopak, Atmakaraka, Upagrahas — with full 16-varga set.",
+              descHi: "षड्बल, अष्टकवर्ग, सर्वतोभद्र, विंशोपक, आत्मकारक, उपग्रह." },
+          ].map((card, i) => (
+            <div key={i} className="bg-white rounded-xl border-2 border-[#d4a843]/20 p-4 text-center hover:border-[#d4a843]/50 hover:shadow-lg transition-all duration-200">
+              <h3 className="font-bold text-sm mb-2" style={{ color: "#3d0c0c" }}>
+                {t(card.titleMr, card.titleEn, card.titleHi)}
+              </h3>
+              <p className="text-xs leading-relaxed text-gray-600">
+                {t(card.descMr, card.descEn, card.descHi)}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+      {/* Main layout — Content left + Form sticky right */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid lg:grid-cols-[1fr_400px] gap-6 lg:gap-8 items-start">
+
+      {/* LEFT COLUMN — Content */}
+      <div className="space-y-12 min-w-0 order-2 lg:order-1">
+
+      {/* What's inside — feature grid */}
+      <section>
+        <div className="text-center mb-6">
+          <div className="inline-block px-4 py-1 rounded-full text-[11px] tracking-widest mb-3" style={{ background: "rgba(212,168,67,0.15)", border: "1px solid #d4a843", color: "#3d0c0c" }}>
+            ॥ {t("तुम्हाला काय मिळेल", "WHAT YOU GET", "आपको क्या मिलेगा")} ॥
+          </div>
+          <h2 className="text-2xl font-bold mb-1" style={{ color: "#3d0c0c" }}>
+            {t("४० विभाग — एका कुंडलीत सर्व", "40 Sections — All in One Kundli", "40 विभाग — एक कुंडली में सब")}
+          </h2>
+          <p className="text-xs" style={{ color: "#5c1a1a" }}>
+            {t("पारंपरिक वैदिक ज्योतिष + आधुनिक अचूकता", "Traditional Vedic jyotish + modern accuracy", "पारंपरिक वैदिक ज्योतिष + आधुनिक सटीकता")}
+          </p>
+        </div>
+        {/* All 43 section titles — each as a full card with maroon header */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          {[
+            { mr: "लग्न कुंडली", en: "Lagna (D1)" },
+            { mr: "चंद्र कुंडली", en: "Chandra" },
+            { mr: "भाव चलित", en: "Bhav Chalit" },
+            { mr: "होरा (D2)", en: "Hora (D2)" },
+            { mr: "द्रेक्काण (D3)", en: "Drekkana (D3)" },
+            { mr: "चतुर्थांश (D4)", en: "Chaturthamsha (D4)" },
+            { mr: "सप्तांश (D7)", en: "Saptamsha (D7)" },
+            { mr: "नवमांश (D9)", en: "Navamsha (D9)" },
+            { mr: "दशमांश (D10)", en: "Dashamsha (D10)" },
+            { mr: "द्वादशांश (D12)", en: "Dwadashamsha (D12)" },
+            { mr: "षोडशांश (D16)", en: "Shodashamsha (D16)" },
+            { mr: "विंशांश (D20)", en: "Vimshamsha (D20)" },
+            { mr: "सिद्धांश (D24)", en: "Siddhamsha (D24)" },
+            { mr: "भांश (D27)", en: "Bhamsha (D27)" },
+            { mr: "त्रिंशांश (D30)", en: "Trimshamsha (D30)" },
+            { mr: "खवेदांश (D40)", en: "Khavedamsha (D40)" },
+            { mr: "अक्षवेदांश (D45)", en: "Akshavedamsha (D45)" },
+            { mr: "षष्ट्यांश (D60)", en: "Shashtiamsha (D60)" },
+            { mr: "ग्रह स्पष्ट", en: "Planet Positions" },
+            { mr: "ग्रह बल", en: "Planet Strength" },
+            { mr: "षड्बल", en: "Shadbala" },
+            { mr: "भाव बल", en: "Bhava Bala" },
+            { mr: "अष्टकवर्ग", en: "Ashtakvarga" },
+            { mr: "विंशोपक बल", en: "Vimshopak Bala" },
+            { mr: "मित्र-शत्रु चक्र", en: "Mitra-Shatru Chakra" },
+            { mr: "योग विश्लेषण", en: "Yoga Analysis" },
+            { mr: "दोष विश्लेषण", en: "Dosha Analysis" },
+            { mr: "मंगळ दोष", en: "Mangal Dosh" },
+            { mr: "काळसर्प दोष", en: "Kalsarp Dosh" },
+            { mr: "अस्त-युद्ध तपशील", en: "Asta-Yuddha" },
+            { mr: "सर्वतोभद्र चक्र", en: "Sarvatobhadra Chakra" },
+            { mr: "चालू महादशा फल", en: "Current Dasha" },
+            { mr: "विंशोत्तरी दशा कालावधी", en: "Dasha Timeline" },
+            { mr: "प्रत्यंतर व सूक्ष्म दशा", en: "Pratyantar & Sookshma" },
+            { mr: "विवाह काल", en: "Marriage Timing" },
+            { mr: "करिअर काल", en: "Career Timing" },
+            { mr: "जन्म पंचांग", en: "Birth Panchang" },
+            { mr: "आत्मकारक व इष्टदेवता", en: "Atmakaraka & Ishta Devata" },
+            { mr: "उपग्रह", en: "Upagrahas" },
+            { mr: "गोचर नाडी", en: "Gochar Naadi" },
+            { mr: "राशी अक्षर व नावसूचना", en: "Nakshatra Letters & Names" },
+            { mr: "भावनिहाय भविष्यकथन", en: "House Predictions" },
+            { mr: "सखोल उपाय व रत्न", en: "Rich Remedies & Gems" },
+          ].map((it, i) => (
+            <div key={i} className="bg-white rounded-xl border-2 border-[#d4a843]/20 overflow-hidden hover:border-[#d4a843]/50 hover:shadow-lg transition-all duration-200">
+              <div className="px-4 py-3" style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}>
+                <h3 className="font-bold text-sm text-white">
+                  {lang === "mr" ? it.mr : it.en}
+                </h3>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section>
+        <div className="text-center mb-6">
+          <div className="inline-block px-4 py-1 rounded-full text-[11px] tracking-widest mb-3" style={{ background: "rgba(212,168,67,0.15)", border: "1px solid #d4a843", color: "#3d0c0c" }}>
+            ॥ {t("कसे काम करते", "HOW IT WORKS", "कैसे काम करता है")} ॥
+          </div>
+          <h2 className="text-2xl font-bold" style={{ color: "#3d0c0c" }}>
+            {t("३ सोप्या पायऱ्या", "3 Simple Steps", "3 आसान चरण")}
+          </h2>
+        </div>
+        <div className="space-y-3">
+          {[
+            { step: "१", stepEn: "1", titleMr: "जन्म माहिती भरा", titleEn: "Enter Birth Details", titleHi: "जन्म विवरण भरें", descMr: "उजवीकडील फॉर्ममध्ये जन्म तारीख, अचूक वेळ (जन्म प्रमाणपत्रावरून), व जन्मस्थान टाइप करा — महाराष्ट्रातील २०००+ शहरे व गावांचा डेटाबेस.", descEn: "Enter date, exact time (from birth certificate), and birthplace in the form on the right — database of 2000+ Maharashtra cities & villages.", descHi: "दाहिनी ओर फॉर्म में जन्म तिथि, सटीक समय व स्थान भरें — 2000+ शहरों का डेटाबेस." },
+            { step: "२", stepEn: "2", titleMr: "१० सेकंदात गणना", titleEn: "Calculated in 10 Seconds", titleHi: "10 सेकंड में गणना", descMr: "लाहिरी अयनांश व स्विस इफेमेरीस वापरून अचूक सिद्धांतिक गणना — १६ वर्ग कुंडल्या, ३० विश्लेषणे तयार.", descEn: "Lahiri Ayanamsha with Swiss Ephemeris — 16 divisional charts, 30 analyses computed accurately.", descHi: "लाहिरी अयनांश व स्विस एफेमेरीस से सटीक गणना — 16 वर्ग कुंडलियाँ, 30 विश्लेषण." },
+            { step: "३", stepEn: "3", titleMr: "वाचा व उपाय करा", titleEn: "Read & Apply Remedies", titleHi: "पढ़ें व उपाय अपनाएँ", descMr: "३ भाषांत (मराठी/इंग्रजी/हिंदी), पारंपरिक पंचांग शैलीत — दोष, योग, दशा, उपाय व मंदिर यात्रा सूचना.", descEn: "In 3 languages, traditional panchang style — doshas, yogas, dashas, remedies and temple yatra suggestions.", descHi: "3 भाषाओं में, पंचांग शैली में — दोष, योग, दशा, उपाय व मंदिर यात्रा." },
+          ].map((s, i) => (
+            <div key={i} className="bg-white rounded-xl border-2 border-[#d4a843]/20 p-4 flex gap-4 items-start hover:border-[#d4a843]/50 hover:shadow-lg transition-all duration-200">
+              <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold text-white" style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}>
+                {lang === "mr" ? s.step : s.stepEn}
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold text-sm mb-1" style={{ color: "#3d0c0c" }}>
+                  {t(s.titleMr, s.titleEn, s.titleHi)}
+                </h3>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  {t(s.descMr, s.descEn, s.descHi)}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Why Bhaagyavedh */}
+      <section>
+        <div className="text-center mb-6">
+          <div className="inline-block px-4 py-1 rounded-full text-[11px] tracking-widest mb-3" style={{ background: "rgba(212,168,67,0.15)", border: "1px solid #d4a843", color: "#3d0c0c" }}>
+            ॥ {t("भाग्यवेध का?", "WHY BHAAGYAVEDH", "भाग्यवेध क्यों?")} ॥
+          </div>
+          <h2 className="text-2xl font-bold" style={{ color: "#3d0c0c" }}>
+            {t("महाराष्ट्रासाठी खास", "Built for Maharashtra", "महाराष्ट्र के लिए")}
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {[
+            { titleMr: "महाराष्ट्रीय जयोतिर्लिंगे", titleEn: "Maharashtra's Jyotirlingas", titleHi: "महाराष्ट्र के ज्योतिर्लिंग", descMr: "त्र्यंबकेश्वर, भीमाशंकर, घृष्णेश्वर, औंढा नागनाथ, परळी वैजनाथ — थेट उपाय जोडणी. शनिशिंगणापूर, जेजुरी, कोल्हापूर, तुळजापूर यात्रा सूचना." },
+            { titleMr: "मराठी जयोतिष परंपरा", titleEn: "Marathi Jyotish Tradition", titleHi: "मराठी ज्योतिष परंपरा", descMr: "गाणगापूर-नृसिंहवाडी दत्त क्षेत्र, गुरुचरित्र पारायण, वारकरी संप्रदाय — सर्व उपाय पद्धतीनुसार." },
+            { titleMr: "लाहिरी अयनांश", titleEn: "Lahiri Ayanamsha", titleHi: "लाहिरी अयनांश", descMr: "भारतीय सरकारी मानक. स्विस इफेमेरीस — नासाच्या खगोलीय डेटावर आधारित. व्यावसायिक ज्योतिषी जी गणना वापरतात तेच आधार." },
+            { titleMr: "त्रिभाषिक पारंपरिक UI", titleEn: "Trilingual Traditional UI", titleHi: "त्रिभाषी पारंपरिक UI", descMr: "मराठी/इंग्रजी/हिंदी — कागदाचा पोत, दुहेरी सुवर्ण सीमा, देवनागरी अंक, संस्कृत संज्ञा." },
+          ].map((f, i) => (
+            <div key={i} className="bg-white rounded-xl border-2 border-[#d4a843]/20 overflow-hidden hover:border-[#d4a843]/50 hover:shadow-lg transition-all duration-200">
+              <div className="px-4 py-3" style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}>
+                <h3 className="font-bold text-sm text-white">
+                  {t(f.titleMr, f.titleEn, f.titleHi)}
+                </h3>
+              </div>
+              <div className="p-4">
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  {f.descMr}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      </div>
+
+      {/* RIGHT COLUMN — Form aside (sticky on desktop) */}
+      <aside className="lg:sticky lg:top-24 self-start order-1 lg:order-2 w-full lg:mt-[120px]">
 
       {/* Saved Kundlis */}
       {(() => {
@@ -285,7 +486,7 @@ export default function KundliPageClient() {
         const saved = JSON.parse(localStorage.getItem("savedKundlis") || "[]");
         if (saved.length === 0) return null;
         return (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 max-w-2xl mx-auto">
+          <div className="bg-white rounded-xl border-2 border-[#d4a843]/20 p-4 mb-4">
             <h3 className="text-sm font-bold mb-3" style={{ color: "#3d0c0c" }}>{t("सेव्ह केलेल्या कुंडल्या", "Saved Kundlis", "सहेजी गई कुंडलियाँ")}</h3>
             <div className="space-y-2">
               {saved.map((s: { name: string; params: Record<string, string> }, i: number) => (
@@ -314,12 +515,16 @@ export default function KundliPageClient() {
 
       {/* Birth Details Form */}
       <form
+        id="kundli-form"
         onSubmit={handleSubmit}
-        className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 max-w-2xl mx-auto"
+        className="bg-white rounded-xl border-2 border-[#d4a843]/20 overflow-hidden scroll-mt-6"
       >
-        <h2 className="text-lg font-bold text-[#3d0c0c] mb-4">
-          {t("जन्म माहिती", "Birth Details", "जन्म जानकारी")}
-        </h2>
+        <div className="px-5 py-3" style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}>
+          <h2 className="text-lg font-bold text-white">
+            {t("जन्म माहिती", "Birth Details", "जन्म जानकारी")}
+          </h2>
+        </div>
+        <div className="p-5">
 
         {/* Name */}
         <div className="mb-4">
@@ -328,7 +533,7 @@ export default function KundliPageClient() {
             type="text"
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4a843] focus:border-[#d4a843]"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#d4a843] focus:outline-none"
             placeholder={t("तुमचे नाव", "Your name", "आपका नाम")}
           />
         </div>
@@ -343,7 +548,7 @@ export default function KundliPageClient() {
               max="31"
               value={form.day}
               onChange={(e) => setForm((f) => ({ ...f, day: e.target.value }))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4a843]"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#d4a843] focus:outline-none"
               placeholder="DD"
               required
             />
@@ -353,7 +558,7 @@ export default function KundliPageClient() {
             <select
               value={form.month}
               onChange={(e) => setForm((f) => ({ ...f, month: e.target.value }))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4a843]"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#d4a843] focus:outline-none"
               required
             >
               <option value="">{t("निवडा", "Select", "चुनें")}</option>
@@ -370,7 +575,7 @@ export default function KundliPageClient() {
               max="2030"
               value={form.year}
               onChange={(e) => setForm((f) => ({ ...f, year: e.target.value }))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4a843]"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#d4a843] focus:outline-none"
               placeholder="YYYY"
               required
             />
@@ -387,7 +592,7 @@ export default function KundliPageClient() {
               max="12"
               value={form.hour}
               onChange={(e) => setForm((f) => ({ ...f, hour: e.target.value }))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4a843]"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#d4a843] focus:outline-none"
               placeholder="HH"
               required
             />
@@ -400,7 +605,7 @@ export default function KundliPageClient() {
               max="59"
               value={form.minute}
               onChange={(e) => setForm((f) => ({ ...f, minute: e.target.value }))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4a843]"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#d4a843] focus:outline-none"
               placeholder="MM"
               required
             />
@@ -410,7 +615,7 @@ export default function KundliPageClient() {
             <select
               value={form.ampm}
               onChange={(e) => setForm((f) => ({ ...f, ampm: e.target.value }))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4a843]"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-[#d4a843] focus:outline-none"
             >
               <option value="AM">{t("सकाळी (AM)", "AM (Morning)", "सुबह (AM)")}</option>
               <option value="PM">{t("दुपारी/संध्याकाळी (PM)", "PM (Afternoon/Evening)", "दोपहर/शाम (PM)")}</option>
@@ -449,8 +654,7 @@ export default function KundliPageClient() {
                 onChange={(e) => { setPlaceSearch(e.target.value); setShowDropdown(true); }}
                 onFocus={() => setShowDropdown(true)}
                 placeholder={t("शहर, तालुका किंवा गाव शोधा...", "Search city, town, taluka or village...", "शहर, तहसील या गाँव खोजें...")}
-                className="w-full px-4 py-2 border border-[#d4a843] rounded-lg focus:ring-2 focus:ring-[#d4a843] outline-none"
-                autoFocus
+                className="w-full px-4 py-2 border border-[#d4a843] rounded-lg focus:border-[#d4a843] focus:outline-none outline-none"
               />
             )}
             {/* Dropdown results */}
@@ -525,6 +729,7 @@ export default function KundliPageClient() {
         {error && (
           <p className="mt-4 text-red-600 text-sm text-center">{error}</p>
         )}
+        </div>
       </form>
 
       {/* Paywall Modal */}
@@ -570,7 +775,21 @@ export default function KundliPageClient() {
         </div>
       )}
 
-    </div>
+      </aside>
+
+      </div>
+
+      {/* Final CTA */}
+      <section className="max-w-4xl mx-auto px-4 py-10 text-center">
+        <a href="#kundli-form" className="inline-block px-6 py-3 rounded-lg font-bold text-sm" style={{
+          background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)",
+          color: "#d4a843",
+          border: "2px solid #d4a843",
+        }}>
+          ॥ {t("आत्ताच मोफत कुंडली बनवा →", "Generate Your Free Kundli Now →", "अभी मुफ्त कुंडली बनाएँ →")} ॥
+        </a>
+      </section>
+
 
       {/* FAQ Section for AEO/GEO */}
       <section className="max-w-4xl mx-auto px-4 py-12">

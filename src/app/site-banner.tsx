@@ -36,7 +36,7 @@ export function SiteBanner() {
       .catch(() => {});
   }, []);
 
-  if (pathname.startsWith("/admin") || pathname.startsWith("/account")) return null;
+  if (/^\/(?:mr|en|hi)\/(?:admin|account)(?:\/|$)/.test(pathname) || pathname.startsWith("/admin") || pathname.startsWith("/account")) return null;
   if (!banner || !banner.active || dismissed) return null;
 
   const colors = colorMap[banner.color] || colorMap.gold;

@@ -108,6 +108,14 @@ export const travelEnquiries = sqliteTable("travel_enquiries", {
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 
+// ── Chat Usage (rate limit for kundli consultation chat) ──────────
+export const chatUsage = sqliteTable("chat_usage", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull().references(() => users.id),
+  date: text("date").notNull(), // YYYY-MM-DD (IST)
+  count: integer("count").notNull().default(0),
+});
+
 // Type exports
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -120,3 +128,5 @@ export type SiteSetting = typeof siteSettings.$inferSelect;
 export type TravelPackage = typeof travelPackages.$inferSelect;
 export type NewTravelPackage = typeof travelPackages.$inferInsert;
 export type TravelEnquiry = typeof travelEnquiries.$inferSelect;
+export type ChatUsage = typeof chatUsage.$inferSelect;
+export type NewChatUsage = typeof chatUsage.$inferInsert;
