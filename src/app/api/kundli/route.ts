@@ -10,6 +10,17 @@ import {
 } from "@/lib/astrology/analysis";
 import { calculateAllDivisionalCharts } from "@/lib/astrology/divisional";
 import { calculateAllEnhancements } from "@/lib/astrology/enhancements";
+import { detectMangalDosh, detectKalsarpDosh } from "@/lib/astrology/doshas-mh";
+import { calculateShadBala } from "@/lib/astrology/shadbala";
+import { calculateAshtakvarga } from "@/lib/astrology/ashtakvarga";
+import { calculateSarvatobhadra } from "@/lib/astrology/sarvatobhadra";
+import { calculateJaimini, calculateMitraShatru } from "@/lib/astrology/jaimini";
+import { calculateGrahaYuddha, calculateCombustionDetails, calculateBhavaBala } from "@/lib/astrology/advanced";
+import { analyzeMarriageTiming, analyzeCareerTiming } from "@/lib/astrology/timing";
+import { calculateDeepDasha } from "@/lib/astrology/deep-dasha";
+import { getNamesForPada } from "@/lib/astrology/names";
+import { calculateUpagrahas, calculateGocharNaadi } from "@/lib/astrology/upagraha";
+import { calculateVimshopakBala } from "@/lib/astrology/vimshopak";
 
 export async function POST(req: NextRequest) {
   try {
@@ -45,6 +56,27 @@ export async function POST(req: NextRequest) {
     // Calculate all enhancements (panchang, aspects, house lords, etc.)
     const enhancements = calculateAllEnhancements(result, divisionalCharts);
 
+    // Maharashtra dosha detectors
+    const mangalDosh = detectMangalDosh(result);
+    const kalsarpDosh = detectKalsarpDosh(result);
+    const shadBala = calculateShadBala(result);
+    const ashtakvarga = calculateAshtakvarga(result);
+    const sarvatobhadra = calculateSarvatobhadra(result);
+    const navamshaChart = divisionalCharts.find((c) => c.id === "navamsha");
+    const dwadashamshaChart = divisionalCharts.find((c) => c.id === "dwadashamsha");
+    const jaimini = calculateJaimini(result, navamshaChart, dwadashamshaChart);
+    const mitraShatru = calculateMitraShatru(result);
+    const grahaYuddha = calculateGrahaYuddha(result);
+    const combustionDetails = calculateCombustionDetails(result);
+    const bhavaBala = calculateBhavaBala(result);
+    const marriageTiming = analyzeMarriageTiming(result);
+    const careerTiming = analyzeCareerTiming(result);
+    const deepDasha = calculateDeepDasha(result);
+    const namesSuggestion = getNamesForPada(result.moonNakshatra, result.moonPada);
+    const upagrahas = calculateUpagrahas(result, enhancements.birthPanchang.sunrise, enhancements.birthPanchang.sunset);
+    const gocharNaadi = calculateGocharNaadi(result);
+    const vimshopakBala = calculateVimshopakBala(result, divisionalCharts);
+
     // Serialize dates in dasha
     const serialized = {
       ...result,
@@ -68,6 +100,23 @@ export async function POST(req: NextRequest) {
       },
       divisionalCharts,
       enhancements,
+      mangalDosh,
+      kalsarpDosh,
+      shadBala,
+      ashtakvarga,
+      sarvatobhadra,
+      jaimini,
+      mitraShatru,
+      grahaYuddha,
+      combustionDetails,
+      bhavaBala,
+      marriageTiming,
+      careerTiming,
+      deepDasha,
+      namesSuggestion,
+      upagrahas,
+      gocharNaadi,
+      vimshopakBala,
     };
 
     return NextResponse.json(serialized);

@@ -34,8 +34,10 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 }
 
 export default function BlogPage() {
-  const allPosts = getAllBlogPosts().map(({ slug, title, titleEn, summary, summaryEn, date, category, categoryEn }) => ({
-    slug, title, titleEn, summary, summaryEn, date, category, categoryEn,
-  }));
+  const allPosts = getAllBlogPosts()
+    .filter((p) => p.categoryEn !== "Temple Guide")
+    .map(({ slug, title, titleEn, summary, summaryEn, date, category, categoryEn }) => ({
+      slug, title, titleEn, summary, summaryEn, date, category, categoryEn,
+    }));
   return <BlogPageClient initialPosts={allPosts} />;
 }

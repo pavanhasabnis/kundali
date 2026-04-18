@@ -37,6 +37,89 @@ interface EnhancementsData {
   childrenAnalysis: { yogaMr: string; yogaEn: string; timingMr: string; timingEn: string };
 }
 
+interface MangalDoshData {
+  present: boolean; severity: string;
+  severityMr: string; severityEn: string; severityHi: string;
+  fromLagna: boolean; fromMoon: boolean; fromVenus: boolean;
+  marsHouse: number; marsRashi: string; marsRashiMr: string;
+  cancellations: string[]; cancellationsMr: string[]; cancellationsHi: string[];
+  affectedAreasMr: string[]; affectedAreasEn: string[]; affectedAreasHi: string[];
+  remediesMr: string[]; remediesEn: string[]; remediesHi: string[];
+  summaryMr: string; summaryEn: string; summaryHi: string;
+}
+
+interface KalsarpDoshData {
+  present: boolean; partial: boolean; type: string | null;
+  typeMr: string; typeEn: string; typeHi: string;
+  rahuHouse: number; ketuHouse: number; udit: boolean; planetsOutside: string[];
+  effectsEn: string; effectsMr: string; effectsHi: string;
+  remediesEn: string[]; remediesMr: string[]; remediesHi: string[];
+  yatraRecommendationEn: string; yatraRecommendationMr: string; yatraRecommendationHi: string;
+  summaryEn: string; summaryMr: string; summaryHi: string;
+}
+
+interface ShadBalaPlanetData {
+  id: string; nameMr: string; nameEn: string;
+  sthana: number; dig: number; kala: number; chesta: number; naisargika: number; drik: number;
+  total: number; totalPoints: number; required: number;
+  isStrong: boolean; strengthRank: number; percentOfRequired: number;
+  verdict: string; verdictMr: string; verdictEn: string; verdictHi: string;
+  remediesMr?: string[]; remediesEn?: string[]; remediesHi?: string[];
+}
+
+interface BhinnashtakaChartData {
+  planetId: string; planetMr: string; planetEn: string;
+  bindus: number[]; total: number;
+  contributions: Record<string, number[]>;
+}
+interface AshtakvargaData {
+  bhinnashtaka: BhinnashtakaChartData[];
+  sarvashtaka: number[];
+  sarvashtakaTotal: number;
+  rashiNames: { mr: string; en: string }[];
+  strongestRashi: { index: number; mr: string; en: string; bindus: number };
+  weakestRashi: { index: number; mr: string; en: string; bindus: number };
+  houseStrength: Array<{
+    house: number; rashiIndex: number;
+    rashiMr: string; rashiEn: string; sav: number;
+    verdict: string; verdictMr: string; verdictEn: string; verdictHi: string;
+    remediesMr?: string[]; remediesEn?: string[]; remediesHi?: string[];
+  }>;
+  summaryMr: string; summaryEn: string; summaryHi: string;
+}
+
+interface SbcTransitPlanetData {
+  id: string; nameMr: string; nameEn: string; nameHi: string;
+  nakshatraIndex: number; nakshatraMr: string; nakshatraEn: string;
+  offsetFromNatal: number;
+  vedhaType: string | null; vedhaTypeMr: string | null; vedhaTypeEn: string | null; vedhaTypeHi: string | null;
+  isBenefic: boolean;
+  effect: "auspicious" | "inauspicious" | "neutral";
+}
+interface SbcGridCellData {
+  nakshatraIndex: number; nakshatraMr: string; nakshatraEn: string;
+  isNatal: boolean; isVedhaPosition: boolean; vedhaType: string | null;
+  transitPlanets: string[];
+}
+interface SarvatobhadraData {
+  natalNakshatraIndex: number;
+  natalNakshatraMr: string; natalNakshatraEn: string; natalNakshatraHi: string;
+  transits: SbcTransitPlanetData[];
+  grid: SbcGridCellData[];
+  auspiciousCount: number; inauspiciousCount: number; neutralCount: number;
+  rating: number;
+  verdict: string; verdictMr: string; verdictEn: string; verdictHi: string;
+  remediesMr?: string[]; remediesEn?: string[]; remediesHi?: string[];
+  summaryMr: string; summaryEn: string; summaryHi: string;
+}
+
+interface ShadBalaData {
+  planets: ShadBalaPlanetData[];
+  strongestEn: string; strongestMr: string;
+  weakestEn: string; weakestMr: string;
+  summaryMr: string; summaryEn: string; summaryHi: string;
+}
+
 interface KundliData {
   lagnaRashiIndex: number;
   lagnaRashiMr: string; lagnaRashi: string; lagnaDMS: string; lagnaNakshatraMr: string; lagnaNakshatra: string;
@@ -45,6 +128,165 @@ interface KundliData {
   analysis: { planetaryStrength: PlanetStrengthData[]; yogas: YogaData[]; doshas: DoshaData[]; housePredictions: HousePredictionData[]; currentDasha: DashaInterpData | null; remedies: RemedyData[]; };
   divisionalCharts: DivisionalChartData[];
   enhancements?: EnhancementsData;
+  mangalDosh?: MangalDoshData;
+  kalsarpDosh?: KalsarpDoshData;
+  shadBala?: ShadBalaData;
+  ashtakvarga?: AshtakvargaData;
+  sarvatobhadra?: SarvatobhadraData;
+  jaimini?: JaiminiData;
+  mitraShatru?: MitraShatruData[];
+  grahaYuddha?: GrahaYuddhaData[];
+  combustionDetails?: CombustionDetailData[];
+  bhavaBala?: BhavaBalaData[];
+  marriageTiming?: MarriageTimingData;
+  careerTiming?: CareerTimingData;
+  deepDasha?: DeepDashaData;
+  namesSuggestion?: NamesSuggestionData;
+  upagrahas?: UpagrahaData[];
+  gocharNaadi?: GocharTransitData[];
+  vimshopakBala?: VimshopakPlanetData[];
+}
+
+interface VimshopakVargaEntryData {
+  vargaId: string; vargaMr: string; vargaEn: string;
+  weight: number; rashiIndex: number;
+  dignity: string; dignityMr: string; dignityEn: string;
+  factor: number; score: number;
+}
+
+interface VimshopakPlanetData {
+  id: string; nameMr: string; nameEn: string;
+  vargas: VimshopakVargaEntryData[];
+  totalBala: number; percent: number;
+  verdict: string; verdictMr: string; verdictEn: string; verdictHi: string;
+}
+
+interface UpagrahaData {
+  id: string; nameMr: string; nameEn: string; nameHi: string;
+  siderealLongitude: number;
+  rashiIndex: number; rashiMr: string; rashiEn: string;
+  degreeInSign: number; degreeDMS: string;
+  house: number; kalaIndex: number; isDayBirth: boolean;
+  descMr: string; descEn: string; descHi: string;
+}
+
+interface GocharTransitData {
+  id: string; nameMr: string; nameEn: string; nameHi: string;
+  currentRashiIndex: number;
+  currentRashiMr: string; currentRashiEn: string;
+  houseFromLagna: number; houseFromMoon: number;
+  effect: string;
+  effectMr: string; effectEn: string; effectHi: string;
+}
+
+interface DeepDashaPeriodData {
+  lord: string; lordMr: string;
+  startDate: string; endDate: string;
+  durationDays: number; isCurrent: boolean;
+  sookshmas?: DeepDashaPeriodData[];
+}
+
+interface DeepDashaData {
+  currentMahadasha: { lord: string; lordMr: string; startDate: string; endDate: string };
+  currentAntardasha: { lord: string; lordMr: string; startDate: string; endDate: string };
+  currentPratyantar: DeepDashaPeriodData | null;
+  currentSookshma: DeepDashaPeriodData | null;
+  pratyantars: DeepDashaPeriodData[];
+  nextMilestoneMr: string; nextMilestoneEn: string; nextMilestoneHi: string;
+}
+
+interface NameEntryData {
+  name: string; nameEn: string; gender: string;
+  meaningMr: string; meaningEn: string;
+}
+
+interface NamesSuggestionData {
+  primaryAkshara: string;
+  allAksharas: string[];
+  boyNames: NameEntryData[];
+  girlNames: NameEntryData[];
+  unisexNames: NameEntryData[];
+}
+
+interface TimingWindowData {
+  startDate: string; endDate: string;
+  mahadashaLord: string; mahadashaLordMr: string;
+  antardashaLord: string; antardashaLordMr: string;
+  score: number;
+  reasonMr: string; reasonEn: string; reasonHi: string;
+  ageAtStart: number;
+}
+
+interface MarriageTimingData {
+  windows: TimingWindowData[];
+  primaryKarakaMr: string; primaryKarakaEn: string;
+  seventhLordMr: string; seventhLordEn: string; seventhLordHouse: number;
+  seventhLordStrength: string;
+  predictedAgeRange: string; predictedAgeRangeEn: string;
+  overallMr: string; overallEn: string; overallHi: string;
+  remediesMr: string[]; remediesEn: string[]; remediesHi: string[];
+}
+
+interface CareerTimingData {
+  windows: TimingWindowData[];
+  tenthLordMr: string; tenthLordEn: string; tenthLordHouse: number;
+  fieldSuggestionsMr: string[]; fieldSuggestionsEn: string[]; fieldSuggestionsHi: string[];
+  overallMr: string; overallEn: string; overallHi: string;
+}
+
+interface GrahaYuddhaData {
+  planet1: string; planet1Mr: string;
+  planet2: string; planet2Mr: string;
+  distance: number;
+  winner: string; winnerMr: string;
+  loser: string; loserMr: string;
+  rashiMr: string; rashiEn: string;
+  reasonMr: string; reasonEn: string; reasonHi: string;
+  effectMr: string; effectEn: string; effectHi: string;
+}
+
+interface CombustionDetailData {
+  id: string; nameMr: string; nameEn: string;
+  isCombust: boolean;
+  distance: number; threshold: number;
+  severity: string;
+  severityMr: string; severityEn: string; severityHi: string;
+  effectMr: string; effectEn: string; effectHi: string;
+  remedyMr: string; remedyEn: string; remedyHi: string;
+}
+
+interface BhavaBalaData {
+  house: number; rashiIndex: number;
+  rashiMr: string; rashiEn: string;
+  subjectMr: string; subjectEn: string;
+  bhavAdhipati: number; bhavDig: number; bhavDrishti: number;
+  total: number;
+  verdict: string; verdictMr: string; verdictEn: string; verdictHi: string;
+}
+
+interface JaiminiData {
+  atmakarakaId: string;
+  atmakarakaNameMr: string; atmakarakaNameEn: string;
+  atmakarakaRashiMr: string; atmakarakaRashiEn: string;
+  atmakarakaDegree: number;
+  karakamshaRashiIndex: number;
+  karakamshaRashiMr: string; karakamshaRashiEn: string;
+  ishtaDevataRashiIndex: number;
+  ishtaDevataRashiMr: string; ishtaDevataRashiEn: string;
+  ishtaDevataMr: string; ishtaDevataEn: string; ishtaDevataHi: string;
+  mantraMr: string; mantraEn: string;
+  significanceMr: string; significanceEn: string; significanceHi: string;
+  charakarakas: Array<{ id: string; nameMr: string; nameEn: string; karakaMr: string; karakaEn: string; role: string; roleMr: string; degree: number }>;
+}
+
+interface MitraShatruData {
+  planetId: string; planetMr: string; planetEn: string;
+  relations: Array<{
+    otherId: string; otherMr: string; otherEn: string;
+    naisargika: string; naisargikaEn: string;
+    tatkalik: string; tatkalikEn: string;
+    panchadha: string; panchadhaEn: string;
+  }>;
 }
 
 const PLANET_LORD_MR: Record<string, string> = { Sun: "सूर्य", Moon: "चंद्र", Mars: "मंगळ", Mercury: "बुध", Jupiter: "गुरु", Venus: "शुक्र", Saturn: "शनि", Rahu: "राहु", Ketu: "केतु" };
@@ -127,6 +369,23 @@ const TABS = [
   { id: "strength", mr: "ग्रह बल", en: "Planet Strength", group: "analysis" },
   { id: "yogas", mr: "योग", en: "Yogas", group: "analysis" },
   { id: "doshas", mr: "दोष", en: "Doshas", group: "analysis" },
+  { id: "mangal-dosh", mr: "मंगळ दोष", en: "Mangal Dosh", group: "analysis" },
+  { id: "kalsarp-dosh", mr: "काळसर्प दोष", en: "Kalsarp Dosh", group: "analysis" },
+  { id: "shadbala", mr: "षड्बल", en: "Shadbala", group: "analysis" },
+  { id: "ashtakvarga", mr: "अष्टकवर्ग", en: "Ashtakvarga", group: "analysis" },
+  { id: "sarvatobhadra", mr: "सर्वतोभद्र चक्र", en: "Sarvatobhadra Chakra", group: "analysis" },
+  { id: "birth-panchang", mr: "जन्म पंचांग", en: "Birth Panchang", group: "analysis" },
+  { id: "jaimini", mr: "आत्मकारक व इष्टदेवता", en: "Atmakaraka & Ishta Devata", group: "analysis" },
+  { id: "mitra-shatru", mr: "मित्र-शत्रु चक्र", en: "Mitra-Shatru Chakra", group: "analysis" },
+  { id: "asta-yuddha", mr: "अस्त-युद्ध तपशील", en: "Combustion & Planetary War", group: "analysis" },
+  { id: "bhava-bala", mr: "भाव बल", en: "Bhava Bala", group: "analysis" },
+  { id: "marriage-timing", mr: "विवाह काल", en: "Marriage Timing", group: "analysis" },
+  { id: "career-timing", mr: "करिअर काल", en: "Career Timing", group: "analysis" },
+  { id: "deep-dasha", mr: "प्रत्यंतर व सूक्ष्म दशा", en: "Pratyantar & Sookshma", group: "analysis" },
+  { id: "names", mr: "राशी अक्षर व नावसूचना", en: "Nakshatra Letters & Names", group: "analysis" },
+  { id: "upagrahas", mr: "उपग्रह", en: "Upagrahas", group: "analysis" },
+  { id: "gochar-naadi", mr: "गोचर नाडी", en: "Gochar Naadi (Transits)", group: "analysis" },
+  { id: "vimshopak-bala", mr: "विंशोपक बल", en: "Vimshopak Bala", group: "analysis" },
   { id: "predictions", mr: "भविष्यकथन", en: "Predictions", group: "analysis" },
   { id: "dasha", mr: "चालू दशा फल", en: "Current Dasha", group: "analysis" },
   { id: "timeline", mr: "दशा कालावधी", en: "Dasha Timeline", group: "analysis" },
@@ -533,6 +792,23 @@ function KundliResultContent() {
               {activeTab === "strength" && <StrengthSection strengths={result.analysis.planetaryStrength} />}
               {activeTab === "yogas" && <YogaSection yogas={result.analysis.yogas} />}
               {activeTab === "doshas" && <DoshaSection doshas={result.analysis.doshas} />}
+              {activeTab === "mangal-dosh" && <MangalDoshSection data={result.mangalDosh} />}
+              {activeTab === "kalsarp-dosh" && <KalsarpDoshSection data={result.kalsarpDosh} />}
+              {activeTab === "shadbala" && <ShadBalaSection data={result.shadBala} />}
+              {activeTab === "ashtakvarga" && <AshtakvargaSection data={result.ashtakvarga} />}
+              {activeTab === "sarvatobhadra" && <SarvatobhadraSection data={result.sarvatobhadra} />}
+              {activeTab === "birth-panchang" && <BirthPanchangSection data={result.enhancements?.birthPanchang} balance={result.enhancements?.balanceDasha} />}
+              {activeTab === "jaimini" && <JaiminiSection data={result.jaimini} />}
+              {activeTab === "mitra-shatru" && <MitraShatruSection data={result.mitraShatru} />}
+              {activeTab === "asta-yuddha" && <AstaYuddhaSection combustion={result.combustionDetails} yuddha={result.grahaYuddha} />}
+              {activeTab === "bhava-bala" && <BhavaBalaSection data={result.bhavaBala} />}
+              {activeTab === "marriage-timing" && <MarriageTimingSection data={result.marriageTiming} />}
+              {activeTab === "career-timing" && <CareerTimingSection data={result.careerTiming} />}
+              {activeTab === "deep-dasha" && <DeepDashaSection data={result.deepDasha} />}
+              {activeTab === "names" && <NamesSection data={result.namesSuggestion} />}
+              {activeTab === "upagrahas" && <UpagrahaSection data={result.upagrahas} />}
+              {activeTab === "gochar-naadi" && <GocharNaadiSection data={result.gocharNaadi} />}
+              {activeTab === "vimshopak-bala" && <VimshopakBalaSection data={result.vimshopakBala} />}
               {activeTab === "predictions" && <PredictionSection predictions={result.analysis.housePredictions} />}
               {activeTab === "dasha" && <DashaSection interp={result.analysis.currentDasha} />}
               {activeTab === "timeline" && <TimelineSection dashas={result.dashas} />}
@@ -1478,30 +1754,28 @@ function DivisionalChartSection({ chart, description }: { chart: DivisionalChart
   chart.planets.forEach((p) => { if (houseMap[p.house]) houseMap[p.house].push(p); });
 
   return (
-    <div>
-      <h2 className="text-lg font-bold text-stone-800 mb-1">{t(chart.nameMr, chart.name)}</h2>
-      <p className="text-sm text-stone-500 mb-4">{description}</p>
-      <div className="flex justify-center mb-6">
+    <div className="print-avoid-break">
+      <OrnateHeader title={t(chart.nameMr, chart.name, chart.nameMr)} subtitle={description} />
+      <div className="flex justify-center mb-6 p-4 rounded-xl" style={{ background: "linear-gradient(180deg, #FFFDF5, #FFF8E7)", border: "2px double #d4a843" }}>
         <NorthIndianChartSVG houseMap={houseMap} label={chart.id === "chandra" ? t("चंद्र","Moon") : undefined} lagnaRashi={getChartLagnaRashi(chart.planets)} />
       </div>
-      {/* Planet placement table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+      <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+        <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
           <thead>
-            <tr className="border-b-2 border-[#d4a843]/30">
-              <th className="text-left py-2 px-3">{t("ग्रह","Planet")}</th>
-              <th className="text-left py-2 px-3">{t("राशी","Sign")}</th>
-              <th className="text-center py-2 px-3">{t("भाव","House")}</th>
-              <th className="text-center py-2 px-3">{t("वक्री","Retro")}</th>
+            <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("ग्रह","Graha")}</th>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("राशी","Rashi")}</th>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("भाव","Bhava")}</th>
+              <th className="px-3 py-2 text-center" style={{ fontFamily: "serif" }}>{t("वक्री","Vakri")}</th>
             </tr>
           </thead>
           <tbody>
-            {chart.planets.map((p) => (
-              <tr key={p.id} className="border-b border-gray-100 hover:bg-[#FFF8E7]">
-                <td className="py-2 px-3 font-semibold">{t(p.nameMr, p.name)}</td>
-                <td className="py-2 px-3">{t(p.rashiMr, p.rashi)}</td>
-                <td className="py-2 px-3 text-center">{n(p.house)}</td>
-                <td className="py-2 px-3 text-center">{p.isRetrograde ? t("वक्री","R") : "—"}</td>
+            {chart.planets.map((p, i) => (
+              <tr key={p.id} style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7", borderTop: "1px solid rgba(212,168,67,0.3)" }}>
+                <td className="px-3 py-2 font-bold text-center" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>{t(p.nameMr, p.name)}</td>
+                <td className="px-3 py-2 text-center" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>{t(p.rashiMr, p.rashi)}</td>
+                <td className="px-3 py-2 text-center font-bold" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>{n(p.house)}</td>
+                <td className="px-3 py-2 text-center italic" style={{ color: p.isRetrograde ? "#b91c1c" : "rgba(92,26,26,0.5)", fontFamily: "serif" }}>{p.isRetrograde ? t("वक्री","Vakri") : "—"}</td>
               </tr>
             ))}
           </tbody>
@@ -1535,12 +1809,20 @@ function AllChartsGrid({ planets, divisionalCharts, lagnaRashi }: { planets: Pla
   ];
 
   return (
-    <div>
-      <h2 className="text-lg font-bold text-stone-800 mb-6">{t("सर्व कुंडली चार्ट", "All Kundli Charts")}</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="print-avoid-break">
+      <OrnateHeader
+        title={t("सर्व कुंडली चार्ट", "Sarva Kundli Chakra", "सर्व कुंडली चक्र")}
+        subtitle={t("लग्न व षोडशवर्ग कुंडल्या", "Lagna and divisional charts", "लग्न व षोडशवर्ग कुंडलियाँ")}
+      />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {allCharts.map((chart) => (
-          <div key={chart.id} className="text-center print-avoid-break">
-            <h3 className="text-sm font-bold mb-2" style={{ color: "#3d0c0c" }}>{chart.name}</h3>
+          <div key={chart.id} className="text-center p-3 print-avoid-break rounded-xl" style={{
+            background: "linear-gradient(180deg, #FFFDF5, #FFF8E7)",
+            border: "1.5px solid #d4a843",
+          }}>
+            <h3 className="text-sm font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+              ॥ {chart.name} ॥
+            </h3>
             <NorthIndianChartSVG houseMap={chart.houseMap} label={chart.label} lagnaRashi={chart.lagnaRashi} />
           </div>
         ))}
@@ -1556,9 +1838,15 @@ function ChartSection({ planets, lagnaRashi }: { planets: PlanetData[]; lagnaRas
   planets.forEach((p) => { if (houseMap[p.house]) houseMap[p.house].push(p); });
 
   return (
-    <div>
-      <h2 className="text-lg font-bold text-stone-800 mb-4">{t("लग्न कुंडली", "Birth Chart (North Indian)")}</h2>
-      <div className="flex justify-center">
+    <div className="print-avoid-break">
+      <OrnateHeader
+        title={t("लग्न कुंडली", "Lagna Kundli", "लग्न कुंडली")}
+        subtitle={t("उत्तर भारतीय पद्धती", "North Indian style", "उत्तर भारतीय शैली")}
+      />
+      <div className="flex justify-center p-5 rounded-xl" style={{
+        background: "linear-gradient(180deg, #FFFDF5, #FFF8E7)",
+        border: "2px double #d4a843",
+      }}>
         <NorthIndianChartSVG houseMap={houseMap} label={t("लग्न","Asc")} lagnaRashi={lagnaRashi} />
       </div>
     </div>
@@ -1569,37 +1857,40 @@ function PlanetTable({ planets, combustion }: { planets: PlanetData[]; combustio
   const { t, lang } = useLang();
   const n = (v: string | number) => lang === "mr" ? toMr(v) : String(v);
   return (
-    <div>
-      <h2 className="text-lg font-bold text-stone-800 mb-4">{t("निरयण ग्रह स्पष्ट", "Nirayana Planet Positions")}</h2>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+    <div className="print-avoid-break">
+      <OrnateHeader
+        title={t("निरयण ग्रह स्पष्ट", "Nirayana Graha Spashta", "निरयण ग्रह स्पष्ट")}
+        subtitle={t("लाहिरी अयनांश अनुसार ग्रहांची स्थिती", "Planetary positions with Lahiri Ayanamsha", "लाहिरी अयनांश से ग्रह स्थिति")}
+      />
+      <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+        <table className="w-full text-xs" style={{ borderCollapse: "collapse" }}>
           <thead>
-            <tr className="border-b-2 border-[#d4a843]/30">
-              <th className="text-left py-2 px-3">{t("ग्रह","Planet")}</th>
-              <th className="text-left py-2 px-3">{t("राशी","Sign")}</th>
-              <th className="text-left py-2 px-3">{t("अंश","Degree")}</th>
-              <th className="text-left py-2 px-3">{t("नक्षत्र","Nakshatra")}</th>
-              <th className="text-left py-2 px-3">{t("नक्ष. स्वामी","Nak. Lord")}</th>
-              <th className="text-center py-2 px-3">{t("पद","Pada")}</th>
-              <th className="text-center py-2 px-3">{t("भाव","House")}</th>
-              <th className="text-center py-2 px-3">{t("वक्री","Retro")}</th>
-              <th className="text-center py-2 px-3">{t("अस्त","Combust")}</th>
+            <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+              <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("ग्रह","Graha")}</th>
+              <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>{t("राशी","Rashi")}</th>
+              <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>{t("अंश","Amsha")}</th>
+              <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>{t("नक्षत्र","Nakshatra")}</th>
+              <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>{t("स्वामी","Swami")}</th>
+              <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>{t("पद","Pada")}</th>
+              <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>{t("भाव","Bhava")}</th>
+              <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>{t("वक्री","Vakri")}</th>
+              <th className="px-2 py-2 text-center" style={{ fontFamily: "serif" }}>{t("अस्त","Asta")}</th>
             </tr>
           </thead>
           <tbody>
-            {planets.map((p) => {
+            {planets.map((p, i) => {
               const comb = combustion?.find(c => c.id === p.id);
               return (
-                <tr key={p.id} className="border-b border-gray-100 hover:bg-[#FFF8E7]">
-                  <td className="py-2 px-3 font-semibold">{t(p.nameMr, p.name||p.id)}</td>
-                  <td className="py-2 px-3">{t(p.rashiMr, p.rashi)}</td>
-                  <td className="py-2 px-3 font-mono text-xs">{n(p.degreeDMS)}</td>
-                  <td className="py-2 px-3">{t(p.nakshatraMr, p.nakshatra)}</td>
-                  <td className="py-2 px-3">{t(PLANET_LORD_MR[p.nakshatraLord] || p.nakshatraLord, p.nakshatraLord)}</td>
-                  <td className="py-2 px-3 text-center">{n(p.pada)}</td>
-                  <td className="py-2 px-3 text-center">{n(p.house)}</td>
-                  <td className="py-2 px-3 text-center">{p.isRetrograde ? t("वक्री","R") : "—"}</td>
-                  <td className="py-2 px-3 text-center">{comb?.isCombust ? t("अस्त","Yes") : "—"}</td>
+                <tr key={p.id} style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7", borderTop: "1px solid rgba(212,168,67,0.3)" }}>
+                  <td className="px-2 py-2 font-bold text-center" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>{t(p.nameMr, p.name||p.id)}</td>
+                  <td className="px-2 py-2 text-center" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>{t(p.rashiMr, p.rashi)}</td>
+                  <td className="px-2 py-2 text-center font-mono" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.2)" }}>{n(p.degreeDMS)}</td>
+                  <td className="px-2 py-2 text-center" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>{t(p.nakshatraMr, p.nakshatra)}</td>
+                  <td className="px-2 py-2 text-center" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>{t(PLANET_LORD_MR[p.nakshatraLord] || p.nakshatraLord, p.nakshatraLord)}</td>
+                  <td className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)" }}>{n(p.pada)}</td>
+                  <td className="px-2 py-2 text-center font-bold" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>{n(p.house)}</td>
+                  <td className="px-2 py-2 text-center italic" style={{ color: p.isRetrograde ? "#b91c1c" : "rgba(92,26,26,0.5)", borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>{p.isRetrograde ? t("वक्री","Vakri") : "—"}</td>
+                  <td className="px-2 py-2 text-center italic" style={{ color: comb?.isCombust ? "#b91c1c" : "rgba(92,26,26,0.5)", fontFamily: "serif" }}>{comb?.isCombust ? t("अस्त","Asta") : "—"}</td>
                 </tr>
               );
             })}
@@ -1613,30 +1904,36 @@ function PlanetTable({ planets, combustion }: { planets: PlanetData[]; combustio
 function StrengthSection({ strengths }: { strengths: PlanetStrengthData[] }) {
   const { t, lang } = useLang();
   const n = (v: string | number) => lang === "mr" ? toMr(v) : String(v);
+  const strengthColor = (s: number) => s >= 75 ? "#1d7d3a" : s >= 50 ? "#b8860b" : s >= 25 ? "#c97226" : "#b91c1c";
   return (
-    <div>
-      <h2 className="text-lg font-bold text-stone-800 mb-4">{t("ग्रह बल विश्लेषण","Planetary Strength Analysis")}</h2>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+    <div className="print-avoid-break">
+      <OrnateHeader
+        title={t("ग्रह बल विचार", "Graha Bala Vichara", "ग्रह बल विचार")}
+        subtitle={t("ग्रहांची स्थिती व बल विश्लेषण", "Planetary dignity and strength analysis", "ग्रहों की स्थिति व बल विश्लेषण")}
+      />
+      <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+        <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
           <thead>
-            <tr className="border-b-2 border-[#d4a843]/30">
-              <th className="text-left py-2 px-3">{t("ग्रह","Planet")}</th>
-              <th className="text-left py-2 px-3">{t("स्थिती","Dignity")}</th>
-              <th className="text-center py-2 px-3">{t("भाव","House")}</th>
-              <th className="text-center py-2 px-3">{t("बल","Strength")}</th>
-              <th className="text-center py-2 px-3">{t("विशेष","Special")}</th>
+            <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("ग्रह","Graha")}</th>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("स्थिती","Sthiti")}</th>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("भाव","Bhava")}</th>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("बल","Bala")}</th>
+              <th className="px-3 py-2 text-center" style={{ fontFamily: "serif" }}>{t("विशेष","Vishesha")}</th>
             </tr>
           </thead>
           <tbody>
-            {strengths.map((s) => (
-              <tr key={s.id} className="border-b border-gray-100 hover:bg-[#FFF8E7] print-avoid-break">
-                <td className="py-2 px-3 font-semibold">{t(s.nameMr, s.nameEn)}</td>
-                <td className="py-2 px-3">{t(s.dignityMr, s.dignityEn)}</td>
-                <td className="py-2 px-3 text-center">{n(s.house)}</td>
-                <td className="py-2 px-3 text-center">{n(s.strengthScore)}%</td>
-                <td className="py-2 px-3 text-center">
-                  {s.isRetrograde && s.id !== "Rahu" && s.id !== "Ketu" ? t("वक्री","Retro") : ""}
-                  {s.isCombust ? t(" अस्त"," Combust") : ""}
+            {strengths.map((s, i) => (
+              <tr key={s.id} className="print-avoid-break" style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7", borderTop: "1px solid rgba(212,168,67,0.3)" }}>
+                <td className="px-3 py-2 font-bold text-center" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>{t(s.nameMr, s.nameEn)}</td>
+                <td className="px-3 py-2 text-center italic" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>{t(s.dignityMr, s.dignityEn)}</td>
+                <td className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.3)" }}>{n(s.house)}</td>
+                <td className="px-3 py-2 text-center font-bold" style={{ color: strengthColor(s.strengthScore), borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                  {n(s.strengthScore)}%
+                </td>
+                <td className="px-3 py-2 text-center italic" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+                  {s.isRetrograde && s.id !== "Rahu" && s.id !== "Ketu" ? t("वक्री","Vakri") : ""}
+                  {s.isCombust ? t(" अस्त"," Asta") : ""}
                   {!(s.isRetrograde && s.id !== "Rahu" && s.id !== "Ketu") && !s.isCombust ? "—" : ""}
                 </td>
               </tr>
@@ -1648,20 +1945,83 @@ function StrengthSection({ strengths }: { strengths: PlanetStrengthData[] }) {
   );
 }
 
-function YogaSection({ yogas }: { yogas: YogaData[] }) {
-  const { t } = useLang();
+// ─── Traditional ornate helpers ──────────────────────────────
+
+function OrnateHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
-    <div>
-      <h2 className="text-lg font-bold text-stone-800 mb-4">{t("योग विश्लेषण","Yoga Analysis")}</h2>
-      {yogas.length === 0 ? <p className="text-stone-500">{t("कोणतेही विशेष योग नाहीत.","No special yogas found.")}</p> : (
+    <div className="text-center mb-5" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843", borderRadius: "12px", padding: "14px 12px" }}>
+      <div className="text-[10px] tracking-widest text-[#5c1a1a]/70 mb-1">॥ श्रीगणेशाय नमः ॥</div>
+      <h2 className="text-xl font-bold" style={{ color: "#3d0c0c", fontFamily: "serif" }}>॥ {title} ॥</h2>
+      {subtitle && <div className="text-[11px] text-[#5c1a1a]/70 mt-1 italic">{subtitle}</div>}
+    </div>
+  );
+}
+
+function OrnateCard({ children, tint }: { children: React.ReactNode; tint?: "cream" | "maroon" | "green" | "red" | "gold" }) {
+  const bg =
+    tint === "maroon" ? "linear-gradient(180deg, #FFF3D6, #FFE9B8)" :
+    tint === "green" ? "linear-gradient(180deg, #F5FBEE, #EAF5D8)" :
+    tint === "red" ? "linear-gradient(180deg, #FDF3EC, #F9E5D4)" :
+    tint === "gold" ? "linear-gradient(180deg, #FFF8E7, #FFF3D6)" :
+    "#FFFDF5";
+  return (
+    <div className="p-4 print-avoid-break mb-4" style={{ background: bg, border: "2px double #d4a843", borderRadius: "12px" }}>
+      {children}
+    </div>
+  );
+}
+
+function verdictTextColor(status: "benefic" | "malefic" | "neutral" | "present" | "absent"): string {
+  if (status === "benefic" || status === "absent") return "#1d7d3a";
+  if (status === "malefic" || status === "present") return "#b91c1c";
+  return "#b8860b";
+}
+
+function YogaSection({ yogas }: { yogas: YogaData[] }) {
+  const { t, lang } = useLang();
+  const typeLabel = (type: "benefic" | "malefic" | "neutral") =>
+    type === "benefic" ? t("शुभ योग", "Shubha Yoga", "शुभ योग") :
+    type === "malefic" ? t("अशुभ योग", "Ashubha Yoga", "अशुभ योग") :
+    t("समयोग", "Samayoga", "समयोग");
+  const strengthMr = (s: string) => s === "strong" ? "तीव्र" : s === "moderate" ? "मध्यम" : "मंद";
+  return (
+    <div className="print-avoid-break">
+      <OrnateHeader
+        title={t("योग विश्लेषण", "Yoga Vishleshana", "योग विश्लेषण")}
+        subtitle={t("कुंडलीतील विशेष ग्रह-संयोगांचे वर्णन", "Special planetary combinations in the chart", "कुंडली में विशेष ग्रह-संयोग")}
+      />
+      {yogas.length === 0 ? (
+        <OrnateCard tint="cream">
+          <p className="text-center text-[#5c1a1a]/70 italic" style={{ fontFamily: "serif" }}>
+            {t("कोणतेही विशेष योग नाहीत.", "No special yogas found.", "कोई विशेष योग नहीं।")}
+          </p>
+        </OrnateCard>
+      ) : (
         <div className="space-y-4">
           {yogas.map((y, i) => (
-            <div key={i} className={`rounded-xl border p-4 print-avoid-break ${y.type==="benefic"?"bg-green-50 border-green-200":y.type==="malefic"?"bg-red-50 border-red-200":"bg-gray-50 border-gray-200"}`}>
+            <div key={i} className="print-avoid-break p-4 rounded-xl" style={{
+              background: y.type === "benefic" ? "linear-gradient(180deg, #F5FBEE, #EAF5D8)" :
+                          y.type === "malefic" ? "linear-gradient(180deg, #FDF3EC, #F9E5D4)" :
+                          "linear-gradient(180deg, #FFFDF5, #FFF8E7)",
+              border: "1.5px solid #d4a843",
+              borderLeft: `4px solid ${verdictTextColor(y.type)}`,
+            }}>
               <div className="flex items-center justify-between mb-2">
-                <h4 className="font-bold">{t(y.nameMr, y.nameEn)}</h4>
-                <span className={`text-xs px-2 py-0.5 rounded-full ${y.type==="benefic"?"bg-green-200 text-green-800":"bg-red-200 text-red-800"}`}>{y.strength}</span>
+                <h4 className="font-bold text-base" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                  ॥ {lang === "mr" ? y.nameMr : y.nameEn} ॥
+                </h4>
+                <div className="text-right">
+                  <div className="text-[11px] font-bold italic" style={{ color: verdictTextColor(y.type), fontFamily: "serif" }}>
+                    {typeLabel(y.type)}
+                  </div>
+                  <div className="text-[10px] text-[#5c1a1a]/60">
+                    {lang === "mr" ? strengthMr(y.strength) : y.strength}
+                  </div>
+                </div>
               </div>
-              <p className="text-sm text-stone-600">{t(y.descriptionMr, y.descriptionEn)}</p>
+              <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a" }}>
+                {t(y.descriptionMr, y.descriptionEn)}
+              </p>
             </div>
           ))}
         </div>
@@ -1671,23 +2031,1791 @@ function YogaSection({ yogas }: { yogas: YogaData[] }) {
 }
 
 function DoshaSection({ doshas }: { doshas: DoshaData[] }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   return (
-    <div>
-      <h2 className="text-lg font-bold text-stone-800 mb-4">{t("दोष विश्लेषण","Dosha Analysis")}</h2>
+    <div className="print-avoid-break">
+      <OrnateHeader
+        title={t("दोष विश्लेषण", "Dosha Vishleshana", "दोष विश्लेषण")}
+        subtitle={t("ग्रहदोषांचे निदान व शांती उपाय", "Planetary afflictions and remedies", "ग्रह दोष व उपाय")}
+      />
       <div className="space-y-4">
         {doshas.map((d, i) => (
-          <div key={i} className={`rounded-xl border-2 p-4 print-avoid-break ${d.present?"bg-red-50 border-red-200":"bg-green-50 border-green-200"}`}>
+          <div key={i} className="print-avoid-break p-4 rounded-xl" style={{
+            background: d.present ? "linear-gradient(180deg, #FDF3EC, #F9E5D4)" : "linear-gradient(180deg, #F5FBEE, #EAF5D8)",
+            border: "1.5px solid #d4a843",
+            borderLeft: `4px solid ${verdictTextColor(d.present ? "present" : "absent")}`,
+          }}>
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-bold">{t(d.nameMr, d.nameEn)}</h4>
-              <span className={`text-xs px-3 py-1 rounded-full font-semibold ${d.present?"bg-red-500 text-white":"bg-green-500 text-white"}`}>
-                {d.present ? t("उपस्थित","Present") : t("अनुपस्थित","Absent")}
+              <h4 className="font-bold text-base" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                ॥ {lang === "mr" ? d.nameMr : d.nameEn} ॥
+              </h4>
+              <span className="text-[11px] font-bold italic" style={{ color: verdictTextColor(d.present ? "present" : "absent"), fontFamily: "serif" }}>
+                {d.present ? t("उपस्थित", "Upasthita", "उपस्थित") : t("अनुपस्थित", "Anupasthita", "अनुपस्थित")}
               </span>
             </div>
-            <p className="text-sm text-stone-600 mb-2">{t(d.descriptionMr, d.descriptionEn)}</p>
-            {d.present && <div className="bg-white/70 rounded-lg p-3 border border-stone-200"><p className="text-sm">{t(d.remedyMr, d.remedyEn)}</p></div>}
+            <p className="text-sm leading-relaxed mb-3" style={{ color: "#5c1a1a" }}>
+              {t(d.descriptionMr, d.descriptionEn)}
+            </p>
+            {d.present && (
+              <div className="rounded-lg p-3" style={{ background: "#FFFDF5", border: "1px solid rgba(212,168,67,0.4)" }}>
+                <div className="text-[11px] font-bold mb-1 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                  ॥ {t("उपाय", "Upaya (Remedy)", "उपाय")} ॥
+                </div>
+                <p className="text-sm" style={{ color: "#5c1a1a" }}>{t(d.remedyMr, d.remedyEn)}</p>
+              </div>
+            )}
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function MangalDoshSection({ data }: { data?: MangalDoshData }) {
+  const { t, lang } = useLang();
+  if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+  const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const pickArr = (mr: string[], en: string[], hi: string[]) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+  return (
+    <div className="print-avoid-break">
+      <OrnateHeader
+        title={t("मंगळ दोष विचार", "Mangal Dosha Vichara", "मंगल दोष विचार")}
+        subtitle={t("लग्न, चंद्र व शुक्रापासून मंगळ स्थिती · परिहार · शांती उपाय", "Mars position from Lagna, Moon, Venus · Cancellations · Remedies", "लग्न, चंद्र व शुक्र से मंगल स्थिति · परिहार · उपाय")}
+      />
+
+      <div className="p-4 rounded-xl mb-4" style={{
+        background: data.present ? "linear-gradient(180deg, #FDF3EC, #F9E5D4)" : "linear-gradient(180deg, #F5FBEE, #EAF5D8)",
+        border: "2px double #d4a843",
+      }}>
+        <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+          <p className="font-bold text-sm" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+            {pick(data.summaryMr, data.summaryEn, data.summaryHi)}
+          </p>
+          <span className="text-[12px] font-bold italic px-3 py-1 rounded" style={{
+            color: verdictTextColor(data.present ? "present" : "absent"),
+            background: "#FFFDF5",
+            border: `1px solid ${verdictTextColor(data.present ? "present" : "absent")}40`,
+            fontFamily: "serif",
+          }}>
+            {data.present ? `॥ ${pick(data.severityMr, data.severityEn, data.severityHi)} ॥` : `॥ ${t("निर्दोष", "Nirdosha", "निर्दोष")} ॥`}
+          </span>
+        </div>
+        {data.present && (
+          <div className="text-xs mt-3 pt-2 grid grid-cols-2 md:grid-cols-4 gap-2" style={{ color: "#5c1a1a", borderTop: "1px dotted #d4a843" }}>
+            <span><b>{t("लग्नापासून", "From Lagna", "लग्न से")}:</b> {data.fromLagna ? "✓" : "—"}</span>
+            <span><b>{t("चंद्रापासून", "From Moon", "चंद्र से")}:</b> {data.fromMoon ? "✓" : "—"}</span>
+            <span><b>{t("शुक्रापासून", "From Venus", "शुक्र से")}:</b> {data.fromVenus ? "✓" : "—"}</span>
+            <span><b>{t("मंगळ राशी", "Mars Rashi", "मंगल राशि")}:</b> {lang === "mr" ? data.marsRashiMr : data.marsRashi}</span>
+          </div>
+        )}
+      </div>
+
+      {data.affectedAreasMr.length > 0 && (
+        <div className="mb-4 p-4 rounded-xl" style={{ background: "#FFFDF5", border: "1.5px solid #d4a843" }}>
+          <h4 className="text-[13px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+            ॥ {t("प्रभावित क्षेत्रे", "Prabhavita Kshetra", "प्रभावित क्षेत्र")} ॥
+          </h4>
+          <ul className="space-y-1">
+            {pickArr(data.affectedAreasMr, data.affectedAreasEn, data.affectedAreasHi).map((a, i) => (
+              <li key={i} className="text-sm pl-3" style={{ color: "#5c1a1a", borderLeft: "2px solid #d4a843" }}>{a}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {data.cancellations.length > 0 && (
+        <div className="mb-4 p-4 rounded-xl" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843" }}>
+          <h4 className="text-[13px] font-bold mb-2 italic text-center" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+            ॥ {t("परिहार", "Parihara (Cancellations)", "परिहार")} ॥
+          </h4>
+          <ul className="space-y-1 text-sm" style={{ color: "#5c1a1a" }}>
+            {pickArr(data.cancellationsMr, data.cancellations, data.cancellationsHi).map((c, i) => (
+              <li key={i} className="text-center" style={{ fontFamily: "serif" }}>{c}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {data.present && (
+        <div className="p-4 rounded-xl" style={{ background: "#FFFDF5", border: "2px double #d4a843" }}>
+          <h4 className="text-[13px] font-bold mb-3 italic text-center" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+            ॥ {t("शांती उपाय", "Shanti Upaya", "शांति उपाय")} ॥
+          </h4>
+          <ul className="space-y-2">
+            {pickArr(data.remediesMr, data.remediesEn, data.remediesHi).map((r, i) => (
+              <li key={i} className="text-sm flex gap-2" style={{ color: "#5c1a1a" }}>
+                <span className="font-bold flex-shrink-0" style={{ color: "#d4a843", fontFamily: "serif" }}>{num(i + 1)}.</span>
+                <span>{r}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function KalsarpDoshSection({ data }: { data?: KalsarpDoshData }) {
+  const { t, lang } = useLang();
+  if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+  const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const pickArr = (mr: string[], en: string[], hi: string[]) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+  return (
+    <div className="print-avoid-break">
+      <OrnateHeader
+        title={t("काळसर्प दोष विचार", "Kalasarpa Dosha Vichara", "कालसर्प दोष विचार")}
+        subtitle={t("राहू-केतू अक्षात ग्रहस्थिती · १२ प्रकार · त्र्यंबकेश्वर शांती", "Planets between Rahu-Ketu axis · 12 types · Trimbakeshwar shanti", "राहु-केतु अक्ष में ग्रह · 12 प्रकार · त्र्यंबकेश्वर शांति")}
+      />
+
+      <div className="p-4 rounded-xl mb-4" style={{
+        background: data.present ? "linear-gradient(180deg, #F5EFFA, #EEE2F5)" : "linear-gradient(180deg, #F5FBEE, #EAF5D8)",
+        border: "2px double #d4a843",
+      }}>
+        <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+          <p className="font-bold text-sm" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+            {pick(data.summaryMr, data.summaryEn, data.summaryHi)}
+          </p>
+          <span className="text-[12px] font-bold italic px-3 py-1 rounded" style={{
+            color: data.present ? "#6b21a8" : "#1d7d3a",
+            background: "#FFFDF5",
+            border: `1px solid ${data.present ? "#6b21a840" : "#1d7d3a40"}`,
+            fontFamily: "serif",
+          }}>
+            {data.present ? `॥ ${data.partial ? t("आंशिक", "Anshika", "आंशिक") : t("पूर्ण", "Purna", "पूर्ण")} ॥` : `॥ ${t("निर्दोष", "Nirdosha", "निर्दोष")} ॥`}
+          </span>
+        </div>
+        {data.present && (
+          <div className="text-xs mt-3 pt-2 grid grid-cols-2 md:grid-cols-4 gap-2" style={{ color: "#5c1a1a", borderTop: "1px dotted #d4a843" }}>
+            <span><b>{t("प्रकार", "Prakara", "प्रकार")}:</b> <span style={{ fontFamily: "serif", color: "#3d0c0c" }}>{pick(data.typeMr, data.typeEn, data.typeHi)}</span></span>
+            <span><b>{t("राहू स्थान", "Rahu Bhava", "राहु भाव")}:</b> {num(data.rahuHouse)}</span>
+            <span><b>{t("केतू स्थान", "Ketu Bhava", "केतु भाव")}:</b> {num(data.ketuHouse)}</span>
+            <span><b>{t("दिशा", "Disha", "दिशा")}:</b> {data.udit ? t("उदित", "Udita", "उदित") : t("अनुदित", "Anudita", "अनुदित")}</span>
+          </div>
+        )}
+      </div>
+
+      {data.present && (
+        <>
+          <div className="p-4 rounded-xl mb-4" style={{ background: "#FFFDF5", border: "1.5px solid #d4a843" }}>
+            <h4 className="text-[13px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+              ॥ {t("फल", "Phala (Effects)", "फल")} ॥
+            </h4>
+            <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a" }}>
+              {pick(data.effectsMr, data.effectsEn, data.effectsHi)}
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl mb-4" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843" }}>
+            <h4 className="text-[13px] font-bold mb-2 italic text-center" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+              ॥ {t("शिफारस केलेले तीर्थक्षेत्र", "Sifarasu Tirthakshetra", "अनुशंसित तीर्थक्षेत्र")} ॥
+            </h4>
+            <p className="text-sm text-center leading-relaxed mb-3" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+              {pick(data.yatraRecommendationMr, data.yatraRecommendationEn, data.yatraRecommendationHi)}
+            </p>
+            <div className="text-center">
+              <a href="/temples/trimbakeshwar" className="inline-block text-xs font-bold px-4 py-2 rounded text-white" style={{ background: "#3d0c0c", border: "1px solid #d4a843", fontFamily: "serif" }}>
+                ॥ {t("त्र्यंबकेश्वर दर्शन →", "Trimbakeshwar Darshan →", "त्र्यंबकेश्वर दर्शन →")} ॥
+              </a>
+            </div>
+          </div>
+          <div className="p-4 rounded-xl" style={{ background: "#FFFDF5", border: "2px double #d4a843" }}>
+            <h4 className="text-[13px] font-bold mb-3 italic text-center" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+              ॥ {t("शांती उपाय", "Shanti Upaya", "शांति उपाय")} ॥
+            </h4>
+            <ul className="space-y-2">
+              {pickArr(data.remediesMr, data.remediesEn, data.remediesHi).map((r, i) => (
+                <li key={i} className="text-sm flex gap-2" style={{ color: "#5c1a1a" }}>
+                  <span className="font-bold flex-shrink-0" style={{ color: "#d4a843", fontFamily: "serif" }}>{num(i + 1)}.</span>
+                  <span>{r}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function ShadBalaSection({ data }: { data?: ShadBalaData }) {
+  const { t, lang } = useLang();
+  if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+  const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+
+  const verdictColor = (v: string) =>
+    v === "very strong" ? "#1d7d3a" :
+    v === "strong" ? "#2d6b2d" :
+    v === "average" ? "#b8860b" :
+    v === "weak" ? "#c97226" :
+    "#b91c1c";
+
+  return (
+    <div className="print-avoid-break">
+      {/* Ornate traditional header */}
+      <div className="text-center mb-5" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843", borderRadius: "12px", padding: "14px 12px" }}>
+        <div className="text-[10px] tracking-widest text-[#5c1a1a]/70 mb-1">॥ श्रीगणेशाय नमः ॥</div>
+        <h2 className="text-xl font-bold" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("षड्बल गणना", "Shadbala Ganana", "षड्बल गणना")} ॥
+        </h2>
+        <div className="text-[11px] text-[#5c1a1a]/70 mt-1 italic">
+          {t("स्थान · दिक् · काल · चेष्टा · नैसर्गिक · दृक्", "Sthana · Dik · Kala · Chesta · Naisargika · Drik", "स्थान · दिक् · काल · चेष्टा · नैसर्गिक · दृक्")}
+        </div>
+      </div>
+
+      {/* Summary shloka-style */}
+      <div className="mb-5 text-center px-4 py-3 rounded-lg" style={{ background: "#FFFDF5", border: "1px solid rgba(212,168,67,0.4)" }}>
+        <p className="text-sm text-[#3d0c0c]" style={{ fontFamily: "serif" }}>
+          {pick(data.summaryMr, data.summaryEn, data.summaryHi)}
+        </p>
+      </div>
+
+      {/* Traditional panchang-style table */}
+      <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+        <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+              <th className="px-3 py-3 text-center font-bold" style={{ borderRight: "1px solid rgba(212,168,67,0.4)" }}>{t("ग्रह", "Graha", "ग्रह")}</th>
+              <th className="px-2 py-3 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)" }}>{t("स्थान", "Sthāna", "स्थान")}</th>
+              <th className="px-2 py-3 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)" }}>{t("दिक्", "Dik", "दिक्")}</th>
+              <th className="px-2 py-3 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)" }}>{t("काल", "Kāla", "काल")}</th>
+              <th className="px-2 py-3 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)" }}>{t("चेष्टा", "Cheṣṭā", "चेष्टा")}</th>
+              <th className="px-2 py-3 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)" }}>{t("नैसर्गिक", "Naisargika", "नैसर्गिक")}</th>
+              <th className="px-2 py-3 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)" }}>{t("दृक्", "Dṛk", "दृक्")}</th>
+              <th className="px-3 py-3 text-center font-bold" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", background: "rgba(212,168,67,0.15)" }}>{t("योग (रूप)", "Total (Rūpa)", "योग (रूप)")}</th>
+              <th className="px-3 py-3 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)" }}>{t("आवश्यक", "Required", "आवश्यक")}</th>
+              <th className="px-3 py-3 text-center">{t("संज्ञा", "Sanjñā", "संज्ञा")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.planets.map((p, i) => (
+              <tr key={p.id} style={{
+                background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7",
+                borderTop: "1px solid rgba(212,168,67,0.3)",
+              }}>
+                <td className="px-3 py-3 font-bold text-center" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                  {lang === "mr" ? p.nameMr : p.nameEn}
+                </td>
+                <td className="px-2 py-3 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)" }}>{num(p.sthana)}</td>
+                <td className="px-2 py-3 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)" }}>{num(p.dig)}</td>
+                <td className="px-2 py-3 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)" }}>{num(p.kala)}</td>
+                <td className="px-2 py-3 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)" }}>{num(p.chesta)}</td>
+                <td className="px-2 py-3 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)" }}>{num(p.naisargika)}</td>
+                <td className="px-2 py-3 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.3)" }}>{num(p.drik)}</td>
+                <td className="px-3 py-3 text-center font-bold" style={{
+                  color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)",
+                  background: "rgba(212,168,67,0.08)",
+                }}>
+                  {num(p.total)}
+                </td>
+                <td className="px-3 py-3 text-center text-stone-500" style={{ borderRight: "1px solid rgba(212,168,67,0.3)" }}>{num(p.required)}</td>
+                <td className="px-3 py-3 text-center font-bold" style={{ color: verdictColor(p.verdict), fontFamily: "serif" }}>
+                  {pick(p.verdictMr, p.verdictEn, p.verdictHi)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr style={{ background: "#3d0c0c", color: "#d4a843" }}>
+              <td className="px-3 py-2 text-[11px] text-center italic" colSpan={10}>
+                {t("६० रूप = १ अंश · पूर्णबल प्रमाणानुसार संज्ञा निर्धारित", "60 Rūpa = 1 Point · Sanjñā determined by Pūrṇabala proportion", "60 रूप = 1 अंश · संज्ञा पूर्णबल प्रमाण से निर्धारित")}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      {/* Rank order — traditional list */}
+      <div className="mt-5 rounded-lg p-4" style={{ background: "#FFF8E7", border: "1px solid rgba(212,168,67,0.3)" }}>
+        <h4 className="text-sm font-bold mb-2 text-center" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("बलक्रम", "Balakrama (Rank Order)", "बलक्रम")} ॥
+        </h4>
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-sm" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+          {[...data.planets].sort((a, b) => a.strengthRank - b.strengthRank).map((p, i) => (
+            <span key={p.id}>
+              <span className="font-bold text-[#3d0c0c]">{num(i + 1)}.</span>{" "}
+              {lang === "mr" ? p.nameMr : p.nameEn}
+              <span className="text-[11px] text-stone-500"> ({num(p.total)})</span>
+              {i < data.planets.length - 1 && <span className="text-[#d4a843] mx-2">॥</span>}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Remedies for weak planets */}
+      {data.planets.filter(p => !p.isStrong).length > 0 && (
+        <div className="mt-6">
+          <h3 className="text-center text-[14px] font-bold mb-3 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+            ॥ {t("क्षीण ग्रहांसाठी शांती उपाय", "Shanti Upaya for Weak Planets", "क्षीण ग्रहों के लिए शांति उपाय")} ॥
+          </h3>
+          <div className="space-y-4">
+            {data.planets.filter(p => !p.isStrong && p.remediesMr && p.remediesMr.length).map((p) => {
+              const remedies = lang === "en" ? p.remediesEn : lang === "hi" ? p.remediesHi : p.remediesMr;
+              return (
+                <div key={p.id} className="p-4 rounded-xl" style={{
+                  background: "linear-gradient(180deg, #FFFDF5, #FFF8E7)",
+                  border: "1.5px solid #d4a843",
+                  borderLeft: "4px solid #c97226",
+                }}>
+                  <h4 className="text-[13px] font-bold mb-2 pb-2 italic" style={{
+                    color: "#3d0c0c", fontFamily: "serif", borderBottom: "1px dotted #d4a843",
+                  }}>
+                    ॥ {lang === "mr" ? p.nameMr : p.nameEn} — {pick(p.verdictMr, p.verdictEn, p.verdictHi)} ({num(p.percentOfRequired)}%) ॥
+                  </h4>
+                  <ul className="space-y-2 mt-2">
+                    {remedies?.map((r, i) => (
+                      <li key={i} className="text-sm flex gap-2 leading-relaxed" style={{ color: "#5c1a1a" }}>
+                        <span className="font-bold flex-shrink-0" style={{ color: "#d4a843", fontFamily: "serif" }}>{num(i + 1)}.</span>
+                        <span>{r}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AshtakvargaSection({ data }: { data?: AshtakvargaData }) {
+  const { t, lang } = useLang();
+  if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+  const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+
+  const savColor = (b: number) =>
+    b >= 33 ? "#1d7d3a" :
+    b >= 28 ? "#2d6b2d" :
+    b >= 25 ? "#b8860b" :
+    "#b91c1c";
+
+  return (
+    <div className="print-avoid-break space-y-5">
+      <OrnateHeader
+        title={t("अष्टकवर्ग", "Ashtakavarga", "अष्टकवर्ग")}
+        subtitle={t("भिन्नाष्टक + सर्वाष्टक · ८ स्त्रोतांचे बिंदू", "Bhinnashtaka + Sarvashtaka · 8-source bindu (points)", "भिन्नाष्टक + सर्वाष्टक · 8 स्रोतों के बिंदु")}
+      />
+
+      <div className="p-4 rounded-xl text-center" style={{
+        background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)",
+        border: "2px double #d4a843",
+      }}>
+        <p className="text-sm font-bold" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          {pick(data.summaryMr, data.summaryEn, data.summaryHi)}
+        </p>
+      </div>
+
+      {/* Sarvashtakvarga — 12 rashi bindus */}
+      <div>
+        <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("सर्वाष्टकवर्ग (SAV)", "Sarvashtakavarga (SAV)", "सर्वाष्टकवर्ग (SAV)")} ॥
+        </h3>
+        <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+          <table className="w-full text-xs" style={{ borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+                <th className="px-2 py-2" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("राशी", "Rashi", "राशि")}</th>
+                {data.rashiNames.map((r, i) => (
+                  <th key={i} className="px-1 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>
+                    {lang === "mr" ? r.mr : r.en.slice(0, 3)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr style={{ background: "#FFFDF5" }}>
+                <td className="px-2 py-3 font-bold text-center" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>SAV</td>
+                {data.sarvashtaka.map((b, i) => (
+                  <td key={i} className="px-1 py-3 text-center font-bold" style={{
+                    color: savColor(b),
+                    borderRight: "1px solid rgba(212,168,67,0.2)",
+                    fontFamily: "serif",
+                    background: b >= 33 ? "rgba(29,125,58,0.1)" : b < 25 ? "rgba(185,28,28,0.08)" : "transparent",
+                  }}>{num(b)}</td>
+                ))}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-[11px] text-center italic mt-2" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>
+          ३३+ {t("अत्यंत प्रबळ", "Ati Prabala", "अत्यंत प्रबल")} · २८-३२ {t("प्रबळ", "Prabala", "प्रबल")} · २५-२७ {t("मध्यम", "Madhyama", "मध्यम")} · &lt;२५ {t("क्षीण", "Ksheena", "क्षीण")}
+        </p>
+      </div>
+
+      {/* House strength */}
+      <div>
+        <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("भाव बल — लग्नापासून", "Bhava Bala from Lagna", "भाव बल — लग्न से")} ॥
+        </h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+          {data.houseStrength.map((h) => {
+            const borderCol = h.verdict === "very strong" ? "#1d7d3a" : h.verdict === "strong" ? "#2d6b2d" : h.verdict === "average" ? "#b8860b" : "#b91c1c";
+            return (
+              <div key={h.house} className="p-2 text-xs rounded-lg" style={{
+                background: "#FFFDF5",
+                border: "1px solid rgba(212,168,67,0.4)",
+                borderLeft: `3px solid ${borderCol}`,
+              }}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold" style={{ color: "#3d0c0c", fontFamily: "serif" }}>भाव {num(h.house)}</span>
+                  <span className="font-bold text-sm" style={{ color: borderCol, fontFamily: "serif" }}>{num(h.sav)}</span>
+                </div>
+                <div style={{ color: "#5c1a1a", fontFamily: "serif" }}>{lang === "mr" ? h.rashiMr : h.rashiEn}</div>
+                <div className="text-[10px] italic mt-0.5" style={{ color: borderCol, fontFamily: "serif" }}>
+                  {pick(h.verdictMr, h.verdictEn, h.verdictHi)}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Bhinnashtakvarga — per-planet bindu table */}
+      <div>
+        <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("भिन्नाष्टकवर्ग", "Bhinnashtakavarga", "भिन्नाष्टकवर्ग")} ॥
+        </h3>
+        <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+          <table className="w-full text-xs" style={{ borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+                <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("ग्रह", "Graha", "ग्रह")}</th>
+                {data.rashiNames.map((r, i) => (
+                  <th key={i} className="px-1 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>
+                    {lang === "mr" ? r.mr : r.en.slice(0, 3)}
+                  </th>
+                ))}
+                <th className="px-2 py-2 text-center" style={{ background: "rgba(212,168,67,0.15)", fontFamily: "serif" }}>{t("योग", "Yoga", "योग")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.bhinnashtaka.map((p, i) => (
+                <tr key={p.planetId} style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7", borderTop: "1px solid rgba(212,168,67,0.3)" }}>
+                  <td className="px-2 py-2 font-bold text-center" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                    {lang === "mr" ? p.planetMr : p.planetEn}
+                  </td>
+                  {p.bindus.map((b, j) => (
+                    <td key={j} className="px-1 py-2 text-center" style={{
+                      color: b >= 5 ? "#1d7d3a" : b <= 2 ? "#b91c1c" : "#5c1a1a",
+                      fontWeight: b >= 5 ? "bold" : "normal",
+                      borderRight: "1px solid rgba(212,168,67,0.2)",
+                    }}>{num(b)}</td>
+                  ))}
+                  <td className="px-2 py-2 text-center font-bold" style={{
+                    color: "#3d0c0c",
+                    background: "rgba(212,168,67,0.08)",
+                    fontFamily: "serif",
+                  }}>{num(p.total)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Remedies for weak houses */}
+      {data.houseStrength.filter(h => h.verdict === "weak").length > 0 && (
+        <div>
+          <h3 className="text-center text-[14px] font-bold mb-3 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+            ॥ {t("क्षीण भावांसाठी शांती उपाय", "Shanti Upaya for Weak Bhavas", "क्षीण भावों के लिए शांति उपाय")} ॥
+          </h3>
+          <div className="space-y-4">
+            {data.houseStrength.filter(h => h.verdict === "weak" && h.remediesMr && h.remediesMr.length).map((h) => {
+              const remedies = lang === "en" ? h.remediesEn : lang === "hi" ? h.remediesHi : h.remediesMr;
+              return (
+                <div key={h.house} className="p-4 rounded-xl" style={{
+                  background: "linear-gradient(180deg, #FFFDF5, #FFF8E7)",
+                  border: "1.5px solid #d4a843",
+                  borderLeft: "4px solid #b91c1c",
+                }}>
+                  <h4 className="text-[13px] font-bold mb-2 pb-2 italic" style={{
+                    color: "#3d0c0c", fontFamily: "serif", borderBottom: "1px dotted #d4a843",
+                  }}>
+                    ॥ {t(`${num(h.house)}वा भाव`, `House ${h.house}`, `${num(h.house)}वां भाव`)} ({lang === "mr" ? h.rashiMr : h.rashiEn}) — SAV {num(h.sav)} · {pick(h.verdictMr, h.verdictEn, h.verdictHi)} ॥
+                  </h4>
+                  <ul className="space-y-2 mt-2">
+                    {remedies?.map((r, i) => (
+                      <li key={i} className="text-sm flex gap-2 leading-relaxed" style={{ color: "#5c1a1a" }}>
+                        <span className="font-bold flex-shrink-0" style={{ color: "#d4a843", fontFamily: "serif" }}>{num(i + 1)}.</span>
+                        <span>{r}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SarvatobhadraSection({ data }: { data?: SarvatobhadraData }) {
+  const { t, lang } = useLang();
+  if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+  const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+
+  const PLANET_ABBR: Record<string, string> = {
+    Sun: "सू", Moon: "चं", Mars: "मं", Mercury: "बु", Jupiter: "गु", Venus: "शु", Saturn: "श", Rahu: "रा", Ketu: "के",
+  };
+
+  const ratingColor =
+    data.rating === 5 ? "#1d7d3a" :
+    data.rating === 4 ? "#2d6b2d" :
+    data.rating === 3 ? "#b8860b" :
+    data.rating === 2 ? "#c97226" : "#b91c1c";
+
+  return (
+    <div className="print-avoid-break space-y-5">
+      <OrnateHeader
+        title={t("सर्वतोभद्र चक्र", "Sarvatobhadra Chakra", "सर्वतोभद्र चक्र")}
+        subtitle={t("जन्म नक्षत्रापासून गोचर वेध · सध्याच्या शुभाशुभाचे निदान", "Transit vedha from Janma nakshatra · current auspiciousness", "जन्म नक्षत्र से गोचर वेध · वर्तमान शुभाशुभ")}
+      />
+
+      <div className="p-4 rounded-xl" style={{
+        background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)",
+        border: "2px double #d4a843",
+      }}>
+        <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+          <p className="text-sm font-bold" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+            {pick(data.summaryMr, data.summaryEn, data.summaryHi)}
+          </p>
+          <div style={{ color: "#d4a843", fontSize: "18px" }}>{"★".repeat(data.rating)}{"☆".repeat(5 - data.rating)}</div>
+        </div>
+        <div className="flex flex-wrap gap-4 text-xs mt-2 pt-2" style={{ color: "#5c1a1a", borderTop: "1px dotted #d4a843", fontFamily: "serif" }}>
+          <span style={{ color: "#1d7d3a" }}>◉ {t("शुभ", "Shubha", "शुभ")}: <b>{num(data.auspiciousCount)}</b></span>
+          <span style={{ color: "#b91c1c" }}>◉ {t("अशुभ", "Ashubha", "अशुभ")}: <b>{num(data.inauspiciousCount)}</b></span>
+          <span style={{ color: "#b8860b" }}>◉ {t("तटस्थ", "Samya", "तटस्थ")}: <b>{num(data.neutralCount)}</b></span>
+          <span className="ml-auto italic" style={{ color: ratingColor }}>॥ {pick(data.verdictMr, data.verdictEn, data.verdictHi)} ॥</span>
+        </div>
+      </div>
+
+      {/* Transit vedha table */}
+      <div>
+        <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("गोचर ग्रह व वेध", "Gochara Graha & Vedha", "गोचर ग्रह व वेध")} ॥
+        </h3>
+        <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+          <table className="w-full text-xs" style={{ borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+                <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("ग्रह", "Graha", "ग्रह")}</th>
+                <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("नक्षत्र", "Nakshatra", "नक्षत्र")}</th>
+                <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("अंतर", "Antara", "अंतर")}</th>
+                <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("वेध", "Vedha", "वेध")}</th>
+                <th className="px-2 py-2 text-center" style={{ fontFamily: "serif" }}>{t("प्रभाव", "Prabhava", "प्रभाव")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.transits.map((tp, i) => {
+                const eCol = tp.effect === "auspicious" ? "#1d7d3a" : tp.effect === "inauspicious" ? "#b91c1c" : "#b8860b";
+                return (
+                  <tr key={tp.id} style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7", borderTop: "1px solid rgba(212,168,67,0.3)" }}>
+                    <td className="px-2 py-2 font-bold text-center" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                      {lang === "mr" ? tp.nameMr : tp.nameEn}
+                    </td>
+                    <td className="px-2 py-2 text-center" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                      {lang === "mr" ? tp.nakshatraMr : tp.nakshatraEn}
+                    </td>
+                    <td className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.3)" }}>{num(tp.offsetFromNatal)}</td>
+                    <td className="px-2 py-2 text-center italic" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                      {tp.vedhaType ? pick(tp.vedhaTypeMr ?? "", tp.vedhaTypeEn ?? "", tp.vedhaTypeHi ?? "") : "—"}
+                    </td>
+                    <td className="px-2 py-2 text-center font-bold italic" style={{ color: eCol, fontFamily: "serif" }}>
+                      {tp.effect === "auspicious" ? t("शुभ", "Shubha", "शुभ") :
+                       tp.effect === "inauspicious" ? t("अशुभ", "Ashubha", "अशुभ") :
+                       t("सम्य", "Samya", "सम्य")}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* 27-cell nakshatra wheel */}
+      <div>
+        <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("नक्षत्र चक्र", "Nakshatra Chakra", "नक्षत्र चक्र")} ॥
+        </h3>
+        <p className="text-[11px] text-center italic mb-3" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>
+          {t("सोनेरी = जन्म · हिरवा = शुभ वेध · लाल = अशुभ वेध · ग्रहचिन्ह = गोचर", "Gold = natal · Green = auspicious · Red = inauspicious · Symbol = transit", "सोनेरी = जन्म · हरा = शुभ · लाल = अशुभ · चिह्न = गोचर")}
+        </p>
+        <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
+          {data.grid.slice(0, 27).map((cell, i) => {
+            const isAuspicious = cell.vedhaType && ["karma", "desha", "manasa", "maanas"].includes(cell.vedhaType);
+            const isInauspicious = cell.vedhaType && ["janma", "sanghatik", "samudaya", "jati", "adhana", "naidhana", "vinasha", "vainashika"].includes(cell.vedhaType);
+            return (
+              <div
+                key={i}
+                className="relative rounded-lg p-1.5 text-[10px] min-h-[64px]"
+                style={{
+                  background: cell.isNatal ? "linear-gradient(180deg, #FFF3D6, #FFE9B8)" :
+                              isAuspicious ? "linear-gradient(180deg, #F5FBEE, #EAF5D8)" :
+                              isInauspicious ? "linear-gradient(180deg, #FDF3EC, #F9E5D4)" :
+                              "#FFFDF5",
+                  border: cell.isNatal ? "2px double #d4a843" :
+                          isAuspicious ? "1.5px solid #1d7d3a" :
+                          isInauspicious ? "1.5px solid #b91c1c" :
+                          "1px solid rgba(212,168,67,0.4)",
+                  boxShadow: cell.isNatal ? "0 0 0 2px rgba(212,168,67,0.4)" : undefined,
+                }}
+                title={cell.vedhaType ?? ""}
+              >
+                <div className="font-bold leading-tight" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                  {lang === "mr" ? cell.nakshatraMr : cell.nakshatraEn}
+                </div>
+                {cell.vedhaType && (
+                  <div className="text-[8px] italic leading-tight" style={{ color: isAuspicious ? "#1d7d3a" : isInauspicious ? "#b91c1c" : "rgba(92,26,26,0.6)" }}>
+                    {cell.vedhaType}
+                  </div>
+                )}
+                {cell.transitPlanets.length > 0 && (
+                  <div className="absolute bottom-0.5 right-0.5 flex flex-wrap gap-0.5 max-w-[40px] justify-end">
+                    {cell.transitPlanets.map((p) => (
+                      <span key={p} className="text-[9px] font-bold px-1 rounded leading-tight" style={{
+                        background: "#3d0c0c", color: "#d4a843", border: "1px solid #d4a843", fontFamily: "serif",
+                      }}>
+                        {PLANET_ABBR[p] ?? p.slice(0, 2)}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Vedha remedies */}
+      {data.remediesMr && data.remediesMr.length > 0 && (
+        <div className="p-4 rounded-xl" style={{
+          background: "linear-gradient(180deg, #FFFDF5, #FFF8E7)",
+          border: "2px double #d4a843",
+          borderLeft: `4px solid ${ratingColor}`,
+        }}>
+          <h3 className="text-center text-[14px] font-bold mb-3 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+            ॥ {t("वर्तमान गोचरांसाठी शांती उपाय", "Shanti Upaya for Current Transits", "वर्तमान गोचर हेतु शांति उपाय")} ॥
+          </h3>
+          <ul className="space-y-2">
+            {(lang === "en" ? data.remediesEn : lang === "hi" ? data.remediesHi : data.remediesMr)?.map((r, i) => (
+              <li key={i} className="text-sm flex gap-2 leading-relaxed" style={{ color: "#5c1a1a" }}>
+                <span className="font-bold flex-shrink-0" style={{ color: "#d4a843", fontFamily: "serif" }}>{num(i + 1)}.</span>
+                <span>{r}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function BirthPanchangSection({ data, balance }: { data?: EnhancementsData["birthPanchang"]; balance?: EnhancementsData["balanceDasha"] }) {
+  const { t, lang } = useLang();
+  if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+
+  const rows: { labelMr: string; labelEn: string; value: string }[] = [
+    { labelMr: "वार", labelEn: "Day (Vara)", value: data.day },
+    { labelMr: "सूर्योदय", labelEn: "Sunrise", value: num(data.sunrise) },
+    { labelMr: "सूर्यास्त", labelEn: "Sunset", value: num(data.sunset) },
+    { labelMr: "दिनमान", labelEn: "Day Duration (Dinmana)", value: num(data.dinman) },
+    { labelMr: "तिथी", labelEn: "Tithi", value: data.tithi },
+    { labelMr: "पक्ष", labelEn: "Paksha", value: data.paksha },
+    { labelMr: "योग", labelEn: "Yoga", value: data.yoga },
+    { labelMr: "करण", labelEn: "Karana", value: data.karana },
+    { labelMr: "मास", labelEn: "Masa (Month)", value: data.masa },
+    { labelMr: "शक संवत्", labelEn: "Shaka Samvat", value: num(data.shakaSamvat) },
+  ];
+
+  return (
+    <div className="print-avoid-break">
+      <OrnateHeader
+        title={t("जन्म पंचांग", "Janma Panchanga", "जन्म पंचांग")}
+        subtitle={t("जन्म क्षणी पंचांगाचे पाच अंग व विम्शोत्तरी बाल दशा", "Five elements of Panchanga at birth + Balance of Dasha", "जन्म समय पंचांग व शेष दशा")}
+      />
+      <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+        <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={i} style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7", borderTop: "1px solid rgba(212,168,67,0.3)" }}>
+                <td className="px-4 py-3 font-bold" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif", width: "40%" }}>
+                  ॥ {t(r.labelMr, r.labelEn, r.labelMr)} ॥
+                </td>
+                <td className="px-4 py-3" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+                  {r.value}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {balance && balance.lordMr !== "—" && (
+        <div className="mt-5 p-4 rounded-xl" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843" }}>
+          <h4 className="text-center text-[13px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+            ॥ {t("जन्मकालीन शेष विम्शोत्तरी दशा", "Balance of Dasha at Birth", "जन्मकालीन शेष विंशोत्तरी दशा")} ॥
+          </h4>
+          <p className="text-center text-sm" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+            {t(`${balance.lordMr} महादशा शेष`, `${balance.lordEn} Mahadasha balance`, `${balance.lordMr} महादशा शेष`)} —
+            <span className="font-bold mx-2" style={{ color: "#3d0c0c" }}>
+              {num(balance.years)} {t("वर्षे", "years", "वर्ष")} · {num(balance.months)} {t("महिने", "months", "माह")} · {num(balance.days)} {t("दिवस", "days", "दिन")}
+            </span>
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function JaiminiSection({ data }: { data?: JaiminiData }) {
+  const { t, lang } = useLang();
+  if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+  const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+  return (
+    <div className="print-avoid-break space-y-5">
+      <OrnateHeader
+        title={t("आत्मकारक व इष्टदेवता", "Atmakaraka & Ishta Devata", "आत्मकारक व इष्टदेवता")}
+        subtitle={t("जैमिनी सूत्रानुसार आत्म्याचा कारक व उपास्य देव", "Per Jaimini Sutras — soul significator and personal deity", "जैमिनी सूत्र — आत्मा कारक व उपास्य देव")}
+      />
+
+      {/* Atmakaraka card */}
+      <div className="p-4 rounded-xl" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843" }}>
+        <h4 className="text-center text-[13px] font-bold mb-3 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("आत्मकारक", "Atmakaraka", "आत्मकारक")} ॥
+        </h4>
+        <div className="text-center">
+          <p className="text-2xl font-bold mb-1" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+            {lang === "mr" ? data.atmakarakaNameMr : data.atmakarakaNameEn}
+          </p>
+          <p className="text-sm" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+            {t("सर्वोच्च अंश असलेला ग्रह", "Planet with highest degree in sign", "सर्वोच्च अंश वाला ग्रह")} — {num(data.atmakarakaDegree)}° {t("अंश", "Amsha", "अंश")} · {lang === "mr" ? data.atmakarakaRashiMr : data.atmakarakaRashiEn} {t("राशी", "Rashi", "राशि")}
+          </p>
+          <p className="text-[11px] italic mt-2" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>
+            {t("आत्मा, जीवन उद्देश व कर्मबंधनाचे प्रतीक — हा ग्रह बलवान करून मोक्षमार्गाकडे वाटचाल.", "Signifies the soul, life purpose and karmic signature — strengthening this planet aids the path to moksha.", "आत्मा, जीवन उद्देश व कर्म बंधन का प्रतीक — इस ग्रह को बलवान करने से मोक्ष मार्ग सुगम.")}
+          </p>
+        </div>
+      </div>
+
+      {/* Ishta Devata card */}
+      <div className="p-5 rounded-xl" style={{ background: "linear-gradient(180deg, #FFFDF5, #FFF8E7)", border: "2px double #d4a843", borderLeft: "4px solid #d4a843" }}>
+        <h4 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("इष्टदेवता", "Ishta Devata (Personal Deity)", "इष्टदेवता")} ॥
+        </h4>
+        <p className="text-center text-[11px] italic mb-3" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>
+          {t(`आत्मकारकाची द्वादशांश (D12) स्थिती: ${data.ishtaDevataRashiMr} राशी`, `Atmakaraka in Dwadashamsha (D12): ${data.ishtaDevataRashiEn}`, `आत्मकारक की द्वादशांश (D12) स्थिति: ${data.ishtaDevataRashiMr} राशि`)}
+        </p>
+        <p className="text-center text-2xl font-bold mb-3" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          {pick(data.ishtaDevataMr, data.ishtaDevataEn, data.ishtaDevataHi)}
+        </p>
+        <div className="mb-3 p-3 rounded" style={{ background: "rgba(212,168,67,0.1)", border: "1px solid rgba(212,168,67,0.3)" }}>
+          <p className="text-[11px] font-bold mb-1 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+            {t("बीज मंत्र", "Beej Mantra", "बीज मंत्र")}
+          </p>
+          <p className="text-sm text-center" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+            {t(data.mantraMr, data.mantraEn, data.mantraMr)}
+          </p>
+        </div>
+        <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+          {pick(data.significanceMr, data.significanceEn, data.significanceHi)}
+        </p>
+      </div>
+
+      {/* Karakamsha */}
+      <div className="p-4 rounded-xl text-center" style={{ background: "#FFFDF5", border: "1.5px solid #d4a843" }}>
+        <h4 className="text-[13px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("कारकांश लग्न", "Karakamsha Lagna", "कारकांश लग्न")} ॥
+        </h4>
+        <p className="text-lg font-bold" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          {lang === "mr" ? data.karakamshaRashiMr : data.karakamshaRashiEn} {t("राशी", "Rashi", "राशि")}
+        </p>
+        <p className="text-[11px] italic mt-2" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>
+          {t("नवमांशातील आत्मकारकाची राशी — आध्यात्मिक प्रवृत्ती व अंतर्मनाची दिशा दर्शवते.", "Sign of Atmakaraka in Navamsha — reveals spiritual inclination and inner direction.", "नवमांश में आत्मकारक की राशि — आध्यात्मिक प्रवृत्ति व अंतर्मन की दिशा.")}
+        </p>
+      </div>
+
+      {/* Chara Karakas table */}
+      <div>
+        <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("सात चर कारक", "Seven Chara Karakas", "सात चर कारक")} ॥
+        </h3>
+        <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+          <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+                <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("कारक", "Karaka", "कारक")}</th>
+                <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("ग्रह", "Graha", "ग्रह")}</th>
+                <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("अंश", "Degree", "अंश")}</th>
+                <th className="px-3 py-2 text-center" style={{ fontFamily: "serif" }}>{t("विषय", "Domain", "विषय")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.charakarakas.map((c, i) => (
+                <tr key={c.role} style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7", borderTop: "1px solid rgba(212,168,67,0.3)" }}>
+                  <td className="px-3 py-2 font-bold text-center italic" style={{ color: c.role === "AK" ? "#d4a843" : "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                    {lang === "mr" ? c.karakaMr : c.karakaEn}
+                  </td>
+                  <td className="px-3 py-2 text-center" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                    {lang === "mr" ? c.nameMr : c.nameEn}
+                  </td>
+                  <td className="px-3 py-2 text-center font-bold" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                    {num(c.degree)}°
+                  </td>
+                  <td className="px-3 py-2 text-center italic" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+                    {c.roleMr}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MitraShatruSection({ data }: { data?: MitraShatruData[] }) {
+  const { t, lang } = useLang();
+  if (!data || data.length === 0) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+
+  const PLANET_IDS = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"];
+
+  const relColor = (pancha: string) => {
+    if (pancha.includes("अधिमित्र") || pancha.includes("Adhimitra")) return "#1d7d3a";
+    if (pancha.includes("अधिशत्रू") || pancha.includes("Adhishatru")) return "#b91c1c";
+    if (pancha === "मित्र" || pancha === "Mitra") return "#2d6b2d";
+    if (pancha === "शत्रू" || pancha === "Shatru") return "#c97226";
+    return "#5c1a1a";
+  };
+
+  // Abbreviation per planet for compact matrix
+  const ABBR: Record<string, string> = { Sun: "सू", Moon: "चं", Mars: "मं", Mercury: "बु", Jupiter: "गु", Venus: "शु", Saturn: "श" };
+  const ABBR_EN: Record<string, string> = { Sun: "Su", Moon: "Mo", Mars: "Ma", Mercury: "Me", Jupiter: "Ju", Venus: "Ve", Saturn: "Sa" };
+
+  return (
+    <div className="print-avoid-break space-y-5">
+      <OrnateHeader
+        title={t("मित्र-शत्रु चक्र", "Mitra-Shatru Chakra", "मित्र-शत्रु चक्र")}
+        subtitle={t("नैसर्गिक + तात्कालिक मैत्री = पंचधा मैत्री", "Naisargika + Tatkalik = Panchadha Maitri", "नैसर्गिक + तात्कालिक मैत्री")}
+      />
+
+      {/* Panchadha matrix */}
+      <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+        <table className="w-full text-xs" style={{ borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+              <th className="px-2 py-2" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("ग्रह ↓", "Planet ↓", "ग्रह ↓")}</th>
+              {PLANET_IDS.map((pid) => (
+                <th key={pid} className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>
+                  {lang === "mr" ? ABBR[pid] : ABBR_EN[pid]}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((row, i) => (
+              <tr key={row.planetId} style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7", borderTop: "1px solid rgba(212,168,67,0.3)" }}>
+                <td className="px-2 py-2 font-bold text-center" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                  {lang === "mr" ? row.planetMr : row.planetEn}
+                </td>
+                {PLANET_IDS.map((pid) => {
+                  if (pid === row.planetId) {
+                    return <td key={pid} className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)", background: "rgba(212,168,67,0.15)" }}>—</td>;
+                  }
+                  const rel = row.relations.find((r) => r.otherId === pid);
+                  if (!rel) return <td key={pid} className="px-2 py-2">—</td>;
+                  const pancha = lang === "en" ? rel.panchadhaEn : rel.panchadha;
+                  return (
+                    <td key={pid} className="px-2 py-2 text-center italic font-bold" style={{
+                      color: relColor(pancha),
+                      borderRight: "1px solid rgba(212,168,67,0.2)",
+                      fontFamily: "serif",
+                      fontSize: "11px",
+                    }}>
+                      {pancha}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p className="text-center text-[11px] italic" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>
+        ॥ {t("अधिमित्र > मित्र > सम > शत्रू > अधिशत्रू", "Adhimitra > Mitra > Sama > Shatru > Adhishatru", "अधिमित्र > मित्र > सम > शत्रू > अधिशत्रू")} ॥
+      </p>
+    </div>
+  );
+}
+
+function AstaYuddhaSection({ combustion, yuddha }: { combustion?: CombustionDetailData[]; yuddha?: GrahaYuddhaData[] }) {
+  const { t, lang } = useLang();
+  const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+
+  const sevColor = (s: string) =>
+    s === "severe" ? "#b91c1c" : s === "moderate" ? "#c97226" : s === "mild" ? "#b8860b" : "#1d7d3a";
+
+  return (
+    <div className="print-avoid-break space-y-5">
+      <OrnateHeader
+        title={t("अस्त व ग्रह युद्ध", "Asta & Graha Yuddha", "अस्त व ग्रह युद्ध")}
+        subtitle={t("सूर्यसान्निध्य + १° अंतरातील ग्रह संघर्ष", "Proximity to Sun + Planetary war within 1°", "सूर्य सामीप्य + ग्रह युद्ध")}
+      />
+
+      {/* Combustion table */}
+      <div>
+        <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("अस्त विचार (सूर्यसंग)", "Asta Vichara (Combustion)", "अस्त विचार (सूर्य सामीप्य)")} ॥
+        </h3>
+        <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+          <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+                <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("ग्रह", "Graha", "ग्रह")}</th>
+                <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("अंतर", "Distance", "अंतर")}</th>
+                <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("सीमा", "Threshold", "सीमा")}</th>
+                <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("अस्त", "Asta", "अस्त")}</th>
+                <th className="px-2 py-2 text-center" style={{ fontFamily: "serif" }}>{t("तीव्रता", "Severity", "तीव्रता")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(combustion || []).map((c, i) => (
+                <tr key={c.id} style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7", borderTop: "1px solid rgba(212,168,67,0.3)" }}>
+                  <td className="px-2 py-2 font-bold text-center" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                    {lang === "mr" ? c.nameMr : c.nameEn}
+                  </td>
+                  <td className="px-2 py-2 text-center" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.3)" }}>{num(c.distance)}°</td>
+                  <td className="px-2 py-2 text-center" style={{ color: "rgba(92,26,26,0.7)", borderRight: "1px solid rgba(212,168,67,0.3)" }}>{num(c.threshold)}°</td>
+                  <td className="px-2 py-2 text-center italic font-bold" style={{ color: c.isCombust ? "#b91c1c" : "#1d7d3a", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                    {c.isCombust ? t("होय", "Yes", "हाँ") : t("नाही", "No", "नहीं")}
+                  </td>
+                  <td className="px-2 py-2 text-center italic font-bold" style={{ color: sevColor(c.severity), fontFamily: "serif" }}>
+                    {pick(c.severityMr, c.severityEn, c.severityHi)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Combust planet details */}
+        <div className="mt-4 space-y-3">
+          {(combustion || []).filter((c) => c.isCombust).map((c) => (
+            <div key={c.id} className="p-4 rounded-xl" style={{
+              background: "linear-gradient(180deg, #FDF3EC, #F9E5D4)",
+              border: "1.5px solid #d4a843",
+              borderLeft: `4px solid ${sevColor(c.severity)}`,
+            }}>
+              <h4 className="text-[13px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                ॥ {lang === "mr" ? c.nameMr : c.nameEn} — {pick(c.severityMr, c.severityEn, c.severityHi)} {t("अस्त", "Asta", "अस्त")} ({num(c.distance)}°) ॥
+              </h4>
+              <p className="text-sm leading-relaxed mb-2" style={{ color: "#5c1a1a" }}>
+                {pick(c.effectMr, c.effectEn, c.effectHi)}
+              </p>
+              <div className="p-2 rounded" style={{ background: "#FFFDF5", border: "1px solid rgba(212,168,67,0.4)" }}>
+                <p className="text-[11px] font-bold italic mb-1" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                  {t("उपाय", "Upaya (Remedy)", "उपाय")}
+                </p>
+                <p className="text-sm" style={{ color: "#5c1a1a" }}>{pick(c.remedyMr, c.remedyEn, c.remedyHi)}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Graha Yuddha */}
+      <div>
+        <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("ग्रह युद्ध", "Graha Yuddha", "ग्रह युद्ध")} ॥
+        </h3>
+        {yuddha && yuddha.length > 0 ? (
+          <div className="space-y-3">
+            {yuddha.map((y, i) => (
+              <div key={i} className="p-4 rounded-xl" style={{
+                background: "linear-gradient(180deg, #FFFDF5, #FFF8E7)",
+                border: "2px double #d4a843",
+              }}>
+                <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+                  <p className="font-bold text-sm" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                    ॥ {lang === "mr" ? y.planet1Mr : y.planet1} ⚔ {lang === "mr" ? y.planet2Mr : y.planet2} — {lang === "mr" ? y.rashiMr : y.rashiEn} {t("राशी", "rashi", "राशि")} ({num(y.distance)}°) ॥
+                  </p>
+                </div>
+                <div className="flex gap-3 mb-2 flex-wrap">
+                  <div className="flex-1 p-2 rounded text-center" style={{ background: "rgba(29,125,58,0.1)", border: "1px solid #1d7d3a" }}>
+                    <p className="text-[10px] italic" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>{t("विजयी", "Winner", "विजयी")}</p>
+                    <p className="font-bold text-sm" style={{ color: "#1d7d3a", fontFamily: "serif" }}>{lang === "mr" ? y.winnerMr : y.winner}</p>
+                  </div>
+                  <div className="flex-1 p-2 rounded text-center" style={{ background: "rgba(185,28,28,0.08)", border: "1px solid #b91c1c" }}>
+                    <p className="text-[10px] italic" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>{t("पराजित", "Loser", "पराजित")}</p>
+                    <p className="font-bold text-sm" style={{ color: "#b91c1c", fontFamily: "serif" }}>{lang === "mr" ? y.loserMr : y.loser}</p>
+                  </div>
+                </div>
+                <p className="text-sm leading-relaxed mb-1" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+                  {pick(y.reasonMr, y.reasonEn, y.reasonHi)}
+                </p>
+                <p className="text-[12px] italic" style={{ color: "rgba(92,26,26,0.8)" }}>
+                  {pick(y.effectMr, y.effectEn, y.effectHi)}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-4 rounded-xl text-center" style={{ background: "#FFFDF5", border: "1.5px solid #d4a843" }}>
+            <p className="text-sm italic" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>
+              ॥ {t("कोणतेही ग्रह युद्ध नाही — सर्व ग्रह परस्परांपासून सुरक्षित अंतरावर.", "No planetary war — all planets at safe mutual distance.", "कोई ग्रह युद्ध नहीं — सभी ग्रह परस्पर सुरक्षित दूरी पर.")} ॥
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function BhavaBalaSection({ data }: { data?: BhavaBalaData[] }) {
+  const { t, lang } = useLang();
+  if (!data || data.length === 0) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+  const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+
+  const verdictColor = (v: string) =>
+    v === "very strong" ? "#1d7d3a" :
+    v === "strong" ? "#2d6b2d" :
+    v === "average" ? "#b8860b" :
+    "#b91c1c";
+
+  return (
+    <div className="print-avoid-break">
+      <OrnateHeader
+        title={t("भाव बल", "Bhava Bala (House Strength)", "भाव बल")}
+        subtitle={t("भावाधिपती + भाव दिग् + भाव दृष्टि = एकूण भाव बल", "Bhavadhipati + Bhav Dig + Bhav Drishti = total Bhava Bala", "भावाधिपति + भाव दिग् + भाव दृष्टि")}
+      />
+
+      <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+        <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+              <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("भाव", "Bhava", "भाव")}</th>
+              <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("राशी", "Rashi", "राशि")}</th>
+              <th className="px-2 py-2 text-left" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("विषय", "Subject", "विषय")}</th>
+              <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>{t("अधिपति", "Adhipati", "अधिपति")}</th>
+              <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif" }}>{t("दिग्", "Dig", "दिग्")}</th>
+              <th className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("दृष्टि", "Drishti", "दृष्टि")}</th>
+              <th className="px-2 py-2 text-center font-bold" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif", background: "rgba(212,168,67,0.15)" }}>{t("योग", "Total", "योग")}</th>
+              <th className="px-2 py-2 text-center" style={{ fontFamily: "serif" }}>{t("संज्ञा", "Sanjna", "संज्ञा")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((h, i) => (
+              <tr key={h.house} style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7", borderTop: "1px solid rgba(212,168,67,0.3)" }}>
+                <td className="px-2 py-2 text-center font-bold" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                  {num(h.house)}
+                </td>
+                <td className="px-2 py-2 text-center" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                  {lang === "mr" ? h.rashiMr : h.rashiEn}
+                </td>
+                <td className="px-2 py-2 text-left italic" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif", fontSize: "12px" }}>
+                  {lang === "mr" ? h.subjectMr : h.subjectEn}
+                </td>
+                <td className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)" }}>{num(h.bhavAdhipati)}</td>
+                <td className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)" }}>{num(h.bhavDig)}</td>
+                <td className="px-2 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.3)" }}>{num(h.bhavDrishti)}</td>
+                <td className="px-2 py-2 text-center font-bold" style={{
+                  color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)",
+                  background: "rgba(212,168,67,0.08)", fontFamily: "serif",
+                }}>{num(h.total)}</td>
+                <td className="px-2 py-2 text-center font-bold italic" style={{ color: verdictColor(h.verdict), fontFamily: "serif" }}>
+                  {pick(h.verdictMr, h.verdictEn, h.verdictHi)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr style={{ background: "#3d0c0c", color: "#d4a843" }}>
+              <td className="px-3 py-2 text-[11px] text-center italic" colSpan={8}>
+                {t("१४०+ अत्यंत प्रबळ · ११०-१३९ प्रबळ · ८५-१०९ मध्यम · <८५ क्षीण", "140+ Very Strong · 110-139 Strong · 85-109 Average · <85 Weak", "140+ अत्यंत प्रबल · 110-139 प्रबल · 85-109 मध्यम · <85 क्षीण")}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function TimingWindowsTable({ windows, lang, t }: { windows: TimingWindowData[]; lang: string; t: (mr: string, en: string, hi?: string) => string }) {
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+  const scoreColor = (s: number) => s >= 8 ? "#1d7d3a" : s >= 7 ? "#2d6b2d" : "#b8860b";
+  const formatDate = (s: string) => {
+    const d = new Date(s);
+    return d.toLocaleDateString(lang === "mr" ? "mr-IN" : "en-IN", { year: "numeric", month: "short", day: "numeric" });
+  };
+  if (windows.length === 0) {
+    return (
+      <div className="p-4 rounded-xl text-center" style={{ background: "#FFFDF5", border: "1.5px solid #d4a843" }}>
+        <p className="text-sm italic" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>
+          ॥ {t("अनुकूल दशा काळ सापडला नाही — ग्रह शक्ती मर्यादित आहे.", "No strong favourable dasha windows found — planetary strength limited.", "अनुकूल दशा काल नहीं मिला — ग्रह शक्ति सीमित.")} ॥
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div className="space-y-3">
+      {windows.map((w, i) => (
+        <div key={i} className="p-3 rounded-xl" style={{
+          background: "linear-gradient(180deg, #FFFDF5, #FFF8E7)",
+          border: "1.5px solid #d4a843",
+          borderLeft: `4px solid ${scoreColor(w.score)}`,
+        }}>
+          <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
+            <p className="font-bold text-sm" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+              ॥ {num(w.mahadashaLordMr)} – {num(w.antardashaLordMr)} ॥
+            </p>
+            <span className="text-[12px] font-bold italic px-2 py-0.5 rounded" style={{
+              color: scoreColor(w.score), background: "#FFFDF5", border: `1px solid ${scoreColor(w.score)}40`,
+              fontFamily: "serif",
+            }}>
+              {num(w.score)}/{num(10)}
+            </span>
+          </div>
+          <p className="text-xs mb-1" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+            {formatDate(w.startDate)} → {formatDate(w.endDate)} · {t("वय", "age", "आयु")} {num(w.ageAtStart)}
+          </p>
+          <p className="text-[12px] italic" style={{ color: "rgba(92,26,26,0.8)", fontFamily: "serif" }}>
+            {lang === "en" ? w.reasonEn : lang === "hi" ? w.reasonHi : w.reasonMr}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function MarriageTimingSection({ data }: { data?: MarriageTimingData }) {
+  const { t, lang } = useLang();
+  if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+  const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const pickArr = (mr: string[], en: string[], hi: string[]) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+  return (
+    <div className="print-avoid-break space-y-5">
+      <OrnateHeader
+        title={t("विवाह काल विचार", "Marriage Timing (Vivaha Kala)", "विवाह काल विचार")}
+        subtitle={t("शुक्र + सप्तमेश दशा विश्लेषणातून अनुकूल वेळा", "Favourable periods from Venus + 7th-lord dasha analysis", "शुक्र + सप्तमेश दशा विश्लेषण")}
+      />
+
+      <div className="p-4 rounded-xl" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843" }}>
+        <p className="text-sm font-bold mb-2" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          {pick(data.overallMr, data.overallEn, data.overallHi)}
+        </p>
+        <div className="text-xs mt-2 pt-2 flex flex-wrap gap-4" style={{ color: "#5c1a1a", borderTop: "1px dotted #d4a843", fontFamily: "serif" }}>
+          <span><b>{t("विवाह कारक", "Karaka", "कारक")}:</b> {lang === "mr" ? data.primaryKarakaMr : data.primaryKarakaEn}</span>
+          <span><b>{t("सप्तमेश", "7th Lord", "सप्तमेश")}:</b> {lang === "mr" ? data.seventhLordMr : data.seventhLordEn} ({num(data.seventhLordHouse)}व्या स्थानी)</span>
+          <span><b>{t("अनुमानित वय", "Predicted age", "अनुमानित आयु")}:</b> <span className="text-[#3d0c0c] font-bold">{lang === "mr" ? data.predictedAgeRange : data.predictedAgeRangeEn}</span></span>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("शुभ दशा काळ", "Favourable Dasha Windows", "शुभ दशा काल")} ॥
+        </h3>
+        <TimingWindowsTable windows={data.windows} lang={lang} t={t} />
+      </div>
+
+      <div className="p-4 rounded-xl" style={{ background: "#FFFDF5", border: "2px double #d4a843" }}>
+        <h3 className="text-center text-[14px] font-bold mb-3 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("विवाह उपाय", "Vivaha Upaya", "विवाह उपाय")} ॥
+        </h3>
+        <ul className="space-y-2">
+          {pickArr(data.remediesMr, data.remediesEn, data.remediesHi).map((r, i) => (
+            <li key={i} className="text-sm flex gap-2 leading-relaxed" style={{ color: "#5c1a1a" }}>
+              <span className="font-bold flex-shrink-0" style={{ color: "#d4a843", fontFamily: "serif" }}>{num(i + 1)}.</span>
+              <span>{r}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function CareerTimingSection({ data }: { data?: CareerTimingData }) {
+  const { t, lang } = useLang();
+  if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+  const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const pickArr = (mr: string[], en: string[], hi: string[]) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+  return (
+    <div className="print-avoid-break space-y-5">
+      <OrnateHeader
+        title={t("करिअर काल विचार", "Career Timing (Karma Kala)", "करियर काल विचार")}
+        subtitle={t("दशमेश + कर्म कारक दशा विश्लेषणातून उन्नती काळ", "Ascent periods from 10th-lord + karma karaka dasha", "दशमेश + कर्म कारक दशा")}
+      />
+
+      <div className="p-4 rounded-xl" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843" }}>
+        <p className="text-sm font-bold mb-2" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          {pick(data.overallMr, data.overallEn, data.overallHi)}
+        </p>
+        <div className="text-xs mt-2 pt-2" style={{ color: "#5c1a1a", borderTop: "1px dotted #d4a843", fontFamily: "serif" }}>
+          <span><b>{t("दशमेश", "10th Lord", "दशमेश")}:</b> {lang === "mr" ? data.tenthLordMr : data.tenthLordEn} ({num(data.tenthLordHouse)}व्या स्थानी)</span>
+        </div>
+      </div>
+
+      <div className="p-4 rounded-xl" style={{ background: "#FFFDF5", border: "1.5px solid #d4a843" }}>
+        <h3 className="text-center text-[14px] font-bold mb-3 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("अनुकूल क्षेत्र (दशमेशाच्या स्वभावानुसार)", "Suitable Fields (by 10th-lord nature)", "अनुकूल क्षेत्र")} ॥
+        </h3>
+        <ul className="space-y-2">
+          {pickArr(data.fieldSuggestionsMr, data.fieldSuggestionsEn, data.fieldSuggestionsHi).map((f, i) => (
+            <li key={i} className="text-sm flex gap-2" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+              <span className="font-bold flex-shrink-0" style={{ color: "#d4a843" }}>{num(i + 1)}.</span>
+              <span>{f}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div>
+        <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("करिअर उन्नती दशा काळ", "Career Ascent Dasha Windows", "करियर उन्नति दशा काल")} ॥
+        </h3>
+        <TimingWindowsTable windows={data.windows} lang={lang} t={t} />
+      </div>
+    </div>
+  );
+}
+
+function DeepDashaSection({ data }: { data?: DeepDashaData }) {
+  const { t, lang } = useLang();
+  if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+  const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+  const formatDate = (s: string) => new Date(s).toLocaleDateString(lang === "mr" ? "mr-IN" : "en-IN", { year: "numeric", month: "short", day: "numeric" });
+
+  return (
+    <div className="print-avoid-break space-y-5">
+      <OrnateHeader
+        title={t("प्रत्यंतर व सूक्ष्म दशा", "Pratyantar & Sookshma Dasha", "प्रत्यंतर व सूक्ष्म दशा")}
+        subtitle={t("सध्याच्या अंतर्दशेतील तिसरा व चौथा स्तर दशा विश्लेषण", "Level 3 & 4 sub-periods within current antardasha", "वर्तमान अंतर्दशा में 3rd व 4th स्तर")}
+      />
+
+      {/* Current path */}
+      <div className="p-4 rounded-xl" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843" }}>
+        <h4 className="text-center text-[13px] font-bold mb-3 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("सध्याचा दशा मार्ग", "Current Dasha Path", "वर्तमान दशा मार्ग")} ॥
+        </h4>
+        <div className="flex flex-wrap items-center justify-center gap-2 text-sm">
+          <span className="px-3 py-1 rounded font-bold" style={{ background: "#3d0c0c", color: "#d4a843", fontFamily: "serif" }}>
+            {lang === "mr" ? data.currentMahadasha.lordMr : data.currentMahadasha.lord}
+          </span>
+          <span style={{ color: "#d4a843" }}>→</span>
+          <span className="px-3 py-1 rounded font-bold" style={{ background: "#5c1a1a", color: "#d4a843", fontFamily: "serif" }}>
+            {lang === "mr" ? data.currentAntardasha.lordMr : data.currentAntardasha.lord}
+          </span>
+          {data.currentPratyantar && (
+            <>
+              <span style={{ color: "#d4a843" }}>→</span>
+              <span className="px-3 py-1 rounded font-bold" style={{ background: "#d4a843", color: "#3d0c0c", fontFamily: "serif" }}>
+                {lang === "mr" ? data.currentPratyantar.lordMr : data.currentPratyantar.lord}
+              </span>
+            </>
+          )}
+          {data.currentSookshma && (
+            <>
+              <span style={{ color: "#d4a843" }}>→</span>
+              <span className="px-3 py-1 rounded font-bold text-xs" style={{ background: "#FFFDF5", color: "#3d0c0c", border: "1.5px solid #d4a843", fontFamily: "serif" }}>
+                {lang === "mr" ? data.currentSookshma.lordMr : data.currentSookshma.lord}
+              </span>
+            </>
+          )}
+        </div>
+        {data.currentSookshma && (
+          <p className="text-center text-[11px] mt-2 italic" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>
+            {t("सूक्ष्म दशा", "Sookshma", "सूक्ष्म")}: {formatDate(data.currentSookshma.startDate)} → {formatDate(data.currentSookshma.endDate)}
+          </p>
+        )}
+      </div>
+
+      {/* Pratyantars list within current antardasha */}
+      <div>
+        <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t(`${data.currentAntardasha.lordMr} अंतर्दशेतील प्रत्यंतर`, `Pratyantars in ${data.currentAntardasha.lord} Antardasha`, `${data.currentAntardasha.lordMr} अंतर्दशा में प्रत्यंतर`)} ॥
+        </h3>
+        <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+          <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+                <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("प्रत्यंतर स्वामी", "Pratyantar Lord", "प्रत्यंतर स्वामी")}</th>
+                <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("आरंभ", "Start", "आरंभ")}</th>
+                <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("समाप्ती", "End", "समाप्ति")}</th>
+                <th className="px-3 py-2 text-center" style={{ fontFamily: "serif" }}>{t("दिवस", "Days", "दिन")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.pratyantars.map((p, i) => (
+                <tr key={i} style={{
+                  background: p.isCurrent ? "linear-gradient(180deg, #FFF3D6, #FFE9B8)" : i % 2 === 0 ? "#FFFDF5" : "#FFF8E7",
+                  borderTop: "1px solid rgba(212,168,67,0.3)",
+                }}>
+                  <td className="px-3 py-2 font-bold text-center" style={{
+                    color: p.isCurrent ? "#3d0c0c" : "#5c1a1a",
+                    borderRight: "1px solid rgba(212,168,67,0.3)",
+                    fontFamily: "serif",
+                  }}>
+                    {p.isCurrent && <span style={{ color: "#d4a843" }}>◉ </span>}
+                    {lang === "mr" ? p.lordMr : p.lord}
+                  </td>
+                  <td className="px-3 py-2 text-center" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>{formatDate(p.startDate)}</td>
+                  <td className="px-3 py-2 text-center" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>{formatDate(p.endDate)}</td>
+                  <td className="px-3 py-2 text-center" style={{ color: "rgba(92,26,26,0.7)" }}>{num(p.durationDays)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Current pratyantar's sookshma breakdown */}
+      {data.currentPratyantar?.sookshmas && data.currentPratyantar.sookshmas.length > 0 && (
+        <div>
+          <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+            ॥ {t(`${data.currentPratyantar.lordMr} प्रत्यंतरातील सूक्ष्म`, `Sookshmas in ${data.currentPratyantar.lord} Pratyantar`, `${data.currentPratyantar.lordMr} प्रत्यंतर में सूक्ष्म`)} ॥
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+            {data.currentPratyantar.sookshmas.map((s, i) => (
+              <div key={i} className="p-2 rounded-lg text-center text-xs" style={{
+                background: s.isCurrent ? "linear-gradient(180deg, #FFF3D6, #FFE9B8)" : "#FFFDF5",
+                border: s.isCurrent ? "2px solid #d4a843" : "1px solid rgba(212,168,67,0.4)",
+                fontFamily: "serif",
+              }}>
+                <p className="font-bold" style={{ color: "#3d0c0c" }}>
+                  {s.isCurrent && "◉ "}{lang === "mr" ? s.lordMr : s.lord}
+                </p>
+                <p className="text-[10px]" style={{ color: "rgba(92,26,26,0.7)" }}>
+                  {formatDate(s.startDate)}
+                </p>
+                <p className="text-[10px]" style={{ color: "rgba(92,26,26,0.5)" }}>
+                  {num(s.durationDays)} {t("दिवस", "days", "दिन")}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {data.nextMilestoneMr && (
+        <p className="text-center text-[12px] italic" style={{ color: "rgba(92,26,26,0.8)", fontFamily: "serif" }}>
+          ॥ {pick(data.nextMilestoneMr, data.nextMilestoneEn, data.nextMilestoneHi)} ॥
+        </p>
+      )}
+    </div>
+  );
+}
+
+function NamesSection({ data }: { data?: NamesSuggestionData }) {
+  const { t, lang } = useLang();
+  if (!data) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+
+  const renderCard = (n: NameEntryData) => (
+    <div key={n.name} className="p-3 rounded-lg" style={{
+      background: "linear-gradient(180deg, #FFFDF5, #FFF8E7)",
+      border: "1.5px solid #d4a843",
+    }}>
+      <div className="flex items-baseline justify-between mb-1">
+        <span className="text-base font-bold" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          {n.name}
+        </span>
+        <span className="text-[11px]" style={{ color: "rgba(92,26,26,0.6)", fontFamily: "serif" }}>
+          {n.nameEn}
+        </span>
+      </div>
+      <p className="text-xs leading-relaxed" style={{ color: "#5c1a1a" }}>
+        {lang === "mr" ? n.meaningMr : n.meaningEn}
+      </p>
+    </div>
+  );
+
+  const total = data.boyNames.length + data.girlNames.length + data.unisexNames.length;
+
+  return (
+    <div className="print-avoid-break space-y-5">
+      <OrnateHeader
+        title={t("राशी अक्षर व नावसूचना", "Nakshatra Letters & Name Suggestions", "राशि अक्षर व नाम सुझाव")}
+        subtitle={t("जन्म नक्षत्र व पदानुसार पारंपरिक मराठी नावे", "Authentic Marathi names per janma-nakshatra pada", "जन्म नक्षत्र व पद के अनुसार पारंपरिक नाम")}
+      />
+
+      {/* Akshara card */}
+      <div className="p-4 rounded-xl text-center" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843" }}>
+        <p className="text-[11px] mb-2 italic" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>
+          {t("तुमचे प्राथमिक राशी अक्षर", "Your primary nakshatra letter", "आपका प्राथमिक नक्षत्र अक्षर")}
+        </p>
+        <p className="text-5xl font-bold mb-2" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          {data.primaryAkshara || "—"}
+        </p>
+        <p className="text-xs" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+          {t("पर्यायी अक्षरे", "Alternate letters", "वैकल्पिक अक्षर")}: <b>{data.allAksharas.join(" · ")}</b>
+        </p>
+      </div>
+
+      {total === 0 ? (
+        <div className="p-4 rounded-xl text-center" style={{ background: "#FFFDF5", border: "1.5px solid #d4a843" }}>
+          <p className="text-sm italic" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>
+            ॥ {t("या अक्षरासाठी नावसूची लवकरच उपलब्ध होईल.", "Name database for this letter coming soon.", "इस अक्षर के लिए नाम सूची शीघ्र.")} ॥
+          </p>
+        </div>
+      ) : (
+        <>
+          {data.boyNames.length > 0 && (
+            <div>
+              <h3 className="text-center text-[14px] font-bold mb-3 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                ॥ {t("मुलांची नावे", "Boys' Names", "लड़कों के नाम")} ({data.boyNames.length}) ॥
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {data.boyNames.map(renderCard)}
+              </div>
+            </div>
+          )}
+          {data.girlNames.length > 0 && (
+            <div>
+              <h3 className="text-center text-[14px] font-bold mb-3 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                ॥ {t("मुलींची नावे", "Girls' Names", "लड़कियों के नाम")} ({data.girlNames.length}) ॥
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {data.girlNames.map(renderCard)}
+              </div>
+            </div>
+          )}
+          {data.unisexNames.length > 0 && (
+            <div>
+              <h3 className="text-center text-[14px] font-bold mb-3 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                ॥ {t("दोघांसाठी नावे", "Unisex Names", "द्विलिंगी नाम")} ({data.unisexNames.length}) ॥
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {data.unisexNames.map(renderCard)}
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+function UpagrahaSection({ data }: { data?: UpagrahaData[] }) {
+  const { t, lang } = useLang();
+  if (!data || data.length === 0) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+  const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+  const dayBirth = data[0]?.isDayBirth;
+
+  return (
+    <div className="print-avoid-break space-y-5">
+      <OrnateHeader
+        title={t("उपग्रह", "Upagrahas (Sub-planets)", "उपग्रह")}
+        subtitle={t("गुलिक, मांदी, यमकंटक, काल व इतर उपग्रहांची राशी व भाव स्थिती", "Gulika, Mandi, Yamakantaka, Kala and other sub-planets — rashi and house positions", "गुलिक, मांदी, यमकंटक आदि उपग्रह")}
+      />
+
+      <div className="p-3 rounded-xl text-center" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843" }}>
+        <p className="text-[12px] italic" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+          {t(
+            `जन्म ${dayBirth ? "दिवसा" : "रात्री"} — दिवस/रात्री कालावधीच्या ८ कलांमध्ये उपग्रह स्थान गणना.`,
+            `${dayBirth ? "Day" : "Night"} birth — upagrahas located by 8-kala division of the day or night.`,
+            `${dayBirth ? "दिन" : "रात्रि"} जन्म — 8 कला विभाजन से गणना.`
+          )}
+        </p>
+      </div>
+
+      <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+        <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("उपग्रह", "Upagraha", "उपग्रह")}</th>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("राशी", "Rashi", "राशि")}</th>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("अंश", "Degree", "अंश")}</th>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("भाव", "Bhava", "भाव")}</th>
+              <th className="px-3 py-2 text-center" style={{ fontFamily: "serif" }}>{t("कला", "Kala", "कला")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((u, i) => (
+              <tr key={u.id} style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7", borderTop: "1px solid rgba(212,168,67,0.3)" }}>
+                <td className="px-3 py-2 font-bold text-center" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                  {lang === "mr" ? u.nameMr : u.nameEn}
+                </td>
+                <td className="px-3 py-2 text-center" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                  {lang === "mr" ? u.rashiMr : u.rashiEn}
+                </td>
+                <td className="px-3 py-2 text-center font-mono text-xs" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.3)" }}>
+                  {u.degreeDMS}
+                </td>
+                <td className="px-3 py-2 text-center font-bold" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                  {num(u.house)}
+                </td>
+                <td className="px-3 py-2 text-center" style={{ color: "rgba(92,26,26,0.7)" }}>
+                  {num(u.kalaIndex)}/{num(8)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Upagraha descriptions */}
+      <div className="space-y-3">
+        {data.map((u) => (
+          <div key={`desc-${u.id}`} className="p-3 rounded-xl" style={{
+            background: "linear-gradient(180deg, #FFFDF5, #FFF8E7)",
+            border: "1.5px solid #d4a843",
+            borderLeft: "4px solid #d4a843",
+          }}>
+            <h4 className="text-[13px] font-bold mb-1 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+              ॥ {lang === "mr" ? u.nameMr : u.nameEn} — {lang === "mr" ? u.rashiMr : u.rashiEn} {t("राशी", "rashi", "राशि")}, {num(u.house)}{t("व्या", "th", "वां")} {t("भाव", "bhava", "भाव")} ॥
+            </h4>
+            <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+              {pick(u.descMr, u.descEn, u.descHi)}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function GocharNaadiSection({ data }: { data?: GocharTransitData[] }) {
+  const { t, lang } = useLang();
+  if (!data || data.length === 0) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+  const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+
+  const effectColor = (e: string) =>
+    e === "favourable" ? "#1d7d3a" :
+    e === "challenging" ? "#b91c1c" : "#b8860b";
+
+  const favCount = data.filter((t) => t.effect === "favourable").length;
+  const chalCount = data.filter((t) => t.effect === "challenging").length;
+  const neuCount = data.length - favCount - chalCount;
+
+  const today = new Date().toLocaleDateString(lang === "mr" ? "mr-IN" : "en-IN", { year: "numeric", month: "long", day: "numeric" });
+
+  return (
+    <div className="print-avoid-break space-y-5">
+      <OrnateHeader
+        title={t("गोचर नाडी — सध्याचे संक्रमण", "Gochar Naadi — Current Transits", "गोचर नाडी — वर्तमान संक्रमण")}
+        subtitle={t("सध्याच्या ग्रहस्थितीचा जन्म लग्न व चंद्र यांवरील प्रभाव", "Current planetary positions overlaid on natal Lagna and Moon", "वर्तमान ग्रह स्थिति का जन्म लग्न व चंद्र पर प्रभाव")}
+      />
+
+      <div className="p-4 rounded-xl" style={{ background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)", border: "2px double #d4a843" }}>
+        <p className="text-center text-sm mb-2 font-bold" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {today} ॥
+        </p>
+        <div className="flex justify-center gap-6 text-xs" style={{ fontFamily: "serif" }}>
+          <span style={{ color: "#1d7d3a" }}>◉ {t("अनुकूल", "Favourable", "अनुकूल")}: <b>{num(favCount)}</b></span>
+          <span style={{ color: "#b8860b" }}>◉ {t("तटस्थ", "Neutral", "तटस्थ")}: <b>{num(neuCount)}</b></span>
+          <span style={{ color: "#b91c1c" }}>◉ {t("प्रतिकूल", "Challenging", "प्रतिकूल")}: <b>{num(chalCount)}</b></span>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+        <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("ग्रह", "Graha", "ग्रह")}</th>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("सध्याची राशी", "Current Rashi", "वर्तमान राशि")}</th>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("लग्नापासून", "From Lagna", "लग्न से")}</th>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("चंद्रापासून", "From Moon", "चंद्र से")}</th>
+              <th className="px-3 py-2 text-center" style={{ fontFamily: "serif" }}>{t("फल", "Effect", "फल")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((tp, i) => (
+              <tr key={tp.id} style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7", borderTop: "1px solid rgba(212,168,67,0.3)" }}>
+                <td className="px-3 py-2 font-bold text-center" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                  {lang === "mr" ? tp.nameMr : tp.nameEn}
+                </td>
+                <td className="px-3 py-2 text-center" style={{ color: "#5c1a1a", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                  {lang === "mr" ? tp.currentRashiMr : tp.currentRashiEn}
+                </td>
+                <td className="px-3 py-2 text-center font-bold" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                  {num(tp.houseFromLagna)}
+                </td>
+                <td className="px-3 py-2 text-center font-bold" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                  {num(tp.houseFromMoon)}
+                </td>
+                <td className="px-3 py-2 text-center italic font-bold" style={{ color: effectColor(tp.effect), fontFamily: "serif" }}>
+                  {tp.effect === "favourable" ? t("अनुकूल", "Favourable", "अनुकूल") :
+                   tp.effect === "challenging" ? t("प्रतिकूल", "Challenging", "प्रतिकूल") :
+                   t("तटस्थ", "Neutral", "तटस्थ")}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Per-planet descriptions */}
+      <div className="space-y-2">
+        {data.map((tp) => (
+          <div key={`desc-${tp.id}`} className="p-3 rounded-xl" style={{
+            background: "#FFFDF5",
+            border: "1.5px solid #d4a843",
+            borderLeft: `4px solid ${effectColor(tp.effect)}`,
+          }}>
+            <p className="text-sm" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+              <span className="font-bold" style={{ color: "#3d0c0c" }}>
+                {lang === "mr" ? tp.nameMr : tp.nameEn}
+              </span>
+              {" "}— {pick(tp.effectMr, tp.effectEn, tp.effectHi)}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function VimshopakBalaSection({ data }: { data?: VimshopakPlanetData[] }) {
+  const { t, lang } = useLang();
+  if (!data || data.length === 0) return <p className="text-stone-500 text-sm">{t("डेटा उपलब्ध नाही.", "Data not available.", "डेटा उपलब्ध नहीं.")}</p>;
+  const pick = (mr: string, en: string, hi: string) => (lang === "en" ? en : lang === "hi" ? hi : mr);
+  const num = (v: string | number) => (lang === "mr" ? toMr(v) : String(v));
+
+  const verdictColor = (v: string) =>
+    v === "excellent" ? "#1d7d3a" :
+    v === "strong" ? "#2d6b2d" :
+    v === "average" ? "#b8860b" :
+    "#b91c1c";
+
+  const dignityColor = (d: string) =>
+    d === "exalted" ? "#1d7d3a" :
+    d === "moolatrikona" || d === "own" ? "#2d6b2d" :
+    d === "friend" ? "#b8860b" :
+    d === "neutral" ? "#5c1a1a" :
+    d === "enemy" ? "#c97226" :
+    "#b91c1c";
+
+  // Use first planet's vargas as column headers (all planets have same 16)
+  const vargaHeaders = data[0]?.vargas ?? [];
+
+  return (
+    <div className="print-avoid-break space-y-5">
+      <OrnateHeader
+        title={t("विंशोपक बल — षोडशवर्ग सारांश", "Vimshopak Bala — Shodashavarga Composite", "विंशोपक बल — षोडशवर्ग सारांश")}
+        subtitle={t("१६ वर्ग कुंडल्यांमधील ग्रहस्थितीचा भारित सारांश (२० पैकी)", "Weighted dignity across 16 divisional charts (out of 20)", "16 वर्ग कुंडलियों का भारित सारांश (20 में से)")}
+      />
+
+      {/* Summary table — totals only */}
+      <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+        <table className="w-full text-sm" style={{ borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("ग्रह", "Graha", "ग्रह")}</th>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("विंशोपक (२० पैकी)", "Vimshopak (of 20)", "विंशोपक (20 में से)")}</th>
+              <th className="px-3 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>%</th>
+              <th className="px-3 py-2 text-center" style={{ fontFamily: "serif" }}>{t("संज्ञा", "Sanjna", "संज्ञा")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((p, i) => (
+              <tr key={p.id} style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7", borderTop: "1px solid rgba(212,168,67,0.3)" }}>
+                <td className="px-3 py-2 font-bold text-center" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                  {lang === "mr" ? p.nameMr : p.nameEn}
+                </td>
+                <td className="px-3 py-2 text-center font-bold" style={{ color: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.3)", background: "rgba(212,168,67,0.08)", fontFamily: "serif" }}>
+                  {num(p.totalBala)}
+                </td>
+                <td className="px-3 py-2 text-center" style={{ color: verdictColor(p.verdict), borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif" }}>
+                  {num(p.percent)}%
+                </td>
+                <td className="px-3 py-2 text-center font-bold italic" style={{ color: verdictColor(p.verdict), fontFamily: "serif" }}>
+                  {pick(p.verdictMr, p.verdictEn, p.verdictHi)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr style={{ background: "#3d0c0c", color: "#d4a843" }}>
+              <td className="px-3 py-2 text-[11px] text-center italic" colSpan={4}>
+                {t("१५+ अत्युत्तम · १२-१४ प्रबळ · ८-११ मध्यम · <८ क्षीण", "15+ Excellent · 12-14 Strong · 8-11 Average · <8 Weak", "15+ अत्युत्तम · 12-14 प्रबल · 8-11 मध्यम · <8 क्षीण")}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      {/* Full matrix — planet × varga → dignity */}
+      <div>
+        <h3 className="text-center text-[14px] font-bold mb-2 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+          ॥ {t("१६ वर्ग कुंडल्यांमधील ग्रह स्थिती", "Planet Dignity across 16 Vargas", "16 वर्ग कुंडलियों में ग्रह स्थिति")} ॥
+        </h3>
+        <div className="overflow-x-auto rounded-lg" style={{ border: "2px double #d4a843" }}>
+          <table className="w-full text-xs" style={{ borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)", color: "#d4a843" }}>
+                <th className="px-2 py-2 text-center sticky left-0" style={{ background: "#3d0c0c", borderRight: "1px solid rgba(212,168,67,0.4)", fontFamily: "serif" }}>{t("ग्रह", "Graha", "ग्रह")}</th>
+                {vargaHeaders.map((v) => (
+                  <th key={v.vargaId} className="px-1 py-2 text-center" style={{ borderRight: "1px solid rgba(212,168,67,0.2)", fontFamily: "serif", fontSize: "10px" }}>
+                    {v.vargaId.startsWith("rashi") ? "D1" :
+                     v.vargaId.startsWith("hora") ? "D2" :
+                     v.vargaId.startsWith("drekkana") ? "D3" :
+                     v.vargaId.startsWith("chaturthamsha") ? "D4" :
+                     v.vargaId.startsWith("saptamsha") ? "D7" :
+                     v.vargaId.startsWith("navamsha") ? "D9" :
+                     v.vargaId.startsWith("dashamsha") ? "D10" :
+                     v.vargaId.startsWith("dwadashamsha") ? "D12" :
+                     v.vargaId.startsWith("shodashamsha") ? "D16" :
+                     v.vargaId.startsWith("vimshamsha") ? "D20" :
+                     v.vargaId.startsWith("siddhamsha") ? "D24" :
+                     v.vargaId.startsWith("bhamsha") ? "D27" :
+                     v.vargaId.startsWith("trimshamsha") ? "D30" :
+                     v.vargaId.startsWith("khavedamsha") ? "D40" :
+                     v.vargaId.startsWith("akshavedamsha") ? "D45" : "D60"}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((p, i) => (
+                <tr key={p.id} style={{ background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7", borderTop: "1px solid rgba(212,168,67,0.3)" }}>
+                  <td className="px-2 py-2 font-bold text-center sticky left-0" style={{
+                    color: "#3d0c0c", background: i % 2 === 0 ? "#FFFDF5" : "#FFF8E7",
+                    borderRight: "1px solid rgba(212,168,67,0.3)", fontFamily: "serif",
+                  }}>
+                    {lang === "mr" ? p.nameMr : p.nameEn}
+                  </td>
+                  {p.vargas.map((v) => (
+                    <td key={v.vargaId} className="px-1 py-2 text-center" style={{
+                      color: dignityColor(v.dignity),
+                      borderRight: "1px solid rgba(212,168,67,0.2)",
+                      fontFamily: "serif",
+                      fontWeight: (v.dignity === "exalted" || v.dignity === "own" || v.dignity === "moolatrikona") ? "bold" : "normal",
+                      fontSize: "10px",
+                    }} title={`${lang === "mr" ? v.dignityMr : v.dignityEn} · ${v.score}`}>
+                      {v.dignity === "exalted" ? "↑" :
+                       v.dignity === "debilitated" ? "↓" :
+                       v.dignity === "own" ? "●" :
+                       v.dignity === "moolatrikona" ? "◉" :
+                       v.dignity === "friend" ? "+" :
+                       v.dignity === "enemy" ? "−" : "○"}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-center text-[10px] italic mt-2" style={{ color: "rgba(92,26,26,0.7)", fontFamily: "serif" }}>
+          ↑ {t("उच्च", "Exalted", "उच्च")} · ◉ {t("मूलत्रिकोण", "Moolatrikona", "मूलत्रिकोण")} · ● {t("स्वराशी", "Own", "स्वराशि")} · + {t("मित्र", "Friend", "मित्र")} · ○ {t("सम", "Neutral", "सम")} · − {t("शत्रू", "Enemy", "शत्रु")} · ↓ {t("नीच", "Debilitated", "नीच")}
+        </p>
       </div>
     </div>
   );
@@ -1697,19 +3825,34 @@ function PredictionSection({ predictions }: { predictions: HousePredictionData[]
   const { t, lang } = useLang();
   const n = (v: string | number) => lang === "mr" ? toMr(v) : String(v);
   return (
-    <div>
-      <h2 className="text-lg font-bold text-stone-800 mb-4">{t("भावनिहाय भविष्यकथन","House-wise Predictions")}</h2>
+    <div className="print-avoid-break">
+      <OrnateHeader
+        title={t("भावनिहाय भविष्यकथन", "Bhava Phala Vichara", "भाव अनुसार फल")}
+        subtitle={t("द्वादश भावांचे फल व रेटिंग", "Predictions for all 12 houses", "द्वादश भावों का फल")}
+      />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {predictions.map((p) => (
-          <div key={p.house} className="border border-stone-200 rounded-xl p-4 hover:shadow-md transition-shadow print-avoid-break">
+          <div key={p.house} className="print-avoid-break p-4 rounded-xl" style={{
+            background: "linear-gradient(180deg, #FFFDF5, #FFF8E7)",
+            border: "1.5px solid #d4a843",
+          }}>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <span className="w-7 h-7 rounded bg-[#FFF8E7] text-[#5c1a1a] text-xs font-bold flex items-center justify-center">{n(p.house)}</span>
-                <h4 className="font-bold text-sm">{t(`${n(p.house)}वा भाव`,`House ${p.house}`)} — {t(p.titleMr, p.titleEn)}</h4>
+                <span className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" style={{
+                  background: "linear-gradient(180deg, #5c1a1a, #3d0c0c)",
+                  color: "#d4a843",
+                  border: "1px solid #d4a843",
+                  fontFamily: "serif",
+                }}>{n(p.house)}</span>
+                <h4 className="font-bold text-sm" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                  {lang === "mr" ? `${n(p.house)}वा भाव` : `House ${p.house}`} — {t(p.titleMr, p.titleEn)}
+                </h4>
               </div>
-              <div className="text-[#d4a843] text-sm">{"★".repeat(p.rating)}{"☆".repeat(5-p.rating)}</div>
+              <div style={{ color: "#d4a843" }}>{"★".repeat(p.rating)}{"☆".repeat(5-p.rating)}</div>
             </div>
-            <p className="text-sm text-stone-600">{t(p.predictionMr, p.predictionEn)}</p>
+            <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a" }}>
+              {t(p.predictionMr, p.predictionEn)}
+            </p>
           </div>
         ))}
       </div>
@@ -1721,24 +3864,41 @@ function DashaSection({ interp }: { interp: DashaInterpData | null }) {
   const { t } = useLang();
   if (!interp) return <p className="text-stone-500">{t("सध्याची दशा माहिती उपलब्ध नाही.","Current dasha info not available.")}</p>;
   return (
-    <div>
-      <h2 className="text-lg font-bold text-stone-800 mb-2">{t(`चालू ${interp.lordMr} महादशा फल`,`Current ${interp.lordEn} Mahadasha`)}</h2>
-      <p className="text-sm text-stone-500 mb-4">{t(interp.periodMr, interp.periodEn)}</p>
-      <div className="space-y-4">
+    <div className="print-avoid-break">
+      <OrnateHeader
+        title={t(`चालू ${interp.lordMr} महादशा फल`, `Current ${interp.lordEn} Mahadasha`, `वर्तमान ${interp.lordMr} महादशा`)}
+        subtitle={t(interp.periodMr, interp.periodEn)}
+      />
+      <div className="space-y-3">
         {[
-          { mr: "करिअर / व्यवसाय", en: "Career", valMr: interp.careerMr, valEn: interp.careerEn },
-          { mr: "आर्थिक / धन", en: "Finance", valMr: interp.financeMr, valEn: interp.financeEn },
-          { mr: "आरोग्य", en: "Health", valMr: interp.healthMr, valEn: interp.healthEn },
-          { mr: "संबंध / कुटुंब", en: "Relationships", valMr: interp.relationshipMr, valEn: interp.relationshipEn },
+          { mr: "करिअर / व्यवसाय", en: "Kārya (Career)", valMr: interp.careerMr, valEn: interp.careerEn },
+          { mr: "आर्थिक / धन", en: "Dhana (Finance)", valMr: interp.financeMr, valEn: interp.financeEn },
+          { mr: "आरोग्य", en: "Ārogya (Health)", valMr: interp.healthMr, valEn: interp.healthEn },
+          { mr: "संबंध / कुटुंब", en: "Sambandha (Relationships)", valMr: interp.relationshipMr, valEn: interp.relationshipEn },
         ].map((area, i) => (
-          <div key={i} className="border-b border-stone-100 pb-3 print-avoid-break">
-            <h4 className="text-sm font-bold text-stone-800 mb-1">{t(area.mr, area.en)}</h4>
-            <p className="text-sm text-stone-600">{t(area.valMr, area.valEn)}</p>
+          <div key={i} className="print-avoid-break p-3 rounded-lg" style={{
+            background: "#FFFDF5",
+            borderLeft: "3px solid #d4a843",
+            border: "1px solid rgba(212,168,67,0.4)",
+          }}>
+            <h4 className="text-[13px] font-bold mb-1 italic" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+              ॥ {t(area.mr, area.en)} ॥
+            </h4>
+            <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a" }}>
+              {t(area.valMr, area.valEn)}
+            </p>
           </div>
         ))}
-        <div className="bg-[#FFF8E7] rounded-xl p-4 border border-[#d4a843]/20">
-          <h4 className="text-sm font-bold text-[#3d0c0c] mb-1">{t("उपाय व सल्ला","Remedies & Advice")}</h4>
-          <p className="text-sm">{t(interp.adviceMr, interp.adviceEn)}</p>
+        <div className="p-4 rounded-xl" style={{
+          background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)",
+          border: "2px double #d4a843",
+        }}>
+          <h4 className="text-[13px] font-bold mb-2 italic text-center" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+            ॥ {t("उपदेश व शांती उपाय", "Upadesha & Shanti Upaya", "उपदेश व शांति उपाय")} ॥
+          </h4>
+          <p className="text-sm text-center leading-relaxed" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+            {t(interp.adviceMr, interp.adviceEn)}
+          </p>
         </div>
       </div>
     </div>
@@ -1751,8 +3911,11 @@ function TimelineSection({ dashas }: { dashas: DashaData[] }) {
   const locale = lang === "mr" ? "mr-IN" : "en-IN";
   const n = (v: string | number) => lang === "mr" ? toMr(v) : String(v);
   return (
-    <div>
-      <h2 className="text-lg font-bold text-stone-800 mb-4">{t("विंशोत्तरी दशा कालावधी","Vimshottari Dasha Timeline")}</h2>
+    <div className="print-avoid-break">
+      <OrnateHeader
+        title={t("विंशोत्तरी दशा कालावधी", "Vimshottari Dasha Kalavadhi", "विंशोत्तरी दशा काल")}
+        subtitle={t("१२० वर्षांचे ग्रहदशा चक्र", "120-year planetary period cycle", "120 वर्ष का ग्रह दशा चक्र")}
+      />
       <div className="space-y-2">
         {dashas.map((d, i) => {
           const start = new Date(d.startDate);
@@ -1763,34 +3926,49 @@ function TimelineSection({ dashas }: { dashas: DashaData[] }) {
           return (
             <div key={i}>
               <button onClick={() => setExpanded(isOpen ? null : i)}
-                className={`w-full flex items-center justify-between p-3 rounded-xl text-left transition-all ${isCurrent ? "bg-[#FFF8E7] border-2 border-[#d4a843]" : "bg-stone-50 hover:bg-stone-100"}`}>
+                className="w-full flex items-center justify-between p-3 text-left transition-all"
+                style={{
+                  background: isCurrent ? "linear-gradient(180deg, #FFF8E7, #FFF3D6)" : "#FFFDF5",
+                  border: isCurrent ? "2px double #d4a843" : "1px solid rgba(212,168,67,0.3)",
+                  borderRadius: "8px",
+                }}>
                 <div className="flex items-center gap-3">
-                  {isCurrent && <span className="text-xs bg-[#5c1a1a] text-white px-2 py-0.5 rounded-full">{t("चालू","Current")}</span>}
-                  <span className="font-bold text-stone-800">{t(PLANET_LORD_MR[d.lord]||d.lord, d.lord)} {t("महादशा","Mahadasha")}</span>
-                  <span className="text-xs text-stone-400">{isOpen ? "▲" : "▼"}</span>
+                  {isCurrent && (
+                    <span className="text-[10px] font-bold italic px-2 py-0.5 rounded" style={{
+                      background: "#3d0c0c", color: "#d4a843", fontFamily: "serif",
+                    }}>॥ {t("चालू","Vartamana")} ॥</span>
+                  )}
+                  <span className="font-bold" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                    {t(PLANET_LORD_MR[d.lord]||d.lord, d.lord)} {t("महादशा","Mahadasha")}
+                  </span>
+                  <span className="text-xs" style={{ color: "#d4a843" }}>{isOpen ? "▲" : "▼"}</span>
                 </div>
-                <div className="text-right text-sm text-stone-600">
-                  <p>{start.toLocaleDateString(locale)} — {end.toLocaleDateString(locale)}</p>
-                  <p className="text-xs">{n(d.years.toFixed(1))} {t("वर्षे","years")}</p>
+                <div className="text-right text-sm" style={{ color: "#5c1a1a" }}>
+                  <p style={{ fontFamily: "serif" }}>{start.toLocaleDateString(locale)} — {end.toLocaleDateString(locale)}</p>
+                  <p className="text-xs">{n(d.years.toFixed(1))} {t("वर्षे","varsha")}</p>
                 </div>
               </button>
-              {/* Antardasha sub-periods */}
               {isOpen && d.antardashas && (
-                <div className="ml-6 mt-1 mb-2 space-y-1">
+                <div className="ml-6 mt-2 mb-3 space-y-1 pl-3" style={{ borderLeft: "2px dotted #d4a843" }}>
                   {d.antardashas.map((ad, j) => {
                     const adStart = new Date(ad.startDate);
                     const adEnd = new Date(ad.endDate);
                     const adCurrent = now >= adStart && now <= adEnd;
                     return (
-                      <div key={j} className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs ${adCurrent ? "bg-[#FFF3D6] border border-[#d4a843]" : "bg-white border border-stone-100"}`}>
+                      <div key={j} className="flex items-center justify-between px-3 py-2 rounded-lg text-xs" style={{
+                        background: adCurrent ? "linear-gradient(180deg, #FFF3D6, #FFE9B8)" : "#FFFDF5",
+                        border: adCurrent ? "1.5px solid #d4a843" : "1px solid rgba(212,168,67,0.3)",
+                      }}>
                         <div className="flex items-center gap-2">
-                          {adCurrent && <span className="w-1.5 h-1.5 rounded-full bg-[#d4a843]" />}
-                          <span className="font-semibold text-stone-700">{t(PLANET_LORD_MR[ad.lord]||ad.lord, ad.lord)}</span>
-                          <span className="text-stone-400">{t("अंतर्दशा","Antardasha")}</span>
+                          {adCurrent && <span className="w-2 h-2 rounded-full" style={{ background: "#d4a843" }} />}
+                          <span className="font-semibold" style={{ color: "#3d0c0c", fontFamily: "serif" }}>
+                            {t(PLANET_LORD_MR[ad.lord]||ad.lord, ad.lord)}
+                          </span>
+                          <span className="italic" style={{ color: "rgba(92,26,26,0.7)" }}>{t("अंतर्दशा","Antardasha")}</span>
                         </div>
-                        <div className="text-right text-stone-500">
-                          <span>{adStart.toLocaleDateString(locale)} — {adEnd.toLocaleDateString(locale)}</span>
-                          <span className="ml-2 text-stone-400">({n(ad.years.toFixed(2))} {t("वर्षे","yr")})</span>
+                        <div className="text-right" style={{ color: "#5c1a1a" }}>
+                          <span style={{ fontFamily: "serif" }}>{adStart.toLocaleDateString(locale)} — {adEnd.toLocaleDateString(locale)}</span>
+                          <span className="ml-2 text-[10px]" style={{ color: "rgba(92,26,26,0.6)" }}>({n(ad.years.toFixed(2))} {t("वर्षे","yr")})</span>
                         </div>
                       </div>
                     );
@@ -1874,30 +4052,48 @@ function PrintTimelineAntardashas({ dashas }: { dashas: DashaData[] }) {
 }
 
 function RemedySection({ remedies }: { remedies: RemedyData[] }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+  const num = (v: number) => (lang === "mr" ? toMr(v) : String(v));
   return (
-    <div>
-      <h2 className="text-lg font-bold text-stone-800 mb-4">{t("उपाय व रत्न सुचना","Remedies & Recommendations")}</h2>
-      <div className="space-y-6">
+    <div className="print-avoid-break">
+      <OrnateHeader
+        title={t("शांती उपाय व रत्न", "Shanti Upaya cha Ratna", "शांति उपाय व रत्न")}
+        subtitle={t("ग्रहदोष निवारण · मंत्र · रत्न · दान", "Planetary remedies · Mantras · Gems · Donations", "ग्रह दोष निवारण · मंत्र · रत्न · दान")}
+      />
+      <div className="space-y-4">
         {remedies.map((r, i) => (
-          <div key={i} className="print-avoid-break">
-            <h3 className="font-bold text-sm text-stone-900 mb-2 flex items-center gap-2">
-              <span className="w-2 h-2 bg-[#d4a843] rounded-full" />
-              {t(r.categoryMr, r.categoryEn)}
+          <div key={i} className="print-avoid-break p-4 rounded-xl" style={{
+            background: "linear-gradient(180deg, #FFFDF5, #FFF8E7)",
+            border: "1.5px solid #d4a843",
+          }}>
+            <h3 className="font-bold text-[14px] mb-3 pb-2 text-center italic" style={{
+              color: "#3d0c0c",
+              fontFamily: "serif",
+              borderBottom: "1px dotted #d4a843",
+            }}>
+              ॥ {t(r.categoryMr, r.categoryEn)} ॥
             </h3>
-            <div className="ml-4 space-y-2">
+            <div className="space-y-2">
               {r.items.map((item, j) => (
-                <div key={j} className="bg-[#FFF8E7] rounded-lg p-3">
-                  <p className="text-sm text-stone-700">{t(item.mr, item.en)}</p>
+                <div key={j} className="flex gap-3 p-2 rounded" style={{ background: "#FFFDF5" }}>
+                  <span className="flex-shrink-0 font-bold" style={{ color: "#d4a843", fontFamily: "serif" }}>
+                    {num(j + 1)}.
+                  </span>
+                  <p className="text-sm leading-relaxed" style={{ color: "#5c1a1a" }}>
+                    {t(item.mr, item.en)}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
         ))}
       </div>
-      <div className="mt-6 bg-slate-50 border border-slate-200 rounded-xl p-4">
-        <p className="text-xs text-slate-700">
-          {t("सूचना: रत्न धारण करण्यापूर्वी अनुभवी ज्योतिषाचा सल्ला अवश्य घ्या.","Note: Always consult an experienced astrologer before wearing gemstones.")}
+      <div className="mt-5 p-4 rounded-xl text-center" style={{
+        background: "linear-gradient(180deg, #FFF8E7, #FFF3D6)",
+        border: "2px double #d4a843",
+      }}>
+        <p className="text-xs italic" style={{ color: "#5c1a1a", fontFamily: "serif" }}>
+          ॥ {t("सूचना: रत्न धारण करण्यापूर्वी अनुभवी ज्योतिषाचा सल्ला अवश्य घ्या.", "Note: Always consult an experienced astrologer before wearing gemstones.", "सूचना: रत्न धारण से पहले अनुभवी ज्योतिषी का परामर्श अवश्य लें.")} ॥
         </p>
       </div>
     </div>
