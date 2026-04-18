@@ -23,6 +23,10 @@ export interface CalendarDay {
   karana: string;
   rahuKaal: string;
   moonRashi: string;
+  sunRashi: string;
+  masa: string;
+  sunrise: string;
+  sunset: string;
   festivals: { name: string; nameMr: string; type: string }[];
   muhuratTags: MuhuratTag[];
   dayType: DayType;
@@ -47,32 +51,49 @@ export async function GET(req: NextRequest) {
     const lng = 73.8567;
     const tz = 5.5;
 
+    const rashiMrToIdx: Record<string, number> = {
+      "मेष": 0, "वृषभ": 1, "मिथुन": 2, "कर्क": 3, "सिंह": 4, "कन्या": 5,
+      "तुला": 6, "वृश्चिक": 7, "धनु": 8, "मकर": 9, "कुंभ": 10, "मीन": 11,
+    };
+
+    const dayPanchang = (date: Date, atHour?: number, atMinute?: number) => {
+      const p = calculatePanchang(date, lat, lng, tz, atHour, atMinute);
+      const isKrishna = p.paksha === "कृष्ण पक्ष";
+      const tithiIdx = (isKrishna ? 15 : 0) + (p.tithiIndex - 1);
+      const sunMasa = rashiMrToIdx[p.sunRashi] ?? -1;
+      return {
+        panchang: p,
+        tithiIdx,
+        pakshaType: (isKrishna ? "krishna" : "shukla") as "krishna" | "shukla",
+        pakshaTithi: (tithiIdx % 15) + 1,
+        sunMasa,
+      };
+    };
+
     for (let d = 1; d <= daysInMonth; d++) {
       const date = new Date(year, month - 1, d);
-      const panchang = calculatePanchang(date, lat, lng, tz);
+      const sunriseView = dayPanchang(date);       // default — sunrise-vyapini rule
+      const noonView = dayPanchang(date, 12, 0);   // for Pratipada tithi-arambha rule
 
+      const panchang = sunriseView.panchang;
+      const tithiIdx = sunriseView.tithiIdx;
       const dayOfWeek = date.getDay();
 
-      // Derive tithiIndex (0-29): use paksha + tithiIndex from panchang
-      const isKrishna = panchang.paksha === "कृष्ण पक्ष";
-      const tithiIdx = (isKrishna ? 15 : 0) + (panchang.tithiIndex - 1);
-
-      // Derive Sun's rashi (masa) for festival matching
-      // panchang.sunRashi is in Marathi — map to index
-      const rashiMrToIdx: Record<string, number> = {
-        "मेष": 0, "वृषभ": 1, "मिथुन": 2, "कर्क": 3, "सिंह": 4, "कन्या": 5,
-        "तुला": 6, "वृश्चिक": 7, "धनु": 8, "मकर": 9, "कुंभ": 10, "मीन": 11,
-      };
-      const sunMasa = rashiMrToIdx[panchang.sunRashi] ?? -1;
-
-      // Match festivals
-      const pakshaTithi = (tithiIdx % 15) + 1;
-      const pakshaType = isKrishna ? "krishna" : "shukla";
-
-      // Lunar festivals (tithi-based)
-      const lunarFestivals = FESTIVAL_RULES.filter(
-        (f) => f.masa === sunMasa && f.paksha === pakshaType && f.tithi === pakshaTithi
-      ).map((f) => ({ name: f.name, nameMr: f.nameMr, type: f.type }));
+      // Festival match rules:
+      // - Pratipada (tithi=1) festivals use noon-tithi rule. Pratipada often begins after
+      //   sunrise when Amavasya/Purnima ends; classical tradition celebrates on the day
+      //   when Pratipada is dominant during daytime (Gudi Padwa, Ghatasthapana, Padwa).
+      // - All other tithi festivals use sunrise-vyapini rule (standard).
+      const matchedNames = new Set<string>();
+      const lunarFestivals: { name: string; nameMr: string; type: string }[] = [];
+      for (const f of FESTIVAL_RULES) {
+        const view = f.tithi === 1 ? noonView : sunriseView;
+        const matched = f.masa === view.sunMasa && f.paksha === view.pakshaType && f.tithi === view.pakshaTithi;
+        if (matched && !matchedNames.has(f.name)) {
+          matchedNames.add(f.name);
+          lunarFestivals.push({ name: f.name, nameMr: f.nameMr, type: f.type });
+        }
+      }
 
       // Fixed-date holidays (English calendar)
       const fixedFestivals = FIXED_HOLIDAYS.filter(
