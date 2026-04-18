@@ -149,11 +149,11 @@ function scanDashas(dashas: DashaPeriod[], k: KundliResult, area: "marriage" | "
     }
   }
 
-  // First pick top 8 by score (strongest astrological windows), then present chronologically.
-  out.sort((a, b) => b.score - a.score || a.startDate.localeCompare(b.startDate));
-  const top = out.slice(0, 8);
-  top.sort((a, b) => a.startDate.localeCompare(b.startDate));
-  return top;
+  // Return all qualifying windows sorted chronologically. Previously capped to top 8
+  // by score, which created confusing gaps (e.g. 2022 → 2029 jump). Score filter
+  // (minScore) already excludes weak combinations; all remaining are "advancement" windows.
+  out.sort((a, b) => a.startDate.localeCompare(b.startDate));
+  return out;
 }
 
 function analyze7thLordStrength(k: KundliResult): { mr: string; en: string; house: number; strength: "good" | "moderate" | "weak" } {
