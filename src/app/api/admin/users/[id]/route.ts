@@ -20,7 +20,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const updates: Record<string, string> = {};
 
   if (body.role && ["user", "admin"].includes(body.role)) updates.role = body.role;
-  if (body.plan && ["free", "premium", "one_time"].includes(body.plan)) updates.plan = body.plan;
+  if (body.plan && ["free", "premium"].includes(body.plan)) updates.plan = body.plan;
 
   if (Object.keys(updates).length === 0) {
     return NextResponse.json({ error: "No valid updates" }, { status: 400 });

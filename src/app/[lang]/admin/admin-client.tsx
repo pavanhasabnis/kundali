@@ -540,7 +540,6 @@ export default function AdminPageClient() {
                           className="text-xs px-2 py-1 rounded border border-gray-200 bg-white cursor-pointer">
                           <option value="free">Free</option>
                           <option value="premium">Premium</option>
-                          <option value="one_time">One-time</option>
                         </select>
                       </td>
                       <td className="px-5 py-3">
@@ -642,7 +641,6 @@ export default function AdminPageClient() {
                     className="text-xs px-2 py-1.5 rounded border border-gray-200 bg-white cursor-pointer">
                     <option value="free">Free</option>
                     <option value="premium">Premium</option>
-                    <option value="one_time">One-time</option>
                   </select>
                 </div>
                 <div className="flex items-center gap-2">

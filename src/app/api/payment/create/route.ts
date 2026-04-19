@@ -12,7 +12,6 @@ const razorpay = new Razorpay({
 
 const PLANS: Record<string, { amount: number; description: string }> = {
   premium: { amount: 19900, description: "Premium Monthly - ₹199" },
-  one_time: { amount: 9900, description: "One-time Patrika - ₹99" },
 };
 
 export async function POST(req: Request) {

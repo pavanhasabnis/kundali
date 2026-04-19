@@ -13,7 +13,7 @@ export const users = sqliteTable("users", {
   birthPlace: text("birth_place"),
   language: text("language").default("mr"), // mr | en
   role: text("role").default("user"), // user | admin
-  plan: text("plan").default("free"), // free | premium | one_time
+  plan: text("plan").default("free"), // free | premium
   planExpiresAt: text("plan_expires_at"), // ISO date for premium
   provider: text("provider").default("google"), // google
   providerAccountId: text("provider_account_id"),
@@ -45,7 +45,7 @@ export const payments = sqliteTable("payments", {
   razorpaySignature: text("razorpay_signature"),
   amount: integer("amount").notNull(), // in paise (e.g., 19900 = ₹199)
   currency: text("currency").default("INR"),
-  plan: text("plan").notNull(), // premium | one_time
+  plan: text("plan").notNull(), // premium
   status: text("status").default("created"), // created | paid | failed
   createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
