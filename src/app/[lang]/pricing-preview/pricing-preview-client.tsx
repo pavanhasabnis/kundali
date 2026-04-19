@@ -45,9 +45,9 @@ const FAQS = [
     qMr: "सदस्यता कशी कार्य करते?",
     qEn: "How does the subscription work?",
     qHi: "सदस्यता कैसे काम करती है?",
-    aMr: "Premium ₹५९९/महिना — दरमहा आकारणी, कोणत्याही वेळी रद्द करा. Plus ₹१५००/महिना — समान अटी, अतिरिक्त फायदे.",
-    aEn: "Premium ₹599/month — billed monthly, cancel anytime. Plus ₹1500/month — same terms, extra perks.",
-    aHi: "Premium ₹599/माह — मासिक बिलिंग, कभी भी रद्द करें. Plus ₹1500/माह — वही शर्तें, अतिरिक्त लाभ.",
+    aMr: "Premium ₹५९९/महिना — दरमहा आकारणी, कोणत्याही वेळी रद्द करा. Plus ₹१४९९/महिना — समान अटी, अतिरिक्त फायदे.",
+    aEn: "Premium ₹599/month — billed monthly, cancel anytime. Plus ₹1499/month — same terms, extra perks.",
+    aHi: "Premium ₹599/माह — मासिक बिलिंग, कभी भी रद्द करें. Plus ₹1499/माह — वही शर्तें, अतिरिक्त लाभ.",
   },
   {
     qMr: "छापील दिनदर्शिका कशी मिळते?",
@@ -99,7 +99,7 @@ function PlanCard({ tier, featured, lang, t }: PlanCardProps) {
   const prices = {
     free: { amount: 0, label: t("कायम", "Forever", "हमेशा") },
     premium: { amount: 599, label: `/${t("महिना", "month", "माह")}` },
-    plus: { amount: 1500, label: `/${t("महिना", "month", "माह")}` },
+    plus: { amount: 1499, label: `/${t("महिना", "month", "माह")}` },
   };
   const subtitles = {
     free: t("सुरुवात करण्यासाठी", "To get started", "शुरू करने के लिए"),
@@ -278,7 +278,7 @@ export default function PricingPreviewClient() {
                     Premium<br /><span style={{ fontSize: 11, fontWeight: 400, color: "#6b5b3e" }}>₹599/{t("महिना", "mo", "माह")}</span>
                   </th>
                   <th style={{ textAlign: "center", padding: "12px 16px", color: "#3d0c0c", fontWeight: 700 }}>
-                    Plus<br /><span style={{ fontSize: 11, fontWeight: 400, color: "#6b5b3e" }}>₹1500/{t("महिना", "mo", "माह")}</span>
+                    Plus<br /><span style={{ fontSize: 11, fontWeight: 400, color: "#6b5b3e" }}>₹1499/{t("महिना", "mo", "माह")}</span>
                   </th>
                 </tr>
               </thead>

@@ -363,9 +363,9 @@ export default function ShopPageClient() {
           </div>
           <p style={{ fontSize: 14, opacity: 0.9, marginBottom: 20, maxWidth: 620, marginLeft: "auto", marginRight: "auto" }}>
             {t(
-              "Premium (₹५९९/महिना) — मोफत दिनदर्शिका + अमर्यादित कुंडली PDF · Plus (₹१५००/महिना) — मोफत पुस्तक + मोफत दिनदर्शिका + १ सल्लामसलत",
-              "Premium (₹599/mo) — free calendar + unlimited kundli PDF · Plus (₹1500/mo) — free book + free calendar + 1 consultation",
-              "Premium (₹599/माह) — मुफ्त पंचांग + असीमित कुंडली PDF · Plus (₹1500/माह) — मुफ्त पुस्तक + मुफ्त पंचांग + 1 परामर्श"
+              "Premium (₹५९९/महिना) — मोफत दिनदर्शिका + अमर्यादित कुंडली PDF · Plus (₹१४९९/महिना) — मोफत पुस्तक + मोफत दिनदर्शिका + १ सल्लामसलत",
+              "Premium (₹599/mo) — free calendar + unlimited kundli PDF · Plus (₹1499/mo) — free book + free calendar + 1 consultation",
+              "Premium (₹599/माह) — मुफ्त पंचांग + असीमित कुंडली PDF · Plus (₹1499/माह) — मुफ्त पुस्तक + मुफ्त पंचांग + 1 परामर्श"
             )}
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>

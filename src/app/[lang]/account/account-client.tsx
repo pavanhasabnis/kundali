@@ -456,7 +456,7 @@ export default function AccountPageClient() {
               {/* Plus */}
               <div className={`bg-white rounded-lg border p-5 ${user.plan === "plus" ? "border-[#2d6b2d] border-2" : "border-gray-200"} relative`}>
                 <p className="font-bold text-[#3d0c0c]">{t("प्रीमियम प्लस", "Premium Plus")}</p>
-                <p className="text-2xl font-bold text-[#3d0c0c] mt-1">₹1500<span className="text-xs font-normal text-[#5c1a1a]/50">/{t("महिना", "month")}</span></p>
+                <p className="text-2xl font-bold text-[#3d0c0c] mt-1">₹1499<span className="text-xs font-normal text-[#5c1a1a]/50">/{t("महिना", "month")}</span></p>
                 <ul className="mt-3 space-y-1.5 text-xs text-[#5c1a1a]/60">
                   <li>{t("सर्व Premium फायदे", "Everything in Premium")}</li>
                   <li>{t("वर्षी १ मोफत बांधील कुंडली पुस्तक", "1 FREE bound kundli book/year")}</li>
@@ -466,7 +466,7 @@ export default function AccountPageClient() {
                 {user.plan !== "plus" ? (
                   <button onClick={() => handlePayment("plus")} className="mt-4 w-full py-2.5 text-sm font-semibold rounded-lg text-white transition hover:opacity-90"
                     style={{ background: "linear-gradient(135deg, #2d6b2d, #1f4d1f)" }}>
-                    {t("Plus घ्या — ₹1500/महिना", "Get Plus — ₹1500/month")}
+                    {t("Plus घ्या — ₹1499/महिना", "Get Plus — ₹1499/month")}
                   </button>
                 ) : (
                   <p className="mt-3 text-xs text-[#2d6b2d] font-medium">{t("सध्याची योजना", "Current Plan")}</p>

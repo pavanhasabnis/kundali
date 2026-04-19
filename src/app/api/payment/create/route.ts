@@ -12,7 +12,7 @@ const razorpay = new Razorpay({
 
 const PLANS: Record<string, { amount: number; description: string }> = {
   premium: { amount: 59900, description: "Premium Monthly - ₹599" },
-  plus:    { amount: 150000, description: "Premium Plus Monthly - ₹1500" },
+  plus:    { amount: 149900, description: "Premium Plus Monthly - ₹1499" },
 };
 
 // One-time product pricing (paise) — bound kundli book
