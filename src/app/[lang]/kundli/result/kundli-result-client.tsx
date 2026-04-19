@@ -636,14 +636,19 @@ function KundliResultContent() {
             <p className="text-sm text-[#5c1a1a]/70 mb-6">
               {t("अधिक कुंडल्या बनवण्यासाठी प्रीमियम प्लॅन घ्या.", "Upgrade to premium plan to generate more kundlis.")}
             </p>
-            <div className="flex gap-3">
-              <button onClick={() => router.push("/account")}
-                className="flex-1 py-2.5 rounded-lg text-sm font-semibold"
+            <div className="flex flex-col gap-2">
+              <button onClick={() => router.push("/account?tab=kundlis")}
+                className="w-full py-2.5 rounded-lg text-sm font-semibold"
+                style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)", color: "#d4a843" }}>
+                {t("माझी सेव्ह केलेली कुंडली पहा", "View My Saved Kundli")}
+              </button>
+              <button onClick={() => router.push("/pricing")}
+                className="w-full py-2.5 rounded-lg text-sm font-semibold"
                 style={{ background: "linear-gradient(135deg, #d4a843, #c49535)", color: "#1a0505" }}>
                 {t("प्रीमियम प्लॅन पहा", "View Premium Plans")}
               </button>
               <button onClick={() => router.push("/kundli")}
-                className="flex-1 py-2.5 rounded-lg text-sm font-semibold border border-gray-200 text-[#5c1a1a]/60 hover:bg-gray-50">
+                className="w-full py-2 rounded-lg text-xs font-medium border border-gray-200 text-[#5c1a1a]/60 hover:bg-gray-50">
                 {t("मागे जा", "Go Back")}
               </button>
             </div>

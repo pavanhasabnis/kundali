@@ -747,17 +747,24 @@ export default function KundliPageClient() {
                   "Upgrade to premium plan to generate more kundlis."
                 )}
               </p>
-              <div className="flex gap-3">
+              <div className="flex flex-col gap-2">
                 <button
-                  onClick={() => router.push("/account")}
-                  className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white"
+                  onClick={() => router.push("/account?tab=kundlis")}
+                  className="w-full py-2.5 rounded-lg text-sm font-semibold text-[#d4a843]"
+                  style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}
+                >
+                  {t("माझी सेव्ह केलेली कुंडली पहा", "View My Saved Kundli", "मेरी सहेजी कुंडली देखें")}
+                </button>
+                <button
+                  onClick={() => router.push("/pricing")}
+                  className="w-full py-2.5 rounded-lg text-sm font-semibold"
                   style={{ background: "linear-gradient(135deg, #d4a843, #c49535)", color: "#1a0505" }}
                 >
                   {t("प्रीमियम प्लॅन पहा", "View Premium Plans", "प्रीमियम प्लान देखें")}
                 </button>
                 <button
                   onClick={() => setShowPaywall(false)}
-                  className="flex-1 py-2.5 rounded-lg text-sm font-semibold border border-gray-200 text-[#5c1a1a]/60 hover:bg-gray-50"
+                  className="w-full py-2 rounded-lg text-xs font-medium border border-gray-200 text-[#5c1a1a]/60 hover:bg-gray-50"
                 >
                   {t("बंद करा", "Close", "बंद करें")}
                 </button>
