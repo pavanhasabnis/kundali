@@ -1,5 +1,6 @@
 import { pageMetaI18n, type Lang } from "@/lib/seo";
 import ShopPageClient from "./shop-client";
+import { JsonLd, breadcrumbSchema } from "@/components/json-ld";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
@@ -20,6 +21,65 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   });
 }
 
-export default function Page() {
-  return <ShopPageClient />;
+const bookProduct = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: "Bound Kundli Book — बांधील कुंडली पुस्तक",
+  description: "Complete Vedic birth chart, dasha analysis, planetary positions, and remedies delivered as a beautifully bound hardcover book (80+ pages) to your home.",
+  image: "https://bhaagyavedh.com/logos/og-image.png",
+  brand: { "@type": "Brand", name: "Bhaagyavedh" },
+  offers: {
+    "@type": "Offer",
+    price: "799",
+    priceCurrency: "INR",
+    availability: "https://schema.org/InStock",
+    priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
+    url: "https://bhaagyavedh.com/mr/shop/claim-book",
+    shippingDetails: {
+      "@type": "OfferShippingDetails",
+      shippingRate: { "@type": "MonetaryAmount", value: "0", currency: "INR" },
+      shippingDestination: { "@type": "DefinedRegion", addressCountry: "IN", addressRegion: "MH" },
+    },
+  },
+};
+
+const calendarProduct = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: "Printed Annual Marathi Calendar 14×22\" — छापील वार्षिक दिनदर्शिका",
+  description: "Full year of tithis, nakshatras, festivals, muhurat, and rahu-kaal — printed calendar for wall display, shipped to your home annually.",
+  image: "https://bhaagyavedh.com/logos/og-image.png",
+  brand: { "@type": "Brand", name: "Bhaagyavedh" },
+  offers: {
+    "@type": "Offer",
+    price: "199",
+    priceCurrency: "INR",
+    availability: "https://schema.org/InStock",
+    priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
+    url: "https://bhaagyavedh.com/mr/shop",
+    shippingDetails: {
+      "@type": "OfferShippingDetails",
+      shippingRate: { "@type": "MonetaryAmount", value: "0", currency: "INR" },
+      shippingDestination: { "@type": "DefinedRegion", addressCountry: "IN", addressRegion: "MH" },
+    },
+  },
+};
+
+export default async function Page({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const base = `https://bhaagyavedh.com/${lang}`;
+  const shopLabel = lang === "mr" ? "दुकान" : lang === "hi" ? "शॉप" : "Shop";
+  const homeLabel = lang === "mr" ? "मुख्यपृष्ठ" : lang === "hi" ? "मुख्य पृष्ठ" : "Home";
+
+  return (
+    <>
+      <JsonLd data={bookProduct} />
+      <JsonLd data={calendarProduct} />
+      <JsonLd data={breadcrumbSchema([
+        { name: homeLabel, url: base },
+        { name: shopLabel, url: `${base}/shop` },
+      ])} />
+      <ShopPageClient />
+    </>
+  );
 }

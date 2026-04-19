@@ -526,6 +526,11 @@ export default function PanchangPageClient() {
 
   return (
     <div className="min-h-screen bg-[#FAFAF8] pb-16">
+      <h1 className="sr-only">
+        {lang === "mr" ? "आजचे पंचांग — तिथी, नक्षत्र, योग, करण, राहू काळ"
+          : lang === "hi" ? "आज का पंचांग — तिथि, नक्षत्र, योग, करण, राहु काल"
+          : "Today's Panchang — Tithi, Nakshatra, Yoga, Karana, Rahu Kaal"}
+      </h1>
       {/* ── Compact Top Bar ── */}
       <div className="bg-white border-b border-stone-200 sticky top-0 z-20 no-print">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3 flex-wrap">

@@ -79,13 +79,18 @@ export const localBusinessSchema = {
     opens: "09:00",
     closes: "18:00",
   },
-  priceRange: "₹0 - ₹199",
+  priceRange: "₹0 - ₹1499",
   description:
     "Vedic astrology services — kundli generation, rashifal, gun milaan, panchang, muhurat, pooja services, and religious yatra packages from Pune, Maharashtra.",
   knowsLanguage: ["mr", "hi", "en"],
   areaServed: {
     "@type": "Country",
     name: "India",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 18.5074,
+    longitude: 73.8077,
   },
 };
 

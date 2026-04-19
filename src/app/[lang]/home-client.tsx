@@ -157,7 +157,7 @@ function OmLoader({ onComplete }: { onComplete: () => void }) {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 0.8 }} className="mt-6 text-center">
         <motion.div initial={{ width: 0 }} animate={{ width: 60 }} transition={{ delay: 0.6, duration: 0.8 }}
           className="h-px mx-auto mb-4" style={{ background: "linear-gradient(90deg, transparent, #d4a843, transparent)" }} />
-        <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: "#d4a843" }}>भाग्यवेध</h1>
+        <p className="text-2xl sm:text-3xl font-bold" style={{ color: "#d4a843" }}>भाग्यवेध</p>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2, duration: 0.6 }}
           className="text-xs mt-2 tracking-[0.2em] uppercase" style={{ color: "rgba(212,168,67,0.3)" }}>
           Vedic Astrology &bull; Pilgrimage &bull; Pooja

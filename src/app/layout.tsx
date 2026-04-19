@@ -6,7 +6,7 @@ import { LangProvider, type Lang } from "@/lib/astrology/language-context";
 import { NavBar } from "./nav-bar";
 import { Footer } from "./footer";
 import { SiteBanner } from "./site-banner";
-import { JsonLd, organizationSchema, websiteSchema } from "@/components/json-ld";
+import { JsonLd, organizationSchema, websiteSchema, localBusinessSchema } from "@/components/json-ld";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -132,6 +132,7 @@ export default async function RootLayout({
         <meta httpEquiv="content-language" content={htmlLang} />
         <JsonLd data={organizationSchema} />
         <JsonLd data={websiteSchema} />
+        <JsonLd data={localBusinessSchema} />
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased font-sans">
         <LangProvider lang={lang}>
