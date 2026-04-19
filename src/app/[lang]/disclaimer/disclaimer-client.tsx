@@ -1,6 +1,7 @@
 "use client";
 
 import { useLang } from "@/lib/astrology/language-context";
+import { PageHero } from "@/components/page-hero";
 
 export default function DisclaimerPageClient() {
   const { t } = useLang();
@@ -57,21 +58,16 @@ export default function DisclaimerPageClient() {
   ];
 
   return (
-    <div className="bg-[#FAFAF8] py-6">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#3d0c0c]">
-            {t("अस्वीकरण", "Disclaimer", "अस्वीकरण")}
-          </h1>
-          <p className="text-[#5c1a1a]/70 mt-2 text-sm">
-            {t(
-              "भाग्यवेध — कृपया आमच्या सेवा वापरण्यापूर्वी हे वाचा",
-              "Bhaagyavedh — Please read this before using our services",
-              "भाग्यवेध — कृपया हमारी सेवाओं का उपयोग करने से पहले इसे पढ़ें"
-            )}
-          </p>
-        </div>
+    <div className="bg-[#FAFAF8]">
+      <PageHero
+        title={t("अस्वीकरण", "Disclaimer", "अस्वीकरण")}
+        subtitle={t(
+          "भाग्यवेध — कृपया आमच्या सेवा वापरण्यापूर्वी हे वाचा",
+          "Bhaagyavedh — Please read this before using our services",
+          "भाग्यवेध — कृपया हमारी सेवाओं का उपयोग करने से पहले इसे पढ़ें"
+        )}
+      />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
 
         {/* Important Notice */}
         <div className="bg-[#FFF8E7] rounded-xl border border-[#d4a843]/30 p-6 mb-6">

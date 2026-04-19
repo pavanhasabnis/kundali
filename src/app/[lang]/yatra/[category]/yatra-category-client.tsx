@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useLang } from "@/lib/astrology/language-context";
+import { PageHero } from "@/components/page-hero";
 
 interface TravelPkg {
   id: string;
@@ -132,7 +133,7 @@ function slugToDbCategory(slug: string): string {
 }
 
 export default function YatraCategoryPageClient() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const params = useParams();
   const slug = params.category as string;
   const dbCategory = slugToDbCategory(slug);
@@ -191,20 +192,13 @@ export default function YatraCategoryPageClient() {
 
   return (
     <div className="min-h-screen bg-[#FAFAF8]">
-      {/* Hero */}
-      <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-          <Link href="/yatra" className="inline-block text-white/40 text-xs hover:text-white/60 transition mb-4">&larr; {t("सर्व यात्रा सेवा", "All Travel Services", "सभी यात्रा सेवाएँ")}</Link>
-          <div className="text-4xl mb-3">{meta.icon}</div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">
-            {t(meta.labelMr, meta.labelEn, meta.labelMr)}
-          </h1>
-          <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            {t(meta.descMr, meta.descEn, meta.descMr)}
-          </p>
-        </div>
-      </section>
+      <PageHero
+        backHref={`/${lang}/yatra`}
+        backLabel={t("सर्व यात्रा सेवा", "All Travel Services", "सभी यात्रा सेवाएँ")}
+        eyebrow={meta.icon}
+        title={t(meta.labelMr, meta.labelEn, meta.labelMr)}
+        subtitle={t(meta.descMr, meta.descEn, meta.descMr)}
+      />
 
       <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
 

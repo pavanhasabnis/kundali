@@ -4,6 +4,7 @@ import { useLang } from "@/lib/astrology/language-context";
 import { useState } from "react";
 import Link from "next/link";
 import { JsonLd, breadcrumbSchema, faqSchema } from "@/components/json-ld";
+import { PageHero } from "@/components/page-hero";
 
 interface Temple {
   id: string;
@@ -1584,21 +1585,14 @@ export default function TemplesPageClient() {
     <div className="min-h-screen bg-[#FAFAF8]">
       <JsonLd data={breadcrumbSchema([{ name: "Home", url: `https://bhaagyavedh.com/${lang}` }, { name: "Temples", url: `https://bhaagyavedh.com/${lang}/temples` }])} />
       <JsonLd data={{ "@context": "https://schema.org", "@type": "ItemList", name: "Famous Hindu Temples in India", description: "Complete guide to Jyotirlinga, Ashtavinayak, Shakti Peeth, Char Dham and other famous temples in India with timings, significance, and darshan info.", url: `https://bhaagyavedh.com/${lang}/temples`, numberOfItems: 50, itemListOrder: "https://schema.org/ItemListUnordered" }} />
-      <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">
-            {t("भारतातील प्रसिद्ध मंदिरे", "Famous Temples of India", "भारत के प्रसिद्ध मंदिर")}
-          </h1>
-          <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            {t(
-              "१२ ज्योतिर्लिंग, अष्टविनायक, शक्तीपीठ, दत्तक्षेत्र आणि भारतभरातील प्रसिद्ध मंदिरांची संपूर्ण माहिती.",
-              "Complete information about 12 Jyotirlingas, Ashtavinayak, Shakti Peethas, Datta Kshetras and famous temples across India.",
-              "१२ ज्योतिर्लिंग, अष्टविनायक, शक्तिपीठ, दत्तक्षेत्र और भारत भर के प्रसिद्ध मंदिरों की सम्पूर्ण जानकारी."
-            )}
-          </p>
-        </div>
-      </section>
+      <PageHero
+        title={t("भारतातील प्रसिद्ध मंदिरे", "Famous Temples of India", "भारत के प्रसिद्ध मंदिर")}
+        subtitle={t(
+          "१२ ज्योतिर्लिंग, अष्टविनायक, शक्तीपीठ, दत्तक्षेत्र आणि भारतभरातील प्रसिद्ध मंदिरांची संपूर्ण माहिती.",
+          "Complete information on 12 Jyotirlingas, Ashtavinayak, Shakti Peethas, Datta Kshetras and famous temples across India.",
+          "१२ ज्योतिर्लिंग, अष्टविनायक, शक्तिपीठ, दत्तक्षेत्र और प्रसिद्ध मंदिरों की सम्पूर्ण जानकारी."
+        )}
+      />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
 
         {/* Filters */}

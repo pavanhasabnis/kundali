@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLang } from "@/lib/astrology/language-context";
+import { PageHero } from "@/components/page-hero";
 
 interface PlanetData { id: string; nameMr: string; name: string; rashi: string; rashiMr: string; house: number; isRetrograde: boolean; }
 interface KundliSummary { lagnaRashi: string; lagnaRashiMr: string; moonRashi: string; moonRashiMr: string; moonNakshatra: string; moonNakshatraMr: string; planets: PlanetData[]; }
@@ -57,12 +58,12 @@ export default function ComparePageClient() {
   const PLANET_MR: Record<string, string> = { Sun: "सूर्य", Moon: "चंद्र", Mars: "मंगळ", Mercury: "बुध", Jupiter: "गुरु", Venus: "शुक्र", Saturn: "शनि", Rahu: "राहु", Ketu: "केतु" };
 
   return (
-    <div className="bg-[#FAFAF8] py-6">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 space-y-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900">{t("कुंडली तुलना", "Kundli Comparison", "कुंडली तुलना")}</h1>
-          <p className="text-gray-600 mt-2 text-sm">{t("दोन कुंडल्या शेजारी पहा — पती-पत्नी, पालक-मूल", "View two charts side-by-side — husband-wife, parent-child", "दो कुंडलियाँ साथ-साथ देखें — पति-पत्नी, माता-पिता-बच्चा")}</p>
-        </div>
+    <div className="bg-[#FAFAF8]">
+      <PageHero
+        title={t("कुंडली तुलना", "Kundli Comparison", "कुंडली तुलना")}
+        subtitle={t("दोन कुंडल्या शेजारी पहा — पती-पत्नी, पालक-मूल", "View two charts side-by-side — husband-wife, parent-child", "दो कुंडलियाँ साथ-साथ देखें — पति-पत्नी, माता-पिता-बच्चा")}
+      />
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 space-y-6 py-8">
 
         {/* Input Forms */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

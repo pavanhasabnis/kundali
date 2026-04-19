@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Outfit } from "next/font/google";
+import { Outfit, Noto_Serif_Devanagari } from "next/font/google";
 import { cookies, headers } from "next/headers";
 import "./globals.css";
 import { LangProvider, type Lang } from "@/lib/astrology/language-context";
@@ -11,6 +11,15 @@ import { JsonLd, organizationSchema, websiteSchema } from "@/components/json-ld"
 const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap",
+});
+
+// Editorial serif for headings — supports Devanagari + Latin so same font
+// renders across all three site languages (mr / hi / en).
+const notoSerifDeva = Noto_Serif_Devanagari({
+  subsets: ["devanagari", "latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-heading",
   display: "swap",
 });
 
@@ -116,7 +125,7 @@ export default async function RootLayout({
   const htmlLang = lang === "en" ? "en-IN" : lang === "hi" ? "hi-IN" : "mr-IN";
 
   return (
-    <html lang={htmlLang} className={outfit.variable}>
+    <html lang={htmlLang} className={`${outfit.variable} ${notoSerifDeva.variable}`}>
       <head>
         <link rel="icon" href="/logos/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/logos/apple-touch-icon.png" />

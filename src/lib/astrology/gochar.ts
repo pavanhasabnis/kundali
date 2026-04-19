@@ -5,8 +5,95 @@
 
 export interface TransitPlanet {
   id: string;
-  rashiIndex: number; // 0-11
+  rashiIndex: number;   // 0-11
+  sidLong?: number;     // optional — sidereal longitude in degrees
+  degreeInSign?: number;
+  speed?: number;       // longitudeSpeed (for retrograde detection)
+  isRetrograde?: boolean;
+  isCombust?: boolean;
 }
+
+// ─── Classical dignity tables (Brihat Parashara / Phaladeepika) ─────
+const EXALTATION: Record<string, number> = { Sun: 0, Moon: 1, Mars: 9, Mercury: 5, Jupiter: 3, Venus: 11, Saturn: 6 };
+const DEBILITATION: Record<string, number> = { Sun: 6, Moon: 7, Mars: 3, Mercury: 11, Jupiter: 9, Venus: 5, Saturn: 0 };
+const OWN_SIGNS: Record<string, number[]> = {
+  Sun: [4], Moon: [3], Mars: [0, 7], Mercury: [2, 5],
+  Jupiter: [8, 11], Venus: [1, 6], Saturn: [9, 10],
+};
+const FRIENDS: Record<string, string[]> = {
+  Sun: ["Moon", "Mars", "Jupiter"],
+  Moon: ["Sun", "Mercury"],
+  Mars: ["Sun", "Moon", "Jupiter"],
+  Mercury: ["Sun", "Venus"],
+  Jupiter: ["Sun", "Moon", "Mars"],
+  Venus: ["Mercury", "Saturn"],
+  Saturn: ["Mercury", "Venus"],
+};
+const ENEMIES: Record<string, string[]> = {
+  Sun: ["Venus", "Saturn"],
+  Moon: [],
+  Mars: ["Mercury"],
+  Mercury: ["Moon"],
+  Jupiter: ["Mercury", "Venus"],
+  Venus: ["Sun", "Moon"],
+  Saturn: ["Sun", "Moon", "Mars"],
+};
+const SIGN_LORDS: Record<number, string> = {
+  0: "Mars", 1: "Venus", 2: "Mercury", 3: "Moon", 4: "Sun", 5: "Mercury",
+  6: "Venus", 7: "Mars", 8: "Jupiter", 9: "Saturn", 10: "Saturn", 11: "Jupiter",
+};
+
+type Dignity = "exalted" | "own" | "friendly" | "neutral" | "enemy" | "debilitated";
+const DIGNITY_MR: Record<Dignity, string> = {
+  exalted: "उच्च", own: "स्वगृही", friendly: "मित्रगृही",
+  neutral: "समगृही", enemy: "शत्रुगृही", debilitated: "नीच",
+};
+const DIGNITY_EN: Record<Dignity, string> = {
+  exalted: "Exalted", own: "Own", friendly: "Friendly",
+  neutral: "Neutral", enemy: "Enemy", debilitated: "Debilitated",
+};
+
+function getDignity(id: string, rashiIndex: number): Dignity {
+  if (id === "Rahu" || id === "Ketu") return "neutral";
+  if (EXALTATION[id] === rashiIndex) return "exalted";
+  if (DEBILITATION[id] === rashiIndex) return "debilitated";
+  if (OWN_SIGNS[id]?.includes(rashiIndex)) return "own";
+  const lord = SIGN_LORDS[rashiIndex];
+  if (FRIENDS[id]?.includes(lord)) return "friendly";
+  if (ENEMIES[id]?.includes(lord)) return "enemy";
+  return "neutral";
+}
+
+// Dignity strength multiplier (affects how much we weight effect text).
+function dignityMultiplier(d: Dignity): number {
+  switch (d) {
+    case "exalted": return 2.0;
+    case "own": return 1.5;
+    case "friendly": return 1.2;
+    case "neutral": return 1.0;
+    case "enemy": return 0.7;
+    case "debilitated": return 0.5;
+  }
+}
+
+// Planetary aspects (दृष्टि). House offsets from the planet's position.
+// Saturn → 3rd, 7th, 10th  (i.e. +2, +6, +9 house positions, 1-based)
+// Jupiter → 5th, 7th, 9th   (+4, +6, +8)
+// Mars   → 4th, 7th, 8th    (+3, +6, +7)
+// Rahu/Ketu → 5th, 7th, 9th (same as Jupiter, optional — classical texts differ)
+// All others → 7th only     (+6)
+const ASPECT_OFFSETS: Record<string, number[]> = {
+  Saturn: [2, 6, 9],
+  Jupiter: [4, 6, 8],
+  Mars: [3, 6, 7],
+  Rahu: [4, 6, 8],
+  Ketu: [4, 6, 8],
+  Sun: [6],
+  Moon: [6],
+  Mercury: [6],
+  Venus: [6],
+};
+const BENEFICS = new Set(["Jupiter", "Venus", "Moon", "Mercury"]);
 
 export interface GocharResult {
   rashiId: number;
@@ -18,7 +105,25 @@ export interface GocharResult {
   health: { mr: string; en: string };
   advice: { mr: string; en: string };
   rating: number; // 1-5
-  transits: { planet: string; planetMr: string; house: number; effect: "good" | "bad" | "neutral" }[];
+  // Pure outcome narrative — jargon-free flowing prose (~120-180 words).
+  narrative: { mr: string; en: string };
+  // Raw arrays for callers who need per-snippet dedup/formatting (e.g. weekly/monthly).
+  careerNotes: { mr: string; en: string }[];
+  loveNotes: { mr: string; en: string }[];
+  healthNotes: { mr: string; en: string }[];
+  generalNotes: { mr: string; en: string }[];
+  transits: {
+    planet: string;
+    planetMr: string;
+    house: number;
+    effect: "good" | "bad" | "neutral";
+    dignity: Dignity;
+    dignityMr: string;
+    dignityEn: string;
+    isRetrograde: boolean;
+    isCombust: boolean;
+    aspectsHouses: number[];
+  }[];
   luckyColor: { mr: string; en: string };
   luckyNumber: number;
 }
@@ -199,35 +304,237 @@ function getTransitHouse(transitRashiIndex: number, fromRashiIndex: number): num
   return ((transitRashiIndex - fromRashiIndex + 12) % 12) + 1;
 }
 
+// ─── Daily narrative composer — pure outcome prose, no planet/house jargon ─
+function composeDailyNarrativeMr(
+  rashiMr: string,
+  rating: number,
+  sun: GocharResult["transits"][number],
+  jup: GocharResult["transits"][number],
+  mars: GocharResult["transits"][number],
+  merc: GocharResult["transits"][number],
+  venus: GocharResult["transits"][number],
+  sat: GocharResult["transits"][number],
+  moon: GocharResult["transits"][number],
+): string {
+  const good = new Set([3, 6, 10, 11]); // Sun's natural good houses — used as context.
+  const sunHouseGood = GOOD_HOUSES.Sun!.includes(sun.house);
+  const jupHouseGood = GOOD_HOUSES.Jupiter!.includes(jup.house);
+
+  // Paragraph 1 — tone + single dominant theme.
+  const tone = rating >= 4
+    ? `आज ${rashiMr} राशीच्या व्यक्तींसाठी वातावरण सकारात्मक व समर्थ आहे.`
+    : rating === 3
+    ? `आज ${rashiMr} राशीच्या व्यक्तींसाठी दिवस मिश्र असला तरी सावधगिरीने पुढे गेल्यास संधी मिळू शकतात.`
+    : `आज ${rashiMr} राशीच्या व्यक्तींनी थोडे सबुरीने निर्णय घ्यायला हवेत — दिवसाचा प्रवाह आव्हानात्मक आहे.`;
+  let lead = "";
+  if (sun.dignity === "exalted" && sunHouseGood) lead = " आत्मविश्वास उंचावलेला राहील, नेतृत्वगुण समोर येतील आणि प्रतिष्ठेच्या कामांत अनुकूल प्रतिसाद मिळेल.";
+  else if (sun.dignity === "exalted" && !sunHouseGood) lead = " आंतरिक ऊर्जा उच्च असली तरी ती योग्य दिशेने वळवण्याचा विचार करा — बाह्य मान्यतेपेक्षा आंतरिक समाधान पहा.";
+  else if (sun.dignity === "debilitated") lead = " आत्मविश्वासावर थोडासा परिणाम जाणवेल; अभिमान बाजूला ठेवून संयमी निर्णय घ्या.";
+  else if ((jup.dignity === "exalted" || jup.dignity === "own") && jupHouseGood) lead = " ज्ञान, मार्गदर्शन आणि ज्येष्ठांचा आशीर्वाद यांचा आधार दिवसभर सोबत राहील.";
+  else if (rating <= 2) lead = " परिस्थिती काही प्रमाणात नियंत्रणाबाहेर वाटू शकते — प्रतिकाराऐवजी स्वीकाराची भूमिका अधिक उपयुक्त.";
+  else lead = " दिवस समतोल आहे — तोलून-मापून टाकलेले पाऊल दीर्घकालीन फायदेशीर ठरते.";
+
+  // Paragraph 2 — career/money tone.
+  let work = "";
+  const careerHouses = new Set([2, 6, 10, 11]);
+  const careerPlanets = [sun, mars, merc, sat].filter((p) => careerHouses.has(p.house));
+  const careerGoodCount = careerPlanets.filter((p) => GOOD_HOUSES[p.planet]?.includes(p.house)).length;
+  if (careerGoodCount >= 2) work = "कामाच्या ठिकाणी प्रगती, महत्त्वाचे निर्णय, किंवा आर्थिक संधी यांपैकी एखादी गोष्ट समोर येऊ शकते — तयारीने प्रतिसाद द्या.";
+  else if (careerGoodCount === 0 && careerPlanets.length >= 2) work = "व्यवहार, करार किंवा वरिष्ठांशी बोलणी करताना शब्दांची निवड आणि कागदपत्रांची तपासणी महत्त्वाची.";
+  else work = "नियमित कामात स्थिरता ठेवा; मोठ्या बदलांऐवजी सातत्यातून फळ मिळेल.";
+  if (merc.dignity === "debilitated" && careerHouses.has(merc.house)) {
+    work += " संवाद-आधारित कामांत छोटी चूक टाळण्यासाठी दुहेरी तपासणी करा.";
+  }
+
+  // Paragraph 3 — relationships.
+  let rel = "";
+  if (venus.dignity === "exalted" || venus.dignity === "own") rel = "जोडीदार व कुटुंबातील संबंधात गोडवा, सहकार्य आणि सौंदर्य-सर्जनशीलतेच्या कामांत आनंद दिसेल.";
+  else if (venus.dignity === "debilitated") rel = "नात्यांत जरा संयम ठेवा; कठोर शब्द टाळून स्पष्ट संवाद निवडा.";
+  else rel = "नात्यांत शांतता राहील; जुन्या संबंधांना थोडा वेळ देणे पोषक.";
+  if ([4, 5, 7].includes(mars.house)) rel += " कुटुंबातील वा जोडीदारातील मतभेदांवर शांत, संयमी प्रतिसाद द्या.";
+
+  // Paragraph 4 — health.
+  let hlth = "";
+  const hhp = [sun, moon, mars, sat, merc].filter((p) => [6, 8, 12].includes(p.house));
+  if (hhp.length === 0) hlth = "आरोग्य स्थिर राहील — नियमित दिनचर्या, पुरेशी झोप पुरेशी आहे.";
+  else {
+    const h12 = hhp.some((p) => p.house === 12);
+    const h8 = hhp.some((p) => p.house === 8);
+    const h6 = hhp.some((p) => p.house === 6);
+    const tips: string[] = [];
+    if (h12) tips.push("झोप व विश्रांतीकडे लक्ष द्या");
+    if (h8) tips.push("अनपेक्षित तब्येतीच्या प्रकरणांत सावधगिरी बाळगा");
+    if (h6) tips.push("पचन व रोगप्रतिकारकशक्ती नियंत्रित ठेवा");
+    hlth = `आजच्या दिवशी ${tips.join(", ")}.`;
+  }
+  if (moon.isCombust) hlth += " मानसिक अस्थिरता जाणवल्यास ध्यान व प्राणायामाचा आधार घ्या.";
+  hlth += " पाणी पुरेसे प्या, हलका आहार निवडा.";
+
+  return `${tone}${lead}\n\n${work}\n\n${rel}\n\n${hlth}`;
+}
+
+function composeDailyNarrativeEn(
+  rashiEn: string,
+  rating: number,
+  sun: GocharResult["transits"][number],
+  jup: GocharResult["transits"][number],
+  mars: GocharResult["transits"][number],
+  merc: GocharResult["transits"][number],
+  venus: GocharResult["transits"][number],
+  sat: GocharResult["transits"][number],
+  moon: GocharResult["transits"][number],
+): string {
+  const sunHouseGood = GOOD_HOUSES.Sun!.includes(sun.house);
+  const jupHouseGood = GOOD_HOUSES.Jupiter!.includes(jup.house);
+
+  const tone = rating >= 4
+    ? `${rashiEn} natives enjoy a supportive and energizing day.`
+    : rating === 3
+    ? `${rashiEn} meets a mixed day — careful steps open real openings.`
+    : `${rashiEn} should slow decisions today; the current is less cooperative.`;
+
+  let lead = "";
+  if (sun.dignity === "exalted" && sunHouseGood) lead = " Confidence runs high; leadership and visibility tasks land well.";
+  else if (sun.dignity === "exalted" && !sunHouseGood) lead = " Inner energy is strong but needs a worthy channel — inner satisfaction over external approval.";
+  else if (sun.dignity === "debilitated") lead = " Self-assurance dips slightly; pair pride with patience before decisions.";
+  else if ((jup.dignity === "exalted" || jup.dignity === "own") && jupHouseGood) lead = " Learning, counsel, and blessings from elders stay with you through the day.";
+  else if (rating <= 2) lead = " Some situations may feel out of your hands — acceptance works better than resistance today.";
+  else lead = " The day is balanced — measured action carries the longest value.";
+
+  const careerHouses = new Set([2, 6, 10, 11]);
+  const careerPlanets = [sun, mars, merc, sat].filter((p) => careerHouses.has(p.house));
+  const careerGoodCount = careerPlanets.filter((p) => GOOD_HOUSES[p.planet]?.includes(p.house)).length;
+  let work = "";
+  if (careerGoodCount >= 2) work = "Work brings progress, a key decision, or a financial opening — stay prepared.";
+  else if (careerGoodCount === 0 && careerPlanets.length >= 2) work = "Word choice and document checks matter in dealings with seniors or partners.";
+  else work = "Keep routine steady; consistency outperforms disruption.";
+  if (merc.dignity === "debilitated" && careerHouses.has(merc.house)) work += " Double-check communication-heavy tasks — small errors cost more today.";
+
+  let rel = "";
+  if (venus.dignity === "exalted" || venus.dignity === "own") rel = "Partner and family ties feel warmer; creative or aesthetic pursuits bring joy.";
+  else if (venus.dignity === "debilitated") rel = "Go gentle in conversations; prefer clarity over implication.";
+  else rel = "Relationships remain steady — give existing bonds quiet time.";
+  if ([4, 5, 7].includes(mars.house)) rel += " Answer family or partner friction with calm dialogue, not reaction.";
+
+  const hhp = [sun, moon, mars, sat, merc].filter((p) => [6, 8, 12].includes(p.house));
+  let hlth = "";
+  if (hhp.length === 0) hlth = "Health stays steady — normal routine and adequate sleep are enough.";
+  else {
+    const tips: string[] = [];
+    if (hhp.some((p) => p.house === 12)) tips.push("prioritize sleep and rest");
+    if (hhp.some((p) => p.house === 8)) tips.push("guard against sudden issues");
+    if (hhp.some((p) => p.house === 6)) tips.push("watch digestion and immunity");
+    hlth = `Today: ${tips.join(", ")}.`;
+  }
+  if (moon.isCombust) hlth += " If the mind feels restless, meditation and breath-work anchor well.";
+  hlth += " Hydrate well and eat light.";
+
+  return `${tone}${lead}\n\n${work}\n\n${rel}\n\n${hlth}`;
+}
+
+// Planet-specific lucky colors + numbers (real association, not deterministic rotation).
+const PLANET_COLOR: Record<string, { mr: string; en: string }> = {
+  Sun: { mr: "सोनेरी / केशरी", en: "Gold / Saffron" },
+  Moon: { mr: "पांढरा / चांदी", en: "White / Silver" },
+  Mars: { mr: "लाल", en: "Red" },
+  Mercury: { mr: "हिरवा", en: "Green" },
+  Jupiter: { mr: "पिवळा", en: "Yellow" },
+  Venus: { mr: "गुलाबी / पांढरा", en: "Pink / White" },
+  Saturn: { mr: "निळा / काळा", en: "Blue / Black" },
+  Rahu: { mr: "धूम्र", en: "Smoky Grey" },
+  Ketu: { mr: "तपकिरी", en: "Brown" },
+};
+const PLANET_NUMBER: Record<string, number> = {
+  Sun: 1, Moon: 2, Jupiter: 3, Rahu: 4, Mercury: 5, Venus: 6, Ketu: 7, Saturn: 8, Mars: 9,
+};
+
 export function calculateGochar(transitPlanets: TransitPlanet[], rashiId: number): GocharResult {
   const transits: GocharResult["transits"] = [];
-  let goodCount = 0;
-  let badCount = 0;
   const careerNotes: { mr: string; en: string }[] = [];
   const loveNotes: { mr: string; en: string }[] = [];
   const healthNotes: { mr: string; en: string }[] = [];
   const generalNotes: { mr: string; en: string }[] = [];
 
-  for (const tp of transitPlanets) {
+  // First pass — compute house + aspects for each planet.
+  const planetInfo = transitPlanets.map((tp) => {
     const house = getTransitHouse(tp.rashiIndex, rashiId);
-    const isGood = GOOD_HOUSES[tp.id]?.includes(house) ?? false;
-    const effect: "good" | "bad" | "neutral" = isGood ? "good" : "neutral";
+    const offsets = ASPECT_OFFSETS[tp.id] || [6];
+    const aspectsHouses = offsets.map((o) => ((house - 1 + o) % 12) + 1);
+    const dignity = getDignity(tp.id, tp.rashiIndex);
+    return { tp, house, aspectsHouses, dignity };
+  });
 
+  // Weighted score accumulator.
+  let score = 0;
+  let bestBeneficScore = -Infinity;
+  let bestBeneficId = "Jupiter";
+
+  for (const info of planetInfo) {
+    const { tp, house, aspectsHouses, dignity } = info;
+    const isGoodHouse = GOOD_HOUSES[tp.id]?.includes(house) ?? false;
+    let base = isGoodHouse ? 1 : -1;
+
+    // Dignity multiplier.
+    base *= dignityMultiplier(dignity);
+
+    // Retrograde: for malefics reverses sign; for benefics dampens.
+    if (tp.isRetrograde) {
+      if (BENEFICS.has(tp.id)) base *= 0.7;
+      else base *= -1;
+    }
+
+    // Combust: weakens markedly.
+    if (tp.isCombust) base *= 0.3;
+
+    // Aspect bonus — count how many of this planet's aspect houses land on
+    // "good" positions 1/5/9 (trines) or 10/11 (upachaya) for this rashi.
+    const goodAspectTargets = new Set([1, 5, 9, 10, 11]);
+    const aspectHits = aspectsHouses.filter((h) => goodAspectTargets.has(h)).length;
+    if (BENEFICS.has(tp.id)) base += aspectHits * 0.3;
+    else base -= aspectHits * 0.2;
+
+    score += base;
+
+    if (BENEFICS.has(tp.id) && base > bestBeneficScore) {
+      bestBeneficScore = base;
+      bestBeneficId = tp.id;
+    }
+
+    // Record transit.
     transits.push({
       planet: tp.id,
       planetMr: PLANET_MR[tp.id] || tp.id,
       house,
-      effect: isGood ? "good" : "bad",
+      effect: base > 0.2 ? "good" : base < -0.2 ? "bad" : "neutral",
+      dignity,
+      dignityMr: DIGNITY_MR[dignity],
+      dignityEn: DIGNITY_EN[dignity],
+      isRetrograde: !!tp.isRetrograde,
+      isCombust: !!tp.isCombust,
+      aspectsHouses,
     });
 
-    if (isGood) goodCount++;
-    else badCount++;
-
-    // Get specific effect text
+    // Compose effect text with context notes appended.
     const planetEffects = TRANSIT_EFFECTS[tp.id];
     if (planetEffects && planetEffects[house]) {
       const eff = planetEffects[house];
-      const note = { mr: eff.mr, en: eff.en };
+      let noteMr = eff.mr;
+      let noteEn = eff.en;
+      const ctxMr: string[] = [];
+      const ctxEn: string[] = [];
+      // Always note dignity so user sees per-day variation.
+      if (dignity === "exalted") { ctxMr.push("उच्च राशीत — प्रभाव अधिक प्रबळ"); ctxEn.push("exalted — strongly amplified"); }
+      else if (dignity === "debilitated") { ctxMr.push("नीच राशीत — प्रभाव दुर्बल"); ctxEn.push("debilitated — much weaker"); }
+      else if (dignity === "own") { ctxMr.push("स्वगृही — पूर्ण फल"); ctxEn.push("own sign — full strength"); }
+      else if (dignity === "friendly") { ctxMr.push("मित्रगृही — सहाय्यक प्रभाव"); ctxEn.push("friendly sign — supportive"); }
+      else if (dignity === "enemy") { ctxMr.push("शत्रुगृही — प्रभाव कमजोर"); ctxEn.push("enemy sign — weakened"); }
+      if (tp.isRetrograde && tp.id !== "Rahu" && tp.id !== "Ketu") {
+        ctxMr.push("वक्री — परिणाम उलटू शकतो");
+        ctxEn.push("retrograde — may reverse");
+      }
+      if (tp.isCombust) { ctxMr.push("अस्त — प्रभाव कमजोर"); ctxEn.push("combust — weakened"); }
+      if (ctxMr.length) { noteMr += ` (${ctxMr.join("; ")})`; noteEn += ` (${ctxEn.join("; ")})`; }
+      const note = { mr: noteMr, en: noteEn };
       if (eff.area === "career") careerNotes.push(note);
       else if (eff.area === "love") loveNotes.push(note);
       else if (eff.area === "health") healthNotes.push(note);
@@ -235,47 +542,98 @@ export function calculateGochar(transitPlanets: TransitPlanet[], rashiId: number
     }
   }
 
-  // Calculate rating
-  const total = goodCount + badCount;
-  const ratio = total > 0 ? goodCount / total : 0.5;
-  const rating = ratio >= 0.7 ? 5 : ratio >= 0.55 ? 4 : ratio >= 0.4 ? 3 : ratio >= 0.25 ? 2 : 1;
+  // Aspect call-outs — when Saturn/Jupiter aspect key houses (5th/7th/10th of this rashi)
+  // add a short note so user understands which houses are under influence.
+  for (const info of planetInfo) {
+    const { tp, aspectsHouses } = info;
+    if (tp.id !== "Saturn" && tp.id !== "Jupiter" && tp.id !== "Mars") continue;
+    const keyHouses = aspectsHouses.filter((h) => [5, 7, 9, 10].includes(h));
+    if (keyHouses.length === 0) continue;
+    const houseStr = keyHouses.join(", ");
+    generalNotes.push({
+      mr: `${PLANET_MR[tp.id]} ${houseStr} व्या भावावर दृष्टी — या क्षेत्रांवर विशेष प्रभाव.`,
+      en: `${tp.id} aspects house(s) ${houseStr} — special influence on those life areas.`,
+    });
+  }
 
-  // Build overall summary
-  const overallMr = goodCount > badCount
-    ? `आज बहुतांश ग्रह अनुकूल स्थितीत आहेत (${goodCount} शुभ, ${badCount} अशुभ गोचर). एकंदर चांगला दिवस. ${generalNotes.map(n => n.mr).join(" ")}`
-    : goodCount === badCount
-    ? `आज ग्रहस्थिती मिश्र आहे (${goodCount} शुभ, ${badCount} अशुभ गोचर). सावधगिरीने काम करा. ${generalNotes.map(n => n.mr).join(" ")}`
-    : `आज काही ग्रह प्रतिकूल आहेत (${goodCount} शुभ, ${badCount} अशुभ गोचर). धीर ठेवा, संयमाने वागा. ${generalNotes.map(n => n.mr).join(" ")}`;
+  // Rating from weighted score (score ranges roughly -8..+8 over 9 planets).
+  const rating = score >= 3.0 ? 5 : score >= 1.0 ? 4 : score >= -1.0 ? 3 : score >= -3.0 ? 2 : 1;
 
-  const overallEn = goodCount > badCount
-    ? `Most planets are in favorable transit today (${goodCount} good, ${badCount} challenging). Overall a good day. ${generalNotes.map(n => n.en).join(" ")}`
-    : goodCount === badCount
-    ? `Planetary transits are mixed today (${goodCount} good, ${badCount} challenging). Work with caution. ${generalNotes.map(n => n.en).join(" ")}`
-    : `Some planets are unfavorable today (${goodCount} good, ${badCount} challenging). Be patient and composed. ${generalNotes.map(n => n.en).join(" ")}`;
+  // Identify dominant positive + dominant negative transits for dynamic advice.
+  const withScore = planetInfo.map((info) => {
+    const isGoodHouse = GOOD_HOUSES[info.tp.id]?.includes(info.house) ?? false;
+    let s = isGoodHouse ? 1 : -1;
+    s *= dignityMultiplier(info.dignity);
+    if (info.tp.isRetrograde) { if (BENEFICS.has(info.tp.id)) s *= 0.7; else s *= -1; }
+    if (info.tp.isCombust) s *= 0.3;
+    return { info, s };
+  });
+  const topGood = withScore.filter((x) => x.s > 0.3).sort((a, b) => b.s - a.s).slice(0, 2);
+  const topBad = withScore.filter((x) => x.s < -0.3).sort((a, b) => a.s - b.s).slice(0, 2);
 
-  const careerMr = careerNotes.length > 0 ? careerNotes.map(n => n.mr).join(". ") : "करिअरबद्दल विशेष प्रभाव नाही. सामान्य कार्यदिवस.";
-  const careerEn = careerNotes.length > 0 ? careerNotes.map(n => n.en).join(". ") : "No special career influence. Normal working day.";
-  const loveMr = loveNotes.length > 0 ? loveNotes.map(n => n.mr).join(". ") : "प्रेम/कुटुंब क्षेत्रात विशेष बदल नाही. शांतता राहील.";
-  const loveEn = loveNotes.length > 0 ? loveNotes.map(n => n.en).join(". ") : "No special changes in love/family. Peace will prevail.";
-  const healthMr = healthNotes.length > 0 ? healthNotes.map(n => n.mr).join(". ") : "आरोग्य सामान्य राहील. नियमित दिनचर्या पाळा.";
-  const healthEn = healthNotes.length > 0 ? healthNotes.map(n => n.en).join(". ") : "Health will be normal. Follow regular routine.";
+  const planetMrWithHouse = (x: typeof withScore[number]) =>
+    `${PLANET_MR[x.info.tp.id]} ${x.info.house} व्या भावात (${DIGNITY_MR[x.info.dignity]})`;
+  const planetEnWithHouse = (x: typeof withScore[number]) =>
+    `${x.info.tp.id} in house ${x.info.house} (${DIGNITY_EN[x.info.dignity]})`;
 
-  // Advice based on dominant transit
+  // Build overall summary using rating tier.
+  const overallMr = rating >= 4
+    ? `आज ग्रहस्थिती प्रबळ अनुकूल आहे. ${generalNotes.map(n => n.mr).join(" ")}`
+    : rating === 3
+    ? `आज ग्रहस्थिती मिश्र आहे — सावधगिरीने काम करा. ${generalNotes.map(n => n.mr).join(" ")}`
+    : `आज काही ग्रह प्रतिकूल आहेत. धीर ठेवा, संयमाने वागा. ${generalNotes.map(n => n.mr).join(" ")}`;
+  const overallEn = rating >= 4
+    ? `Planetary transits are strongly favorable today. ${generalNotes.map(n => n.en).join(" ")}`
+    : rating === 3
+    ? `Mixed transits today — proceed with care. ${generalNotes.map(n => n.en).join(" ")}`
+    : `Some planets are unfavorable today. Be patient and composed. ${generalNotes.map(n => n.en).join(" ")}`;
+
+  const careerMr = careerNotes.length > 0 ? careerNotes.map(n => n.mr).join(" ") : "करिअरबद्दल विशेष प्रभाव नाही.";
+  const careerEn = careerNotes.length > 0 ? careerNotes.map(n => n.en).join(" ") : "No special career influence.";
+  const loveMr = loveNotes.length > 0 ? loveNotes.map(n => n.mr).join(" ") : "प्रेम/कुटुंब क्षेत्रात विशेष बदल नाही.";
+  const loveEn = loveNotes.length > 0 ? loveNotes.map(n => n.en).join(" ") : "No special changes in love/family.";
+  const healthMr = healthNotes.length > 0 ? healthNotes.map(n => n.mr).join(" ") : "आरोग्य सामान्य राहील.";
+  const healthEn = healthNotes.length > 0 ? healthNotes.map(n => n.en).join(" ") : "Health will be normal.";
+
+  // Dynamic advice — ground the tier-specific line in today's dominant planets.
+  const goodLeadMr = topGood.length ? `${planetMrWithHouse(topGood[0])} शुभ आहे.` : "";
+  const goodLeadEn = topGood.length ? `${planetEnWithHouse(topGood[0])} is favorable.` : "";
+  const badLeadMr = topBad.length ? `${planetMrWithHouse(topBad[0])} कमजोर आहे.` : "";
+  const badLeadEn = topBad.length ? `${planetEnWithHouse(topBad[0])} is challenging.` : "";
   const adviceMr = rating >= 4
-    ? "आज शुभ गोचरामुळे महत्वाची कामे करा. निर्णय घ्या. नवीन सुरुवात करा."
-    : rating >= 3
-    ? "सावधगिरीने पण सकारात्मकपणे काम करा. मध्यम धोका स्वीकारार्ह."
-    : "आज महत्वाचे निर्णय टाळा. शांत राहा. उद्या चांगला दिवस असेल.";
+    ? `${goodLeadMr} आज शुभ गोचरामुळे महत्वाची कामे करा — निर्णय, नवीन सुरुवात, करार फायदेशीर.`.trim()
+    : rating === 3
+    ? `${goodLeadMr} ${badLeadMr} मिश्र ग्रहस्थिती — सावधगिरीने पुढे जा, सकारात्मक राहा.`.trim()
+    : `${badLeadMr} आज महत्वाचे निर्णय टाळा. शांत राहा, धीर ठेवा — उद्याचा ग्रहयोग बदलेल.`.trim();
   const adviceEn = rating >= 4
-    ? "Today's transits are favorable — take important actions, make decisions, start new things."
-    : rating >= 3
-    ? "Work cautiously but positively. Moderate risk is acceptable."
-    : "Avoid important decisions today. Stay calm. Tomorrow will be a better day.";
+    ? `${goodLeadEn} Today's transits are favorable — take important actions, make decisions, start new things.`.trim()
+    : rating === 3
+    ? `${goodLeadEn} ${badLeadEn} Mixed transits — proceed cautiously but positively.`.trim()
+    : `${badLeadEn} Avoid important decisions today. Stay calm — tomorrow's transits will shift.`.trim();
 
-  // Lucky color based on strongest benefic transit
-  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
-  const luckyColor = LUCKY_COLORS[(rashiId + dayOfYear) % LUCKY_COLORS.length];
-  const luckyNumber = ((rashiId * 3 + dayOfYear * 7) % 9) + 1;
+  // Lucky color / number now tied to strongest benefic transit planet.
+  const luckyColor = PLANET_COLOR[bestBeneficId] || { mr: "पिवळा", en: "Yellow" };
+  const luckyNumber = PLANET_NUMBER[bestBeneficId] ?? 3;
+
+  // Build a per-planet lookup for narrative composer (defaults to a neutral stub when missing).
+  const tDefault = (id: string): GocharResult["transits"][number] => ({
+    planet: id, planetMr: PLANET_MR[id] || id, house: 1, effect: "neutral",
+    dignity: "neutral", dignityMr: DIGNITY_MR.neutral, dignityEn: DIGNITY_EN.neutral,
+    isRetrograde: false, isCombust: false, aspectsHouses: [],
+  });
+  const byId = (id: string) => transits.find((t) => t.planet === id) || tDefault(id);
+  const narrative = {
+    mr: composeDailyNarrativeMr(
+      RASHI_NAMES[rashiId].mr, rating,
+      byId("Sun"), byId("Jupiter"), byId("Mars"), byId("Mercury"),
+      byId("Venus"), byId("Saturn"), byId("Moon"),
+    ),
+    en: composeDailyNarrativeEn(
+      RASHI_NAMES[rashiId].en, rating,
+      byId("Sun"), byId("Jupiter"), byId("Mars"), byId("Mercury"),
+      byId("Venus"), byId("Saturn"), byId("Moon"),
+    ),
+  };
 
   return {
     rashiId,
@@ -287,6 +645,8 @@ export function calculateGochar(transitPlanets: TransitPlanet[], rashiId: number
     health: { mr: healthMr, en: healthEn },
     advice: { mr: adviceMr, en: adviceEn },
     rating,
+    narrative,
+    careerNotes, loveNotes, healthNotes, generalNotes,
     transits,
     luckyColor,
     luckyNumber,

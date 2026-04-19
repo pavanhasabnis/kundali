@@ -27,6 +27,12 @@ export interface CalendarDay {
   masa: string;
   sunrise: string;
   sunset: string;
+  tithiEnd: string | null;
+  karanaEnd: string | null;
+  yogaEnd: string | null;
+  moonRashiEnd: string | null;
+  nakshatras: { name: string; nameEn: string; end: string | null }[];
+  karanas: { name: string; end: string | null }[];
   festivals: { name: string; nameMr: string; type: string }[];
   muhuratTags: MuhuratTag[];
   dayType: DayType;
@@ -79,17 +85,17 @@ export async function GET(req: NextRequest) {
       const tithiIdx = sunriseView.tithiIdx;
       const dayOfWeek = date.getDay();
 
-      // Festival match: use मध्याह्न-व्यापिनी (noon-tithi) rule.
-      // Classical tradition for most festivals — Akshaya Tritiya, Gudi Padwa, Hartalika,
-      // Ganesh Chaturthi, Navratri — celebrates on the day when the target tithi is
-      // dominant during daytime (midday) rather than strictly at sunrise. This handles
-      // cases like Akshaya Tritiya 2026 where Tritiya begins 10:49 AM April 19 (after
-      // sunrise Dwitiya), but the festival is observed on April 19 per classical rule.
+      // Festival match: union of sunrise-view (सूर्योदय-व्यापिनी) and noon-view
+      // (मध्याह्न-व्यापिनी). Noon-view catches festivals whose tithi starts after
+      // sunrise (Akshaya Tritiya, Gudi Padwa, Hartalika, Ganesh Chaturthi, Navratri).
+      // Sunrise-view catches the complement — festivals whose tithi ends before
+      // madhyanna (monthly Vinayaki Chaturthi, Ekadashis, Sankashti).
       const matchedNames = new Set<string>();
       const lunarFestivals: { name: string; nameMr: string; type: string }[] = [];
       for (const f of FESTIVAL_RULES) {
-        const matched = f.masa === noonView.sunMasa && f.paksha === noonView.pakshaType && f.tithi === noonView.pakshaTithi;
-        if (matched && !matchedNames.has(f.name)) {
+        const matchesSun = f.masa === sunriseView.sunMasa && f.paksha === sunriseView.pakshaType && f.tithi === sunriseView.pakshaTithi;
+        const matchesNoon = f.masa === noonView.sunMasa && f.paksha === noonView.pakshaType && f.tithi === noonView.pakshaTithi;
+        if ((matchesSun || matchesNoon) && !matchedNames.has(f.name)) {
           matchedNames.add(f.name);
           lunarFestivals.push({ name: f.name, nameMr: f.nameMr, type: f.type });
         }
@@ -139,10 +145,42 @@ export async function GET(req: NextRequest) {
         masa: panchang.masa,
         sunrise: panchang.sunrise || "06:00",
         sunset: panchang.sunset || "18:30",
+        tithiEnd: panchang.tithiEnd ?? null,
+        karanaEnd: panchang.karanaEnd ?? null,
+        yogaEnd: panchang.yogaEnd ?? null,
+        moonRashiEnd: panchang.moonRashiEnd ?? null,
+        nakshatras: panchang.nakshatras ?? [],
+        karanas: panchang.karanas ?? [],
         festivals,
         muhuratTags,
         dayType,
       });
+    }
+
+    // Dedup consecutive-day festival matches. A tithi often spans two sunrises so
+    // the sunrise-OR-noon match fires on both days. Classical anchor rule:
+    //   - Krishna paksha festivals (Sankashti, krishna Ekadashi) are moonrise-anchored —
+    //     keep the LATER day (moonrise falls in second day's night window).
+    //   - Shukla paksha festivals (Vinayaki, shukla Ekadashi) are sunrise-anchored —
+    //     keep the EARLIER day.
+    const nameToRule: Record<string, { paksha: "shukla" | "krishna" }> = {};
+    for (const r of FESTIVAL_RULES) nameToRule[r.name] = { paksha: r.paksha };
+    for (let i = 0; i < days.length - 1; i++) {
+      const cur = days[i];
+      const nxt = days[i + 1];
+      const curNames = new Set(cur.festivals.map((f) => f.name));
+      const dupNames = nxt.festivals.filter((f) => curNames.has(f.name)).map((f) => f.name);
+      for (const name of dupNames) {
+        const rule = nameToRule[name];
+        if (!rule) continue;
+        if (rule.paksha === "krishna") {
+          // drop from earlier day
+          cur.festivals = cur.festivals.filter((f) => f.name !== name);
+        } else {
+          // drop from later day
+          nxt.festivals = nxt.festivals.filter((f) => f.name !== name);
+        }
+      }
     }
 
     return NextResponse.json({

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLang } from "@/lib/astrology/language-context";
+import { PageHero } from "@/components/page-hero";
 
 interface MuhuratResult {
   date: string; day: number; dayName: string; tithi: string; paksha: string;
@@ -68,13 +69,10 @@ export default function MuhuratFinderPageClient() {
 
   return (
     <div className="min-h-screen bg-[#FAFAF8]">
-      <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">{t("मुहूर्त शोधक", "Muhurat Finder", "मुहूर्त खोजक")}</h1>
-          <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">{t("शुभ मुहूर्त शोधा — वास्तुशांती, गृहप्रवेश, विवाह, व्यापार", "Find auspicious dates — Vastushanti, Gruhapravesh, Marriage, Business", "शुभ मुहूर्त खोजें — वास्तुशांति, गृहप्रवेश, विवाह, व्यापार")}</p>
-        </div>
-      </section>
+      <PageHero
+        title={t("मुहूर्त शोधक", "Muhurat Finder", "मुहूर्त खोजक")}
+        subtitle={t("शुभ मुहूर्त शोधा — वास्तुशांती, गृहप्रवेश, विवाह, व्यापार", "Find auspicious dates — Vastushanti, Gruhapravesh, Marriage, Business", "शुभ मुहूर्त खोजें — वास्तुशांति, गृहप्रवेश, विवाह, व्यापार")}
+      />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-8 py-6">
 
         {/* Search Form */}

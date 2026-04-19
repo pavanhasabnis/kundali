@@ -4,6 +4,7 @@ import { useLang } from "@/lib/astrology/language-context";
 import { useState } from "react";
 import { EnquiryPopup } from "@/components/enquiry-popup";
 import { JsonLd, serviceSchema, breadcrumbSchema } from "@/components/json-ld";
+import { PageHero } from "@/components/page-hero";
 
 interface PoojaService {
   id: string;
@@ -750,21 +751,14 @@ export default function PoojaServicesPageClient() {
         offers: { "@type": "AggregateOffer", lowPrice: "0", highPrice: "199", priceCurrency: "INR", availability: "https://schema.org/InStock" },
       }} />
       <JsonLd data={breadcrumbSchema([{ name: "Home", url: `https://bhaagyavedh.com/${lang}` }, { name: "Pooja Services", url: `https://bhaagyavedh.com/${lang}/pooja-services` }])} />
-      <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">
-            {t("पूजा, पाठ व कर्मकांड सेवा", "Pooja, Path & Ritual Services", "पूजा, पाठ व कर्मकांड सेवाएँ")}
-          </h1>
-          <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            {t(
-              "वास्तुशांती, गृहप्रवेश, सत्यनारायण, लग्नविधी, हवन, दोष निवारण — सर्व धार्मिक विधींची माहिती.",
-              "Vastushanti, Gruhapravesh, Satyanarayan, Wedding, Havan, Dosha Nivaran — all ritual services info.",
-              "वास्तुशांति, गृहप्रवेश, सत्यनारायण, विवाह विधि, हवन, दोष निवारण — सभी धार्मिक विधियों की जानकारी."
-            )}
-          </p>
-        </div>
-      </section>
+      <PageHero
+        title={t("पूजा, पाठ व कर्मकांड सेवा", "Pooja, Path & Ritual Services", "पूजा, पाठ व कर्मकांड सेवाएँ")}
+        subtitle={t(
+          "वास्तुशांती, गृहप्रवेश, सत्यनारायण, लग्नविधी, हवन, दोष निवारण — सर्व धार्मिक विधींची माहिती.",
+          "Vastushanti, Gruhapravesh, Satyanarayan, Wedding, Havan, Dosha Nivaran — all ritual services.",
+          "वास्तुशांति, गृहप्रवेश, सत्यनारायण, विवाह विधि, हवन, दोष निवारण — सभी धार्मिक विधियाँ."
+        )}
+      />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
 
         {/* Search & Category Filter */}

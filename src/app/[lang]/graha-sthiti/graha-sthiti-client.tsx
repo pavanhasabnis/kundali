@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useLang } from "@/lib/astrology/language-context";
 import { formatDateTimeMarathi, getMarathiPeriod } from "@/lib/astrology/time-format";
+import { PageHero } from "@/components/page-hero";
 
 interface PlanetPos { id: string; name: string; nameMr: string; rashi: string; rashiMr: string; degreeDMS: string; nakshatra: string; nakshatraMr: string; house: number; isRetrograde: boolean; }
 
@@ -73,13 +74,11 @@ export default function CurrentPlanetsPageClient() {
 
   return (
     <div className="min-h-screen bg-[#FAFAF8]">
-      <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">{t("आत्ताचे ग्रह स्थिती", "Current Planet Positions", "वर्तमान ग्रह स्थिति")}</h1>
-          <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">{t("सध्या आकाशातील सर्व ९ ग्रहांची वास्तविक स्थिती", "Real-time positions of all 9 planets in the sky right now", "अभी आकाश में सभी ९ ग्रहों की वास्तविक स्थिति")}</p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow={t("लाइव गणना", "Live Sky", "लाइव गणना")}
+        title={t("आत्ताचे ग्रह स्थिती", "Current Planet Positions", "वर्तमान ग्रह स्थिति")}
+        subtitle={t("सध्या आकाशातील सर्व ९ ग्रहांची वास्तविक स्थिती", "Real-time positions of all 9 planets in the sky right now", "अभी आकाश में सभी ९ ग्रहों की वास्तविक स्थिति")}
+      />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 space-y-6 py-6">
 
         {/* Time Display */}

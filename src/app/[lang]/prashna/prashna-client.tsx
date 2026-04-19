@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { useLang } from "@/lib/astrology/language-context";
 import { PLACES, type Place } from "@/lib/astrology/places";
 import { PRASHNA_CATEGORY_MR, PRASHNA_CATEGORY_EN, type PrashnaCategory } from "@/lib/astrology/prashna";
+import { PageHero } from "@/components/page-hero";
 
 type PlanetData = {
   id: string;
@@ -140,21 +141,15 @@ export default function PrashnaClient() {
 
   return (
     <div className="min-h-screen bg-[#FAFAF8]">
-      <section className="relative py-12 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
-        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-          <div className="inline-block px-4 py-1 rounded-full text-[11px] font-bold tracking-widest mb-4" style={{ background: "rgba(212,168,67,0.15)", border: "1px solid rgba(212,168,67,0.4)", color: "#d4a843" }}>
-            ॥ {t("श्रीगणेशाय नमः", "SHRI GANESHAYA NAMAH", "श्रीगणेशाय नमः")} ॥
-          </div>
-          <h1 className="text-3xl sm:text-5xl font-bold mb-3 text-white">{t("प्रश्न कुंडली", "Prashna Kundli", "प्रश्न कुंडली")}</h1>
-          <p className="text-[#e8d9b3] text-sm sm:text-base max-w-2xl mx-auto">
-            {t(
-              "मनातील प्रश्न विचारा. आत्ताच्या ग्रहस्थितीवरून पारंपरिक प्रश्न ज्योतिष उत्तर देते.",
-              "Ask a question on your mind. Traditional Prashna astrology interprets the current planetary positions for an answer.",
-              "मन का प्रश्न पूछें. वर्तमान ग्रह स्थिति से पारंपरिक प्रश्न ज्योतिष उत्तर देता है."
-            )}
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow={t("॥ श्रीगणेशाय नमः ॥", "॥ SHRI GANESHAYA NAMAH ॥", "॥ श्रीगणेशाय नमः ॥")}
+        title={t("प्रश्न कुंडली", "Prashna Kundli", "प्रश्न कुंडली")}
+        subtitle={t(
+          "मनातील प्रश्न विचारा. आत्ताच्या ग्रहस्थितीवरून पारंपरिक प्रश्न ज्योतिष उत्तर देते.",
+          "Ask a question on your mind. Traditional Prashna astrology interprets current planetary positions.",
+          "मन का प्रश्न पूछें. वर्तमान ग्रह स्थिति से पारंपरिक प्रश्न ज्योतिष उत्तर देता है."
+        )}
+      />
 
       <section className="max-w-4xl mx-auto px-4 py-10">
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-stone-200 p-6 space-y-5">

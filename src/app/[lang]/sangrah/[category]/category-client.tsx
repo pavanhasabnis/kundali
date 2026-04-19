@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useLang } from "@/lib/astrology/language-context";
 import { SANGRAH_CATEGORIES, type SangrahItem } from "@/lib/sangrah-types";
 import { JsonLd, breadcrumbSchema } from "@/components/json-ld";
+import { PageHero } from "@/components/page-hero";
 
 interface CategoryInfo {
   id: string;
@@ -67,38 +68,22 @@ export default function CategoryPageClient({ category, items }: Props) {
       />
 
       {/* Hero */}
-      <section
-        className="relative py-10 md:py-14 text-center"
-        style={{
-          background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)",
-        }}
+      <PageHero
+        backHref={`/${lang}/sangrah`}
+        backLabel={t("संग्रह", "Sangrah", "संग्रह")}
+        title={t(category.labelMr, category.labelEn, category.labelMr)}
+        date={`${items.length} ${t("पठणे उपलब्ध", "items available", "पाठ उपलब्ध")}`}
       >
-        <div className="max-w-4xl mx-auto px-4">
-          <Link
-            href="/sangrah"
-            className="inline-block text-white/50 hover:text-[#d4a843] text-sm mb-4 transition"
-          >
-            ← {t("संग्रह", "Sangrah", "संग्रह")}
-          </Link>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-            {t(category.labelMr, category.labelEn, category.labelMr)}
-          </h1>
-          <p className="text-white/60 text-sm">
-            {items.length} {t("पठणे उपलब्ध", "items available", "पाठ उपलब्ध")}
-          </p>
-
-          {/* Search */}
-          <div className="mt-5 max-w-md mx-auto">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={t("नावाने शोधा...", "Search by name...", "नाम से खोजें...")}
-              className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:border-[#d4a843]/60 text-sm"
-            />
-          </div>
+        <div className="mt-5 max-w-md mx-auto">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t("नावाने शोधा...", "Search by name...", "नाम से खोजें...")}
+            className="w-full px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:border-[#d4a843]/60 text-sm"
+          />
         </div>
-      </section>
+      </PageHero>
 
       {/* Deity Filters */}
       {deities.length > 1 && (

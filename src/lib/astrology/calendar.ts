@@ -94,6 +94,64 @@ export const FESTIVAL_RULES: FestivalRule[] = [
   // ── फाल्गुन (Sun in कुंभ=10) ──
   { name: "Holi", nameMr: "होळी (धुळवड)", masa: 10, paksha: "shukla", tithi: 15, type: "major" },
   { name: "Rang Panchami", nameMr: "रंगपंचमी", masa: 10, paksha: "krishna", tithi: 5, type: "minor" },
+
+  // ═══ All 24 Ekadashis (month-wise) ═══════════════════════════════
+  // Chaitra (Sun in मीन=11)
+  { name: "Kamada Ekadashi", nameMr: "कामदा एकादशी", masa: 11, paksha: "shukla", tithi: 11, type: "ekadashi" },
+  { name: "Papamochani Ekadashi", nameMr: "पापमोचनी एकादशी", masa: 11, paksha: "krishna", tithi: 11, type: "ekadashi" },
+  // Vaisakh (Sun in मेष=0) — Mohini already above
+  { name: "Varuthini Ekadashi", nameMr: "वरूथिनी एकादशी", masa: 0, paksha: "krishna", tithi: 11, type: "ekadashi" },
+  // Jyeshtha (Sun in वृषभ=1) — Nirjala already above
+  { name: "Apara Ekadashi", nameMr: "अपरा एकादशी (अचला)", masa: 1, paksha: "krishna", tithi: 11, type: "ekadashi" },
+  // Ashadha (Sun in मिथुन=2) — Ashadhi/Devshayani already above
+  { name: "Yogini Ekadashi", nameMr: "योगिनी एकादशी", masa: 2, paksha: "krishna", tithi: 11, type: "ekadashi" },
+  // Shravan (Sun in कर्क=3)
+  { name: "Putrada Ekadashi (Shravan)", nameMr: "पुत्रदा एकादशी (पवित्रा)", masa: 3, paksha: "shukla", tithi: 11, type: "ekadashi" },
+  { name: "Kamika Ekadashi", nameMr: "कामिका एकादशी", masa: 3, paksha: "krishna", tithi: 11, type: "ekadashi" },
+  // Bhadrapad (Sun in सिंह=4) — Parivartini already above
+  { name: "Aja Ekadashi", nameMr: "अजा एकादशी (अन्नदा)", masa: 4, paksha: "krishna", tithi: 11, type: "ekadashi" },
+  // Ashwin (Sun in कन्या=5)
+  { name: "Pashankusha Ekadashi", nameMr: "पाशांकुशा एकादशी (पापांकुशा)", masa: 5, paksha: "shukla", tithi: 11, type: "ekadashi" },
+  { name: "Indira Ekadashi", nameMr: "इंदिरा एकादशी", masa: 5, paksha: "krishna", tithi: 11, type: "ekadashi" },
+  // Kartik (Sun in तुला=6) — Kartiki/Prabodhini already above
+  { name: "Rama Ekadashi", nameMr: "रमा एकादशी", masa: 6, paksha: "krishna", tithi: 11, type: "ekadashi" },
+  // Margashirsh (Sun in वृश्चिक=7) — Mokshada already above (Geeta Jayanti)
+  { name: "Utpanna Ekadashi", nameMr: "उत्पन्ना एकादशी", masa: 7, paksha: "krishna", tithi: 11, type: "ekadashi" },
+  // Pausha (Sun in धनु=8) — Saphala already above
+  { name: "Putrada Ekadashi (Pausha)", nameMr: "पुत्रदा एकादशी (पौष)", masa: 8, paksha: "shukla", tithi: 11, type: "ekadashi" },
+  // Magha (Sun in मकर=9) — Bhishma already above
+  { name: "Shattila Ekadashi", nameMr: "षट्तिला एकादशी", masa: 9, paksha: "krishna", tithi: 11, type: "ekadashi" },
+  // Phalgun (Sun in कुंभ=10)
+  { name: "Amalaki Ekadashi", nameMr: "आमलकी एकादशी", masa: 10, paksha: "shukla", tithi: 11, type: "ekadashi" },
+  { name: "Vijaya Ekadashi", nameMr: "विजया एकादशी", masa: 10, paksha: "krishna", tithi: 11, type: "ekadashi" },
+
+  // ═══ All 12 Sankashti Chaturthis (कृष्ण चतुर्थी, masa-specific names) ═══
+  { name: "Vikata Sankashti", nameMr: "विकट संकष्टी चतुर्थी", masa: 11, paksha: "krishna", tithi: 4, type: "vrat" },
+  { name: "Ekdant Sankashti", nameMr: "एकदंत संकष्टी चतुर्थी", masa: 0, paksha: "krishna", tithi: 4, type: "vrat" },
+  { name: "Krishnapingal Sankashti", nameMr: "कृष्णपिंगल संकष्टी चतुर्थी", masa: 1, paksha: "krishna", tithi: 4, type: "vrat" },
+  { name: "Gajanan Sankashti", nameMr: "गजानन संकष्टी चतुर्थी", masa: 2, paksha: "krishna", tithi: 4, type: "vrat" },
+  { name: "Bahula Sankashti", nameMr: "बहुला संकष्टी चतुर्थी", masa: 3, paksha: "krishna", tithi: 4, type: "vrat" },
+  { name: "Heramb Sankashti", nameMr: "हेरंब संकष्टी चतुर्थी", masa: 4, paksha: "krishna", tithi: 4, type: "vrat" },
+  { name: "Vighnaraj Sankashti", nameMr: "विघ्नराज संकष्टी चतुर्थी", masa: 5, paksha: "krishna", tithi: 4, type: "vrat" },
+  { name: "Vakratund Sankashti", nameMr: "वक्रतुंड संकष्टी चतुर्थी", masa: 6, paksha: "krishna", tithi: 4, type: "vrat" },
+  { name: "Akhurath Sankashti", nameMr: "अखुरथ संकष्टी चतुर्थी", masa: 7, paksha: "krishna", tithi: 4, type: "vrat" },
+  { name: "Lambodar Sankashti", nameMr: "लंबोदर संकष्टी चतुर्थी", masa: 8, paksha: "krishna", tithi: 4, type: "vrat" },
+  { name: "Dwijpriya Sankashti", nameMr: "द्विजप्रिय संकष्टी चतुर्थी (तिलकुंद)", masa: 9, paksha: "krishna", tithi: 4, type: "vrat" },
+  { name: "Bhalchandra Sankashti", nameMr: "भालचंद्र संकष्टी चतुर्थी", masa: 10, paksha: "krishna", tithi: 4, type: "vrat" },
+
+  // ═══ Vinayaki Chaturthis (शुक्ल चतुर्थी) — Ganesh Chaturthi (Bhadrapad) already above ═══
+  { name: "Vinayaki Chaturthi (Chaitra)", nameMr: "विनायकी चतुर्थी (चैत्र)", masa: 11, paksha: "shukla", tithi: 4, type: "vrat" },
+  { name: "Vinayaki Chaturthi (Vaisakh)", nameMr: "विनायकी चतुर्थी (वैशाख)", masa: 0, paksha: "shukla", tithi: 4, type: "vrat" },
+  { name: "Vinayaki Chaturthi (Jyeshtha)", nameMr: "विनायकी चतुर्थी (ज्येष्ठ)", masa: 1, paksha: "shukla", tithi: 4, type: "vrat" },
+  { name: "Vinayaki Chaturthi (Ashadha)", nameMr: "विनायकी चतुर्थी (आषाढ)", masa: 2, paksha: "shukla", tithi: 4, type: "vrat" },
+  { name: "Vinayaki Chaturthi (Shravan)", nameMr: "विनायकी चतुर्थी (श्रावण)", masa: 3, paksha: "shukla", tithi: 4, type: "vrat" },
+  // Bhadrapad masa 4 shukla 4 = Ganesh Chaturthi (above)
+  { name: "Vinayaki Chaturthi (Ashwin)", nameMr: "विनायकी चतुर्थी (आश्विन)", masa: 5, paksha: "shukla", tithi: 4, type: "vrat" },
+  { name: "Vinayaki Chaturthi (Kartik)", nameMr: "विनायकी चतुर्थी (कार्तिक)", masa: 6, paksha: "shukla", tithi: 4, type: "vrat" },
+  { name: "Vinayaki Chaturthi (Margashirsh)", nameMr: "विनायकी चतुर्थी (मार्गशीर्ष)", masa: 7, paksha: "shukla", tithi: 4, type: "vrat" },
+  { name: "Vinayaki Chaturthi (Pausha)", nameMr: "विनायकी चतुर्थी (पौष)", masa: 8, paksha: "shukla", tithi: 4, type: "vrat" },
+  { name: "Ganesh Jayanti (Tilkund)", nameMr: "गणेश जयंती (तिलकुंद चतुर्थी)", masa: 9, paksha: "shukla", tithi: 4, type: "major" },
+  { name: "Vinayaki Chaturthi (Phalgun)", nameMr: "विनायकी चतुर्थी (फाल्गुन)", masa: 10, paksha: "shukla", tithi: 4, type: "vrat" },
 ];
 
 // ─── Fixed-Date Holidays (English Calendar) ─────────────────────

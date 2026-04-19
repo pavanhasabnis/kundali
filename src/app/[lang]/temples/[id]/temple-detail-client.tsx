@@ -3,6 +3,7 @@
 import { useLang } from "@/lib/astrology/language-context";
 import Link from "next/link";
 import { JsonLd, breadcrumbSchema } from "@/components/json-ld";
+import { PageHero } from "@/components/page-hero";
 
 interface TempleDetail {
   nameMr: string;
@@ -56,8 +57,13 @@ export default function TempleDetailClient({ id, temple }: { id: string; temple:
 
   const templeUrl = `https://bhaagyavedh.com/${lang}/temples/${id}`;
 
+  const templeLocEyebrow = temple.locationMr
+    ? `📍 ${t(temple.locationMr, temple.locationEn || temple.locationMr, temple.locationMr)}`
+    : temple.deityMr ? t(temple.deityMr, temple.deityEn || temple.deityMr, temple.deityMr)
+    : undefined;
+
   return (
-    <div className="bg-[#FAFAF8] py-6">
+    <div className="bg-[#FAFAF8]">
       {/* JSON-LD Structured Data */}
       <JsonLd data={{
         "@context": "https://schema.org",
@@ -72,6 +78,16 @@ export default function TempleDetailClient({ id, temple }: { id: string; temple:
         publicAccess: true,
         tourBookingPage: "https://bhaagyavedh.com/yatra",
       }} />
+
+      <PageHero
+        backHref={`/${lang}/temples`}
+        backLabel={t("सर्व मंदिरे", "All Temples", "सभी मंदिर")}
+        eyebrow={templeLocEyebrow}
+        title={t(temple.nameMr, temple.nameEn, temple.nameMr)}
+        subtitle={temple.deityMr && temple.locationMr ? t(temple.deityMr, temple.deityEn || temple.deityMr, temple.deityMr) : undefined}
+      />
+
+      <div className="py-6">
       <JsonLd data={breadcrumbSchema([
         { name: "Home", url: `https://bhaagyavedh.com/${lang}` },
         { name: "Temples", url: `https://bhaagyavedh.com/${lang}/temples` },
@@ -79,33 +95,8 @@ export default function TempleDetailClient({ id, temple }: { id: string; temple:
       ])} />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        {/* Back link */}
-        <Link href="/temples" className="inline-flex items-center gap-1 text-sm text-[#d4a843] hover:text-[#3d0c0c] mb-6 transition">
-          {t("← सर्व मंदिरे", "← All Temples", "← सभी मंदिर")}
-        </Link>
-
-        {/* Header */}
+        {/* Header (quick-info bar only — hero is now full-width above) */}
         <div className="bg-white rounded-xl border border-[#d4a843]/20 shadow-sm overflow-hidden mb-6">
-          <div className="p-6" style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}>
-            <div className="flex items-center gap-4">
-              <span className="text-4xl">{temple.icon}</span>
-              <div>
-                <h1 className="text-2xl font-bold text-[#d4a843]">
-                  {t(temple.nameMr, temple.nameEn, temple.nameMr)}
-                </h1>
-                {temple.deityMr && (
-                  <p className="text-white/70 mt-1">{t(temple.deityMr, temple.deityEn, temple.deityMr)}</p>
-                )}
-                {temple.locationMr && (
-                  <p className="text-white/50 text-sm mt-1 flex items-center gap-1">
-                    <span>📍</span> {t(temple.locationMr, temple.locationEn, temple.locationMr)}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Quick info bar */}
           {(temple.timingsMr || temple.specialMr) && (
             <div className="px-6 py-3 bg-[#FFF8E7] border-b border-[#d4a843]/10 flex flex-wrap gap-x-6 gap-y-2 text-sm text-[#5c1a1a]/70">
               {temple.timingsMr && (
@@ -146,6 +137,7 @@ export default function TempleDetailClient({ id, temple }: { id: string; temple:
             {t("← सर्व मंदिरांची यादी पहा", "← View all temples", "← सभी मंदिरों की सूची देखें")}
           </Link>
         </div>
+      </div>
       </div>
     </div>
   );

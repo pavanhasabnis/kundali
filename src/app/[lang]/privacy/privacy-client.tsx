@@ -1,6 +1,7 @@
 "use client";
 
 import { useLang } from "@/lib/astrology/language-context";
+import { PageHero } from "@/components/page-hero";
 
 export default function PrivacyPageClient() {
   const { t } = useLang();
@@ -57,24 +58,17 @@ export default function PrivacyPageClient() {
   ];
 
   return (
-    <div className="bg-[#FAFAF8] py-6">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#3d0c0c]">
-            {t("गोपनीयता धोरण", "Privacy Policy", "गोपनीयता नीति")}
-          </h1>
-          <p className="text-[#5c1a1a]/70 mt-2 text-sm">
-            {t(
-              "भाग्यवेध — तुमच्या माहितीची काळजी आम्हाला आहे",
-              "Bhaagyavedh — We care about your data privacy",
-              "भाग्यवेध — हम आपकी जानकारी की परवाह करते हैं"
-            )}
-          </p>
-          <p className="text-[#5c1a1a]/50 mt-1 text-xs">
-            {t("शेवटचे अद्ययावत: एप्रिल २०२६", "Last updated: April 2026", "अंतिम अद्यतन: अप्रैल २०२६")}
-          </p>
-        </div>
+    <div className="bg-[#FAFAF8]">
+      <PageHero
+        title={t("गोपनीयता धोरण", "Privacy Policy", "गोपनीयता नीति")}
+        subtitle={t(
+          "भाग्यवेध — तुमच्या माहितीची काळजी आम्हाला आहे",
+          "Bhaagyavedh — We care about your data privacy",
+          "भाग्यवेध — हम आपकी जानकारी की परवाह करते हैं"
+        )}
+        date={t("शेवटचे अद्ययावत: एप्रिल २०२६", "Last updated: April 2026", "अंतिम अद्यतन: अप्रैल २०२६")}
+      />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
 
         {/* Introduction */}
         <div className="bg-white rounded-xl border border-[#d4a843]/20 p-6 shadow-sm mb-6">

@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useLang } from "@/lib/astrology/language-context";
 import { SANGRAH_CATEGORIES, type SangrahItem } from "@/lib/sangrah-types";
+import { PageHero } from "@/components/page-hero";
 
 /* ─── Print helper components (same as detail page) ─── */
 const PrintHeader = ({ title, subtitle }: { title: string; subtitle: string }) => (
@@ -166,18 +167,13 @@ export default function DownloadClient() {
     <>
       {/* ═══ Browser UI ═══ */}
       <div className="no-print">
-        <section
-          className="py-10 md:py-14 text-center"
-          style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}
+        <PageHero
+          backHref="/sangrah"
+          backLabel={t("संग्रह", "Sangrah", "संग्रह")}
+          title={collectionTitle}
+          date={`${items.length} ${t("पठणे तयार आहेत डाउनलोडसाठी", "items ready for download", "पाठ डाउनलोड के लिए तैयार")}`}
         >
-          <div className="max-w-3xl mx-auto px-4">
-            <Link href="/sangrah" className="inline-block text-white/50 hover:text-[#d4a843] text-sm mb-4 transition">
-              ← {t("संग्रह", "Sangrah", "संग्रह")}
-            </Link>
-            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">{collectionTitle}</h1>
-            <p className="text-white/60 text-sm mb-6">
-              {items.length} {t("पठणे तयार आहेत डाउनलोडसाठी", "items ready for download", "पाठ डाउनलोड के लिए तैयार")}
-            </p>
+          <div className="mt-6 flex flex-col items-center gap-2">
             <button
               onClick={handlePrint}
               className="px-8 py-3 rounded-xl font-semibold text-[#3d0c0c] transition-all hover:scale-105"
@@ -185,14 +181,14 @@ export default function DownloadClient() {
             >
               {t("PDF डाउनलोड करा", "Download as PDF", "PDF डाउनलोड करें")}
             </button>
-            <p className="text-white/40 text-xs mt-3">
+            <p className="text-white/40 text-xs">
               {t(
                 "\"Save as PDF\" निवडा प्रिंट डायलॉगमध्ये",
                 "Select \"Save as PDF\" in the print dialog"
               )}
             </p>
           </div>
-        </section>
+        </PageHero>
 
         {/* Table of Contents preview */}
         <section className="max-w-3xl mx-auto px-4 py-8">

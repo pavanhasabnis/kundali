@@ -51,20 +51,55 @@ export async function GET(req: NextRequest) {
     swisseph.swe_set_sid_mode(swisseph.SE_SIDM_LAHIRI, 0, 0);
     const ayanamsa = swisseph.swe_get_ayanamsa_ut(jd);
 
-    // Calculate all planet positions (sidereal)
+    // Calculate all planet positions (sidereal) + speed (for retrograde) + combust check
     const transitPlanets: TransitPlanet[] = [];
+    let sunSidLong = 0;
 
     for (const planet of PLANET_IDS) {
-      const result = swisseph.swe_calc_ut(jd, planet.seId, swisseph.SEFLG_SWIEPH);
+      const result = swisseph.swe_calc_ut(jd, planet.seId, swisseph.SEFLG_SWIEPH | swisseph.SEFLG_SPEED);
+      // swisseph result shape can be error | numbers object; narrow via 'longitude' presence.
+      if (!("longitude" in result)) continue;
       const sidLong = getSiderealLong(result.longitude, ayanamsa);
       const rashiIndex = Math.floor(sidLong / 30);
+      const degreeInSign = sidLong - rashiIndex * 30;
+      const speed = "longitudeSpeed" in result ? result.longitudeSpeed : 0;
 
-      transitPlanets.push({ id: planet.id, rashiIndex });
+      if (planet.id === "Sun") sunSidLong = sidLong;
+
+      transitPlanets.push({
+        id: planet.id,
+        rashiIndex,
+        sidLong,
+        degreeInSign,
+        speed,
+        isRetrograde: planet.id !== "Sun" && planet.id !== "Moon" && speed < 0,
+        isCombust: false, // filled below after Sun long known
+      });
     }
 
-    // Ketu is always 180° from Rahu
+    // Ketu is always 180° from Rahu — same speed sign; nodes are always retrograde.
     const rahu = transitPlanets.find(p => p.id === "Rahu")!;
-    transitPlanets.push({ id: "Ketu", rashiIndex: (rahu.rashiIndex + 6) % 12 });
+    const ketuSidLong = (rahu.sidLong + 180) % 360;
+    transitPlanets.push({
+      id: "Ketu",
+      rashiIndex: (rahu.rashiIndex + 6) % 12,
+      sidLong: ketuSidLong,
+      degreeInSign: ketuSidLong - Math.floor(ketuSidLong / 30) * 30,
+      speed: rahu.speed,
+      isRetrograde: true,
+      isCombust: false,
+    });
+
+    // Combustion — planet within classical orb of Sun (exception: Sun itself, Rahu/Ketu).
+    // Orbs (degrees): Moon 12, Mars 17, Mercury 14 (retro 12), Jupiter 11, Venus 10 (retro 8), Saturn 15.
+    const combustOrb: Record<string, number> = { Moon: 12, Mars: 17, Mercury: 14, Jupiter: 11, Venus: 10, Saturn: 15 };
+    for (const tp of transitPlanets) {
+      const orb = combustOrb[tp.id];
+      if (!orb) continue;
+      let diff = Math.abs(tp.sidLong - sunSidLong);
+      if (diff > 180) diff = 360 - diff;
+      if (diff <= orb) tp.isCombust = true;
+    }
 
     // Calculate Gochar for requested rashi(s)
     if (rashiParam === "all" || !rashiParam) {

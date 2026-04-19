@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useLang } from "@/lib/astrology/language-context";
 import { PLACES, type Place } from "@/lib/astrology/places";
 import { JsonLd, serviceSchema, breadcrumbSchema, faqSchema } from "@/components/json-ld";
+import { PageHero } from "@/components/page-hero";
 
 interface FactorResult {
   factor: string;
@@ -248,17 +249,10 @@ export default function MatchingPageClient() {
     <div className="min-h-screen bg-[#FAFAF8]">
       <JsonLd data={serviceSchema({ name: "Gun Milaan — गुण मिलान", description: "Free Ashtakoot gun milaan for marriage compatibility. 36-point matching with Varna, Vashya, Tara, Yoni, Maitri, Gana, Bhakoot & Nadi analysis.", url: `https://bhaagyavedh.com/${lang}/matching` })} />
       <JsonLd data={breadcrumbSchema([{ name: "Home", url: `https://bhaagyavedh.com/${lang}` }, { name: "Gun Milaan", url: `https://bhaagyavedh.com/${lang}/matching` }])} />
-      <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">
-            {t("अष्टकूट गुण मिलान", "Ashtakoot Guna Milan", "अष्टकूट गुण मिलान")}
-          </h1>
-          <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            {t("३६ गुणांवर आधारित विवाह जुळणी", "Marriage matching based on 36 Gunas", "३६ गुणों पर आधारित विवाह मिलान")}
-          </p>
-        </div>
-      </section>
+      <PageHero
+        title={t("अष्टकूट गुण मिलान", "Ashtakoot Guna Milan", "अष्टकूट गुण मिलान")}
+        subtitle={t("३६ गुणांवर आधारित विवाह जुळणी", "Marriage matching based on 36 Gunas", "३६ गुणों पर आधारित विवाह मिलान")}
+      />
       <div className="space-y-8 max-w-5xl mx-auto px-4 sm:px-6 py-6">
 
       <form onSubmit={handleSubmit} className="space-y-6">

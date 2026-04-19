@@ -5,6 +5,7 @@ import { useMemo, useState, useRef, useEffect } from "react";
 import { useLang } from "@/lib/astrology/language-context";
 import { SANGRAH_CATEGORIES, type SangrahItem } from "@/lib/sangrah-types";
 import { JsonLd, breadcrumbSchema } from "@/components/json-ld";
+import { PageHero } from "@/components/page-hero";
 
 type ViewMode = "devanagari" | "transliteration" | "both";
 
@@ -126,7 +127,7 @@ function splitForPrint(text: string, prose = false): string[] {
 }
 
 export default function SangrahDetailClient({ item, categoryLabel }: Props) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const [viewMode, setViewMode] = useState<ViewMode>("devanagari");
   const [fontSize, setFontSize] = useState(18);
   const [showMeaning, setShowMeaning] = useState(false);
@@ -228,33 +229,13 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
       {/* ═══ Browser UI (hidden when printing) ═══ */}
       <div className="no-print">
 
-      {/* Header */}
-      <section
-        className="relative py-8 md:py-12 text-center"
-        style={{
-          background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)",
-        }}
-      >
-        <div className="max-w-4xl mx-auto px-4">
-          <Link
-            href={`/sangrah/${item.category}`}
-            className="inline-block text-white/50 hover:text-[#d4a843] text-sm mb-3 transition"
-          >
-            ← {t(categoryLabel.mr, categoryLabel.en, categoryLabel.mr)}
-          </Link>
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">
-            {t(item.title, item.titleEn, item.title)}
-          </h1>
-          <p className="text-white/50 text-sm">
-            {t(item.deityMr, item.deityEn, item.deityMr)} • {t(categoryLabel.mr, categoryLabel.en, categoryLabel.mr)}
-          </p>
-          {hasChapters && (
-            <p className="text-[#d4a843] text-sm mt-2 font-medium">
-              {chapters.length} {t("अध्याय", "Chapters", "अध्याय")}
-            </p>
-          )}
-        </div>
-      </section>
+      <PageHero
+        backHref={`/${lang}/sangrah/${item.category}`}
+        backLabel={t(categoryLabel.mr, categoryLabel.en, categoryLabel.mr)}
+        eyebrow={t(item.deityMr, item.deityEn, item.deityMr)}
+        title={t(item.title, item.titleEn, item.title)}
+        date={hasChapters ? `${chapters.length} ${t("अध्याय", "Chapters", "अध्याय")}` : undefined}
+      />
 
       {/* Chapter Navigation — only for multi-chapter content */}
       {hasChapters && (

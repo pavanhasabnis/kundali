@@ -2,6 +2,7 @@
 
 import { useLang } from "@/lib/astrology/language-context";
 import Link from "next/link";
+import { PageHero } from "@/components/page-hero";
 
 export default function AboutPageClient() {
   const { t, lang } = useLang();
@@ -11,31 +12,15 @@ export default function AboutPageClient() {
     <div className="bg-[#FAFAF8]">
 
       {/* ═══ Hero ═══ */}
-      <section className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 40%, #3d0c0c 100%)" }}>
-        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full border border-[#d4a843]/10" />
-        <div className="absolute -bottom-32 -left-16 w-80 h-80 rounded-full border border-[#d4a843]/5" />
-
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-20 sm:py-28 text-center">
-          <p className="text-[#d4a843]/60 text-xs font-semibold tracking-[0.25em] uppercase mb-6">
-            {t("वैदिक ज्योतिष आणि तीर्थयात्रा", "Vedic Astrology & Divine Journeys", "वैदिक ज्योतिष और तीर्थयात्रा")}
-          </p>
-          <h1 className="text-3xl sm:text-5xl font-bold text-[#d4a843] mb-5 leading-tight">
-            {t("भाग्यवेध — आमच्याबद्दल", "About Bhaagyavedh", "भाग्यवेध — हमारे बारे में")}
-          </h1>
-          <p className="text-sm sm:text-base text-white/40 max-w-2xl mx-auto leading-relaxed">
-            {t(
-              "प्राचीन भारतीय ज्योतिष शास्त्राला आधुनिक तंत्रज्ञानाच्या माध्यमातून प्रत्येक मराठी व्यक्तीपर्यंत पोहोचवणारा विश्वासार्ह मंच. अचूक गणना, शास्त्रशुद्ध विश्लेषण आणि सांस्कृतिक जतन — हे आमचे ध्येय आहे.",
-              "A trusted platform bringing ancient Indian Jyotish Shastra to every individual through modern technology. Accurate calculations, authentic analysis and cultural preservation — that is our purpose."
-            )}
-          </p>
-          <div className="flex items-center justify-center gap-3 mt-8">
-            <div className="w-16 h-px bg-gradient-to-r from-transparent to-[#d4a843]/30" />
-            <span className="text-[#d4a843]/30 text-[11px] tracking-wider">॥ श्री गणेशाय नमः ॥</span>
-            <div className="w-16 h-px bg-gradient-to-l from-transparent to-[#d4a843]/30" />
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrow={t("वैदिक ज्योतिष आणि तीर्थयात्रा", "Vedic Astrology & Divine Journeys", "वैदिक ज्योतिष और तीर्थयात्रा")}
+        title={t("भाग्यवेध — आमच्याबद्दल", "About Bhaagyavedh", "भाग्यवेध — हमारे बारे में")}
+        subtitle={t(
+          "प्राचीन भारतीय ज्योतिष शास्त्राला आधुनिक तंत्रज्ञानाच्या माध्यमातून प्रत्येक मराठी व्यक्तीपर्यंत पोहोचवणारा विश्वासार्ह मंच.",
+          "A trusted platform bringing ancient Indian Jyotish Shastra to every individual through modern technology.",
+          "प्राचीन भारतीय ज्योतिष शास्त्र को आधुनिक तकनीक के माध्यम से पहुंचाने वाला विश्वसनीय मंच."
+        )}
+      />
 
       {/* ═══ Our Story ═══ */}
       <section className="py-16 sm:py-20">

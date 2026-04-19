@@ -354,41 +354,40 @@ function calculateDasha(
 // Uses SUNRISE time (not noon) — this is the standard in Indian panchang tradition
 // Kalnirnay, Tilak Panchang, and all official panchangs use sunrise as the reference
 export function calculatePanchang(date: Date, latitude: number, longitude: number, timezone: number, birthHour?: number, birthMinute?: number) {
-  // First calculate JD at approximate sunrise (6 AM local) to find actual sunrise
-  const approxSunriseUTC = 6 - timezone; // ~6 AM local in UTC
-  const jdApprox = swisseph.swe_julday(
+  // JD at UT midnight of the requested date (start of search window for rise/set)
+  const dayStartJD = swisseph.swe_julday(
     date.getFullYear(),
     date.getMonth() + 1,
     date.getDate(),
-    approxSunriseUTC,
+    0,
     swisseph.SE_GREG_CAL
   );
 
-  // Calculate actual sunrise
+  // Actual sunrise via Swiss Ephemeris.
+  // Binding signature: (tjd_ut, ipl, starname, epheflag, rsmi, longitude, latitude, height, atpress, attemp).
+  // Passing geopos as an array or `0` for starname silently corrupts the result.
+  const approxSunriseUTC = 6 - timezone;
   let sunriseHourUTC = approxSunriseUTC;
   try {
     const riseResult = swisseph.swe_rise_trans(
-      jdApprox - 0.5, // start searching from midnight
+      dayStartJD,
       swisseph.SE_SUN,
-      0, // star name (not used)
+      null,
       swisseph.SEFLG_SWIEPH,
-      swisseph.SE_CALC_RISE, // sunrise
-      [longitude, latitude, 0], // geopos: [lng, lat, altitude]
-      0, // atpress
-      0, // attemp
+      swisseph.SE_CALC_RISE,
+      longitude,
+      latitude,
+      0,
+      0,
+      0,
     );
-    if (riseResult && riseResult.transitTime) {
-      // Convert JD of sunrise to UTC hours on this day
-      const sunriseJD = riseResult.transitTime;
-      const dayStartJD = swisseph.swe_julday(date.getFullYear(), date.getMonth() + 1, date.getDate(), 0, swisseph.SE_GREG_CAL);
-      sunriseHourUTC = (sunriseJD - dayStartJD) * 24;
+    if (riseResult && "transitTime" in riseResult && riseResult.transitTime) {
+      sunriseHourUTC = (riseResult.transitTime - dayStartJD) * 24;
     }
   } catch {
-    // If sunrise calculation fails, use 6 AM local as fallback
     sunriseHourUTC = approxSunriseUTC;
   }
 
-  // Calculate panchang at sunrise time
   const jd = swisseph.swe_julday(
     date.getFullYear(),
     date.getMonth() + 1,
@@ -397,31 +396,37 @@ export function calculatePanchang(date: Date, latitude: number, longitude: numbe
     swisseph.SE_GREG_CAL
   );
 
-  // Calculate sunrise/sunset times for display
   const sunriseLocal = sunriseHourUTC + timezone;
-  const sunriseH = Math.floor(sunriseLocal);
-  const sunriseM = Math.floor((sunriseLocal - sunriseH) * 60);
-
-  let sunsetLocal = sunriseLocal + 12; // approximate
+  let sunsetLocal = sunriseLocal + 12;
   try {
     const setResult = swisseph.swe_rise_trans(
-      jdApprox - 0.5,
+      dayStartJD,
       swisseph.SE_SUN,
-      0,
+      null,
       swisseph.SEFLG_SWIEPH,
-      swisseph.SE_CALC_SET, // sunset
-      [longitude, latitude, 0],
+      swisseph.SE_CALC_SET,
+      longitude,
+      latitude,
+      0,
       0,
       0,
     );
-    if (setResult && setResult.transitTime) {
-      const dayStartJD = swisseph.swe_julday(date.getFullYear(), date.getMonth() + 1, date.getDate(), 0, swisseph.SE_GREG_CAL);
+    if (setResult && "transitTime" in setResult && setResult.transitTime) {
       sunsetLocal = ((setResult.transitTime - dayStartJD) * 24) + timezone;
     }
-  } catch { /* use approximate */ }
+  } catch { /* fall back to approx */ }
 
-  const sunsetH = Math.floor(sunsetLocal);
-  const sunsetM = Math.floor((sunsetLocal - sunsetH) * 60);
+  // Round minutes to nearest (panchang convention) instead of truncating.
+  const toHHMM = (hoursFloat: number) => {
+    let totalMin = Math.round(hoursFloat * 60);
+    if (totalMin < 0) totalMin += 24 * 60;
+    totalMin = totalMin % (24 * 60);
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    return { h, m };
+  };
+  const { h: sunriseH, m: sunriseM } = toHHMM(sunriseLocal);
+  const { h: sunsetH, m: sunsetM } = toHHMM(sunsetLocal);
 
   swisseph.swe_set_sid_mode(swisseph.SE_SIDM_LAHIRI, 0, 0);
   // For tithi/karana/yoga/nakshatra at birth, use birth-moment JD if provided.
@@ -496,6 +501,136 @@ export function calculatePanchang(date: Date, latitude: number, longitude: numbe
 
   const dayNames = ["रविवार", "सोमवार", "मंगळवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
 
+  // ── Panchang transitions (end-times for tithi/nakshatra/yoga/karana/moon-rashi) ──
+  // Sample Sun + Moon every 30 min from sunrise over a 30h window; detect boundary
+  // crossings via linear interpolation (angular velocity is quasi-constant at this scale).
+  const NAK_STEP = 360 / 27;
+  const RASHI_STEP = 30;
+  const windowStartJD = jd;                  // sunrise JD (UT)
+  const windowEndJD = jd + 30 / 24;          // +30h to catch events up to next sunrise + buffer
+  const sampleStepJD = 0.5 / 24;             // 30 min
+  type Sample = { jd: number; diffC: number; moonC: number; yogaC: number };
+  const samples: Sample[] = [];
+  let prevDiff = NaN, prevMoon = NaN, prevYoga = NaN;
+  for (let t = windowStartJD; t <= windowEndJD + sampleStepJD; t += sampleStepJD) {
+    const ayan = swisseph.swe_get_ayanamsa_ut(t);
+    const sunR = swisseph.swe_calc_ut(t, swisseph.SE_SUN, swisseph.SEFLG_SWIEPH);
+    const moonR = swisseph.swe_calc_ut(t, swisseph.SE_MOON, swisseph.SEFLG_SWIEPH);
+    const sunS = getSiderealLong(sunR.longitude, ayan);
+    const moonS = getSiderealLong(moonR.longitude, ayan);
+    let diff = moonS - sunS; if (diff < 0) diff += 360;
+    let yogaSum = sunS + moonS; if (yogaSum >= 360) yogaSum -= 360;
+    let moonC = moonS;
+    if (samples.length > 0) {
+      // Unwrap: these quantities are monotonically increasing (mod 360) over a day.
+      while (diff < prevDiff - 0.01) diff += 360;
+      while (moonC < prevMoon - 0.01) moonC += 360;
+      while (yogaSum < prevYoga - 0.01) yogaSum += 360;
+    }
+    samples.push({ jd: t, diffC: diff, moonC, yogaC: yogaSum });
+    prevDiff = diff; prevMoon = moonC; prevYoga = yogaSum;
+  }
+
+  const jdToLocalMinutes = (jdUT: number) => {
+    // Return minutes past local midnight on the sunrise day (can exceed 1440 for ghatika-style display).
+    return (jdUT - dayStartJD) * 24 * 60 + timezone * 60;
+  };
+  const formatHHMM = (jdUT: number) => {
+    const totalMin = Math.round(jdToLocalMinutes(jdUT));
+    const hours = Math.floor(totalMin / 60);
+    const mins = ((totalMin % 60) + 60) % 60;
+    return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
+  };
+  const findCrossings = (field: "diffC" | "moonC" | "yogaC", stepDeg: number) => {
+    const out: { jdEnd: number; fromIdx: number; toIdx: number }[] = [];
+    for (let i = 1; i < samples.length; i++) {
+      const a = samples[i - 1][field];
+      const b = samples[i][field];
+      const idxA = Math.floor(a / stepDeg);
+      const idxB = Math.floor(b / stepDeg);
+      for (let k = idxA + 1; k <= idxB; k++) {
+        const target = k * stepDeg;
+        const frac = (target - a) / (b - a);
+        const jdEnd = samples[i - 1].jd + frac * (samples[i].jd - samples[i - 1].jd);
+        out.push({ jdEnd, fromIdx: k - 1, toIdx: k });
+      }
+    }
+    return out;
+  };
+
+  const tithiCross = findCrossings("diffC", 12);
+  const karanaCross = findCrossings("diffC", 6);
+  const nakCross = findCrossings("moonC", NAK_STEP);
+  const yogaCross = findCrossings("yogaC", NAK_STEP);
+  const moonRashiCross = findCrossings("moonC", RASHI_STEP);
+
+  const tithiEnd = tithiCross[0] ? formatHHMM(tithiCross[0].jdEnd) : null;
+  const karanaEnd = karanaCross[0] ? formatHHMM(karanaCross[0].jdEnd) : null;
+  const yogaEnd = yogaCross[0] ? formatHHMM(yogaCross[0].jdEnd) : null;
+  const moonRashiEnd = moonRashiCross[0] ? formatHHMM(moonRashiCross[0].jdEnd) : null;
+  const sunriseMin = timezone * 60 + sunriseHourUTC * 60;
+  const nextSunriseMin = sunriseMin + 24 * 60;
+
+  // Build karana list (current at sunrise + each subsequent karana up to next sunrise).
+  // BPHS sequence — for karana index k ∈ [0,59]: 0 Kimstughna (first half of Shukla Pratipada),
+  // 1-56 movable (7-cycle Bava/Balava/Kaulava/Taitila/Gara/Vanija/Vishti), 57 Shakuni,
+  // 58 Chatushpada, 59 Naga.
+  const movableKaranaNames = ["बव", "बालव", "कौलव", "तैतिल", "गर", "वणिज", "विष्टी"];
+  const karanaNameFor = (absIdx: number): string => {
+    const k = ((absIdx % 60) + 60) % 60;
+    if (k === 0) return "किंस्तुघ्न";
+    if (k <= 56) return movableKaranaNames[(k - 1) % 7];
+    if (k === 57) return "शकुनी";
+    if (k === 58) return "चतुष्पाद";
+    return "नाग";
+  };
+  const karanaList: { name: string; end: string | null }[] = [];
+  karanaList.push({
+    name: karanaName,
+    end: karanaCross[0] ? formatHHMM(karanaCross[0].jdEnd) : null,
+  });
+  for (let i = 0; i < karanaCross.length; i++) {
+    const c = karanaCross[i];
+    const endMin = jdToLocalMinutes(c.jdEnd);
+    if (endMin <= sunriseMin) continue;
+    if (endMin > nextSunriseMin) break;
+    const nextKarana = karanaNameFor(c.toIdx);
+    const laterCross = karanaCross[i + 1];
+    const lastInList = karanaList[karanaList.length - 1];
+    if (lastInList.name !== nextKarana) {
+      karanaList.push({
+        name: nextKarana,
+        end: laterCross ? formatHHMM(laterCross.jdEnd) : null,
+      });
+    }
+  }
+
+  // Nakshatras that touch the 24h window starting at sunrise.
+  // Include current nakshatra + any that moon enters before next sunrise.
+  const nakshatraList: { name: string; nameEn: string; end: string | null }[] = [];
+  // Current nakshatra (from sunrise): end time is first nakCross if any, else null
+  nakshatraList.push({
+    name: NAKSHATRAS[nakIndex].mr,
+    nameEn: NAKSHATRAS[nakIndex].en,
+    end: nakCross[0] ? formatHHMM(nakCross[0].jdEnd) : null,
+  });
+  for (const c of nakCross) {
+    const endMin = jdToLocalMinutes(c.jdEnd);
+    if (endMin <= sunriseMin) continue;
+    if (endMin > nextSunriseMin) break;
+    const nextIdx = c.toIdx % 27;
+    if (nakshatraList.length === 0 || nakshatraList[nakshatraList.length - 1].nameEn !== NAKSHATRAS[nextIdx].en) {
+      // This crossing ends the current-in-list nakshatra at c.jdEnd; push the next one
+      // with its own end time (if available from a later crossing).
+      const laterCross = nakCross.find((x) => x.jdEnd > c.jdEnd + 1e-6);
+      nakshatraList.push({
+        name: NAKSHATRAS[nextIdx].mr,
+        nameEn: NAKSHATRAS[nextIdx].en,
+        end: laterCross ? formatHHMM(laterCross.jdEnd) : null,
+      });
+    }
+  }
+
   // Sun's rashi for masa (month)
   const sunRashi = getRashiIndex(sunSid);
   const masaNames = [
@@ -522,5 +657,11 @@ export function calculatePanchang(date: Date, latitude: number, longitude: numbe
     sunRashi: RASHIS[sunRashi].mr,
     sunrise: `${String(sunriseH).padStart(2, "0")}:${String(sunriseM).padStart(2, "0")}`,
     sunset: `${String(sunsetH).padStart(2, "0")}:${String(sunsetM).padStart(2, "0")}`,
+    tithiEnd,
+    karanaEnd,
+    yogaEnd,
+    moonRashiEnd,
+    nakshatras: nakshatraList,
+    karanas: karanaList,
   };
 }

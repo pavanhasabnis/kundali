@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useLang } from "@/lib/astrology/language-context";
 import { EnquiryPopup } from "@/components/enquiry-popup";
 import { JsonLd, serviceSchema, breadcrumbSchema } from "@/components/json-ld";
+import { PageHero } from "@/components/page-hero";
 
 interface TravelPkg {
   id: string;
@@ -164,22 +165,14 @@ export default function YatraPageClient() {
           { "@type": "Question", name: "अष्टविनायक यात्रा पुण्यातून किती दिवसांची आहे?", acceptedAnswer: { "@type": "Answer", text: "अष्टविनायक यात्रा पुण्यातून २ ते ३ दिवसांची असते. सर्व ८ गणपती मंदिरे (मोरगाव, थेऊर, सिद्धटेक, रांजणगाव, ओझर, लेण्याद्री, महड, पाली) दर्शन पूर्ण होते." } },
         ],
       }} />
-      {/* Hero */}
-      <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">
-            {t("धार्मिक यात्रा सेवा", "Religious Travel Services", "धार्मिक यात्रा सेवाएँ")}
-          </h1>
-          <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            {t(
-              "तीर्थक्षेत्रांना भेट द्या — ज्योतिर्लिंग, चारधाम, अष्टविनायक आणि अनेक पवित्र स्थळांची यात्रा आमच्यासोबत करा",
-              "Visit sacred destinations — Jyotirlinga, Char Dham, Ashtavinayak and many more holy pilgrimages with us",
-              "तीर्थक्षेत्रों की यात्रा करें — ज्योतिर्लिंग, चार धाम, अष्टविनायक और कई पवित्र स्थलों की यात्रा हमारे साथ"
-            )}
-          </p>
-        </div>
-      </section>
+      <PageHero
+        title={t("धार्मिक यात्रा सेवा", "Religious Travel Services", "धार्मिक यात्रा सेवाएँ")}
+        subtitle={t(
+          "तीर्थक्षेत्रांना भेट द्या — ज्योतिर्लिंग, चारधाम, अष्टविनायक आणि अनेक पवित्र स्थळांची यात्रा आमच्यासोबत करा.",
+          "Visit sacred destinations — Jyotirlinga, Char Dham, Ashtavinayak and more holy pilgrimages with us.",
+          "तीर्थक्षेत्रों की यात्रा — ज्योतिर्लिंग, चार धाम, अष्टविनायक और कई पवित्र स्थल."
+        )}
+      />
 
       <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12">
 

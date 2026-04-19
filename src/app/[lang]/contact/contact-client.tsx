@@ -3,6 +3,7 @@
 import { useLang } from "@/lib/astrology/language-context";
 import { useState } from "react";
 import { JsonLd, localBusinessSchema, breadcrumbSchema } from "@/components/json-ld";
+import { PageHero } from "@/components/page-hero";
 
 export default function ContactPageClient() {
   const { t } = useLang();
@@ -33,21 +34,10 @@ export default function ContactPageClient() {
     <div className="min-h-screen bg-[#FAFAF8]">
       <JsonLd data={localBusinessSchema} />
       <JsonLd data={breadcrumbSchema([{ name: "Home", url: "https://bhaagyavedh.com" }, { name: "Contact", url: "https://bhaagyavedh.com/contact" }])} />
-      <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">
-            {t("संपर्क करा", "Contact Us", "सम्पर्क करें")}
-          </h1>
-          <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            {t(
-              "आम्हाला तुमच्या प्रश्नांची उत्तरे देण्यात आनंद होईल",
-              "We would be happy to answer your questions",
-              "हमें आपके प्रश्नों के उत्तर देकर खुशी होगी"
-            )}
-          </p>
-        </div>
-      </section>
+      <PageHero
+        title={t("संपर्क करा", "Contact Us", "सम्पर्क करें")}
+        subtitle={t("आम्हाला तुमच्या प्रश्नांची उत्तरे देण्यात आनंद होईल", "We would be happy to answer your questions", "हमें आपके प्रश्नों के उत्तर देकर खुशी होगी")}
+      />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

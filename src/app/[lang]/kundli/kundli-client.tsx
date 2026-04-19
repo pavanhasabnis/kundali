@@ -6,6 +6,7 @@ import { signIn } from "next-auth/react";
 import { useLang } from "@/lib/astrology/language-context";
 import { PLACES, type Place } from "@/lib/astrology/places";
 import { JsonLd, serviceSchema, breadcrumbSchema, faqSchema } from "@/components/json-ld";
+import { PageHero } from "@/components/page-hero";
 
 interface PlanetData {
   id: string;
@@ -267,42 +268,33 @@ export default function KundliPageClient() {
     <div className="min-h-screen bg-[#FAFAF8]">
       <JsonLd data={serviceSchema({ name: "Free Kundli Generator — मोफत कुंडली", description: "Generate accurate Vedic birth chart (kundli) with planetary positions, dashas, yogas, and doshas. Free online janam kundali.", url: `https://bhaagyavedh.com/${lang}/kundli` })} />
       <JsonLd data={breadcrumbSchema([{ name: "Home", url: `https://bhaagyavedh.com/${lang}` }, { name: "Kundli", url: `https://bhaagyavedh.com/${lang}/kundli` }])} />
-      {/* Hero — Conversion focused */}
-      <section className="relative py-12 sm:py-20 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-          <div className="inline-block px-4 py-1 rounded-full text-[11px] font-bold tracking-widest mb-4" style={{ background: "rgba(212,168,67,0.15)", border: "1px solid rgba(212,168,67,0.4)", color: "#d4a843" }}>
-            ॥ {t("श्रीगणेशाय नमः", "SHRI GANESHAYA NAMAH", "श्रीगणेशाय नमः")} ॥
-          </div>
-          <h1 className="text-3xl sm:text-5xl font-bold text-[#d4a843] mb-4" style={{  }}>
-            {t("मोफत जन्म कुंडली", "Free Janam Kundli", "मुफ्त जन्म कुंडली")}
-          </h1>
-          <p className="text-white/80 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed mb-6" style={{  }}>
-            {t(
-              "४० हून अधिक वैदिक विश्लेषणे · महाराष्ट्रीय परंपरेनुसार · त्र्यंबकेश्वर, शनि शिंगणापूर, कोल्हापूर महालक्ष्मी यांच्यासह उपाय — फक्त जन्मतारीख, वेळ व ठिकाण भरा.",
-              "40+ Vedic analyses · Traditional Maharashtrian jyotish · Remedies linked to Trimbakeshwar, Shani Shingnapur, Kolhapur Mahalaxmi — just enter date, time, place.",
-              "40+ वैदिक विश्लेषण · महाराष्ट्रीय परंपरा · त्र्यंबकेश्वर, शनि शिंगणापुर, कोल्हापुर महालक्ष्मी उपाय — बस जन्म तिथि, समय, स्थान भरें."
-            )}
-          </p>
-          {/* Stats row */}
-          <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-center mb-6">
-            {[
-              { num: "40+", labelMr: "विश्लेषणे", labelEn: "Analyses", labelHi: "विश्लेषण" },
-              { num: "16", labelMr: "वर्ग कुंडल्या", labelEn: "Divisional Charts", labelHi: "वर्ग कुंडलियाँ" },
-              { num: "3", labelMr: "भाषा", labelEn: "Languages", labelHi: "भाषाएँ" },
-              { num: "₹0", labelMr: "मोफत", labelEn: "Free", labelHi: "मुफ्त" },
-            ].map((s, i) => (
-              <div key={i}>
-                <div className="text-2xl sm:text-3xl font-bold text-[#d4a843]" style={{  }}>{s.num}</div>
-                <div className="text-[11px] text-white/60" style={{  }}>{t(s.labelMr, s.labelEn, s.labelHi)}</div>
-              </div>
-            ))}
-          </div>
-          <a href="#kundli-form" className="inline-block px-6 py-3 rounded-lg font-bold text-sm" style={{ background: "linear-gradient(135deg, #d4a843, #c49535)", color: "#1a0505" }}>
-            ॥ {t("आत्ताच कुंडली बनवा →", "Generate My Kundli Now →", "अभी कुंडली बनाएँ →")} ॥
-          </a>
+      {/* Hero — Unified cinematic */}
+      <PageHero
+        eyebrow={t("॥ श्रीगणेशाय नमः ॥", "॥ SHRI GANESHAYA NAMAH ॥", "॥ श्रीगणेशाय नमः ॥")}
+        title={t("मोफत जन्म कुंडली", "Free Janam Kundli", "मुफ्त जन्म कुंडली")}
+        subtitle={t(
+          "४० हून अधिक वैदिक विश्लेषणे · महाराष्ट्रीय परंपरेनुसार · त्र्यंबकेश्वर, शनि शिंगणापूर, कोल्हापूर महालक्ष्मी यांच्यासह उपाय — फक्त जन्मतारीख, वेळ व ठिकाण भरा.",
+          "40+ Vedic analyses · Traditional Maharashtrian jyotish · Remedies linked to Trimbakeshwar, Shani Shingnapur, Kolhapur Mahalaxmi — just enter date, time, place.",
+          "40+ वैदिक विश्लेषण · महाराष्ट्रीय परंपरा · त्र्यंबकेश्वर, शनि शिंगणापुर, कोल्हापुर महालक्ष्मी उपाय — बस जन्म तिथि, समय, स्थान भरें."
+        )}
+      >
+        <div className="flex flex-wrap justify-center gap-4 sm:gap-8 text-center mt-6 mb-6">
+          {[
+            { num: "40+", labelMr: "विश्लेषणे", labelEn: "Analyses", labelHi: "विश्लेषण" },
+            { num: "16", labelMr: "वर्ग कुंडल्या", labelEn: "Divisional Charts", labelHi: "वर्ग कुंडलियाँ" },
+            { num: "3", labelMr: "भाषा", labelEn: "Languages", labelHi: "भाषाएँ" },
+            { num: "₹0", labelMr: "मोफत", labelEn: "Free", labelHi: "मुफ्त" },
+          ].map((s, i) => (
+            <div key={i}>
+              <div className="text-2xl sm:text-3xl font-bold" style={{ color: "#d4a843" }}>{s.num}</div>
+              <div className="text-[11px]" style={{ color: "rgba(245,230,200,0.7)" }}>{t(s.labelMr, s.labelEn, s.labelHi)}</div>
+            </div>
+          ))}
         </div>
-      </section>
+        <a href="#kundli-form" className="inline-block px-6 py-3 rounded-lg font-bold text-sm transition hover:scale-105" style={{ background: "linear-gradient(135deg, #d4a843, #c49535)", color: "#1a0505" }}>
+          ॥ {t("आत्ताच कुंडली बनवा →", "Generate My Kundli Now →", "अभी कुंडली बनाएँ →")} ॥
+        </a>
+      </PageHero>
 
       {/* Quick value props */}
       <section className="max-w-6xl mx-auto px-4 py-8 -mt-6 relative z-20">

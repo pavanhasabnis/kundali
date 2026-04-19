@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { EnquiryPopup } from "@/components/enquiry-popup";
 import { JsonLd, serviceSchema, breadcrumbSchema, faqSchema } from "@/components/json-ld";
+import { PageHero } from "@/components/page-hero";
 
 const SERVICES = [
   {
@@ -278,27 +279,22 @@ export default function ConsultationPageClient() {
         offers: { "@type": "Offer", price: "199", priceCurrency: "INR", availability: "https://schema.org/InStock" },
       }} />
       <JsonLd data={breadcrumbSchema([{ name: "Home", url: "https://bhaagyavedh.com" }, { name: "Consultation", url: "https://bhaagyavedh.com/consultation" }])} />
-      {/* Hero */}
-      <section className="relative py-16 sm:py-24 overflow-hidden" style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}>
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="max-w-5xl mx-auto px-4 text-center relative z-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-3">{t("ज्योतिष सल्ला सेवा", "Astrology Consultation Services", "ज्योतिष परामर्श सेवाएँ")}</h1>
-          <p className="text-white/60 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            {t(
-              "अनुभवी वैदिक ज्योतिषांकडून वैयक्तिक सल्ला — फोन, व्हिडिओ कॉल किंवा प्रत्यक्ष भेटीद्वारे. प्रत्येक सल्ला तुमच्या कुंडलीवर आधारित — कोणतीही टेम्पलेट उत्तरे नाहीत.",
-              "Personal consultation by experienced Vedic astrologers — via phone, video call or in-person. Every consultation is based on YOUR chart — no template answers.",
-              "अनुभवी वैदिक ज्योतिषियों से व्यक्तिगत परामर्श — फ़ोन, वीडियो कॉल या प्रत्यक्ष भेंट द्वारा. हर परामर्श आपकी कुंडली पर आधारित — कोई टेम्पलेट उत्तर नहीं."
-            )}
-          </p>
-          <div className="flex items-center justify-center gap-4 mt-8">
-            <button onClick={() => openEnquiry(t("ज्योतिष सल्ला सेवा", "Astrology Consultation", "ज्योतिष परामर्श"))}
-              className="px-8 py-3 rounded-full font-semibold text-sm transition-all hover:-translate-y-0.5 cursor-pointer"
-              style={{ background: "linear-gradient(135deg, #d4a843, #c49535)", color: "#1a0505" }}>
-              {t("चौकशी करा", "Enquire Now", "पूछताछ करें")}
-            </button>
-          </div>
+      <PageHero
+        title={t("ज्योतिष सल्ला सेवा", "Astrology Consultation Services", "ज्योतिष परामर्श सेवाएँ")}
+        subtitle={t(
+          "अनुभवी वैदिक ज्योतिषांकडून वैयक्तिक सल्ला — फोन, व्हिडिओ कॉल किंवा प्रत्यक्ष भेटीद्वारे. प्रत्येक सल्ला तुमच्या कुंडलीवर आधारित.",
+          "Personal consultation by experienced Vedic astrologers — phone, video, or in-person. Grounded in YOUR chart.",
+          "अनुभवी वैदिक ज्योतिषियों से व्यक्तिगत परामर्श — आपकी कुंडली पर आधारित."
+        )}
+      >
+        <div className="flex items-center justify-center gap-4 mt-6">
+          <button onClick={() => openEnquiry(t("ज्योतिष सल्ला सेवा", "Astrology Consultation", "ज्योतिष परामर्श"))}
+            className="px-8 py-3 rounded-full font-semibold text-sm transition-all hover:-translate-y-0.5 cursor-pointer"
+            style={{ background: "linear-gradient(135deg, #d4a843, #c49535)", color: "#1a0505" }}>
+            {t("चौकशी करा", "Enquire Now", "पूछताछ करें")}
+          </button>
         </div>
-      </section>
+      </PageHero>
 
       {/* Services — 2x2 Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">

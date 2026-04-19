@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useLang } from "@/lib/astrology/language-context";
 import { SANGRAH_CATEGORIES, type SangrahItem } from "@/lib/sangrah-types";
 import { JsonLd, breadcrumbSchema, serviceSchema } from "@/components/json-ld";
+import { PageHero } from "@/components/page-hero";
 
 interface Props {
   items: SangrahItem[];
@@ -45,40 +46,25 @@ export default function SangrahPageClient({ items, counts }: Props) {
         ])}
       />
 
-      {/* Hero */}
-      <section
-        className="relative py-12 md:py-16 text-center overflow-hidden"
-        style={{
-          background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)",
-        }}
+      <PageHero
+        title={t("संपूर्ण संग्रह", "Complete Sangrah", "सम्पूर्ण संग्रह")}
+        subtitle={t(
+          "आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा, नित्य पठण आणि नामावली — सर्व एकाच ठिकाणी.",
+          "Aartis, Stotras, Chalisas, Mantras, Vrat Kathas, Daily Prayers & Namavalis — all in one place.",
+          "आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा, नित्य पाठ और नामावली — एक ही जगह."
+        )}
+        date={`${totalCount}+ ${t("श्लोक आणि मंत्र", "Shlokas & Mantras", "श्लोक और मंत्र")}`}
       >
-        <div className="max-w-4xl mx-auto px-4 relative z-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
-            {t("संपूर्ण संग्रह", "Complete Sangrah", "सम्पूर्ण संग्रह")}
-          </h1>
-          <p className="text-white/70 text-base md:text-lg mb-6 max-w-2xl mx-auto">
-            {t(
-              "आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा, नित्य पठण आणि नामावली — सर्व एकाच ठिकाणी",
-              "Aartis, Stotras, Chalisas, Mantras, Vrat Kathas, Daily Prayers & Namavalis — all in one place",
-              "आरती, स्तोत्र, चालीसा, मंत्र, व्रत कथा, नित्य पाठ और नामावली — सब एक ही जगह"
-            )}
-          </p>
-          <p className="text-[#d4a843] font-semibold text-lg">
-            {totalCount}+ {t("श्लोक आणि मंत्र", "Shlokas & Mantras", "श्लोक और मंत्र")}
-          </p>
-
-          {/* Search */}
-          <div className="mt-6 max-w-md mx-auto">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={t("शोधा... (आरती, स्तोत्र, मंत्र)", "Search... (aarti, stotra, mantra)", "खोजें... (आरती, स्तोत्र, मंत्र)")}
-              className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:border-[#d4a843]/60 text-sm"
-            />
-          </div>
+        <div className="mt-6 max-w-md mx-auto">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t("शोधा... (आरती, स्तोत्र, मंत्र)", "Search... (aarti, stotra, mantra)", "खोजें... (आरती, स्तोत्र, मंत्र)")}
+            className="w-full px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:border-[#d4a843]/60 text-sm"
+          />
         </div>
-      </section>
+      </PageHero>
 
       {/* Category Grid */}
       <section className="max-w-6xl mx-auto px-4 py-10">
