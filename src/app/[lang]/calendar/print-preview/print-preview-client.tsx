@@ -41,6 +41,28 @@ const SAKA_MONTHS_MR = ["चैत्र", "वैशाख", "ज्येष�
 const SAKA_MONTHS_EN = ["Chaitra", "Vaisakha", "Jyaistha", "Asadha", "Sravana", "Bhadra", "Asvina", "Kartika", "Agrahayana", "Pausa", "Magha", "Phalguna"];
 const SAKA_MONTHS_HI = ["चैत्र", "वैशाख", "ज्येष्ठ", "आषाढ़", "श्रावण", "भाद्रपद", "आश्विन", "कार्तिक", "अग्रहायण", "पौष", "माघ", "फाल्गुन"];
 
+type SizeKey = "wall" | "a4" | "desk";
+const SIZES: Record<SizeKey, { w: string; h: string; cssSize: string; labelMr: string; labelEn: string; labelHi: string; dims: string }> = {
+  wall: { w: "356mm", h: "559mm", cssSize: "356mm 559mm", labelMr: "भिंत १४×२२ इंच", labelEn: "Wall 14×22\"", labelHi: "दीवार 14×22\"", dims: "356 × 559 mm" },
+  a4:   { w: "210mm", h: "297mm", cssSize: "A4 portrait",   labelMr: "A4 पोर्ट्रेट",    labelEn: "A4 Portrait",    labelHi: "A4 पोर्ट्रेट",    dims: "210 × 297 mm" },
+  desk: { w: "297mm", h: "210mm", cssSize: "A4 landscape",  labelMr: "A4 लँडस्केप (टेबल)", labelEn: "A4 Landscape (Desk)", labelHi: "A4 लैंडस्केप (डेस्क)", dims: "297 × 210 mm" },
+};
+function scaleFor(size: SizeKey) {
+  if (size === "wall") return 1;
+  if (size === "a4") return Math.min(210 / 356, 297 / 559);
+  const w = parseInt(SIZES[size].w);
+  const h = parseInt(SIZES[size].h);
+  return Math.min(w / 356, h / 559);
+}
+function transformFor(size: SizeKey, s: number) {
+  if (size === "a4") {
+    const sX = 210 / 356;
+    const sY = 297 / 559;
+    return `scale(${sX}, ${sY})`;
+  }
+  return `scale(${s})`;
+}
+
 function toDev(n: number | string): string {
   const d = "०१२३४५६७८९";
   return String(n).split("").map(c => d[parseInt(c)] ?? c).join("");
@@ -150,8 +172,10 @@ function VratGroup({ title, days, lang, showTithi = false }: { title: string; da
 }
 
 // ── Front sheet (big calendar grid) ──
-function FrontSheet({ entry, lang, t }: { entry: MonthEntry; lang: string; t: TFn }) {
+function FrontSheet({ entry, lang, t, size }: { entry: MonthEntry; lang: string; t: TFn; size: SizeKey }) {
   const { year, month, data } = entry;
+  const sz = SIZES[size];
+  const s = scaleFor(size);
   const monthNames = lang === "mr" ? MONTH_NAMES_MR : lang === "hi" ? MONTH_NAMES_HI : MONTH_NAMES_EN;
   const dayHeaders = lang === "mr" ? DAY_HEADERS_MR : lang === "hi" ? DAY_HEADERS_HI : DAY_HEADERS_EN;
   const sakaMonths = lang === "mr" ? SAKA_MONTHS_MR : lang === "hi" ? SAKA_MONTHS_HI : SAKA_MONTHS_EN;
@@ -173,8 +197,14 @@ function FrontSheet({ entry, lang, t }: { entry: MonthEntry; lang: string; t: TF
 
   return (
     <div className="sheet" style={{
+      width: sz.w, height: sz.h, background: "#FFF8E7",
+      boxShadow: "0 4px 24px rgba(0,0,0,0.2)",
+      overflow: "hidden", position: "relative",
+    }}>
+    <div style={{
       width: "356mm", height: "559mm", background: "#FFF8E7",
-      boxShadow: "0 4px 24px rgba(0,0,0,0.2)", position: "relative",
+      transform: transformFor(size, s), transformOrigin: "top left",
+      position: "relative",
       display: "flex", flexDirection: "column",
       fontFamily: "'Noto Serif Devanagari', 'Times New Roman', serif",
       color: "#3d0c0c", overflow: "hidden",
@@ -314,12 +344,15 @@ function FrontSheet({ entry, lang, t }: { entry: MonthEntry; lang: string; t: TF
         </div>
       </div>
     </div>
+    </div>
   );
 }
 
 // ── Back sheet (detailed panchang) ──
-function BackSheet({ entry, lang, t }: { entry: MonthEntry; lang: string; t: TFn }) {
+function BackSheet({ entry, lang, t, size }: { entry: MonthEntry; lang: string; t: TFn; size: SizeKey }) {
   const { year, month, data } = entry;
+  const sz = SIZES[size];
+  const s = scaleFor(size);
   const monthNames = lang === "mr" ? MONTH_NAMES_MR : lang === "hi" ? MONTH_NAMES_HI : MONTH_NAMES_EN;
   const dayHeaders = lang === "mr" ? DAY_HEADERS_MR : lang === "hi" ? DAY_HEADERS_HI : DAY_HEADERS_EN;
   const sakaMonths = lang === "mr" ? SAKA_MONTHS_MR : lang === "hi" ? SAKA_MONTHS_HI : SAKA_MONTHS_EN;
@@ -345,8 +378,13 @@ function BackSheet({ entry, lang, t }: { entry: MonthEntry; lang: string; t: TFn
 
   return (
     <div className="sheet" style={{
-      width: "356mm", height: "559mm", background: "#FFF8E7",
+      width: sz.w, height: sz.h, background: "#FFF8E7",
       boxShadow: "0 4px 24px rgba(0,0,0,0.2)",
+      overflow: "hidden",
+    }}>
+    <div style={{
+      width: "356mm", height: "559mm", background: "#FFF8E7",
+      transform: transformFor(size, s), transformOrigin: "top left",
       display: "flex", flexDirection: "column",
       fontFamily: "'Noto Serif Devanagari', 'Times New Roman', serif",
       color: "#3d0c0c", overflow: "hidden",
@@ -511,6 +549,149 @@ function BackSheet({ entry, lang, t }: { entry: MonthEntry; lang: string; t: TFn
         </div>
       </div>
     </div>
+    </div>
+  );
+}
+
+// ── Desk (A4 landscape 297×210mm) native layout ──
+function DeskSheet({ entry, lang, t }: { entry: MonthEntry; lang: string; t: TFn }) {
+  const { year, month, data } = entry;
+  const monthNames = lang === "mr" ? MONTH_NAMES_MR : lang === "hi" ? MONTH_NAMES_HI : MONTH_NAMES_EN;
+  const dayHeaders = lang === "mr" ? DAY_HEADERS_MR : lang === "hi" ? DAY_HEADERS_HI : DAY_HEADERS_EN;
+  const sakaMonths = lang === "mr" ? SAKA_MONTHS_MR : lang === "hi" ? SAKA_MONTHS_HI : SAKA_MONTHS_EN;
+  const s1 = sakaCivil(year, month, 1);
+  const sN = sakaCivil(year, month, data.daysInMonth);
+  const m1 = sakaMonths[s1.monthIdx];
+  const m2 = sakaMonths[sN.monthIdx];
+  const yr = devIfNeeded(sN.sakaYear, lang);
+  const sakaLabel = m1 === m2 ? `${m1} · ${t("शके", "Saka", "शक")} ${yr}` : `${m1}–${m2} · ${t("शके", "Saka", "शक")} ${yr}`;
+  const midDay = data.days[Math.floor(data.days.length / 2)];
+  const sunRashiSlug = midDay ? RASHI_LIST.find(r => r.mr === midDay.sunRashi)?.slug : null;
+  const grid: (CalendarDay | null)[] = [...Array(data.firstDayOfWeek).fill(null), ...data.days];
+  while (grid.length < 42) grid.push(null);
+  const ekadashi = data.days.filter(d => d.tithi?.includes("एकादशी"));
+  const purnimaAmavasya = data.days.filter(d => d.tithi?.includes("पौर्णिमा") || d.tithi?.includes("अमावस्या"));
+  const fests = data.days.flatMap(d => d.festivals.map(f => ({ day: d.day, name: t(f.nameMr, f.name, f.nameMr) })));
+  return (
+    <div className="sheet" style={{
+      width: "297mm", height: "210mm", background: "#FFF8E7",
+      boxShadow: "0 4px 24px rgba(0,0,0,0.2)", overflow: "hidden",
+      display: "flex", flexDirection: "column",
+      fontFamily: "'Noto Serif Devanagari', 'Times New Roman', serif",
+      color: "#3d0c0c",
+    }}>
+      {/* Header 22mm */}
+      <div style={{
+        height: "22mm",
+        background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)",
+        color: "#FFF8E7", display: "grid", gridTemplateColumns: "1.2fr 2fr 1.2fr",
+        padding: "3mm 8mm", alignItems: "center", borderBottom: "1.2mm solid #d4a843",
+      }}>
+        <div><BrandMark size={10} /></div>
+        <div style={{ textAlign: "center", display: "flex", alignItems: "baseline", justifyContent: "center", gap: "4mm" }}>
+          <span style={{ fontSize: "9mm", fontWeight: "bold", color: "#d4a843", lineHeight: 1 }}>{monthNames[month]}</span>
+          <span style={{ fontSize: "6mm", fontWeight: "bold", color: "#FFF8E7", lineHeight: 1 }}>{devIfNeeded(year, lang)}</span>
+        </div>
+        <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "1mm" }}>
+          <div style={{ fontSize: "2.8mm", color: "#d4a843", fontWeight: "bold" }}>{sakaLabel}</div>
+          <div style={{ display: "flex", alignItems: "center", gap: "2mm" }}>
+            {midDay && <span style={{ fontSize: "2.5mm", color: "#FFF8E7" }}>{t("सूर्य", "Sun", "सूर्य")}: <strong style={{ color: "#d4a843" }}>{midDay.sunRashi}</strong></span>}
+            {sunRashiSlug && <ZodiacBadge slug={sunRashiSlug} size={18} variant="gold" />}
+          </div>
+        </div>
+      </div>
+      {/* Day headers */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", background: "#5c1a1a", color: "#d4a843", fontWeight: "bold", fontSize: "3mm", borderBottom: "0.4mm solid #d4a843" }}>
+        {dayHeaders.map((d, i) => (
+          <div key={i} style={{ padding: "1.2mm 1mm", textAlign: "center", color: i === 0 ? "#ff9999" : "#d4a843", borderRight: i < 6 ? "0.2mm solid rgba(212,168,67,0.3)" : "none" }}>{d}</div>
+        ))}
+      </div>
+      {/* Main: grid + side column */}
+      <div style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 55mm", overflow: "hidden" }}>
+        {/* Grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gridAutoRows: "1fr", background: "#FFF8E7" }}>
+          {grid.map((d, i) => {
+            const col = i % 7;
+            const row = Math.floor(i / 7);
+            const isSunday = col === 0;
+            return (
+              <div key={i} style={{
+                borderRight: col < 6 ? "0.2mm solid #e5d5b5" : "none",
+                borderBottom: row < 5 ? "0.2mm solid #e5d5b5" : "none",
+                padding: "1.2mm 1.5mm", position: "relative",
+                display: "flex", flexDirection: "column",
+                background: d?.dayType === "festival" ? "#fff3d6" : "transparent",
+                overflow: "hidden",
+              }}>
+                {d ? (
+                  <>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", lineHeight: 1 }}>
+                      <span style={{ fontSize: "5.5mm", fontWeight: "bold", color: isSunday ? "#b91c1c" : "#3d0c0c", lineHeight: 0.9, fontFamily: "'Noto Serif Devanagari', serif" }}>{devIfNeeded(d.day, lang)}</span>
+                      {lang !== "en" && <span style={{ fontSize: "2mm", color: "#9b8b6e" }}>{d.day}</span>}
+                    </div>
+                    <div style={{ fontSize: "2mm", color: "#5c1a1a", marginTop: "0.6mm", fontWeight: 600, lineHeight: 1.1 }}>
+                      {shortPaksha(d.paksha)} {d.tithi}
+                    </div>
+                    <div style={{ fontSize: "1.9mm", color: "#6b5b3e", marginTop: "0.3mm", lineHeight: 1.1 }}>{d.nakshatra}</div>
+                    {d.festivals.length > 0 && (
+                      <div style={{ fontSize: "1.9mm", fontWeight: "bold", color: d.festivals[0].type === "national" || d.festivals[0].type === "state" ? "#1e40af" : "#b91c1c", marginTop: "0.4mm", lineHeight: 1.1, overflow: "hidden", textOverflow: "ellipsis" }}>
+                        • {t(d.festivals[0].nameMr, d.festivals[0].name, d.festivals[0].nameMr)}
+                      </div>
+                    )}
+                    <div style={{ fontSize: "1.7mm", color: "#9b8b6e", marginTop: "auto", paddingTop: "0.5mm", borderTop: "0.2mm dotted #d4c090" }}>
+                      {t("राहु", "Rahu", "Rahu")}: {fmtRange(d.rahuKaal, lang)}
+                    </div>
+                    {d.dayType === "shubh" && <div style={{ position: "absolute", top: "1mm", right: "1mm", width: "1.5mm", height: "1.5mm", borderRadius: "50%", background: "#2d6b2d" }} />}
+                    {d.dayType === "ashubh" && <div style={{ position: "absolute", top: "1mm", right: "1mm", width: "1.5mm", height: "1.5mm", borderRadius: "50%", background: "#b91c1c" }} />}
+                  </>
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+        {/* Side column: festivals + key days */}
+        <div style={{ borderLeft: "0.4mm solid #d4a843", padding: "2mm 3mm", background: "#fffdf6", display: "flex", flexDirection: "column", gap: "2mm", fontSize: "2.2mm", overflow: "hidden" }}>
+          <div>
+            <div style={{ fontSize: "2.8mm", fontWeight: "bold", color: "#5c1a1a", borderBottom: "0.3mm solid #d4a843", paddingBottom: "0.5mm", marginBottom: "1mm" }}>{t("सण व उत्सव", "Festivals", "त्यौहार")}</div>
+            <div style={{ lineHeight: 1.4 }}>
+              {fests.length === 0 ? <span style={{ opacity: 0.6 }}>—</span> : fests.slice(0, 14).map((f, i) => (
+                <div key={i} style={{ marginBottom: "0.3mm" }}><strong style={{ color: "#b91c1c" }}>{devIfNeeded(f.day, lang)}</strong> <span style={{ color: "#3d0c0c" }}>{f.name}</span></div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div style={{ fontSize: "2.8mm", fontWeight: "bold", color: "#5c1a1a", borderBottom: "0.3mm solid #d4a843", paddingBottom: "0.5mm", marginBottom: "1mm" }}>{t("व्रत / मुख्य", "Vrat / Key", "व्रत / मुख्य")}</div>
+            <div style={{ lineHeight: 1.4 }}>
+              {ekadashi.slice(0, 2).map((d, i) => (
+                <div key={`e${i}`}><strong style={{ color: "#d4a843" }}>{devIfNeeded(d.day, lang)}</strong> {t("एकादशी", "Ekadashi", "एकादशी")}</div>
+              ))}
+              {purnimaAmavasya.slice(0, 2).map((d, i) => (
+                <div key={`p${i}`}><strong style={{ color: "#d4a843" }}>{devIfNeeded(d.day, lang)}</strong> {d.tithi}</div>
+              ))}
+            </div>
+          </div>
+          <div style={{ marginTop: "auto", fontSize: "1.9mm", color: "#6b5b3e", borderTop: "0.2mm dotted #d4a843", paddingTop: "1mm" }}>
+            <div>● {t("शुभ", "Auspicious", "शुभ")}  ● {t("अशुभ", "Inauspicious", "अशुभ")}</div>
+            <div style={{ marginTop: "0.5mm" }}>{t("लाहिरी अयनांश · IST", "Lahiri · IST", "लाहिरी · IST")}</div>
+          </div>
+        </div>
+      </div>
+      {/* Footer 14mm */}
+      <div style={{ height: "14mm", background: "#3d0c0c", color: "#FFF8E7", padding: "2mm 8mm", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4mm", borderTop: "1.2mm solid #d4a843", fontSize: "2.3mm", alignItems: "center" }}>
+        <div>
+          <div style={{ fontSize: "2.8mm", fontWeight: "bold", color: "#d4a843" }}>{t("भाग्यवेध", "Bhaagyavedh", "भाग्यवेध")}</div>
+          <div style={{ opacity: 0.85, marginTop: "0.5mm" }}>{t("वैदिक पंचांग · दिनदर्शिका", "Vedic Panchang · Calendar", "वैदिक पंचांग · दिनदर्शिका")}</div>
+        </div>
+        <div style={{ textAlign: "center", opacity: 0.85 }}>
+          <div>{t("राहुकाळ · तिथी समाप्ती वेळा", "Rahu-Kaal · Tithi end times", "राहुकाल · तिथि समाप्ति")}</div>
+          <div style={{ opacity: 0.7, marginTop: "0.5mm" }}>{t("लाहिरी अयनांश · वेळा IST", "Lahiri Ayanamsa · IST", "लाहिरी · IST")}</div>
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ fontWeight: "bold", color: "#d4a843" }}>bhaagyavedh.com</div>
+          <div style={{ opacity: 0.6, marginTop: "0.5mm" }}>© {devIfNeeded(year, lang)}</div>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -520,12 +701,14 @@ export default function PrintPreviewClient() {
   const now = new Date(Date.now() + 5.5 * 3600 * 1000);
   const qpYear = Number(searchParams.get("year"));
   const qpMonth = Number(searchParams.get("month"));
+  const qpSize = searchParams.get("size") as SizeKey | null;
   const autoPrint = searchParams.get("auto") === "1";
   const fullYear = searchParams.get("full") === "1";
 
   const [year, setYear] = useState(qpYear && qpYear > 1900 ? qpYear : now.getUTCFullYear());
   const [month, setMonth] = useState(qpMonth >= 1 && qpMonth <= 12 ? qpMonth : now.getUTCMonth() + 1);
   const [mode, setMode] = useState<"single" | "full">(fullYear ? "full" : "single");
+  const [size, setSize] = useState<SizeKey>(qpSize && SIZES[qpSize] ? qpSize : "wall");
   const [entries, setEntries] = useState<MonthEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [scale, setScale] = useState(1);
@@ -563,10 +746,11 @@ export default function PrintPreviewClient() {
     return () => { cancelled = true; };
   }, [year, month, mode]);
 
-  // Fit-to-screen
+  // Fit-to-screen (sheet px depends on chosen paper width)
   useLayoutEffect(() => {
     function recalc() {
-      const SHEET_PX = 1346;
+      const sheetMm = parseInt(SIZES[size].w);
+      const SHEET_PX = (sheetMm / 25.4) * 96;
       const PADDING = 24;
       const w = window.innerWidth - PADDING;
       setScale(w < SHEET_PX ? w / SHEET_PX : 1);
@@ -574,7 +758,7 @@ export default function PrintPreviewClient() {
     recalc();
     window.addEventListener("resize", recalc);
     return () => window.removeEventListener("resize", recalc);
-  }, []);
+  }, [size]);
 
   // Dynamic title
   const monthNamesForTitle = lang === "mr" ? MONTH_NAMES_MR : lang === "hi" ? MONTH_NAMES_HI : MONTH_NAMES_EN;
@@ -607,7 +791,12 @@ export default function PrintPreviewClient() {
             ? t("वार्षिक दिनदर्शिका", "Full-Year Calendar", "वार्षिक कैलेंडर")
             : t("मासिक दिनदर्शिका", "Monthly Calendar", "मासिक कैलेंडर")}
         </strong>
-        <span style={{ fontSize: 12, color: "#6b5b3e" }}>14&quot; × 22&quot; (356 × 559 mm)</span>
+        <span style={{ fontSize: 12, color: "#6b5b3e" }}>{SIZES[size].dims}</span>
+        <select value={size} onChange={e => setSize(e.target.value as SizeKey)} style={{ padding: "4px 8px" }}>
+          <option value="wall">{t(SIZES.wall.labelMr, SIZES.wall.labelEn, SIZES.wall.labelHi)}</option>
+          <option value="a4">{t(SIZES.a4.labelMr, SIZES.a4.labelEn, SIZES.a4.labelHi)}</option>
+          <option value="desk">{t(SIZES.desk.labelMr, SIZES.desk.labelEn, SIZES.desk.labelHi)}</option>
+        </select>
         <select value={mode} onChange={e => setMode(e.target.value as "single" | "full")} style={{ padding: "4px 8px" }}>
           <option value="full">{t("पूर्ण वर्ष (१२ महिने)", "Full Year (12 months)", "पूरा वर्ष (12 माह)")}</option>
           <option value="single">{t("एक महिना", "Single Month", "एक माह")}</option>
@@ -629,6 +818,8 @@ export default function PrintPreviewClient() {
       <div ref={sheetWrapRef} className="sheets-wrap" style={{
         display: "flex", flexDirection: "column", alignItems: "center",
         padding: "24px 12px", gap: "24px",
+        maxWidth: `calc(${SIZES[size].w} + 24px)`,
+        margin: "0 auto",
         zoom: scale,
       }}>
         {loading && (
@@ -637,14 +828,22 @@ export default function PrintPreviewClient() {
             {mode === "full" && <div style={{ fontSize: 12, marginTop: 8, opacity: 0.7 }}>{t("१२ महिन्यांचा डेटा आणत आहे", "Fetching 12 months", "12 महीनों का डेटा ला रहे हैं")}</div>}
           </div>
         )}
-        {!loading && entries.flatMap((e) => [
-          <FrontSheet key={`${e.year}-${e.month}-f`} entry={e} lang={lang} t={t} />,
-          <BackSheet key={`${e.year}-${e.month}-b`} entry={e} lang={lang} t={t} />,
-        ])}
+        {!loading && entries.flatMap((e) => {
+          if (size === "wall") return [
+            <FrontSheet key={`${e.year}-${e.month}-f`} entry={e} lang={lang} t={t} size={size} />,
+            <BackSheet key={`${e.year}-${e.month}-b`} entry={e} lang={lang} t={t} size={size} />,
+          ];
+          if (size === "desk") return [
+            <DeskSheet key={`${e.year}-${e.month}-d`} entry={e} lang={lang} t={t} />,
+          ];
+          return [
+            <FrontSheet key={`${e.year}-${e.month}-f`} entry={e} lang={lang} t={t} size={size} />,
+          ];
+        })}
       </div>
 
       <style>{`
-        @page { size: 356mm 559mm; margin: 0; }
+        @page { size: ${SIZES[size].cssSize}; margin: 0; }
         @media print {
           html, body { background: #FFF8E7 !important; margin: 0 !important; padding: 0 !important; }
           .no-print { display: none !important; }
