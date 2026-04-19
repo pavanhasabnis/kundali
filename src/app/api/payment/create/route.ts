@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { users, payments } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import Razorpay from "razorpay";
+import { getBookPriceForUser } from "@/lib/book-pricing";
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID!,
@@ -15,12 +16,9 @@ const PLANS: Record<string, { amount: number; description: string }> = {
   plus:    { amount: 149900, description: "Premium Plus Monthly - ₹1499" },
 };
 
-// One-time product pricing (paise) — bound kundli book
-const PRODUCTS: Record<string, { amountByPlan: Record<string, number>; description: string }> = {
-  book: {
-    amountByPlan: { free: 79900, premium: 64900, plus: 0 },
-    description: "Bound Kundli Book",
-  },
+// One-time products. Book pricing computed via getBookPriceForUser (checks Plus free-claim usage).
+const PRODUCT_DESCRIPTIONS: Record<string, string> = {
+  book: "Bound Kundli Book",
 };
 
 export async function POST(req: Request) {
@@ -42,11 +40,16 @@ export async function POST(req: Request) {
   let tag: string;
 
   if (product) {
-    const prod = PRODUCTS[product];
-    if (!prod) return NextResponse.json({ error: "Invalid product" }, { status: 400 });
-    amount = prod.amountByPlan[user.plan ?? "free"] ?? prod.amountByPlan.free;
-    if (amount === 0) return NextResponse.json({ error: "Product is free for your plan — use claim flow" }, { status: 400 });
-    description = prod.description;
+    const desc = PRODUCT_DESCRIPTIONS[product];
+    if (!desc) return NextResponse.json({ error: "Invalid product" }, { status: 400 });
+    if (product === "book") {
+      const price = await getBookPriceForUser(user.id, user.plan);
+      if (price.amount === 0) return NextResponse.json({ error: "Product is free for your plan — use claim flow" }, { status: 400 });
+      amount = price.amount;
+    } else {
+      return NextResponse.json({ error: "Unsupported product" }, { status: 400 });
+    }
+    description = desc;
     tag = `product:${product}`;
   } else {
     const planConfig = PLANS[plan];

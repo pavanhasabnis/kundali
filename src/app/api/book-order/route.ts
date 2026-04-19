@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/dev-session";
 import { db } from "@/lib/db";
 import { users, kundlis, bookOrders } from "@/lib/db/schema";
-import { eq, and, gte } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
+import { getBookPriceForUser } from "@/lib/book-pricing";
 
 // GET /api/book-order — list current user's orders
 export async function GET() {
@@ -58,29 +59,8 @@ export async function POST(req: Request) {
   });
   if (!kundli) return NextResponse.json({ error: "Kundli not found" }, { status: 404 });
 
-  // Compute price + free-claim eligibility
   const plan = user.plan ?? "free";
-  const BASE_PRICE = 79900; // paise
-  const PREMIUM_PRICE = 64900;
-
-  const yearStart = `${new Date().getUTCFullYear()}-01-01T00:00:00.000Z`;
-  const priorFreeClaims = await db.query.bookOrders.findMany({
-    where: and(
-      eq(bookOrders.userId, user.id),
-      eq(bookOrders.planAtOrder, "plus"),
-      gte(bookOrders.createdAt, yearStart),
-    ),
-  });
-  const usedFreeClaim = priorFreeClaims.filter(o => o.amountPaid === 0 && o.status !== "cancelled").length > 0;
-
-  let amountPaid: number;
-  if (plan === "plus" && !usedFreeClaim) {
-    amountPaid = 0; // free claim
-  } else if (plan === "premium") {
-    amountPaid = PREMIUM_PRICE;
-  } else {
-    amountPaid = BASE_PRICE;
-  }
+  const { amount: amountPaid } = await getBookPriceForUser(user.id, plan);
 
   // Non-free orders must include razorpayPaymentId
   if (amountPaid > 0 && !razorpayPaymentId) {
