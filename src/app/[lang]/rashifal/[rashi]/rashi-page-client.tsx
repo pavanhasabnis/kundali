@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useLang } from "@/lib/astrology/language-context";
 import { RASHI_LIST } from "@/lib/rashi-data";
 import { JsonLd, breadcrumbSchema, faqSchema } from "@/components/json-ld";
+import { ZodiacBadge } from "@/components/zodiac-badge";
 
 interface TransitInfo { planet: string; planetMr: string; house: number; effect: "good" | "bad" | "neutral" }
 interface Prediction {
@@ -16,6 +17,7 @@ interface Prediction {
   love: { mr: string; en: string };
   health: { mr: string; en: string };
   advice: { mr: string; en: string };
+  narrative?: { mr: string; en: string };
   rating: number;
   transits: TransitInfo[];
   luckyColor: { mr: string; en: string };
@@ -98,28 +100,40 @@ export default function RashiPageClient({ rashiSlug, rashiId, initialPrediction 
         }}
       />
 
-      {/* Hero */}
-      <section
-        className="relative py-12 sm:py-16 overflow-hidden"
-        style={{ background: "linear-gradient(135deg, #3d0c0c 0%, #5c1a1a 50%, #3d0c0c 100%)" }}
-      >
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4a843' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-        <div className="max-w-3xl mx-auto px-4 text-center relative z-10">
-          <Link href="/rashifal" className="inline-block text-white/50 hover:text-[#d4a843] text-sm mb-4 transition">
+      {/* Cinematic Hero — matches /mr/rashifal */}
+      <section className="relative overflow-hidden" style={{ background: "linear-gradient(145deg, #1a0505 0%, #3d0c0c 40%, #5c1a1a 100%)" }}>
+        <svg aria-hidden className="absolute inset-0 w-full h-full opacity-15" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <pattern id="stars-rashi-sub" width="80" height="80" patternUnits="userSpaceOnUse">
+              <circle cx="10" cy="20" r="0.8" fill="#d4a843" />
+              <circle cx="40" cy="55" r="1.2" fill="#d4a843" />
+              <circle cx="65" cy="15" r="0.6" fill="#d4a843" />
+              <circle cx="70" cy="70" r="0.9" fill="#d4a843" />
+              <circle cx="20" cy="65" r="0.5" fill="#d4a843" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#stars-rashi-sub)" />
+        </svg>
+
+        <div className="relative max-w-6xl mx-auto px-4 py-14 sm:py-20 text-center">
+          <Link href={`/${lang}/rashifal`} className="inline-flex items-center gap-2 text-xs uppercase tracking-widest mb-4 font-semibold" style={{ color: "#d4a843" }}>
             ← {t("सर्व राशी", "All Signs", "सभी राशियाँ")}
           </Link>
-          <div className="w-16 h-16 mx-auto mb-3 rounded-xl flex items-center justify-center text-3xl text-white" style={{ background: "linear-gradient(135deg, #7B2D8E, #9B59B6)" }}>
-            {rashi.symbol}
+          <div className="inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] font-semibold mb-5" style={{ color: "#d4a843" }}>
+            <span className="h-px w-8" style={{ background: "#d4a843" }} />
+            {t("वास्तविक ग्रह गोचर", "Live Transit", "वास्तविक ग्रह गोचर")}
+            <span className="h-px w-8" style={{ background: "#d4a843" }} />
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#d4a843] mb-2">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-3" style={{ color: "#f5e6c8", fontFamily: "var(--font-heading)", letterSpacing: "-0.01em" }}>
             {t(`${rashi.mr} राशीफल आज`, `${rashi.en} Horoscope Today`, `${rashi.mr} राशिफल आज`)}
           </h1>
-          <p className="text-white/60 text-sm sm:text-base">{todayStr}</p>
-          <p className="text-white/40 text-xs mt-1">
-            {t("वैदिक ग्रह गोचरावर आधारित", "Based on Vedic planetary transits", "वैदिक ग्रह गोचर पर आधारित")}
+          <p className="text-lg sm:text-xl font-semibold tracking-wide" style={{ color: "#d4a843" }}>
+            {todayStr}
           </p>
-          <p className="text-white/30 text-[10px] mt-2">
-            {t("वास्तविक ग्रह गोचरावर आधारित", "Based on real planetary transits", "वास्तविक ग्रह गोचर पर आधारित")}
+          <p className="mt-4 text-sm max-w-2xl mx-auto" style={{ color: "rgba(245,230,200,0.7)" }}>
+            {t(`${rashi.mr} राशीचे आजचे अचूक भविष्य — लाहिरी अयनांशावर आधारित वैदिक गोचर.`,
+               `${rashi.en}'s precise daily horoscope — Vedic transits via Lahiri ayanamsa.`,
+               `${rashi.mr} राशि का आज का सटीक भविष्य — लाहिरी अयनांश आधारित.`)}
           </p>
         </div>
       </section>
@@ -150,24 +164,32 @@ export default function RashiPageClient({ rashiSlug, rashiId, initialPrediction 
               </div>
             </div>
 
-            {/* Prediction Sections */}
-            <div className="bg-white rounded-2xl shadow-sm overflow-hidden" style={{ border: "1px solid rgba(212,168,67,0.2)" }}>
-              {[
-                { title: t("आजचे एकंदर भविष्य", "Overall Prediction", "आज का समग्र भविष्य"), text: t(pred.overall.mr, pred.overall.en, pred.overall.mr), highlight: true },
-                { title: t("करिअर व आर्थिक", "Career & Finance", "करियर और वित्त"), text: t(pred.career.mr, pred.career.en, pred.career.mr) },
-                { title: t("प्रेम व कुटुंब", "Love & Family", "प्रेम और परिवार"), text: t(pred.love.mr, pred.love.en, pred.love.mr) },
-                { title: t("आरोग्य", "Health", "स्वास्थ्य"), text: t(pred.health.mr, pred.health.en, pred.health.mr) },
-                { title: t("आजचा सल्ला", "Today's Advice", "आज की सलाह"), text: t(pred.advice.mr, pred.advice.en, pred.advice.mr) },
-              ].map((sec, i) => (
-                <div
-                  key={i}
-                  className={`p-5 md:p-6 ${sec.highlight ? "bg-[#FFF8E7]/50" : ""}`}
-                  style={i > 0 ? { borderTop: "1px solid rgba(212,168,67,0.1)" } : {}}
-                >
-                  <h2 className="text-sm font-bold mb-2 text-[#5c1a1a]">{sec.title}</h2>
-                  <p className="text-sm leading-relaxed text-[#4a3a2a]">{sec.text}</p>
+            {/* Pure narrative — jargon-free flowing prose */}
+            <div className="bg-white rounded-2xl shadow-sm p-6 md:p-8" style={{ border: "1px solid rgba(212,168,67,0.2)" }}>
+              <h2 className="text-[11px] uppercase tracking-wider font-bold mb-4" style={{ color: "#8b6914" }}>
+                {t(`${rashi.mr} राशीचे आजचे भविष्य`, `${rashi.en} — Today's Horoscope`, `${rashi.mr} राशि का आज का भविष्य`)}
+              </h2>
+              <div className="space-y-4">
+                {(pred.narrative ? t(pred.narrative.mr, pred.narrative.en, pred.narrative.mr) : t(pred.overall.mr, pred.overall.en, pred.overall.mr))
+                  .split("\n\n").map((p) => p.trim()).filter(Boolean).map((para, i) => (
+                    <p
+                      key={i}
+                      className={`text-[17px] leading-[1.85] ${i === 0 ? "first-letter:text-5xl first-letter:font-bold first-letter:float-left first-letter:mr-3 first-letter:mt-1 first-letter:leading-[0.9]" : ""}`}
+                      style={{ color: "#3d0c0c", fontFamily: "serif" }}
+                    >
+                      {para}
+                    </p>
+                  ))}
+              </div>
+              <div className="mt-6 pt-5 rounded-xl p-5 flex items-start gap-4" style={{ background: "linear-gradient(135deg, #FFF8E7, #FFFDF5)", border: "1px solid rgba(212,168,67,0.3)" }}>
+                <div className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold" style={{ background: "linear-gradient(135deg, #d4a843, #b38a2d)" }}>!</div>
+                <div>
+                  <p className="text-[11px] uppercase tracking-wider font-bold mb-1" style={{ color: "#8b6914" }}>
+                    {t("आजचा सल्ला", "Today's Advice", "आज की सलाह")}
+                  </p>
+                  <p className="text-sm leading-relaxed" style={{ color: "#3d0c0c" }}>{t(pred.advice.mr, pred.advice.en, pred.advice.mr)}</p>
                 </div>
-              ))}
+              </div>
             </div>
 
             {/* Transit Details */}
@@ -212,9 +234,7 @@ export default function RashiPageClient({ rashiSlug, rashiId, initialPrediction 
                     className="flex flex-col items-center p-3 rounded-xl bg-white hover:shadow-md hover:-translate-y-0.5 transition-all text-center"
                     style={{ border: "1px solid rgba(212,168,67,0.15)" }}
                   >
-                    <span className="w-10 h-10 mx-auto mb-1 rounded-lg flex items-center justify-center text-lg text-white" style={{ background: "linear-gradient(135deg, #7B2D8E, #9B59B6)" }}>
-                      {r.symbol}
-                    </span>
+                    <ZodiacBadge slug={r.slug} size={40} />
                     <span className="text-xs font-bold text-[#3d0c0c]">{t(r.mr, r.en, r.mr)}</span>
                   </Link>
                 ))}

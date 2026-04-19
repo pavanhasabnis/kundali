@@ -5,23 +5,12 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useLang } from "@/lib/astrology/language-context";
 import { JsonLd, localBusinessSchema, siteNavigationSchema } from "@/components/json-ld";
+import { ZodiacBadge } from "@/components/zodiac-badge";
+import { RASHI_LIST } from "@/lib/rashi-data";
 
 /* ─── Data ────────────────────────────────────────────────── */
 
-const zodiacSigns = [
-  { name: "मेष", nameEn: "Aries", icon: "♈" },
-  { name: "वृषभ", nameEn: "Taurus", icon: "♉" },
-  { name: "मिथुन", nameEn: "Gemini", icon: "♊" },
-  { name: "कर्क", nameEn: "Cancer", icon: "♋" },
-  { name: "सिंह", nameEn: "Leo", icon: "♌" },
-  { name: "कन्या", nameEn: "Virgo", icon: "♍" },
-  { name: "तुला", nameEn: "Libra", icon: "♎" },
-  { name: "वृश्चिक", nameEn: "Scorpio", icon: "♏" },
-  { name: "धनु", nameEn: "Sagittarius", icon: "♐" },
-  { name: "मकर", nameEn: "Capricorn", icon: "♑" },
-  { name: "कुंभ", nameEn: "Aquarius", icon: "♒" },
-  { name: "मीन", nameEn: "Pisces", icon: "♓" },
-];
+const zodiacSigns = RASHI_LIST.map((r) => ({ name: r.mr, nameEn: r.en, slug: r.slug }));
 
 interface TravelPkg {
   id: string;
@@ -510,9 +499,9 @@ export default function PreviewHomeClient() {
             <div className="flex flex-col items-center justify-center h-full">
               <div className="grid grid-cols-3 gap-x-6 gap-y-4">
                 {zodiacSigns.slice(0, 6).map((s, i) => (
-                  <div key={i} className="text-center">
-                    <div className="text-2xl sm:text-3xl" style={{ color: "#d4a843" }}>{s.icon}</div>
-                    <div className="text-sm font-semibold text-white/70 mt-1">{s.name}</div>
+                  <div key={i} className="text-center flex flex-col items-center">
+                    <ZodiacBadge slug={s.slug} size={56} variant="maroon" />
+                    <div className="text-sm font-semibold text-white/70 mt-2">{s.name}</div>
                     <div className="text-xs text-white/30">{s.nameEn}</div>
                   </div>
                 ))}
@@ -523,9 +512,9 @@ export default function PreviewHomeClient() {
             <div className="flex flex-col items-center justify-center h-full">
               <div className="grid grid-cols-3 gap-x-6 gap-y-4">
                 {zodiacSigns.slice(6, 12).map((s, i) => (
-                  <div key={i} className="text-center">
-                    <div className="text-2xl sm:text-3xl" style={{ color: "#d4a843" }}>{s.icon}</div>
-                    <div className="text-sm font-semibold text-white/70 mt-1">{s.name}</div>
+                  <div key={i} className="text-center flex flex-col items-center">
+                    <ZodiacBadge slug={s.slug} size={56} variant="maroon" />
+                    <div className="text-sm font-semibold text-white/70 mt-2">{s.name}</div>
                     <div className="text-xs text-white/30">{s.nameEn}</div>
                   </div>
                 ))}
