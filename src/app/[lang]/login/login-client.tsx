@@ -3,14 +3,22 @@
 import { useLang } from "@/lib/astrology/language-context";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPageClient() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get("redirect");
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Safe redirect: only allow same-origin paths
+  const safeRedirect = redirectParam && redirectParam.startsWith("/") && !redirectParam.startsWith("//") ? redirectParam : null;
+  const userHome = safeRedirect ?? `/${lang}`;
+  const adminHome = "/admin";
 
   async function handleEmailAuth(e: React.FormEvent) {
     e.preventDefault();
@@ -49,7 +57,7 @@ export default function LoginPageClient() {
       // Check role and redirect accordingly
       const sess = await fetch("/api/auth/session").then((r) => r.json());
       const role = sess?.user?.role;
-      window.location.href = role === "admin" ? "/admin" : "/account";
+      window.location.href = role === "admin" ? adminHome : userHome;
     } catch {
       setError("Something went wrong");
       setLoading(false);
@@ -64,7 +72,7 @@ export default function LoginPageClient() {
     });
     const data = await res.json();
     if (data.success) {
-      window.location.href = role === "admin" ? "/admin" : "/account";
+      window.location.href = role === "admin" ? adminHome : userHome;
     }
   }
 
@@ -91,7 +99,7 @@ export default function LoginPageClient() {
 
           {/* Google Sign In */}
           <button
-            onClick={() => signIn("google", { callbackUrl: "/account" })}
+            onClick={() => signIn("google", { callbackUrl: userHome })}
             className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 transition text-[#3d0c0c] font-medium shadow-sm"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
