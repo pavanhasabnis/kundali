@@ -116,6 +116,32 @@ export const chatUsage = sqliteTable("chat_usage", {
   count: integer("count").notNull().default(0),
 });
 
+// ── Book Orders (printed bound kundli book shipped to user) ────────
+export const bookOrders = sqliteTable("book_orders", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull().references(() => users.id),
+  kundliId: text("kundli_id").notNull().references(() => kundlis.id),
+  kundliName: text("kundli_name").notNull(), // snapshot at order time
+  recipientName: text("recipient_name").notNull(),
+  addressLine1: text("address_line1").notNull(),
+  addressLine2: text("address_line2"),
+  city: text("city").notNull(),
+  state: text("state").notNull(),
+  pin: text("pin").notNull(),
+  phone: text("phone").notNull(),
+  planAtOrder: text("plan_at_order").notNull(), // free | premium | plus
+  amountPaid: integer("amount_paid").notNull().default(0), // paise; 0 = free claim
+  razorpayPaymentId: text("razorpay_payment_id"),
+  status: text("status").notNull().default("pending"), // pending | printing | shipped | delivered | cancelled
+  trackingNumber: text("tracking_number"),
+  courier: text("courier"), // e.g., "Shiprocket", "DTDC"
+  adminNotes: text("admin_notes"),
+  shippedAt: text("shipped_at"),
+  deliveredAt: text("delivered_at"),
+  createdAt: text("created_at").notNull().$defaultFn(() => new Date().toISOString()),
+  updatedAt: text("updated_at").notNull().$defaultFn(() => new Date().toISOString()),
+});
+
 // Type exports
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -130,3 +156,5 @@ export type NewTravelPackage = typeof travelPackages.$inferInsert;
 export type TravelEnquiry = typeof travelEnquiries.$inferSelect;
 export type ChatUsage = typeof chatUsage.$inferSelect;
 export type NewChatUsage = typeof chatUsage.$inferInsert;
+export type BookOrder = typeof bookOrders.$inferSelect;
+export type NewBookOrder = typeof bookOrders.$inferInsert;

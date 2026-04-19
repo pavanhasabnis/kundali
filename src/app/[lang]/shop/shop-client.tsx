@@ -31,9 +31,9 @@ const PRODUCTS: Product[] = [
     tagMr: "८०+ पानी हार्डबाउंड",
     tagEn: "80+ pg hardbound",
     tagHi: "80+ पृष्ठ हार्डबाउंड",
-    descMr: "संपूर्ण जन्मकुंडली, दशा विश्लेषण, ग्रह स्थिती, उपाय — सुंदर बांधील पुस्तक स्वरूपात घरपोच पाठवले जाते.",
-    descEn: "Complete birth chart, dasha analysis, planetary positions, remedies — delivered as a beautifully bound hardcover book to your home.",
-    descHi: "संपूर्ण जन्म कुंडली, दशा विश्लेषण, ग्रह स्थिति, उपाय — सुंदर हार्डबाउंड पुस्तक आपके घर पहुंचाई जाएगी.",
+    descMr: "संपूर्ण जन्मकुंडली, दशा विश्लेषण, ग्रह स्थिती, उपाय — सुंदर बांधील पुस्तक स्वरूपात घरपोच पाठवले जाते. डिजिटल PDF अमर्यादित डाउनलोड (Premium/Plus); छापील पुस्तक — Plus मध्ये वर्षी १ मोफत.",
+    descEn: "Complete birth chart, dasha analysis, planetary positions, remedies — delivered as a beautifully bound hardcover book to your home. Digital PDF unlimited downloads (Premium/Plus); printed book — 1 free/year in Plus.",
+    descHi: "संपूर्ण जन्म कुंडली, दशा विश्लेषण, ग्रह स्थिति, उपाय — सुंदर हार्डबाउंड पुस्तक आपके घर पहुंचाई जाएगी. डिजिटल PDF असीमित (Premium/Plus); मुद्रित पुस्तक — Plus में 1 मुफ्त/वर्ष.",
     emoji: "📖",
     pricing: {
       free:    { amount: 799, label: "non-subscriber" },
@@ -277,7 +277,19 @@ function ProductCard({ product, currentTier, lang: langProp }: { product: Produc
           <PriceRow tier="plus" data={product.pricing.plus} active={currentTier === "plus"} />
         </div>
         <div style={{ marginTop: "auto", display: "flex", gap: 8, flexDirection: "column" }}>
-          {price.free ? (
+          {product.id === "kundli-book" ? (
+            <Link href={`/${langProp}/shop/claim-book`} style={{
+              padding: "12px 16px",
+              background: price.free ? "#d4f0d4" : "linear-gradient(135deg, #3d0c0c, #5c1a1a)",
+              color: price.free ? "#2d6b2d" : "#d4a843",
+              border: price.free ? "1px solid #2d6b2d" : "1px solid #d4a843",
+              borderRadius: 8, fontWeight: 700, fontSize: 15, textAlign: "center", textDecoration: "none",
+            }}>
+              {price.free
+                ? `✓ ${t("मोफत पुस्तक मागवा (Plus)", "Claim FREE Book (Plus)", "मुफ्त पुस्तक लें (Plus)")}`
+                : t(`मागवा — ₹${price.amount}`, `Order Now — ₹${price.amount}`, `ऑर्डर करें — ₹${price.amount}`)}
+            </Link>
+          ) : price.free ? (
             <button disabled style={{ padding: "12px 16px", background: "#d4f0d4", color: "#2d6b2d", border: "1px solid #2d6b2d", borderRadius: 8, fontWeight: 700, fontSize: 15, cursor: "default" }}>
               ✓ {t("तुमच्या योजनेत समाविष्ट", "Included in your plan", "आपकी योजना में शामिल")}
             </button>

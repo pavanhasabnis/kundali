@@ -39,20 +39,19 @@ export async function POST(req: Request) {
     status: "paid",
   }).where(eq(payments.id, payment.id));
 
-  // Update user plan
-  const planUpdates: Record<string, unknown> = {
-    plan: payment.plan,
-    updatedAt: new Date().toISOString(),
-  };
+  // If tag is a subscription plan, update user plan; if product (e.g. book), leave plan alone
+  const tag = payment.plan;
+  const isSubscription = tag === "premium" || tag === "plus";
 
-  if (payment.plan === "premium") {
-    // Set expiry 30 days from now
+  if (isSubscription) {
     const expiry = new Date();
     expiry.setDate(expiry.getDate() + 30);
-    planUpdates.planExpiresAt = expiry.toISOString();
+    await db.update(users).set({
+      plan: tag,
+      planExpiresAt: expiry.toISOString(),
+      updatedAt: new Date().toISOString(),
+    }).where(eq(users.id, payment.userId));
   }
 
-  await db.update(users).set(planUpdates).where(eq(users.id, payment.userId));
-
-  return NextResponse.json({ success: true, plan: payment.plan });
+  return NextResponse.json({ success: true, plan: tag, subscription: isSubscription, paymentId: razorpay_payment_id });
 }

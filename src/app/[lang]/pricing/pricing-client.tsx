@@ -19,6 +19,7 @@ function translateToken(token: string, lang: string): string {
     "१": { mr: "१", en: "1", hi: "1" },
     "२०% सवलत": { mr: "२०% सवलत", en: "20% off", hi: "20% छूट" },
     "दरमहा १": { mr: "दरमहा १", en: "1 / month", hi: "1 / माह" },
+    "वर्षी १ मोफत": { mr: "वर्षी १ मोफत", en: "1 free / year", hi: "1 मुफ्त / वर्ष" },
   };
   const entry = map[token];
   if (!entry) return token;
@@ -27,13 +28,13 @@ function translateToken(token: string, lang: string): string {
 
 const PLAN_FEATURES: PlanFeature[] = [
   { mr: "कुंडली (जन्म पत्रिका)", en: "Kundli (birth chart)", hi: "कुंडली (जन्म पत्रिका)", tiers: { free: "१", premium: "अमर्यादित", plus: "अमर्यादित" } },
-  { mr: "सविस्तर कुंडली PDF डाउनलोड", en: "Detailed kundli PDF download", hi: "विस्तृत कुंडली PDF डाउनलोड", tiers: { free: false, premium: true, plus: true } },
+  { mr: "सविस्तर कुंडली PDF डाउनलोड (अमर्यादित)", en: "Detailed kundli PDF download (unlimited)", hi: "विस्तृत कुंडली PDF डाउनलोड (असीमित)", tiers: { free: false, premium: true, plus: true } },
   { mr: "दशा विश्लेषण व उपाय", en: "Dasha analysis & remedies", hi: "दशा विश्लेषण व उपाय", tiers: { free: false, premium: true, plus: true } },
   { mr: "गुण मिलान (३६ गुण)", en: "Gun Milaan (36 guna)", hi: "गुण मिलान (36 गुण)", tiers: { free: true, premium: true, plus: true } },
   { mr: "पंचांग, राशीफल, कॅलेंडर", en: "Panchang, rashifal, calendar", hi: "पंचांग, राशिफल, कैलेंडर", tiers: { free: true, premium: true, plus: true } },
   { mr: "मुहूर्त शोधक", en: "Muhurat finder", hi: "मुहूर्त खोजक", tiers: { free: true, premium: true, plus: true } },
   { mr: "छापील दिनदर्शिका घरपोच", en: "Printed calendar shipped home", hi: "मुद्रित पंचांग घर पर", tiers: { free: false, premium: true, plus: true } },
-  { mr: "बांधील कुंडली पुस्तक (वर्षी १)", en: "Bound kundli book (1/year)", hi: "बाउंड कुंडली पुस्तक (1/वर्ष)", tiers: { free: false, premium: "२०% सवलत", plus: true } },
+  { mr: "बांधील छापील कुंडली पुस्तक (घरपोच)", en: "Bound printed kundli book (shipped)", hi: "बाउंड मुद्रित कुंडली पुस्तक (घर पर)", tiers: { free: false, premium: "२०% सवलत", plus: "वर्षी १ मोफत" } },
   { mr: "ज्योतिषाशी सल्लामसलत", en: "Consultation with astrologer", hi: "ज्योतिषी परामर्श", tiers: { free: false, premium: false, plus: "दरमहा १" } },
   { mr: "पूजा बुकिंग सवलत", en: "Pooja booking discount", hi: "पूजा बुकिंग छूट", tiers: { free: false, premium: false, plus: true } },
   { mr: "प्राधान्य समर्थन", en: "Priority support", hi: "प्राथमिकता समर्थन", tiers: { free: false, premium: true, plus: true } },
@@ -47,6 +48,14 @@ const FAQS = [
     aMr: "Premium ₹५९९/महिना — दरमहा आकारणी, कोणत्याही वेळी रद्द करा. Plus ₹१५००/महिना — समान अटी, अतिरिक्त फायदे.",
     aEn: "Premium ₹599/month — billed monthly, cancel anytime. Plus ₹1500/month — same terms, extra perks.",
     aHi: "Premium ₹599/माह — मासिक बिलिंग, कभी भी रद्द करें. Plus ₹1500/माह — वही शर्तें, अतिरिक्त लाभ.",
+  },
+  {
+    qMr: "अमर्यादित PDF व १ छापील पुस्तक यात फरक काय?",
+    qEn: "What's the difference between unlimited PDF and 1 printed book?",
+    qHi: "असीमित PDF और 1 मुद्रित पुस्तक में क्या अंतर?",
+    aMr: "Premium व Plus सदस्यांना अमर्यादित डिजिटल PDF कुंडल्या डाउनलोड करता येतात — स्वतःची, कुटुंबाची, मित्रांची. छापील बांधील पुस्तक मात्र घरपोच येते — छपाई व शिपिंग खर्चामुळे Plus मध्ये वर्षी १ मोफत, Premium मध्ये २०% सवलतीत.",
+    aEn: "Premium and Plus members can download unlimited digital kundli PDFs — for themselves, family, friends. The printed bound book is shipped physically — due to print + shipping costs, Plus includes 1 free per year, Premium gets 20% off.",
+    aHi: "Premium व Plus सदस्य असीमित डिजिटल PDF कुंडली डाउनलोड कर सकते हैं — अपनी, परिवार, मित्रों की. मुद्रित बाउंड पुस्तक घर पर भेजी जाती है — छपाई + शिपिंग लागत के कारण Plus में 1 मुफ्त/वर्ष, Premium में 20% छूट.",
   },
   {
     qMr: "छापील दिनदर्शिका कशी मिळते?",
@@ -121,7 +130,9 @@ function PlanCard({ tier, featured, lang, t, currentPlan, isLoggedIn }: PlanCard
   const borderWidth = isCurrent || featured ? 2 : 1;
 
   const tierFeatures = PLAN_FEATURES.filter(f => f.tiers[tier] !== false);
-  const ctaHref = isLoggedIn ? `/${lang}/account?tab=payments` : `/${lang}/login?redirect=/${lang}/account?tab=payments`;
+  const ctaHref = tier === "free"
+    ? (isLoggedIn ? `/${lang}/account` : `/${lang}/login?redirect=/${lang}/account`)
+    : (isLoggedIn ? `/${lang}/account?tab=payments` : `/${lang}/login?redirect=/${lang}/account?tab=payments`);
 
   return (
     <div style={{

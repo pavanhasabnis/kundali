@@ -15,7 +15,32 @@ interface Enquiry { id: string; name: string; email: string; phone?: string; sub
 interface TravelPkg { id: string; titleMr: string; titleEn: string; descriptionMr?: string; descriptionEn?: string; category: string; duration?: string; priceFrom?: number; priceTo?: number; inclusions?: string; itineraryMr?: string; itineraryEn?: string; highlights?: string; imageUrl?: string; locationMr?: string; locationEn?: string; active: boolean; featured: boolean; createdAt: string; }
 interface TravelEnq { id: string; packageId?: string; packageTitle?: string; name: string; email: string; phone: string; travelDate?: string; travelers?: number; message?: string; status: string; createdAt: string; }
 
-type Tab = "dashboard" | "users" | "blog" | "temples" | "kundlis" | "payments" | "enquiries" | "travel" | "settings";
+type Tab = "dashboard" | "users" | "blog" | "temples" | "kundlis" | "payments" | "book-orders" | "enquiries" | "travel" | "settings";
+
+interface AdminBookOrder {
+  id: string;
+  userId: string;
+  kundliId: string;
+  kundliName: string;
+  recipientName: string;
+  addressLine1: string;
+  addressLine2?: string | null;
+  city: string;
+  state: string;
+  pin: string;
+  phone: string;
+  planAtOrder: string;
+  amountPaid: number;
+  razorpayPaymentId?: string | null;
+  status: string;
+  trackingNumber?: string | null;
+  courier?: string | null;
+  adminNotes?: string | null;
+  shippedAt?: string | null;
+  deliveredAt?: string | null;
+  createdAt: string;
+  user?: { name: string; email: string; plan: string | null } | null;
+}
 
 function BlogGenerator({ onGenerated, onToast }: { onGenerated: () => void; onToast: (msg: string) => void }) {
   const [prompt, setPrompt] = useState("");
@@ -171,6 +196,7 @@ export default function AdminPageClient() {
   const [selectedKundlis, setSelectedKundlis] = useState<Set<string>>(new Set());
   const [deletingKundlis, setDeletingKundlis] = useState(false);
   const [paymentsList, setPaymentsList] = useState<PaymentRecord[]>([]);
+  const [bookOrdersList, setBookOrdersList] = useState<AdminBookOrder[]>([]);
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [travelPkgs, setTravelPkgs] = useState<TravelPkg[]>([]);
   const [travelEnqs, setTravelEnqs] = useState<TravelEnq[]>([]);
@@ -228,6 +254,20 @@ export default function AdminPageClient() {
   const toggleKundli = (id: string) => setSelectedKundlis((prev) => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
   const toggleAllKundlis = () => setSelectedKundlis((prev) => prev.size === kundlisList.length ? new Set() : new Set(kundlisList.map((k) => k.id)));
   const loadPayments = useCallback(async () => { const r = await fetch("/api/admin/payments"); const d = await r.json(); setPaymentsList(d.payments || []); }, []);
+  const loadBookOrders = useCallback(async () => { const r = await fetch("/api/admin/book-orders"); const d = await r.json(); setBookOrdersList(d.orders || []); }, []);
+  async function updateBookOrder(id: string, patch: Partial<AdminBookOrder>) {
+    const res = await fetch(`/api/admin/book-orders/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(patch),
+    });
+    if (res.ok) {
+      setBookOrdersList(prev => prev.map(o => o.id === id ? { ...o, ...patch } : o));
+      showToast("Updated");
+    } else {
+      showToast("Error");
+    }
+  }
   const loadEnquiries = useCallback(async () => { const r = await fetch("/api/admin/enquiries"); const d = await r.json(); setEnquiries(d.enquiries || []); }, []);
   const loadSettings = useCallback(async () => { const r = await fetch("/api/admin/settings"); const d = await r.json(); setSettings(d.settings || {}); }, []);
   const loadTravel = useCallback(async () => { const r = await fetch("/api/admin/travel"); const d = await r.json(); setTravelPkgs(d.packages || []); }, []);
@@ -239,10 +279,11 @@ export default function AdminPageClient() {
     if (activeTab === "blog") loadBlog();
     if (activeTab === "kundlis") loadKundlis();
     if (activeTab === "payments") loadPayments();
+    if (activeTab === "book-orders") loadBookOrders();
     if (activeTab === "enquiries") loadEnquiries();
     if (activeTab === "travel") { loadTravel(); loadTravelEnqs(); }
     if (activeTab === "settings") loadSettings();
-  }, [activeTab, authorized, loadUsers, loadBlog, loadKundlis, loadPayments, loadEnquiries, loadTravel, loadTravelEnqs, loadSettings]);
+  }, [activeTab, authorized, loadUsers, loadBlog, loadKundlis, loadPayments, loadBookOrders, loadEnquiries, loadTravel, loadTravelEnqs, loadSettings]);
 
   // ── Actions ──────────────────────────────────────────────────────
   async function updateUser(id: string, field: string, value: string) {
@@ -412,6 +453,7 @@ export default function AdminPageClient() {
     { key: "travel", label: "Travel Packages" },
     { key: "kundlis", label: "Kundli Reports" },
     { key: "payments", label: "Payments" },
+    { key: "book-orders", label: "Book Orders" },
     { key: "enquiries", label: "Enquiries" },
     { key: "settings", label: "Settings" },
   ];
@@ -1102,6 +1144,84 @@ export default function AdminPageClient() {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {/* ════════ BOOK ORDERS (printed bound kundli book) ════════ */}
+        {activeTab === "book-orders" && (
+          <div className="space-y-3">
+            <div className="bg-white rounded-lg border border-gray-200 px-5 py-3 flex items-center justify-between">
+              <p className="text-sm font-medium text-[#3d0c0c]">{bookOrdersList.length} book orders</p>
+              <p className="text-xs text-[#5c1a1a]/50">
+                {bookOrdersList.filter(o => o.status === "pending").length} pending · {bookOrdersList.filter(o => o.status === "printing").length} printing · {bookOrdersList.filter(o => o.status === "shipped").length} shipped
+              </p>
+            </div>
+            {bookOrdersList.length === 0 ? (
+              <div className="bg-white rounded-lg border border-gray-200 p-8 text-center text-sm text-[#5c1a1a]/50">No book orders yet.</div>
+            ) : (
+              <div className="space-y-3">
+                {bookOrdersList.map(o => {
+                  const dateStr = new Date(o.createdAt).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+                  const statusColor: Record<string, string> = {
+                    pending: "#9b8b6e", printing: "#d4a843", shipped: "#3b82f6",
+                    delivered: "#2d6b2d", cancelled: "#b91c1c",
+                  };
+                  return (
+                    <div key={o.id} className="bg-white rounded-lg border border-gray-200 p-4 text-sm">
+                      <div className="flex justify-between items-start flex-wrap gap-3 mb-3 border-b border-gray-100 pb-3">
+                        <div className="min-w-0">
+                          <div className="font-bold text-[#3d0c0c]">{o.kundliName}</div>
+                          <div className="text-xs text-[#5c1a1a]/60 mt-0.5 font-mono">#{o.id.slice(0, 12)}</div>
+                          <div className="text-xs text-[#5c1a1a]/50 mt-0.5">{dateStr}</div>
+                        </div>
+                        <div className="text-right">
+                          <span style={{ background: statusColor[o.status] + "22", color: statusColor[o.status], padding: "3px 10px", borderRadius: 20, fontSize: 11, fontWeight: 700 }}>
+                            {o.status}
+                          </span>
+                          <div className="text-xs mt-1 font-semibold text-[#3d0c0c]">
+                            {o.amountPaid === 0 ? "FREE" : `₹${o.amountPaid / 100}`} · {o.planAtOrder}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs mb-3">
+                        <div>
+                          <div className="text-[#5c1a1a]/50 mb-0.5 font-medium uppercase tracking-wide text-[10px]">User</div>
+                          <div className="text-[#3d0c0c]">{o.user?.name ?? "?"}</div>
+                          <div className="text-[#5c1a1a]/60">{o.user?.email ?? "?"}</div>
+                        </div>
+                        <div>
+                          <div className="text-[#5c1a1a]/50 mb-0.5 font-medium uppercase tracking-wide text-[10px]">Ship to</div>
+                          <div className="text-[#3d0c0c]">{o.recipientName}</div>
+                          <div className="text-[#5c1a1a]/80">{o.addressLine1}{o.addressLine2 ? `, ${o.addressLine2}` : ""}</div>
+                          <div className="text-[#5c1a1a]/80">{o.city}, {o.state} — {o.pin}</div>
+                          <div className="text-[#5c1a1a]/80">📞 {o.phone}</div>
+                        </div>
+                      </div>
+                      {/* Admin controls */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 pt-3 border-t border-gray-100">
+                        <select value={o.status} onChange={(e) => updateBookOrder(o.id, { status: e.target.value })}
+                          className="text-xs px-2 py-1.5 rounded border border-gray-200 bg-white">
+                          <option value="pending">Pending</option>
+                          <option value="printing">Printing</option>
+                          <option value="shipped">Shipped</option>
+                          <option value="delivered">Delivered</option>
+                          <option value="cancelled">Cancelled</option>
+                        </select>
+                        <input type="text" placeholder="Courier (DTDC/Shiprocket)" defaultValue={o.courier ?? ""}
+                          onBlur={(e) => { if (e.target.value !== (o.courier ?? "")) updateBookOrder(o.id, { courier: e.target.value }); }}
+                          className="text-xs px-2 py-1.5 rounded border border-gray-200 bg-white" />
+                        <input type="text" placeholder="Tracking #" defaultValue={o.trackingNumber ?? ""}
+                          onBlur={(e) => { if (e.target.value !== (o.trackingNumber ?? "")) updateBookOrder(o.id, { trackingNumber: e.target.value }); }}
+                          className="text-xs px-2 py-1.5 rounded border border-gray-200 bg-white" />
+                        <input type="text" placeholder="Internal notes" defaultValue={o.adminNotes ?? ""}
+                          onBlur={(e) => { if (e.target.value !== (o.adminNotes ?? "")) updateBookOrder(o.id, { adminNotes: e.target.value }); }}
+                          className="text-xs px-2 py-1.5 rounded border border-gray-200 bg-white" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 

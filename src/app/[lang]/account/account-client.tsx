@@ -2,7 +2,7 @@
 
 import { useLang } from "@/lib/astrology/language-context";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface UserProfile {
@@ -32,16 +32,38 @@ interface SavedKundli {
   createdAt: string;
 }
 
-type Tab = "overview" | "kundlis" | "payments" | "profile";
+type Tab = "overview" | "kundlis" | "payments" | "orders" | "profile";
+
+interface BookOrder {
+  id: string;
+  kundliName: string;
+  recipientName: string;
+  addressLine1: string;
+  city: string;
+  state: string;
+  pin: string;
+  status: string;
+  trackingNumber?: string | null;
+  courier?: string | null;
+  amountPaid: number;
+  planAtOrder: string;
+  createdAt: string;
+  shippedAt?: string | null;
+  deliveredAt?: string | null;
+}
 
 export default function AccountPageClient() {
   const { t, lang } = useLang();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const isMr = lang === "mr";
   const [user, setUser] = useState<UserProfile | null>(null);
   const [kundlis, setKundlis] = useState<SavedKundli[]>([]);
+  const [orders, setOrders] = useState<BookOrder[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<Tab>("overview");
+  const qpTab = searchParams.get("tab") as Tab | null;
+  const validTab = (t: string | null): t is Tab => t === "overview" || t === "kundlis" || t === "payments" || t === "orders" || t === "profile";
+  const [activeTab, setActiveTab] = useState<Tab>(validTab(qpTab) ? qpTab : "overview");
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -75,6 +97,12 @@ export default function AccountPageClient() {
         if (data.kundlis) setKundlis(data.kundlis);
       } catch { /* ignore */ }
 
+      try {
+        const res = await fetch("/api/book-order");
+        const data = await res.json();
+        if (data.orders) setOrders(data.orders);
+      } catch { /* ignore */ }
+
       setLoading(false);
     }
     load();
@@ -98,7 +126,7 @@ export default function AccountPageClient() {
     setTimeout(() => setToast(""), 3000);
   }
 
-  async function handlePayment(plan: "premium") {
+  async function handlePayment(plan: "premium" | "plus") {
     try {
       const res = await fetch("/api/payment/create", {
         method: "POST",
@@ -121,7 +149,7 @@ export default function AccountPageClient() {
         amount: data.amount,
         currency: data.currency,
         name: "Bhaagyavedh",
-        description: "Premium Monthly — Unlimited Access",
+        description: data.description ?? (plan === "plus" ? "Premium Plus Monthly — Full Access + Consultation" : "Premium Monthly — Unlimited Access"),
         order_id: data.orderId,
         handler: async (response: any) => {
           const verifyRes = await fetch("/api/payment/verify", {
@@ -174,12 +202,14 @@ export default function AccountPageClient() {
   const planLabels: Record<string, { mr: string; en: string }> = {
     free: { mr: "मोफत", en: "Free" },
     premium: { mr: "प्रीमियम", en: "Premium" },
+    plus: { mr: "प्रीमियम प्लस", en: "Premium Plus" },
   };
 
   const navItems: { key: Tab; labelMr: string; labelEn: string }[] = [
     { key: "overview", labelMr: "माझे खाते", labelEn: "Overview" },
     { key: "kundlis", labelMr: "माझ्या कुंडल्या", labelEn: "My Kundlis" },
     { key: "payments", labelMr: "पेमेंट्स", labelEn: "Payments" },
+    { key: "orders", labelMr: "माझ्या ऑर्डर्स", labelEn: "My Orders" },
     { key: "profile", labelMr: "प्रोफाइल सेटिंग्ज", labelEn: "Profile Settings" },
   ];
 
@@ -386,7 +416,7 @@ export default function AccountPageClient() {
         {/* ════════ PAYMENTS ════════ */}
         {activeTab === "payments" && (
           <div className="space-y-6 max-w-3xl">
-            <div className="grid sm:grid-cols-2 gap-4 max-w-2xl">
+            <div className="grid sm:grid-cols-3 gap-4">
               {/* Free */}
               <div className={`bg-white rounded-lg border p-5 ${user.plan === "free" ? "border-[#d4a843] border-2" : "border-gray-200"}`}>
                 <p className="font-bold text-[#3d0c0c]">{t("मोफत", "Free")}</p>
@@ -405,21 +435,41 @@ export default function AccountPageClient() {
                   {t("शिफारस", "Recommended")}
                 </span>
                 <p className="font-bold text-[#3d0c0c]">{t("प्रीमियम", "Premium")}</p>
-                <p className="text-2xl font-bold text-[#3d0c0c] mt-1">₹199<span className="text-xs font-normal text-[#5c1a1a]/50">/{t("महिना", "month")}</span></p>
+                <p className="text-2xl font-bold text-[#3d0c0c] mt-1">₹599<span className="text-xs font-normal text-[#5c1a1a]/50">/{t("महिना", "month")}</span></p>
                 <ul className="mt-3 space-y-1.5 text-xs text-[#5c1a1a]/60">
-                  <li>{t("अनलिमिटेड कुंडली", "Unlimited Kundlis")}</li>
-                  <li>{t("सविस्तर विश्लेषण व PDF", "Detailed Analysis & PDF")}</li>
-                  <li>{t("दशा अंदाज व उपाय", "Dasha Predictions & Remedies")}</li>
-                  <li>{t("गुण मिलान अनलिमिटेड", "Unlimited Guna Matching")}</li>
-                  <li>{t("सर्व सेवांना पूर्ण ॲक्सेस", "Full Access to All Services")}</li>
+                  <li>{t("अमर्यादित कुंडली PDF", "Unlimited Kundli PDFs")}</li>
+                  <li>{t("दशा विश्लेषण व उपाय", "Dasha Analysis & Remedies")}</li>
+                  <li>{t("छापील दिनदर्शिका घरपोच", "Printed Calendar Shipped")}</li>
+                  <li>{t("कुंडली पुस्तकावर २०% सवलत", "20% off Kundli Book")}</li>
+                  <li>{t("प्राधान्य समर्थन", "Priority Support")}</li>
                 </ul>
                 {user.plan !== "premium" ? (
                   <button onClick={() => handlePayment("premium")} className="mt-4 w-full py-2.5 text-sm font-semibold rounded-lg text-white transition hover:opacity-90"
                     style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}>
-                    {t("प्रीमियम घ्या — ₹199/महिना", "Get Premium — ₹199/month")}
+                    {t("प्रीमियम घ्या — ₹599/महिना", "Get Premium — ₹599/month")}
                   </button>
                 ) : (
                   <p className="mt-3 text-xs text-[#d4a843] font-medium">{t("सध्याची योजना", "Current Plan")}</p>
+                )}
+              </div>
+
+              {/* Plus */}
+              <div className={`bg-white rounded-lg border p-5 ${user.plan === "plus" ? "border-[#2d6b2d] border-2" : "border-gray-200"} relative`}>
+                <p className="font-bold text-[#3d0c0c]">{t("प्रीमियम प्लस", "Premium Plus")}</p>
+                <p className="text-2xl font-bold text-[#3d0c0c] mt-1">₹1500<span className="text-xs font-normal text-[#5c1a1a]/50">/{t("महिना", "month")}</span></p>
+                <ul className="mt-3 space-y-1.5 text-xs text-[#5c1a1a]/60">
+                  <li>{t("सर्व Premium फायदे", "Everything in Premium")}</li>
+                  <li>{t("वर्षी १ मोफत बांधील कुंडली पुस्तक", "1 FREE bound kundli book/year")}</li>
+                  <li>{t("दरमहा १ ज्योतिषी सल्लामसलत", "1 astrologer consultation/month")}</li>
+                  <li>{t("पूजा बुकिंग सवलत", "Pooja booking discount")}</li>
+                </ul>
+                {user.plan !== "plus" ? (
+                  <button onClick={() => handlePayment("plus")} className="mt-4 w-full py-2.5 text-sm font-semibold rounded-lg text-white transition hover:opacity-90"
+                    style={{ background: "linear-gradient(135deg, #2d6b2d, #1f4d1f)" }}>
+                    {t("Plus घ्या — ₹1500/महिना", "Get Plus — ₹1500/month")}
+                  </button>
+                ) : (
+                  <p className="mt-3 text-xs text-[#2d6b2d] font-medium">{t("सध्याची योजना", "Current Plan")}</p>
                 )}
               </div>
             </div>
@@ -428,6 +478,75 @@ export default function AccountPageClient() {
               <h3 className="text-xs font-bold text-[#3d0c0c] uppercase tracking-wide mb-3">{t("पेमेंट इतिहास", "Payment History")}</h3>
               <p className="text-sm text-[#5c1a1a]/40">{t("अजून कोणतेही पेमेंट नाही.", "No payments yet.")}</p>
             </div>
+          </div>
+        )}
+
+        {/* ════════ ORDERS (printed book shipments) ════════ */}
+        {activeTab === "orders" && (
+          <div className="space-y-5 max-w-4xl">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <h2 className="text-lg font-bold text-[#3d0c0c]">{t("माझ्या ऑर्डर्स", "My Orders")}</h2>
+              <Link href={`/${lang}/shop/claim-book`} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#d4a843]" style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}>
+                {t("+ नवीन ऑर्डर", "+ New Order")}
+              </Link>
+            </div>
+            {orders.length === 0 ? (
+              <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+                <p className="text-sm text-[#5c1a1a]/60 mb-4">
+                  {t("तुम्ही अजून छापील पुस्तक मागवले नाही.", "You haven't ordered a printed book yet.")}
+                </p>
+                <Link href={`/${lang}/shop`} className="inline-block px-5 py-2 rounded-lg bg-[#d4a843] text-[#3d0c0c] text-sm font-semibold">
+                  {t("दुकान पहा", "Visit Shop")}
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {orders.map(o => {
+                  const statusColor: Record<string, string> = {
+                    pending: "#9b8b6e", printing: "#d4a843", shipped: "#3b82f6",
+                    delivered: "#2d6b2d", cancelled: "#b91c1c",
+                  };
+                  const statusLabelMr: Record<string, string> = {
+                    pending: "प्रलंबित", printing: "छापणीत", shipped: "पाठवले",
+                    delivered: "पोहोचले", cancelled: "रद्द",
+                  };
+                  const dateStr = new Date(o.createdAt).toLocaleDateString(isMr ? "mr-IN" : "en-IN", { day: "numeric", month: "short", year: "numeric" });
+                  return (
+                    <div key={o.id} className="bg-white rounded-lg border border-gray-200 p-4 text-sm">
+                      <div className="flex justify-between items-start flex-wrap gap-3 mb-3">
+                        <div>
+                          <div className="font-bold text-[#3d0c0c]">{o.kundliName}</div>
+                          <div className="text-xs text-[#5c1a1a]/50 mt-0.5">
+                            {t("ऑर्डर", "Order")} #{o.id.slice(0, 8)} · {dateStr}
+                          </div>
+                        </div>
+                        <span style={{ background: statusColor[o.status] + "22", color: statusColor[o.status], padding: "3px 10px", borderRadius: 20, fontSize: 11, fontWeight: 700 }}>
+                          {t(statusLabelMr[o.status] ?? o.status, o.status)}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div>
+                          <div className="text-[#5c1a1a]/50 mb-0.5">{t("शिपिंग पत्ता", "Ship to")}</div>
+                          <div className="text-[#3d0c0c]">{o.recipientName}, {o.addressLine1}, {o.city}, {o.state} — {o.pin}</div>
+                        </div>
+                        <div>
+                          <div className="text-[#5c1a1a]/50 mb-0.5">{t("रक्कम", "Amount")}</div>
+                          <div className="text-[#3d0c0c] font-semibold">
+                            {o.amountPaid === 0 ? t("मोफत (Plus वार्षिक)", "FREE (Plus annual)") : `₹${o.amountPaid / 100}`}
+                          </div>
+                        </div>
+                        {o.trackingNumber && (
+                          <div className="sm:col-span-2">
+                            <div className="text-[#5c1a1a]/50 mb-0.5">{t("ट्रॅकिंग", "Tracking")}</div>
+                            <div className="text-[#3d0c0c] font-mono text-xs">{o.courier ? `${o.courier} · ` : ""}{o.trackingNumber}</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 

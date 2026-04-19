@@ -43,11 +43,11 @@ const navStructure: NavNode[] = [
     ],
   },
   { kind: "link", item: { href: "/calendar", labelMr: "दिनदर्शिका", labelEn: "Calendar", labelHi: "कैलेंडर" } },
+  { kind: "link", item: { href: "/shop", labelMr: "दुकान", labelEn: "Shop", labelHi: "शॉप" } },
   { kind: "link", item: { href: "/pricing", labelMr: "योजना", labelEn: "Plans", labelHi: "योजनाएं" } },
   {
     kind: "group", key: "seva", labelMr: "सेवा", labelEn: "Services", labelHi: "सेवा",
     items: [
-      { href: "/shop", labelMr: "दुकान", labelEn: "Shop", labelHi: "शॉप" },
       { href: "/pooja-services", labelMr: "पूजा सेवा", labelEn: "Pooja Services", labelHi: "पूजा सेवा" },
       { href: "/consultation", labelMr: "सल्ला सेवा", labelEn: "Consult", labelHi: "परामर्श" },
     ],
