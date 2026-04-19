@@ -507,6 +507,8 @@ function KundliResultContent() {
         setAuthChecked(true);
         return;
       }
+      // View-mode: loading an already-saved kundli from account list — skip limit gate
+      const isViewMode = !!searchParams.get("view");
       try {
         const sRes = await fetch("/api/user");
         const sData = await sRes.json();
@@ -516,8 +518,8 @@ function KundliResultContent() {
         }
         setUserPlan(sData.user.plan || "free");
 
-        // Check kundli count for free users (skip for admin/premium)
-        if (!sData.user.plan || sData.user.plan === "free") {
+        // Check kundli count for free users (skip for admin/premium + view mode)
+        if (!isViewMode && (!sData.user.plan || sData.user.plan === "free")) {
           const kRes = await fetch("/api/user/kundlis");
           const kData = await kRes.json();
           const count = kData.kundlis?.length || 0;
@@ -582,10 +584,11 @@ function KundliResultContent() {
         const data = await res.json();
         setResult(data);
 
-        // Auto-save kundli to DB (once per mount). Skip for admin-generated runs and when no name given.
+        // Auto-save kundli to DB (once per mount). Skip for admin-generated runs, view-mode (already saved), and when no name given.
         const isAdminRun = searchParams.get("admin") === "1";
+        const isViewMode = !!searchParams.get("view");
         const hasName = !!searchParams.get("name");
-        if (!savedRef.current && !isAdminRun && hasName) {
+        if (!savedRef.current && !isAdminRun && !isViewMode && hasName) {
           savedRef.current = true;
           try {
             const day = searchParams.get("day") || "1";

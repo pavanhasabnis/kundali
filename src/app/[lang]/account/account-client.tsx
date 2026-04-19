@@ -29,6 +29,8 @@ interface SavedKundli {
   dateOfBirth: string;
   birthTime: string;
   birthPlace: string;
+  latitude?: number | null;
+  longitude?: number | null;
   createdAt: string;
 }
 
@@ -397,17 +399,34 @@ export default function AccountPageClient() {
               </div>
             ) : (
               <div className="divide-y divide-gray-100">
-                {kundlis.map((k) => (
-                  <div key={k.id} className="flex items-center justify-between px-5 py-3 hover:bg-gray-50/50">
-                    <div>
-                      <p className="font-medium text-[#3d0c0c] text-sm">{k.name}</p>
-                      <p className="text-xs text-[#5c1a1a]/40 mt-0.5">
-                        {k.dateOfBirth} &middot; {k.birthTime} &middot; {k.birthPlace}
-                      </p>
-                    </div>
-                    <p className="text-xs text-[#5c1a1a]/40">{new Date(k.createdAt).toLocaleDateString(isMr ? "mr-IN" : "en-IN")}</p>
-                  </div>
-                ))}
+                {kundlis.map((k) => {
+                  const [y, mo, d] = (k.dateOfBirth || "").split("-");
+                  const [h, mi] = (k.birthTime || "").split(":");
+                  const params = new URLSearchParams({
+                    view: k.id,
+                    name: k.name,
+                    year: y || "", month: mo || "", day: d || "",
+                    hour: h || "", minute: mi || "",
+                    lat: k.latitude != null ? String(k.latitude) : "",
+                    lng: k.longitude != null ? String(k.longitude) : "",
+                    tz: "5.5",
+                    place: k.birthPlace || "",
+                  });
+                  return (
+                    <Link key={k.id} href={`/${lang}/kundli/result?${params.toString()}`} className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition">
+                      <div>
+                        <p className="font-medium text-[#3d0c0c] text-sm">{k.name}</p>
+                        <p className="text-xs text-[#5c1a1a]/40 mt-0.5">
+                          {k.dateOfBirth} &middot; {k.birthTime} &middot; {k.birthPlace}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <p className="text-xs text-[#5c1a1a]/40">{new Date(k.createdAt).toLocaleDateString(isMr ? "mr-IN" : "en-IN")}</p>
+                        <span className="text-[#d4a843] text-sm">→</span>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -415,62 +434,83 @@ export default function AccountPageClient() {
 
         {/* ════════ PAYMENTS ════════ */}
         {activeTab === "payments" && (
-          <div className="space-y-6 max-w-3xl">
-            <div className="grid sm:grid-cols-3 gap-4">
+          <div className="space-y-6">
+            <div className="grid sm:grid-cols-3 gap-4 items-stretch">
               {/* Free */}
-              <div className={`bg-white rounded-lg border p-5 ${user.plan === "free" ? "border-[#d4a843] border-2" : "border-gray-200"}`}>
+              <div className={`bg-white rounded-lg border p-5 flex flex-col ${user.plan === "free" ? "border-[#d4a843] border-2" : "border-gray-200"}`}>
                 <p className="font-bold text-[#3d0c0c]">{t("मोफत", "Free")}</p>
-                <p className="text-2xl font-bold text-[#3d0c0c] mt-1">₹0</p>
-                <ul className="mt-3 space-y-1.5 text-xs text-[#5c1a1a]/60">
-                  <li>{t("१ मोफत कुंडली", "1 Free Kundli")}</li>
-                  <li>{t("मूळ कुंडली विश्लेषण", "Basic Kundli Analysis")}</li>
-                  <li>{t("राशीफल, पंचांग, कॅलेंडर", "Rashifal, Panchang, Calendar")}</li>
+                <p className="text-2xl font-bold text-[#3d0c0c] mt-1">₹0<span className="text-xs font-normal text-[#5c1a1a]/50">&nbsp;·&nbsp;{t("कायम", "forever")}</span></p>
+                <ul className="mt-4 space-y-2 text-xs text-[#5c1a1a]/70 flex-1">
+                  <li>✓ {t("१ मोफत कुंडली", "1 Free Kundli")}</li>
+                  <li>✓ {t("मूळ कुंडली विश्लेषण", "Basic Kundli Analysis")}</li>
+                  <li>✓ {t("राशीफल, पंचांग, कॅलेंडर", "Rashifal, Panchang, Calendar")}</li>
+                  <li>✓ {t("गुण मिलान", "Gun Milaan")}</li>
+                  <li>✓ {t("मुहूर्त शोधक", "Muhurat Finder")}</li>
                 </ul>
-                {user.plan === "free" && <p className="mt-3 text-xs text-[#d4a843] font-medium">{t("सध्याची योजना", "Current Plan")}</p>}
+                <div className="mt-5 pt-4 border-t border-gray-100">
+                  {user.plan === "free" ? (
+                    <div className="py-2.5 rounded-lg text-center text-xs font-semibold bg-[#d4a843]/15 text-[#d4a843]">
+                      ✓ {t("सध्याची योजना", "Current Plan")}
+                    </div>
+                  ) : (
+                    <div className="py-2.5 text-center text-xs text-[#5c1a1a]/40">
+                      {t("सुरुवातीची योजना", "Starter plan")}
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Premium */}
-              <div className={`bg-white rounded-lg border p-5 ${user.plan === "premium" ? "border-[#d4a843] border-2" : "border-gray-200"} relative`}>
-                <span className="absolute -top-2.5 right-4 text-[10px] font-bold px-3 py-0.5 rounded-full" style={{ background: "#d4a843", color: "#1a0505" }}>
-                  {t("शिफारस", "Recommended")}
+              <div className={`bg-white rounded-lg border p-5 flex flex-col relative ${user.plan === "premium" ? "border-[#d4a843] border-2" : "border-gray-200"}`}>
+                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-[10px] font-bold px-3 py-0.5 rounded-full whitespace-nowrap" style={{ background: "#d4a843", color: "#1a0505" }}>
+                  ⭐ {t("शिफारस", "Recommended")}
                 </span>
                 <p className="font-bold text-[#3d0c0c]">{t("प्रीमियम", "Premium")}</p>
                 <p className="text-2xl font-bold text-[#3d0c0c] mt-1">₹599<span className="text-xs font-normal text-[#5c1a1a]/50">/{t("महिना", "month")}</span></p>
-                <ul className="mt-3 space-y-1.5 text-xs text-[#5c1a1a]/60">
-                  <li>{t("अमर्यादित कुंडली PDF", "Unlimited Kundli PDFs")}</li>
-                  <li>{t("दशा विश्लेषण व उपाय", "Dasha Analysis & Remedies")}</li>
-                  <li>{t("छापील दिनदर्शिका घरपोच", "Printed Calendar Shipped")}</li>
-                  <li>{t("कुंडली पुस्तकावर २०% सवलत", "20% off Kundli Book")}</li>
-                  <li>{t("प्राधान्य समर्थन", "Priority Support")}</li>
+                <ul className="mt-4 space-y-2 text-xs text-[#5c1a1a]/70 flex-1">
+                  <li>✓ {t("अमर्यादित कुंडली PDF", "Unlimited Kundli PDFs")}</li>
+                  <li>✓ {t("दशा विश्लेषण व उपाय", "Dasha Analysis & Remedies")}</li>
+                  <li>✓ {t("छापील दिनदर्शिका घरपोच", "Printed Calendar Shipped")}</li>
+                  <li>✓ {t("कुंडली पुस्तकावर २०% सवलत", "20% off Kundli Book")}</li>
+                  <li>✓ {t("प्राधान्य समर्थन", "Priority Support")}</li>
                 </ul>
-                {user.plan !== "premium" ? (
-                  <button onClick={() => handlePayment("premium")} className="mt-4 w-full py-2.5 text-sm font-semibold rounded-lg text-white transition hover:opacity-90"
-                    style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}>
-                    {t("प्रीमियम घ्या — ₹599/महिना", "Get Premium — ₹599/month")}
-                  </button>
-                ) : (
-                  <p className="mt-3 text-xs text-[#d4a843] font-medium">{t("सध्याची योजना", "Current Plan")}</p>
-                )}
+                <div className="mt-5 pt-4 border-t border-gray-100">
+                  {user.plan !== "premium" ? (
+                    <button onClick={() => handlePayment("premium")} className="w-full py-2.5 text-xs font-semibold rounded-lg text-[#d4a843] transition hover:opacity-90"
+                      style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}>
+                      {t("प्रीमियम घ्या", "Get Premium")}
+                    </button>
+                  ) : (
+                    <div className="py-2.5 rounded-lg text-center text-xs font-semibold bg-[#d4a843]/15 text-[#d4a843]">
+                      ✓ {t("सध्याची योजना", "Current Plan")}
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Plus */}
-              <div className={`bg-white rounded-lg border p-5 ${user.plan === "plus" ? "border-[#2d6b2d] border-2" : "border-gray-200"} relative`}>
+              <div className={`bg-white rounded-lg border p-5 flex flex-col ${user.plan === "plus" ? "border-[#2d6b2d] border-2" : "border-gray-200"}`}>
                 <p className="font-bold text-[#3d0c0c]">{t("प्रीमियम प्लस", "Premium Plus")}</p>
                 <p className="text-2xl font-bold text-[#3d0c0c] mt-1">₹1499<span className="text-xs font-normal text-[#5c1a1a]/50">/{t("महिना", "month")}</span></p>
-                <ul className="mt-3 space-y-1.5 text-xs text-[#5c1a1a]/60">
-                  <li>{t("सर्व Premium फायदे", "Everything in Premium")}</li>
-                  <li>{t("वर्षी १ मोफत बांधील कुंडली पुस्तक", "1 FREE bound kundli book/year")}</li>
-                  <li>{t("दरमहा १ ज्योतिषी सल्लामसलत", "1 astrologer consultation/month")}</li>
-                  <li>{t("पूजा बुकिंग सवलत", "Pooja booking discount")}</li>
+                <ul className="mt-4 space-y-2 text-xs text-[#5c1a1a]/70 flex-1">
+                  <li>✓ {t("सर्व Premium फायदे", "Everything in Premium")}</li>
+                  <li>✓ {t("वर्षी १ मोफत बांधील कुंडली पुस्तक", "1 FREE bound kundli book/year")}</li>
+                  <li>✓ {t("दरमहा १ ज्योतिषी सल्लामसलत", "1 astrologer consultation/month")}</li>
+                  <li>✓ {t("पूजा बुकिंग सवलत", "Pooja booking discount")}</li>
+                  <li>✓ {t("प्राधान्य समर्थन", "Priority Support")}</li>
                 </ul>
-                {user.plan !== "plus" ? (
-                  <button onClick={() => handlePayment("plus")} className="mt-4 w-full py-2.5 text-sm font-semibold rounded-lg text-white transition hover:opacity-90"
-                    style={{ background: "linear-gradient(135deg, #2d6b2d, #1f4d1f)" }}>
-                    {t("Plus घ्या — ₹1499/महिना", "Get Plus — ₹1499/month")}
-                  </button>
-                ) : (
-                  <p className="mt-3 text-xs text-[#2d6b2d] font-medium">{t("सध्याची योजना", "Current Plan")}</p>
-                )}
+                <div className="mt-5 pt-4 border-t border-gray-100">
+                  {user.plan !== "plus" ? (
+                    <button onClick={() => handlePayment("plus")} className="w-full py-2.5 text-xs font-semibold rounded-lg text-white transition hover:opacity-90"
+                      style={{ background: "linear-gradient(135deg, #2d6b2d, #1f4d1f)" }}>
+                      {t("Plus घ्या", "Get Plus")}
+                    </button>
+                  ) : (
+                    <div className="py-2.5 rounded-lg text-center text-xs font-semibold bg-[#2d6b2d]/15 text-[#2d6b2d]">
+                      ✓ {t("सध्याची योजना", "Current Plan")}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
