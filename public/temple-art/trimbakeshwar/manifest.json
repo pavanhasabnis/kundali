@@ -1,0 +1,47 @@
+{
+  "templeId": "trimbakeshwar",
+  "scenes": [
+    {
+      "scene": "katha",
+      "file": "katha.png",
+      "model": "imagen-4.0-generate-001",
+      "bytes": 1735846
+    },
+    {
+      "scene": "hook",
+      "file": "hook.png",
+      "model": "imagen-4.0-generate-001",
+      "bytes": 1681989
+    },
+    {
+      "scene": "intro",
+      "file": "intro.png",
+      "model": "imagen-4.0-generate-001",
+      "bytes": 1744292
+    },
+    {
+      "scene": "architecture",
+      "file": "architecture.png",
+      "model": "imagen-4.0-generate-001",
+      "bytes": 1916484
+    },
+    {
+      "scene": "rituals",
+      "file": "rituals.png",
+      "model": "imagen-4.0-generate-001",
+      "bytes": 1666309
+    },
+    {
+      "scene": "kumbh",
+      "file": "kumbh.png",
+      "model": "imagen-4.0-generate-001",
+      "bytes": 2239871
+    },
+    {
+      "scene": "cta",
+      "file": "cta.png",
+      "model": "imagen-4.0-generate-001",
+      "bytes": 1350928
+    }
+  ]
+}

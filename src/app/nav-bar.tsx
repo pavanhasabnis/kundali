@@ -112,10 +112,10 @@ export function NavBar() {
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md border-b border-[#d4a843]/20 shadow-sm font-heading" style={{ background: "rgba(61,12,12,0.95)" }}>
-      <div className="max-w-[1400px] mx-auto px-3 sm:px-4 py-1.5">
+      <div className="max-w-[1400px] mx-auto px-3 sm:px-4 py-2.5">
         <div className="flex items-center justify-between gap-2">
           <Link href={langPrefix} className="flex items-center shrink-0">
-            <img src={lang === "en" ? "/logos/navbar-dark.svg" : "/logos/navbar-dark-mr.svg"} alt="Bhaagyavedh" className="h-10 w-auto" />
+            <img src={lang === "en" ? "/logos/navbar-dark.svg" : "/logos/navbar-dark-mr.svg"} alt="Bhaagyavedh" className="h-12 w-auto" />
           </Link>
 
           {/* Desktop: grouped nav with dropdowns */}
@@ -127,7 +127,7 @@ export function NavBar() {
                   <Link
                     key={node.item.href}
                     href={withLang(node.item.href)}
-                    className={`shrink-0 px-2 xl:px-2.5 py-1.5 text-[11px] xl:text-[12px] font-medium transition-colors whitespace-nowrap ${
+                    className={`shrink-0 px-2 xl:px-2.5 py-2 text-[12px] xl:text-[13px] font-medium transition-colors whitespace-nowrap ${
                       active ? "text-[#d4a843]" : "text-white/75 hover:text-[#d4a843]"
                     }`}
                   >
@@ -142,7 +142,7 @@ export function NavBar() {
                   <button
                     onClick={() => setOpenDropdown(open ? null : node.key)}
                     onMouseEnter={() => setOpenDropdown(node.key)}
-                    className={`inline-flex items-center gap-0.5 px-2 xl:px-2.5 py-1.5 text-[11px] xl:text-[12px] font-medium transition-colors whitespace-nowrap ${
+                    className={`inline-flex items-center gap-0.5 px-2 xl:px-2.5 py-2 text-[12px] xl:text-[13px] font-medium transition-colors whitespace-nowrap ${
                       active || open ? "text-[#d4a843]" : "text-white/75 hover:text-[#d4a843]"
                     }`}
                     aria-haspopup="menu"
