@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props) {
     path: `/blog/${slug}`,
     ogType: "article",
     mr: {
-      title: `${titleMr} — ${titleEn} | भाग्यवेध ब्लॉग`,
+      title: `${titleMr} — ${titleEn}`,
       description: descMr,
       keywords: [
         ...tagsMr,
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props) {
       ],
     },
     en: {
-      title: `${post.seo?.metaTitle || titleEn} — ${titleMr} | Bhaagyavedh Blog`,
+      title: `${post.seo?.metaTitle || titleEn} — ${titleMr}`,
       description: descEn,
       keywords: [
         ...tagsEn,

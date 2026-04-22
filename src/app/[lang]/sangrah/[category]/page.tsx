@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props) {
     lang: l,
     path: `/sangrah/${category}`,
     mr: {
-      title: `${cat.labelMr} संग्रह — ${cat.labelEn} Marathi | भाग्यवेध`,
+      title: `${cat.labelMr} संग्रह — ${cat.labelEn} Marathi`,
       description: `मराठी ${cat.labelMr} संग्रह — ${cat.description}. संस्कृत मुळ, मराठी लिप्यंतर आणि अर्थासह.`,
       keywords: [
         `${cat.labelMr}`, `मराठी ${cat.labelMr}`, `${cat.labelMr} संग्रह`,
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props) {
       ],
     },
     en: {
-      title: `${cat.labelEn} Collection — ${cat.labelMr} | Sanskrit + Marathi | Bhaagyavedh`,
+      title: `${cat.labelEn} Collection — ${cat.labelMr} | Sanskrit + Marathi`,
       description: `Complete ${cat.labelEn.toLowerCase()} collection in Sanskrit with Marathi transliteration and English meaning. ${cat.descriptionEn}.`,
       keywords: [
         `${cat.labelEn.toLowerCase()}`, `${cat.labelEn.toLowerCase()} collection`,

@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Astrology Blog — Marathi Vedic Articles | Bhaagyavedh",
+      title: "Astrology Blog — Marathi Vedic Articles",
       description:
         "Daily Marathi astrology blog — Vedic articles on horoscope, festivals, vrat katha, remedies, panchang. Read authentic Jyotish content in Marathi & English.",
       keywords: [

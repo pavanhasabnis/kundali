@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props) {
     path: `/temples/${id}`,
     ogType: "article",
     mr: {
-      title: `${nameMr} मंदिर — दर्शन वेळ, इतिहास | ${nameEn} Temple Marathi | भाग्यवेध`,
+      title: `${nameMr} मंदिर — दर्शन वेळ, इतिहास | ${nameEn} Temple Marathi`,
       description: descMr,
       keywords: [
         `${nameMr} मंदिर`, `${nameMr} दर्शन`, `${nameMr} मंदिर माहिती`,
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props) {
       ],
     },
     en: {
-      title: `${nameEn} Temple — Darshan Timings, History, How to Reach | Bhaagyavedh`,
+      title: `${nameEn} Temple — Darshan Timings, History, How to Reach`,
       description: descEn,
       keywords: [
         `${nameEn} temple`, `${nameEn} darshan`, `${nameEn} history`,

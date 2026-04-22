@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Pilgrimage Packages — Jyotirlinga, Char Dham | Bhaagyavedh",
+      title: "Pilgrimage Packages — Jyotirlinga, Char Dham",
       description:
         "Guided pilgrimage packages from Pune — 12 Jyotirlinga, Char Dham, Ashtavinayak, Shakti Peeth, Panch Prayag. Yatra marathi with full travel arrangements.",
       keywords: [

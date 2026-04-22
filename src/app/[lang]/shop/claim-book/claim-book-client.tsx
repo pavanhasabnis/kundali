@@ -222,7 +222,7 @@ export default function ClaimBookClient() {
     <div style={{ minHeight: "100vh", background: "#fffaf0" }}>
       <div style={{ maxWidth: 820, margin: "0 auto", padding: "40px 20px 60px" }}>
         <Link href={`/${lang}/shop`} style={{ fontSize: 13, color: "#5c1a1a", textDecoration: "none" }}>
-          ← {t("दुकानावर परत", "Back to Shop", "शॉप पर वापस")}
+          ← {t("शॉपवर परत", "Back to Shop", "शॉप पर वापस")}
         </Link>
         <h1 style={{ fontSize: 30, color: "#3d0c0c", marginTop: 16, marginBottom: 6, fontWeight: 700 }}>
           {t("छापील कुंडली पुस्तक मागवा", "Claim Printed Kundli Book", "मुद्रित कुंडली पुस्तक लें")}

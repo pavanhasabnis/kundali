@@ -8,13 +8,13 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/privacy",
     mr: {
-      title: "गोपनीयता धोरण — Privacy Policy Marathi | भाग्यवेध",
+      title: "गोपनीयता धोरण — Privacy Policy Marathi",
       description:
         "भाग्यवेध गोपनीयता धोरण — आपल्या डेटाची सुरक्षा आणि वापरण्याविषयी माहिती. Privacy policy marathi.",
       keywords: ["गोपनीयता धोरण", "privacy policy marathi", "bhaagyavedh privacy"],
     },
     en: {
-      title: "Privacy Policy — Bhaagyavedh",
+      title: "Privacy Policy",
       description:
         "Bhaagyavedh privacy policy — how we collect, use, and protect your data. Available in Marathi and English.",
       keywords: ["privacy policy", "data protection", "bhaagyavedh privacy"],

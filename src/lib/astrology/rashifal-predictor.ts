@@ -1,5 +1,8 @@
 import swisseph from "swisseph";
 import { calculateGochar, type TransitPlanet, type GocharResult } from "./gochar";
+import { db } from "@/lib/db";
+import { dailyRashifal } from "@/lib/db/schema";
+import { eq, and } from "drizzle-orm";
 
 const PLANET_IDS: { id: string; seId: number }[] = [
   { id: "Sun", seId: swisseph.SE_SUN },
@@ -47,5 +50,34 @@ export function predictRashifal(rashiId: number, date?: Date): GocharResult {
     return new Date(nowIST.getUTCFullYear(), nowIST.getUTCMonth(), nowIST.getUTCDate());
   })();
   const planets = computeTransitPlanets(d);
-  return calculateGochar(planets, rashiId);
+  const result = calculateGochar(planets, rashiId);
+
+  // Overlay DB-cached LLM prose when available for (date, rashi).
+  const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  try {
+    const cached = db
+      .select()
+      .from(dailyRashifal)
+      .where(and(eq(dailyRashifal.date, dateStr), eq(dailyRashifal.rashiId, rashiId)))
+      .limit(1)
+      .all();
+    if (cached.length > 0) {
+      const c = cached[0];
+      result.overall = { mr: c.overall, en: result.overall.en };
+      result.career  = { mr: c.career,  en: result.career.en  };
+      result.love    = { mr: c.love,    en: result.love.en    };
+      result.health  = { mr: c.health,  en: result.health.en  };
+      if (c.advice)      result.advice    = { mr: c.advice, en: result.advice.en };
+      if (c.luckyColor)  result.luckyColor.mr = c.luckyColor;
+      if (c.luckyNumber) result.luckyNumber = c.luckyNumber;
+      if (c.rating)      result.rating = c.rating;
+      result.narrative = {
+        mr: `${c.overall}\n\n${c.career}\n\n${c.love}\n\n${c.health}`,
+        en: result.narrative.en,
+      };
+    }
+  } catch {
+    // DB unavailable during build — return algorithmic result
+  }
+  return result;
 }

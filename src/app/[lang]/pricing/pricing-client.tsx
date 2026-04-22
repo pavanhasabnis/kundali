@@ -1,380 +1,602 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useLang } from "@/lib/astrology/language-context";
+import { TIERS, type BillingCycle } from "@/lib/pricing";
 
-type Tier = "free" | "premium" | "plus";
-
-interface PlanFeature {
-  mr: string;
-  en: string;
-  hi: string;
-  tiers: Record<Tier, boolean | string>;
+function T(lang: string, mr: string, en: string, hi?: string): string {
+  if (lang === "en") return en;
+  if (lang === "hi") return hi ?? mr;
+  return mr;
 }
 
-function translateToken(token: string, lang: string): string {
-  const map: Record<string, { en: string; hi: string; mr: string }> = {
-    "अमर्यादित": { mr: "अमर्यादित", en: "Unlimited", hi: "असीमित" },
-    "१": { mr: "१", en: "1", hi: "1" },
-    "२०% सवलत": { mr: "२०% सवलत", en: "20% off", hi: "20% छूट" },
-    "दरमहा १": { mr: "दरमहा १", en: "1 / month", hi: "1 / माह" },
-    "वर्षी १ मोफत": { mr: "वर्षी १ मोफत", en: "1 free / year", hi: "1 मुफ्त / वर्ष" },
+/** Path for CTA that leads to checkout. Unauth → login with redirect.
+ *  Auth → /account?tab=payments with pre-filled plan + cycle query. */
+function checkoutHref(args: {
+  lang: string;
+  plan: string;
+  cycle?: BillingCycle;
+  isLoggedIn: boolean;
+}): string {
+  const base = `/${args.lang}/account?tab=payments&plan=${args.plan}`;
+  const qsCycle = args.cycle ? `&cycle=${args.cycle}` : "";
+  if (args.isLoggedIn) return `${base}${qsCycle}`;
+  const redirect = encodeURIComponent(`${base}${qsCycle}`);
+  return `/${args.lang}/login?redirect=${redirect}`;
+}
+
+/* ─── Comparison matrix ─────────────────────────────────────── */
+
+type CellValue = boolean | { mr: string; en: string; hi?: string };
+
+interface ComparisonRow {
+  featureMr: string;
+  featureEn: string;
+  featureHi: string;
+  values: {
+    free: CellValue;
+    starter: CellValue;
+    premium: CellValue;
+    plus: CellValue;
   };
-  const entry = map[token];
-  if (!entry) return token;
-  return entry[lang as "mr" | "en" | "hi"] ?? entry.mr;
 }
 
-const PLAN_FEATURES: PlanFeature[] = [
-  { mr: "कुंडली (जन्म पत्रिका)", en: "Kundli (birth chart)", hi: "कुंडली (जन्म पत्रिका)", tiers: { free: "१", premium: "अमर्यादित", plus: "अमर्यादित" } },
-  { mr: "सविस्तर कुंडली PDF डाउनलोड (अमर्यादित)", en: "Detailed kundli PDF download (unlimited)", hi: "विस्तृत कुंडली PDF डाउनलोड (असीमित)", tiers: { free: false, premium: true, plus: true } },
-  { mr: "दशा विश्लेषण व उपाय", en: "Dasha analysis & remedies", hi: "दशा विश्लेषण व उपाय", tiers: { free: false, premium: true, plus: true } },
-  { mr: "गुण मिलान (३६ गुण)", en: "Gun Milaan (36 guna)", hi: "गुण मिलान (36 गुण)", tiers: { free: true, premium: true, plus: true } },
-  { mr: "पंचांग, राशीफल, कॅलेंडर", en: "Panchang, rashifal, calendar", hi: "पंचांग, राशिफल, कैलेंडर", tiers: { free: true, premium: true, plus: true } },
-  { mr: "मुहूर्त शोधक", en: "Muhurat finder", hi: "मुहूर्त खोजक", tiers: { free: true, premium: true, plus: true } },
-  { mr: "छापील दिनदर्शिका घरपोच", en: "Printed calendar shipped home", hi: "मुद्रित पंचांग घर पर", tiers: { free: false, premium: true, plus: true } },
-  { mr: "बांधील छापील कुंडली पुस्तक (घरपोच)", en: "Bound printed kundli book (shipped)", hi: "बाउंड मुद्रित कुंडली पुस्तक (घर पर)", tiers: { free: false, premium: "२०% सवलत", plus: "वर्षी १ मोफत" } },
-  { mr: "ज्योतिषाशी सल्लामसलत", en: "Consultation with astrologer", hi: "ज्योतिषी परामर्श", tiers: { free: false, premium: false, plus: "दरमहा १" } },
-  { mr: "पूजा बुकिंग सवलत", en: "Pooja booking discount", hi: "पूजा बुकिंग छूट", tiers: { free: false, premium: false, plus: true } },
-  { mr: "प्राधान्य समर्थन", en: "Priority support", hi: "प्राथमिकता समर्थन", tiers: { free: false, premium: true, plus: true } },
+const COMPARISON_ROWS: ComparisonRow[] = [
+  {
+    featureMr: "कुंडली निर्मिती",
+    featureEn: "Kundli generation",
+    featureHi: "कुंडली निर्माण",
+    values: {
+      free: { mr: "१/दिवस", en: "1/day", hi: "1/दिन" },
+      starter: { mr: "३० एकूण", en: "30 total", hi: "30 कुल" },
+      premium: { mr: "अमर्यादित", en: "Unlimited", hi: "असीमित" },
+      plus: { mr: "अमर्यादित", en: "Unlimited", hi: "असीमित" },
+    },
+  },
+  {
+    featureMr: "सविस्तर कुंडली PDF (८०+ पान)",
+    featureEn: "Detailed kundli PDF (80+ pages)",
+    featureHi: "विस्तृत कुंडली PDF (80+ पृष्ठ)",
+    values: { free: false, starter: true, premium: true, plus: true },
+  },
+  {
+    featureMr: "गुण मिलान (३६-गुण)",
+    featureEn: "Gun Milan (36-point)",
+    featureHi: "गुण मिलान (36-गुण)",
+    values: { free: true, starter: true, premium: true, plus: true },
+  },
+  {
+    featureMr: "पंचांग, मुहूर्त शोध",
+    featureEn: "Panchang, muhurat search",
+    featureHi: "पंचांग, मुहूर्त खोज",
+    values: { free: true, starter: true, premium: true, plus: true },
+  },
+  {
+    featureMr: "दैनिक राशीभविष्य",
+    featureEn: "Daily rashifal",
+    featureHi: "दैनिक राशिफल",
+    values: { free: true, starter: true, premium: true, plus: true },
+  },
+  {
+    featureMr: "वार्षिक भविष्य रिपोर्ट (८०+ पान)",
+    featureEn: "Yearly forecast report (80+ pages)",
+    featureHi: "वार्षिक भविष्य (80+ पृष्ठ)",
+    values: { free: false, starter: false, premium: true, plus: true },
+  },
+  {
+    featureMr: "पंचांग WhatsApp alerts",
+    featureEn: "Panchang WhatsApp alerts",
+    featureHi: "पंचांग WhatsApp",
+    values: { free: false, starter: false, premium: true, plus: true },
+  },
+  {
+    featureMr: "छापील दिनदर्शिका घरपोच (वार्षिक)",
+    featureEn: "Printed calendar shipped (yearly)",
+    featureHi: "मुद्रित पंचांग घर पर (वार्षिक)",
+    values: {
+      free: false,
+      starter: false,
+      premium: { mr: "मोफत", en: "Free", hi: "मुफ्त" },
+      plus: { mr: "मोफत", en: "Free", hi: "मुफ्त" },
+    },
+  },
+  {
+    featureMr: "बांधील कुंडली पुस्तक (घरपोच)",
+    featureEn: "Bound kundli book (shipped)",
+    featureHi: "बाउंड कुंडली पुस्तक",
+    values: {
+      free: { mr: "₹७९९", en: "₹799", hi: "₹799" },
+      starter: { mr: "₹७९९", en: "₹799", hi: "₹799" },
+      premium: { mr: "₹६४९", en: "₹649", hi: "₹649" },
+      plus: { mr: "१ मोफत/वर्ष", en: "1 free/yr", hi: "1 मुफ्त/वर्ष" },
+    },
+  },
+  {
+    featureMr: "ज्योतिष सल्ला (१ तास/महिना)",
+    featureEn: "Astrologer consultation (1hr/month)",
+    featureHi: "ज्योतिष परामर्श (1 घंटे/माह)",
+    values: { free: false, starter: false, premium: false, plus: true },
+  },
+  {
+    featureMr: "प्राधान्य WhatsApp समर्थन",
+    featureEn: "Priority WhatsApp support",
+    featureHi: "प्राथमिकता WhatsApp",
+    values: { free: false, starter: false, premium: false, plus: true },
+  },
+  {
+    featureMr: "पूजा/यात्रा सेवेवर सवलत",
+    featureEn: "Pooja/yatra service discount",
+    featureHi: "पूजा/यात्रा छूट",
+    values: {
+      free: false,
+      starter: false,
+      premium: false,
+      plus: { mr: "१०% सवलत", en: "10% off", hi: "10% छूट" },
+    },
+  },
 ];
 
 const FAQS = [
   {
-    qMr: "सदस्यता कशी कार्य करते?",
-    qEn: "How does the subscription work?",
-    qHi: "सदस्यता कैसे काम करती है?",
-    aMr: "Premium ₹५९९/महिना — दरमहा आकारणी, कोणत्याही वेळी रद्द करा. Plus ₹१४९९/महिना — समान अटी, अतिरिक्त फायदे.",
-    aEn: "Premium ₹599/month — billed monthly, cancel anytime. Plus ₹1499/month — same terms, extra perks.",
-    aHi: "Premium ₹599/माह — मासिक बिलिंग, कभी भी रद्द करें. Plus ₹1499/माह — वही शर्तें, अतिरिक्त लाभ.",
+    qMr: "स्टार्टर ₹९९ आणि प्रीमियम मध्ये कोणती निवडावी?",
+    qEn: "Starter ₹99 vs Premium — which should I pick?",
+    qHi: "स्टार्टर ₹99 या प्रीमियम — क्या चुनें?",
+    aMr: "स्टार्टर एकरकमी — ३० दिवसांच्या कालावधीत ३० सविस्तर कुंडल्या (कुटुंब, नातेवाईक, मित्रांसाठी). PDF तुमच्याकडे कायमच्या. प्रीमियम मासिक सदस्यता — अमर्यादित कुंडल्या, वार्षिक भविष्य, पंचांग alerts, दरमहा रिन्यू. गुण मिलान व मुहूर्त शोध मोफतच राहतात. मोफत १ कुंडली/दिवस नेहमीच आहे.",
+    aEn: "Starter is one-time — 30 detailed kundlis in a 30-day pass (family, relatives, friends). PDFs yours forever. Premium is an ongoing monthly subscription — unlimited kundlis, yearly forecast, panchang alerts, auto-renew. Gun Milan and Muhurat search stay free for everyone. Everyone also gets 1 free kundli/day forever.",
+    aHi: "स्टार्टर एकबारगी — 30 दिन में 30 विस्तृत कुंडली. PDF हमेशा आपकी. प्रीमियम मासिक — असीमित कुंडली, वार्षिक भविष्य. गुण मिलान व मुहूर्त मुफ्त रहते हैं. मुफ्त 1 कुंडली/दिन हमेशा है.",
   },
   {
-    qMr: "अमर्यादित PDF व १ छापील पुस्तक यात फरक काय?",
-    qEn: "What's the difference between unlimited PDF and 1 printed book?",
-    qHi: "असीमित PDF और 1 मुद्रित पुस्तक में क्या अंतर?",
-    aMr: "Premium व Plus सदस्यांना अमर्यादित डिजिटल PDF कुंडल्या डाउनलोड करता येतात — स्वतःची, कुटुंबाची, मित्रांची. छापील बांधील पुस्तक मात्र घरपोच येते — छपाई व शिपिंग खर्चामुळे Plus मध्ये वर्षी १ मोफत, Premium मध्ये २०% सवलतीत.",
-    aEn: "Premium and Plus members can download unlimited digital kundli PDFs — for themselves, family, friends. The printed bound book is shipped physically — due to print + shipping costs, Plus includes 1 free per year, Premium gets 20% off.",
-    aHi: "Premium व Plus सदस्य असीमित डिजिटल PDF कुंडली डाउनलोड कर सकते हैं — अपनी, परिवार, मित्रों की. मुद्रित बाउंड पुस्तक घर पर भेजी जाती है — छपाई + शिपिंग लागत के कारण Plus में 1 मुफ्त/वर्ष, Premium में 20% छूट.",
+    qMr: "वार्षिक योजनेत किती बचत?",
+    qEn: "How much do I save with yearly billing?",
+    qHi: "वार्षिक योजना में कितनी बचत?",
+    aMr: "प्रीमियम वार्षिक ₹४,९९९ — मासिक ₹५९९ × १२ = ₹७,१८८ तुलनेत ₹२,१८९ बचत (३०%). प्लस वार्षिक ₹१२,९९९ — मासिक तुलनेत ₹४,९८९ बचत (२८%).",
+    aEn: "Premium Yearly ₹4,999 saves ₹2,189 vs monthly (30% off). Plus Yearly ₹12,999 saves ₹4,989 vs monthly (28% off).",
+    aHi: "प्रीमियम वार्षिक ₹4,999 में ₹2,189 बचत (30%). प्लस वार्षिक ₹12,999 में ₹4,989 बचत (28%).",
   },
   {
-    qMr: "छापील दिनदर्शिका कशी मिळते?",
-    qEn: "How do I get the printed calendar?",
-    qHi: "मुद्रित पंचांग कैसे मिलता है?",
-    aMr: "दरवर्षी डिसेंबर-जानेवारीमध्ये तुमच्या नोंदणीकृत पत्त्यावर पाठवली जाते. फक्त Premium व Plus सदस्यांसाठी.",
-    aEn: "Shipped every December-January to your registered address. Only for Premium and Plus members.",
-    aHi: "हर साल दिसंबर-जनवरी में आपके पंजीकृत पते पर भेजा जाता है. केवल Premium और Plus सदस्यों के लिए.",
-  },
-  {
-    qMr: "वैयक्तिक सल्लामसलत कशी होते?",
-    qEn: "How does personal consultation work?",
-    qHi: "व्यक्तिगत परामर्श कैसे होता है?",
-    aMr: "Plus सदस्यांना दरमहा एक ३०-मिनिट सल्लामसलत — WhatsApp/फोन/व्हिडिओ. तुमच्या कुंडलीनुसार वैयक्तिक सल्ला.",
-    aEn: "Plus members get one 30-minute consultation per month via WhatsApp/call/video — personal advice based on your kundli.",
-    aHi: "Plus सदस्यों को मासिक 30-मिनट परामर्श — WhatsApp/कॉल/वीडियो. आपकी कुंडली के अनुसार सलाह.",
-  },
-  {
-    qMr: "कोणती पेमेंट पद्धत स्वीकारता?",
-    qEn: "What payment methods do you accept?",
-    qHi: "कौन से भुगतान स्वीकार करते हैं?",
-    aMr: "UPI, क्रेडिट/डेबिट कार्ड, नेट बँकिंग, वॉलेट — Razorpay द्वारे सुरक्षित.",
-    aEn: "UPI, credit/debit cards, net banking, wallets — secured via Razorpay.",
-    aHi: "UPI, क्रेडिट/डेबिट कार्ड, नेट बैंकिंग, वॉलेट — Razorpay द्वारा सुरक्षित.",
+    qMr: "Plus मध्ये काय मिळते?",
+    qEn: "What does Plus include?",
+    qHi: "Plus में क्या मिलता है?",
+    aMr: "Plus — प्रीमियमचे सर्व फायदे + १ तास तज्ञ ज्योतिष सल्ला/महिना + बांधील कुंडली पुस्तक वार्षिक मोफत + प्राधान्य WhatsApp + पूजा/यात्रेवर १०% सवलत.",
+    aEn: "Plus includes everything in Premium + 1hr expert consultation/month + 1 bound kundli book free yearly + priority WhatsApp support + 10% off pooja and yatra services.",
+    aHi: "Plus में प्रीमियम के सभी फायदे + 1 घंटे परामर्श/माह + बाउंड कुंडली पुस्तक वार्षिक + प्राथमिकता WhatsApp.",
   },
   {
     qMr: "सदस्यता रद्द करता येते का?",
     qEn: "Can I cancel my subscription?",
     qHi: "क्या मैं सदस्यता रद्द कर सकता हूं?",
-    aMr: "होय, कोणत्याही वेळी. अकाउंट पेजवरून रद्द करा. पुढील बिलिंग चक्र थांबते.",
-    aEn: "Yes, anytime. Cancel from your account page. Next billing cycle stops.",
-    aHi: "हां, किसी भी समय. अकाउंट पेज से रद्द करें. अगला बिलिंग चक्र रुक जाता है.",
+    aMr: "होय, कोणत्याही वेळी अकाउंट पेजवरून. पुढील बिलिंग चक्र थांबते. स्टार्टर एकरकमी असल्याने रद्द करण्याचा प्रश्न नाही.",
+    aEn: "Yes, anytime from your account page. Next billing cycle stops. Starter is one-time so there's no cancellation.",
+    aHi: "हां, अकाउंट पेज से कभी भी. अगला बिलिंग चक्र रुक जाता है. स्टार्टर एकबारगी है.",
+  },
+  {
+    qMr: "पेमेंट सुरक्षित आहे का?",
+    qEn: "Is the payment secure?",
+    qHi: "भुगतान सुरक्षित है?",
+    aMr: "UPI, क्रेडिट/डेबिट कार्ड, नेट बँकिंग, वॉलेट — Razorpay (PCI-DSS प्रमाणित) द्वारे सुरक्षित. कार्ड माहिती कधीही आमच्या सर्व्हरवर साठवली जात नाही.",
+    aEn: "UPI, credit/debit cards, net banking, wallets — secured via Razorpay (PCI-DSS certified). Card data never touches our servers.",
+    aHi: "UPI, कार्ड, नेट बैंकिंग, वॉलेट — Razorpay (PCI-DSS) द्वारा सुरक्षित.",
   },
 ];
 
-interface PlanCardProps {
-  tier: Tier;
-  featured?: boolean;
-  lang: string;
-  t: (mr: string, en: string, hi?: string) => string;
-  currentPlan: string | null;
-  isLoggedIn: boolean;
-}
-
-function PlanCard({ tier, featured, lang, t, currentPlan, isLoggedIn }: PlanCardProps) {
-  const titles = {
-    free: { mr: "Free", en: "Free", hi: "Free" },
-    premium: { mr: "Premium", en: "Premium", hi: "Premium" },
-    plus: { mr: "Premium Plus", en: "Premium Plus", hi: "Premium Plus" },
-  };
-  const prices = {
-    free: { amount: 0, label: t("कायम", "Forever", "हमेशा") },
-    premium: { amount: 599, label: `/${t("महिना", "month", "माह")}` },
-    plus: { amount: 1499, label: `/${t("महिना", "month", "माह")}` },
-  };
-  const subtitles = {
-    free: t("सुरुवात करण्यासाठी", "To get started", "शुरू करने के लिए"),
-    premium: t("सर्वाधिक लोकप्रिय", "Most popular", "सबसे लोकप्रिय"),
-    plus: t("पूर्ण अनुभव", "Complete experience", "पूर्ण अनुभव"),
-  };
-  const ctaText = {
-    free: t("विनामूल्य सुरुवात", "Start Free", "मुफ्त शुरू करें"),
-    premium: t("Premium घ्या", "Get Premium", "Premium लें"),
-    plus: t("Plus घ्या", "Get Plus", "Plus लें"),
-  };
-
-  const title = titles[tier][lang as "mr" | "en" | "hi"] ?? titles[tier].mr;
-  const price = prices[tier];
-  const accent = tier === "plus" ? "#d4a843" : tier === "premium" ? "#d4a843" : "#9b8b6e";
-  const isCurrent = currentPlan === tier;
-  const borderColor = isCurrent ? "#2d6b2d" : featured ? "#d4a843" : "#e5d5b5";
-  const borderWidth = isCurrent || featured ? 2 : 1;
-
-  const tierFeatures = PLAN_FEATURES.filter(f => f.tiers[tier] !== false);
-  const ctaHref = tier === "free"
-    ? (isLoggedIn ? `/${lang}/account` : `/${lang}/login?redirect=/${lang}/account`)
-    : (isLoggedIn ? `/${lang}/account?tab=payments` : `/${lang}/login?redirect=/${lang}/account?tab=payments`);
-
-  return (
-    <div style={{
-      background: "#fffdf6",
-      border: `${borderWidth}px solid ${borderColor}`,
-      borderRadius: 12,
-      padding: "28px 24px",
-      boxShadow: featured ? "0 8px 24px rgba(212,168,67,0.2)" : "0 2px 10px rgba(61,12,12,0.05)",
-      position: "relative",
-      display: "flex",
-      flexDirection: "column",
-      gap: 18,
-      transform: featured ? "scale(1.02)" : "none",
-    }}>
-      {isCurrent && (
-        <span style={{
-          position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)",
-          background: "#2d6b2d", color: "#fff", fontSize: 11, fontWeight: 700,
-          padding: "4px 14px", borderRadius: 20, letterSpacing: "0.5px",
-          textTransform: "uppercase", whiteSpace: "nowrap",
-        }}>
-          ✓ {t("तुमची योजना", "Your Plan", "आपकी योजना")}
-        </span>
-      )}
-      {!isCurrent && featured && (
-        <span style={{
-          position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)",
-          background: "linear-gradient(135deg, #d4a843, #b88f38)",
-          color: "#3d0c0c", fontSize: 11, fontWeight: 700,
-          padding: "4px 14px", borderRadius: 20, letterSpacing: "0.5px",
-          textTransform: "uppercase", whiteSpace: "nowrap",
-        }}>
-          ⭐ {t("शिफारस", "Recommended", "अनुशंसित")}
-        </span>
-      )}
-      <div>
-        <div style={{ fontSize: 22, fontWeight: 700, color: "#3d0c0c", letterSpacing: "-0.5px" }}>{title}</div>
-        <div style={{ fontSize: 12, color: accent, fontWeight: 600, marginTop: 3, letterSpacing: "0.3px", textTransform: "uppercase" }}>
-          {subtitles[tier]}
-        </div>
-      </div>
-      <div style={{ borderBottom: "1px solid #e5d5b5", paddingBottom: 14 }}>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
-          <span style={{ fontSize: 36, fontWeight: 700, color: "#3d0c0c", lineHeight: 1 }}>
-            {price.amount === 0 ? t("मोफत", "FREE", "मुफ्त") : `₹${price.amount}`}
-          </span>
-          {price.amount > 0 && (
-            <span style={{ fontSize: 14, color: "#6b5b3e" }}>{price.label}</span>
-          )}
-          {price.amount === 0 && (
-            <span style={{ fontSize: 12, color: "#6b5b3e", marginLeft: 4 }}>· {price.label}</span>
-          )}
-        </div>
-      </div>
-      <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
-        {tierFeatures.map((f, i) => {
-          const label = lang === "mr" ? f.mr : lang === "hi" ? f.hi : f.en;
-          const val = f.tiers[tier];
-          const valStr = typeof val === "string" ? val : null;
-          return (
-            <li key={i} style={{ fontSize: 13, color: "#3d0c0c", display: "flex", gap: 10, alignItems: "flex-start", lineHeight: 1.4 }}>
-              <span style={{ color: "#2d6b2d", fontWeight: 700, flexShrink: 0, fontSize: 15 }}>✓</span>
-              <span style={{ flex: 1 }}>
-                {label}
-                {valStr && <strong style={{ color: accent, marginLeft: 4 }}>({translateToken(valStr, lang)})</strong>}
-              </span>
-            </li>
-          );
-        })}
-      </ul>
-      {isCurrent ? (
-        <div style={{
-          padding: "14px 20px", background: "#d4f0d4", color: "#2d6b2d",
-          border: "1.5px solid #2d6b2d", borderRadius: 8, fontWeight: 700,
-          fontSize: 15, textAlign: "center",
-        }}>
-          ✓ {t("सध्याची योजना", "Current Plan", "वर्तमान योजना")}
-        </div>
-      ) : (
-        <Link href={ctaHref} style={{
-          padding: "14px 20px",
-          background: tier === "free"
-            ? "#fff"
-            : "linear-gradient(135deg, #3d0c0c, #5c1a1a)",
-          color: tier === "free" ? "#3d0c0c" : "#d4a843",
-          border: tier === "free" ? "1.5px solid #3d0c0c" : "1.5px solid #d4a843",
-          borderRadius: 8,
-          fontWeight: 700,
-          fontSize: 15,
-          textAlign: "center",
-          textDecoration: "none",
-          display: "block",
-          transition: "all 0.2s",
-        }}>
-          {ctaText[tier]}
-        </Link>
-      )}
-      {tier !== "free" && !isCurrent && (
-        <div style={{ fontSize: 11, color: "#6b5b3e", textAlign: "center", marginTop: -6 }}>
-          {t("कधीही रद्द करा · सुरक्षित पेमेंट", "Cancel anytime · Secure payment", "कभी भी रद्द करें · सुरक्षित भुगतान")}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function FAQItem({ q, a, lang }: { q: { mr: string; en: string; hi: string }; a: { mr: string; en: string; hi: string }; lang: string }) {
-  const [open, setOpen] = useState(false);
-  const question = lang === "mr" ? q.mr : lang === "hi" ? q.hi : q.en;
-  const answer = lang === "mr" ? a.mr : lang === "hi" ? a.hi : a.en;
-  return (
-    <div style={{ borderBottom: "1px solid #e5d5b5", padding: "16px 0" }}>
-      <button onClick={() => setOpen(!open)} style={{
-        width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center",
-        background: "transparent", border: "none", cursor: "pointer", padding: 0, textAlign: "left",
-        fontSize: 15, fontWeight: 600, color: "#3d0c0c",
-      }}>
-        <span>{question}</span>
-        <span style={{ color: "#d4a843", fontSize: 20, transform: open ? "rotate(45deg)" : "none", transition: "transform 0.2s" }}>+</span>
-      </button>
-      {open && (
-        <div style={{ fontSize: 14, color: "#5c1a1a", lineHeight: 1.6, marginTop: 10, paddingRight: 30 }}>
-          {answer}
-        </div>
-      )}
-    </div>
-  );
-}
-
 export default function PricingPageClient() {
-  const { t, lang } = useLang();
+  const { lang } = useLang();
+  const [billing, setBilling] = useState<BillingCycle>("monthly");
   const [currentPlan, setCurrentPlan] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     fetch("/api/auth/session")
-      .then(r => r.json())
-      .then(data => {
+      .then((r) => r.json())
+      .then((data) => {
         if (data?.user?.email) {
           setIsLoggedIn(true);
-          return fetch("/api/user").then(r => r.json()).then(u => setCurrentPlan(u?.plan ?? null)).catch(() => {});
+          return fetch("/api/user")
+            .then((r) => r.json())
+            .then((u) => setCurrentPlan(u?.plan ?? null))
+            .catch(() => {});
         }
       })
       .catch(() => {});
   }, []);
 
+  const t = (mr: string, en: string, hi?: string) => T(lang, mr, en, hi);
+
+  // Resolve prices based on selected cycle. Starter is always onetime.
+  const starterTier = TIERS["starter:onetime"];
+  const premiumTier = billing === "yearly" ? TIERS["premium:yearly"] : TIERS["premium:monthly"];
+  const plusTier = billing === "yearly" ? TIERS["plus:yearly"] : TIERS["plus:monthly"];
+
+  const priceSuffix = useMemo(
+    () =>
+      billing === "yearly"
+        ? t("/वर्ष", "/year", "/वर्ष")
+        : t("/महिना", "/month", "/माह"),
+    [billing, lang],
+  );
+
   return (
-    <div style={{ minHeight: "100vh", background: "#fffaf0" }}>
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "60px 20px 30px", textAlign: "center" }}>
-        <div style={{ display: "inline-block", padding: "5px 14px", background: "#fff3d6", color: "#5c1a1a", fontSize: 11, fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", borderRadius: 20, marginBottom: 16 }}>
-          {t("सदस्यता योजना", "Subscription Plans", "सदस्यता योजनाएं")}
-        </div>
-        <h1 style={{ fontSize: 40, color: "#3d0c0c", margin: 0, fontWeight: 700, letterSpacing: "-1px", lineHeight: 1.1 }}>
-          {t("तुमच्यासाठी योग्य योजना निवडा", "Choose the plan that's right for you", "आपके लिए सही योजना चुनें")}
-        </h1>
-        <p style={{ fontSize: 16, color: "#6b5b3e", marginTop: 14, maxWidth: 600, marginLeft: "auto", marginRight: "auto", lineHeight: 1.5 }}>
+    <div className="min-h-screen bg-gradient-to-b from-[#FAFAF8] to-white">
+      {/* ─── Hero ─── */}
+      <section className="max-w-5xl mx-auto px-4 pt-14 pb-8 text-center">
+        <p className="text-[#d4a843] text-sm font-semibold tracking-wider uppercase mb-3">
+          {t("भाग्यवेध सदस्यता", "Bhaagyavedh Membership", "भाग्यवेध सदस्यता")}
+        </p>
+        <h1 className="text-4xl md:text-5xl font-bold text-[#3d0c0c] leading-tight mb-4">
           {t(
-            "विनामूल्य कुंडली व पंचांग — किंवा Premium सदस्य व्हा आणि अमर्यादित कुंडली, छापील दिनदर्शिका व अधिक मिळवा.",
-            "Free kundli & panchang — or become a Premium member for unlimited kundlis, printed calendar, and more.",
-            "मुफ्त कुंडली व पंचांग — या Premium सदस्य बनें और असीमित कुंडली, मुद्रित पंचांग और अधिक पाएं."
+            "फक्त कुंडली नव्हे — वर्षभराचे वैदिक मार्गदर्शन",
+            "Not just a kundli — a year of Vedic guidance",
+            "सिर्फ कुंडली नहीं — साल भर का मार्गदर्शन",
+          )}
+        </h1>
+        <p className="text-gray-600 max-w-2xl mx-auto text-base md:text-lg">
+          {t(
+            "Parashara परंपरा · लाहिरी अयनांश · NASA JPL खगोलीय डेटा — तुमच्या जीवनाच्या प्रत्येक टप्प्यासाठी अचूक वैदिक मार्गदर्शन.",
+            "Parashara tradition · Lahiri Ayanamsa · NASA JPL ephemeris — accurate Vedic guidance for every stage of your life.",
+            "Parashara परंपरा · लाहिरी अयनांश · NASA JPL डेटा — आपके जीवन के हर चरण के लिए सटीक वैदिक मार्गदर्शन.",
           )}
         </p>
-      </div>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "20px 20px 60px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24, alignItems: "stretch" }}>
-          <PlanCard tier="free" lang={lang} t={t} currentPlan={currentPlan} isLoggedIn={isLoggedIn} />
-          <PlanCard tier="premium" featured lang={lang} t={t} currentPlan={currentPlan} isLoggedIn={isLoggedIn} />
-          <PlanCard tier="plus" lang={lang} t={t} currentPlan={currentPlan} isLoggedIn={isLoggedIn} />
+        {/* Billing toggle */}
+        <div className="inline-flex items-center gap-2 mt-8 p-1 rounded-full border border-[#d4a843]/30 bg-white">
+          <button
+            onClick={() => setBilling("monthly")}
+            className={`px-5 py-2 text-sm font-semibold rounded-full transition ${
+              billing === "monthly" ? "bg-[#3d0c0c] text-[#d4a843]" : "text-gray-500"
+            }`}
+          >
+            {t("मासिक", "Monthly", "मासिक")}
+          </button>
+          <button
+            onClick={() => setBilling("yearly")}
+            className={`px-5 py-2 text-sm font-semibold rounded-full transition ${
+              billing === "yearly" ? "bg-[#3d0c0c] text-[#d4a843]" : "text-gray-500"
+            }`}
+          >
+            {t("वार्षिक", "Yearly", "वार्षिक")}{" "}
+            <span className="ml-1 text-[10px] bg-[#d4a843] text-[#3d0c0c] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">
+              {t("३०% सवलत", "Save 30%", "30% छूट")}
+            </span>
+          </button>
         </div>
-      </div>
+      </section>
 
-      <div style={{ background: "#fff", borderTop: "1px solid #e5d5b5", borderBottom: "1px solid #e5d5b5" }}>
-        <div style={{ maxWidth: 1000, margin: "0 auto", padding: "50px 20px" }}>
-          <h2 style={{ fontSize: 28, color: "#3d0c0c", textAlign: "center", margin: "0 0 36px", fontWeight: 700 }}>
-            {t("सर्व तुलना", "Compare all plans", "सभी योजनाओं की तुलना")}
-          </h2>
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
-              <thead>
-                <tr style={{ borderBottom: "2px solid #d4a843" }}>
-                  <th style={{ textAlign: "left", padding: "12px 16px", color: "#6b5b3e", fontWeight: 600, fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px" }}>{t("वैशिष्ट्य", "Feature", "विशेषता")}</th>
-                  <th style={{ textAlign: "center", padding: "12px 16px", color: "#3d0c0c", fontWeight: 700 }}>Free</th>
-                  <th style={{ textAlign: "center", padding: "12px 16px", color: "#3d0c0c", fontWeight: 700, background: "#fff3d6" }}>
-                    Premium<br /><span style={{ fontSize: 11, fontWeight: 400, color: "#6b5b3e" }}>₹599/{t("महिना", "mo", "माह")}</span>
-                  </th>
-                  <th style={{ textAlign: "center", padding: "12px 16px", color: "#3d0c0c", fontWeight: 700 }}>
-                    Plus<br /><span style={{ fontSize: 11, fontWeight: 400, color: "#6b5b3e" }}>₹1499/{t("महिना", "mo", "माह")}</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {PLAN_FEATURES.map((f, i) => {
-                  const label = lang === "mr" ? f.mr : lang === "hi" ? f.hi : f.en;
-                  const render = (v: boolean | string) => {
-                    if (v === true) return <span style={{ color: "#2d6b2d", fontSize: 18, fontWeight: 700 }}>✓</span>;
-                    if (v === false) return <span style={{ color: "#d4c0a0", fontSize: 18 }}>—</span>;
-                    return <span style={{ color: "#d4a843", fontWeight: 700, fontSize: 13 }}>{translateToken(v, lang)}</span>;
-                  };
-                  return (
-                    <tr key={i} style={{ borderBottom: "1px solid #f0e5cc" }}>
-                      <td style={{ padding: "12px 16px", color: "#3d0c0c" }}>{label}</td>
-                      <td style={{ padding: "12px 16px", textAlign: "center" }}>{render(f.tiers.free)}</td>
-                      <td style={{ padding: "12px 16px", textAlign: "center", background: "rgba(255,243,214,0.4)" }}>{render(f.tiers.premium)}</td>
-                      <td style={{ padding: "12px 16px", textAlign: "center" }}>{render(f.tiers.plus)}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+      {/* ─── Tier cards: Free, Starter, Premium, Plus ─── */}
+      <section className="max-w-7xl mx-auto px-4 pt-6 pb-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
+          <PlanCard
+            title={t("प्रारंभ (मोफत)", "Starter (Free)", "शुरुआत (मुफ्त)")}
+            tagline={t("चाचणी करून पहा", "Try it out", "आज़माएं")}
+            price="₹0"
+            priceSuffix={t("कायम", "forever", "हमेशा")}
+            outcome={t("१ कुंडली/दिवस + पंचांग + राशीभविष्य", "1 kundli/day + panchang + rashifal", "1 कुंडली/दिन + पंचांग + राशिफल")}
+            bullets={[
+              t("१ कुंडली PDF/दिवस", "1 kundli PDF/day", "1 कुंडली PDF/दिन"),
+              t("दैनिक पंचांग + १२ राशी भविष्य", "Daily panchang + 12 rashi forecast", "दैनिक पंचांग + 12 राशि"),
+              t("संग्रह — आरती, स्तोत्र, मंत्र", "Sangrah — aarti, stotra, mantra", "संग्रह — आरती, स्तोत्र"),
+            ]}
+            ctaLabel={t("मोफत सुरू करा", "Start free", "मुफ्त शुरू करें")}
+            ctaHref={`/${lang}/kundli`}
+            theme="neutral"
+            isCurrent={currentPlan === "free"}
+          />
+
+          <PlanCard
+            badge={t("लग्न · जन्म · उद्घाटन", "Wedding · Birth · Launch", "विवाह · जन्म · उद्घाटन")}
+            title={t("स्टार्टर", "Starter", "स्टार्टर")}
+            tagline={t("एकरकमी — नेहमीसाठी तुमची", "One-time — yours forever", "एक बार — हमेशा आपकी")}
+            price={`₹${starterTier.rupees}`}
+            priceSuffix={t("एकरकमी", "one-time", "एक बार")}
+            outcome={t(
+              "३० सविस्तर कुंडली — ३० दिवसांसाठी",
+              "30 detailed kundlis — 30-day pass",
+              "30 विस्तृत कुंडली — 30 दिन",
+            )}
+            bullets={[
+              t("३० सविस्तर कुंडली (८०+ पान प्रत्येकी)", "30 detailed kundlis (80+ pages each)", "30 विस्तृत कुंडली (80+ पृष्ठ)"),
+              t("PDF कायमची — डाउनलोड करून ठेवा", "PDFs yours forever — download + keep", "PDF हमेशा आपकी"),
+              t("प्रिंट-रेडी · भेट म्हणून पाठवा", "Print-ready · share as gift", "प्रिंट-रेडी · उपहार"),
+              t("डिजिटल-केवळ योजना — कोणतेही मासिक शुल्क नाही", "Digital-only plan — no recurring charges", "डिजिटल-केवल — कोई मासिक शुल्क नहीं"),
+              t("अपग्रेडवर ₹९९ क्रेडिट", "₹99 credited on upgrade", "अपग्रेड पर ₹99 क्रेडिट"),
+            ]}
+            ctaLabel={`₹${starterTier.rupees} — ${t("घ्या", "Get", "लें")}`}
+            ctaHref={checkoutHref({ lang, plan: "starter", cycle: "onetime", isLoggedIn })}
+            theme="bronze"
+            isCurrent={currentPlan === "starter"}
+          />
+
+          <PlanCard
+            badge={t("सर्वाधिक लोकप्रिय", "Most popular", "सबसे लोकप्रिय")}
+            title={t("प्रीमियम", "Premium", "प्रीमियम")}
+            tagline={t("कुटुंब + वर्षभराचे मार्गदर्शन", "For families · year-round", "परिवार · साल भर")}
+            price={`₹${premiumTier.rupees.toLocaleString("en-IN")}`}
+            priceSuffix={priceSuffix}
+            priceStrike={
+              billing === "yearly" && premiumTier.monthlyEquivalentRupees
+                ? `₹${premiumTier.monthlyEquivalentRupees.toLocaleString("en-IN")}`
+                : undefined
+            }
+            outcome={t(
+              "अमर्यादित कुंडली + वार्षिक भविष्य + पंचांग alerts",
+              "Unlimited kundlis + yearly forecast + panchang alerts",
+              "असीमित कुंडली + वार्षिक भविष्य",
+            )}
+            bullets={[
+              t("अमर्यादित कुंडली PDF डाउनलोड", "Unlimited kundli PDF downloads", "असीमित कुंडली PDF"),
+              t("वार्षिक भविष्य (८०+ पाने)", "Yearly forecast (80+ pages)", "वार्षिक भविष्य (80+ पृष्ठ)"),
+              t("दैनिक पंचांग WhatsApp alerts", "Daily panchang WhatsApp alerts", "दैनिक पंचांग WhatsApp"),
+              t("मोफत छापील दिनदर्शिका घरपोच (वार्षिक)", "Free printed calendar shipped home (yearly)", "मुफ्त मुद्रित पंचांग घर पर (वार्षिक)"),
+              t("कुंडली पुस्तकावर २०% सवलत", "20% off kundli book", "कुंडली पुस्तक 20% छूट"),
+            ]}
+            ctaLabel={
+              billing === "monthly"
+                ? t(`₹${premiumTier.rupees} — मासिक घ्या`, `₹${premiumTier.rupees} — Subscribe`, `₹${premiumTier.rupees} — मासिक लें`)
+                : t(`₹${premiumTier.rupees.toLocaleString("en-IN")} — वार्षिक घ्या`, `₹${premiumTier.rupees.toLocaleString("en-IN")} — Get yearly`, `₹${premiumTier.rupees.toLocaleString("en-IN")} — वार्षिक लें`)
+            }
+            ctaHref={checkoutHref({ lang, plan: "premium", cycle: billing, isLoggedIn })}
+            theme="gold"
+            highlight
+            isCurrent={currentPlan === "premium"}
+          />
+
+          <PlanCard
+            badge={t("सर्वोत्तम मूल्य", "Best value", "सर्वोत्तम")}
+            title={t("प्लस", "Plus", "प्लस")}
+            tagline={t("ज्योतिष सल्ला + पुस्तक", "Astrologer + book", "ज्योतिष + पुस्तक")}
+            price={`₹${plusTier.rupees.toLocaleString("en-IN")}`}
+            priceSuffix={priceSuffix}
+            priceStrike={
+              billing === "yearly" && plusTier.monthlyEquivalentRupees
+                ? `₹${plusTier.monthlyEquivalentRupees.toLocaleString("en-IN")}`
+                : undefined
+            }
+            scarcity={t("२० जागा/महिना", "20 slots/month", "20 सीटें/माह")}
+            outcome={t(
+              "१ तास तज्ञ सल्ला + बांधील पुस्तक + Premium",
+              "1hr expert call + bound book + Premium",
+              "1 घंटे परामर्श + बाउंड पुस्तक + Premium",
+            )}
+            bullets={[
+              t("प्रीमियमचे सर्व फायदे", "Everything in Premium", "प्रीमियम सब"),
+              t("१ तास ज्योतिष सल्ला/महिना", "1hr consultation/month", "1 घंटे/माह"),
+              t("बांधील कुंडली पुस्तक वार्षिक मोफत", "Bound kundli book — 1 free/yr", "बाउंड पुस्तक 1 मुफ्त/वर्ष"),
+              t("मोफत छापील दिनदर्शिका घरपोच (वार्षिक)", "Free printed calendar shipped home (yearly)", "मुफ्त मुद्रित पंचांग घर पर (वार्षिक)"),
+              t("प्राधान्य WhatsApp (४८ तास)", "Priority WhatsApp (48h)", "प्राथमिकता WhatsApp"),
+              t("पूजा/यात्रेवर १०% सवलत", "10% off pooja/yatra", "पूजा/यात्रा 10% छूट"),
+            ]}
+            ctaLabel={t("Plus घ्या", "Get Plus", "Plus लें")}
+            ctaHref={checkoutHref({ lang, plan: "plus", cycle: billing, isLoggedIn })}
+            theme="dark"
+            isCurrent={currentPlan === "plus"}
+          />
+
         </div>
-      </div>
+      </section>
 
-      <div style={{ maxWidth: 720, margin: "0 auto", padding: "50px 20px 30px" }}>
-        <h2 style={{ fontSize: 28, color: "#3d0c0c", textAlign: "center", margin: "0 0 16px", fontWeight: 700 }}>
-          {t("वारंवार विचारले जाणारे प्रश्न", "Frequently Asked Questions", "अक्सर पूछे जाने वाले प्रश्न")}
+      {/* ─── Comparison table ─── */}
+      <section className="max-w-5xl mx-auto px-4 pb-16 hidden md:block">
+        <h2 className="text-2xl font-bold text-[#3d0c0c] text-center mb-6">
+          {t("पूर्ण तुलना", "Full comparison", "पूरी तुलना")}
         </h2>
-        <div style={{ marginTop: 24 }}>
+        <div className="overflow-x-auto bg-white border border-[#e5d5b5] rounded-xl">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-[#3d0c0c] text-[#d4a843]">
+                <th className="text-left py-3 px-4 font-semibold">
+                  {t("फीचर", "Feature", "फ़ीचर")}
+                </th>
+                <th className="text-center py-3 px-4 font-semibold">
+                  {t("मोफत", "Free", "मुफ्त")}
+                </th>
+                <th className="text-center py-3 px-4 font-semibold">
+                  {t("स्टार्टर ₹९९", "Starter ₹99", "स्टार्टर ₹99")}
+                </th>
+                <th className="text-center py-3 px-4 font-semibold bg-[#5c1a1a]">
+                  {t("प्रीमियम", "Premium", "प्रीमियम")}
+                </th>
+                <th className="text-center py-3 px-4 font-semibold">
+                  {t("प्लस", "Plus", "प्लस")}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {COMPARISON_ROWS.map((row, i) => (
+                <tr key={i} className={i % 2 === 0 ? "bg-[#faf7ee]" : "bg-white"}>
+                  <td className="py-3 px-4 text-[#3d0c0c] font-medium">
+                    {lang === "mr" ? row.featureMr : lang === "hi" ? row.featureHi : row.featureEn}
+                  </td>
+                  {(["free", "starter", "premium", "plus"] as const).map((tier) => {
+                    const val = row.values[tier];
+                    return (
+                      <td
+                        key={tier}
+                        className={`py-3 px-4 text-center text-xs ${
+                          tier === "premium" ? "bg-[#fff9eb]" : ""
+                        }`}
+                      >
+                        {val === true ? (
+                          <span className="text-emerald-700 font-bold">✓</span>
+                        ) : val === false ? (
+                          <span className="text-gray-300">—</span>
+                        ) : (
+                          <span className="text-[#3d0c0c] font-semibold">
+                            {lang === "mr" ? val.mr : lang === "hi" ? val.hi ?? val.mr : val.en}
+                          </span>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* ─── FAQ ─── */}
+      <section className="max-w-3xl mx-auto px-4 pb-20">
+        <h2 className="text-2xl font-bold text-[#3d0c0c] text-center mb-6">
+          {t("वारंवार विचारले जाणारे प्रश्न", "Frequently Asked Questions", "सामान्य प्रश्न")}
+        </h2>
+        <div className="bg-white rounded-xl border border-[#e5d5b5] p-2">
           {FAQS.map((f, i) => (
-            <FAQItem key={i} q={{ mr: f.qMr, en: f.qEn, hi: f.qHi }} a={{ mr: f.aMr, en: f.aEn, hi: f.aHi }} lang={lang} />
+            <FAQItem
+              key={i}
+              q={{ mr: f.qMr, en: f.qEn, hi: f.qHi }}
+              a={{ mr: f.aMr, en: f.aEn, hi: f.aHi }}
+              lang={lang}
+            />
           ))}
         </div>
+      </section>
+    </div>
+  );
+}
+
+/* ─── Plan card ──────────────────────────────────────────────── */
+
+interface PlanCardProps {
+  badge?: string;
+  title: string;
+  tagline: string;
+  price: string;
+  priceSuffix?: string;
+  priceStrike?: string;
+  outcome: string;
+  bullets: string[];
+  ctaLabel: string;
+  ctaHref: string;
+  scarcity?: string;
+  theme: "neutral" | "bronze" | "gold" | "dark";
+  highlight?: boolean;
+  isCurrent?: boolean;
+}
+
+function PlanCard(p: PlanCardProps) {
+  const themes = {
+    neutral: { bg: "bg-white", border: "border-gray-200", title: "text-[#3d0c0c]", price: "text-[#3d0c0c]" },
+    bronze: { bg: "bg-white", border: "border-amber-700/40", title: "text-amber-900", price: "text-amber-900" },
+    gold: { bg: "bg-white", border: "border-[#d4a843]", title: "text-[#3d0c0c]", price: "text-[#3d0c0c]" },
+    dark: { bg: "bg-[#3d0c0c]", border: "border-[#3d0c0c]", title: "text-white", price: "text-[#d4a843]" },
+  } as const;
+  const th = themes[p.theme];
+  const dark = p.theme === "dark";
+
+  return (
+    <div
+      className={`relative rounded-2xl border-2 ${th.border} ${th.bg} p-6 flex flex-col ${
+        p.highlight ? "shadow-xl md:scale-[1.03]" : "shadow-sm"
+      }`}
+    >
+      {p.isCurrent && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase bg-emerald-700 text-white">
+          ✓ Current
+        </div>
+      )}
+      {!p.isCurrent && p.badge && (
+        <div
+          className={`absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase whitespace-nowrap ${
+            p.highlight ? "bg-[#d4a843] text-[#3d0c0c]" : "bg-[#3d0c0c] text-[#d4a843]"
+          }`}
+        >
+          {p.badge}
+        </div>
+      )}
+
+      <h3 className={`text-xl font-bold mt-2 ${th.title}`}>{p.title}</h3>
+      <p className={`text-xs mt-1 min-h-[2.25rem] ${dark ? "text-white/60" : "text-gray-500"}`}>
+        {p.tagline}
+      </p>
+
+      <div className="mt-5 flex items-baseline flex-wrap gap-x-2 gap-y-1 min-h-[3rem]">
+        {p.priceStrike && (
+          <span className={`text-sm line-through ${dark ? "text-white/40" : "text-gray-400"}`}>
+            {p.priceStrike}
+          </span>
+        )}
+        <span className={`text-3xl font-bold leading-none ${th.price}`}>{p.price}</span>
+        {p.priceSuffix && (
+          <span className={`text-sm ${dark ? "text-white/60" : "text-gray-500"}`}>
+            {p.priceSuffix}
+          </span>
+        )}
       </div>
 
-      <div style={{ background: "#3d0c0c", color: "#FFF8E7", padding: "44px 20px", marginTop: 20 }}>
-        <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
-          <h2 style={{ fontSize: 26, color: "#d4a843", margin: 0, fontWeight: 700 }}>
-            {t("अजून प्रश्न आहेत?", "Still have questions?", "अभी भी प्रश्न हैं?")}
-          </h2>
-          <p style={{ fontSize: 15, opacity: 0.9, marginTop: 10, marginBottom: 22 }}>
-            {t("आमच्याशी संपर्क साधा — आम्ही तुम्हाला योग्य योजना निवडण्यात मदत करू.", "Get in touch — we'll help you pick the right plan.", "हमसे संपर्क करें — हम आपको सही योजना चुनने में मदद करेंगे.")}
-          </p>
-          <Link href={`/${lang}/contact`} style={{
-            display: "inline-block", padding: "14px 32px",
-            background: "#d4a843", color: "#3d0c0c",
-            borderRadius: 8, fontWeight: 700, fontSize: 15, textDecoration: "none",
-          }}>
-            {t("संपर्क करा", "Contact Us", "संपर्क करें")}
-          </Link>
-        </div>
+      <div className="min-h-[1.5rem]">
+        {p.scarcity && (
+          <p className="mt-2 text-xs font-semibold text-red-600">⚡ {p.scarcity}</p>
+        )}
       </div>
+
+      <div className={`mt-3 py-3 px-3 rounded-lg text-sm font-medium min-h-[5rem] flex items-center ${dark ? "bg-white/5 text-white" : "bg-[#3d0c0c]/5 text-[#3d0c0c]"}`}>
+        {p.outcome}
+      </div>
+
+      <ul className={`mt-4 space-y-2 text-sm flex-1 ${dark ? "text-white/80" : "text-gray-600"}`}>
+        {p.bullets.map((b, i) => (
+          <li key={i} className="flex items-start gap-2">
+            <span className="text-[#d4a843] mt-0.5">✓</span>
+            <span>{b}</span>
+          </li>
+        ))}
+      </ul>
+
+      {p.isCurrent ? (
+        <div className="mt-6 py-3 text-center rounded-xl font-semibold text-sm bg-emerald-100 text-emerald-800 border border-emerald-200">
+          ✓ Current plan
+        </div>
+      ) : (
+        <Link
+          href={p.ctaHref}
+          className={`mt-6 block text-center py-3 rounded-xl text-sm font-semibold transition hover:scale-[1.02] ${
+            p.theme === "neutral"
+              ? "bg-white border-2 border-[#3d0c0c] text-[#3d0c0c]"
+              : p.theme === "bronze"
+                ? "bg-amber-700 text-white"
+                : "text-[#3d0c0c]"
+          }`}
+          style={
+            p.theme === "gold" || p.theme === "dark"
+              ? { background: "linear-gradient(135deg, #d4a843, #e5bc5a)" }
+              : undefined
+          }
+        >
+          {p.ctaLabel}
+        </Link>
+      )}
+    </div>
+  );
+}
+
+function FAQItem({
+  q,
+  a,
+  lang,
+}: {
+  q: { mr: string; en: string; hi: string };
+  a: { mr: string; en: string; hi: string };
+  lang: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const question = lang === "mr" ? q.mr : lang === "hi" ? q.hi : q.en;
+  const answer = lang === "mr" ? a.mr : lang === "hi" ? a.hi : a.en;
+  return (
+    <div className="border-b border-[#e5d5b5] last:border-b-0 p-4">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex justify-between items-center bg-transparent border-0 cursor-pointer p-0 text-left text-sm font-semibold text-[#3d0c0c]"
+      >
+        <span>{question}</span>
+        <span
+          className={`text-[#d4a843] text-xl transition-transform ${open ? "rotate-45" : ""}`}
+        >
+          +
+        </span>
+      </button>
+      {open && (
+        <div className="text-sm text-[#5c1a1a] leading-relaxed mt-3 pr-6">{answer}</div>
+      )}
     </div>
   );
 }

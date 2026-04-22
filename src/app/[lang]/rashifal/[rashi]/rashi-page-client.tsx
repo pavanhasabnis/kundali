@@ -28,28 +28,36 @@ interface Props {
   rashiSlug: string;
   rashiId: number;
   initialPrediction?: Prediction | null;
+  initialDate?: string;
 }
 
-export default function RashiPageClient({ rashiSlug, rashiId, initialPrediction = null }: Props) {
+export default function RashiPageClient({ rashiSlug, rashiId, initialPrediction = null, initialDate }: Props) {
   const { t, lang } = useLang();
   const [pred, setPred] = useState<Prediction | null>(initialPrediction);
   const [loading, setLoading] = useState(!initialPrediction);
 
   const rashi = RASHI_LIST[rashiId];
-  const todayStr = new Date().toLocaleDateString(lang === "mr" ? "mr-IN" : lang === "hi" ? "hi-IN" : "en-IN", {
+  const displayDate = initialDate
+    ? (() => {
+        const [y, m, d] = initialDate.split("-").map(Number);
+        return new Date(y, m - 1, d);
+      })()
+    : new Date();
+  const todayStr = displayDate.toLocaleDateString(lang === "mr" ? "mr-IN" : lang === "hi" ? "hi-IN" : "en-IN", {
     year: "numeric", month: "long", day: "numeric", weekday: "long",
   });
 
   useEffect(() => {
     if (initialPrediction) return;
-    fetch(`/api/rashifal?rashi=${rashiId}`)
+    const q = initialDate ? `?rashi=${rashiId}&date=${initialDate}` : `?rashi=${rashiId}`;
+    fetch(`/api/rashifal${q}`)
       .then((r) => r.json())
       .then((data) => {
         setPred(data.prediction);
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [rashiId, initialPrediction]);
+  }, [rashiId, initialPrediction, initialDate]);
 
   return (
     <div className="min-h-screen bg-[#FAFAF8]">
@@ -84,7 +92,7 @@ export default function RashiPageClient({ rashiSlug, rashiId, initialPrediction 
           "@type": "Article",
           headline: `${rashi.mr} राशीफल आज — ${rashi.en} Horoscope Today`,
           description: t(rashi.descMr, rashi.descEn, rashi.descMr),
-          image: "https://bhaagyavedh.com/logos/og-image.png",
+          image: "https://bhaagyavedh.com/opengraph-image.png",
           url: `https://bhaagyavedh.com/${lang}/rashifal/${rashiSlug}`,
           datePublished: new Date().toISOString().split("T")[0],
           dateModified: new Date().toISOString().split("T")[0],
@@ -116,9 +124,11 @@ export default function RashiPageClient({ rashiSlug, rashiId, initialPrediction 
         </svg>
 
         <div className="relative max-w-6xl mx-auto px-4 py-14 sm:py-20 text-center">
-          <Link href={`/${lang}/rashifal`} className="inline-flex items-center gap-2 text-xs uppercase tracking-widest mb-4 font-semibold" style={{ color: "#d4a843" }}>
-            ← {t("सर्व राशी", "All Signs", "सभी राशियाँ")}
-          </Link>
+          <div className="mb-6 flex justify-center">
+            <Link href={`/${lang}/rashifal`} className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-semibold hover:opacity-80" style={{ color: "#d4a843" }}>
+              ← {t("सर्व राशी", "All Signs", "सभी राशियाँ")}
+            </Link>
+          </div>
           <div className="inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] font-semibold mb-5" style={{ color: "#d4a843" }}>
             <span className="h-px w-8" style={{ background: "#d4a843" }} />
             {t("वास्तविक ग्रह गोचर", "Live Transit", "वास्तविक ग्रह गोचर")}

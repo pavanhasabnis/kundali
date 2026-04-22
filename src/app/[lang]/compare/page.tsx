@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/compare",
     mr: {
-      title: "दोन कुंडलींची तुलना — Kundli Compare Marathi | भाग्यवेध",
+      title: "दोन कुंडलींची तुलना — Kundli Compare Marathi",
       description:
         "दोन कुंडली एकत्र पाहा आणि तुलना करा. ग्रह स्थिती, नवमांश, दशा यांची तुलना. Kundali compare marathi, do kundalikanchi tulna.",
       keywords: [
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Compare Two Kundlis Side by Side — Chart Comparison | Bhaagyavedh",
+      title: "Compare Two Kundlis Side by Side — Chart Comparison",
       description:
         "Compare two janam kundlis side by side. View planetary positions, navamsha, dashas together. Free kundali compare tool in Marathi and English.",
       keywords: [

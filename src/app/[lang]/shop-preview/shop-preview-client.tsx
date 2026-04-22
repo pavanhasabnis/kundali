@@ -347,7 +347,7 @@ export default function ShopPreviewClient() {
       {/* Hero */}
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "40px 20px 20px", textAlign: "center" }}>
         <h1 style={{ fontSize: 34, color: "#3d0c0c", margin: 0, fontWeight: 700, letterSpacing: "-0.5px" }}>
-          {t("भाग्यवेध दुकान", "Bhaagyavedh Shop", "भाग्यवेध शॉप")}
+          {t("भाग्यवेध शॉप", "Bhaagyavedh Shop", "भाग्यवेध शॉप")}
         </h1>
         <p style={{ fontSize: 15, color: "#6b5b3e", marginTop: 10, maxWidth: 560, marginLeft: "auto", marginRight: "auto" }}>
           {t(

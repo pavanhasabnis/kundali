@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/graha-sthiti",
     mr: {
-      title: "आजची ग्रह स्थिती — ९ ग्रह संचार | Graha Sthiti Marathi | भाग्यवेध",
+      title: "आजची ग्रह स्थिती — ९ ग्रह संचार | Graha Sthiti Marathi",
       description:
         "आजची ग्रह स्थिती — सूर्य, चंद्र, मंगळ, बुध, गुरू, शुक्र, शनी, राहू, केतू. Aaj chi graha sthiti marathi. वास्तविक ग्रह गोचर आणि संचार.",
       keywords: [
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Planetary Positions Today — 9 Grahas Live | Graha Sthiti | Bhaagyavedh",
+      title: "Planetary Positions Today — 9 Grahas Live | Graha Sthiti",
       description:
         "Live planetary positions — Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, Ketu. Real-time vedic graha sthiti with rashi and nakshatra positions.",
       keywords: [

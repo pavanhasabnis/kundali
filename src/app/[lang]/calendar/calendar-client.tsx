@@ -12,7 +12,7 @@ interface CalendarDay {
   date: string; day: number; dayOfWeek: number; dayName: string;
   tithi: string; tithiIndex: number; paksha: string;
   nakshatra: string; nakshatraEn: string; yoga: string; karana: string;
-  rahuKaal: string; moonRashi: string; sunRashi: string;
+  rahuKaal: string; gulikaKaal: string; yamaganda: string; moonRashi: string; sunRashi: string;
   masa: string; sunrise: string; sunset: string;
   tithiEnd: string | null; karanaEnd: string | null;
   yogaEnd: string | null; moonRashiEnd: string | null;
@@ -373,6 +373,8 @@ export default function CalendarPageClient() {
                         { l: t("योग:", "Yoga:", "योग:"), v: `${selectedDay.yoga}${selectedDay.yogaEnd ? " " + formatPanchangTime(selectedDay.yogaEnd, lang) : ""}` },
                         { l: t("करण:", "Karana:", "करण:"), v: karanaText },
                         { l: t("राहुकाळ:", "Rahu Kaal:", "राहुकाल:"), v: formatTimeRangeMarathi(selectedDay.rahuKaal, lang) },
+                        { l: t("गुलिक काळ:", "Gulika Kaal:", "गुलिक काल:"), v: formatTimeRangeMarathi(selectedDay.gulikaKaal, lang) },
+                        { l: t("यमगंड:", "Yamaganda:", "यमगंड:"), v: formatTimeRangeMarathi(selectedDay.yamaganda, lang) },
                         { l: t("राष्ट्रीय:", "National:", "राष्ट्रीय:"), v: `${sakaMonth} ${sakaDay}, ${t("शके", "Saka", "शक")} ${sakaYr}` },
                       ];
                     })().map((item, i) => (

@@ -148,22 +148,24 @@ function fmtDateRange(startISO: string, endISO: string, lang: string): string {
   return `${sStr} – ${eStr}`;
 }
 
-export default function SaptahikRashiClient({ rashiId, rashiSlug }: { rashiId: number; rashiSlug: string }) {
+export default function SaptahikRashiClient({ rashiId, rashiSlug, initialWeek, initialData }: { rashiId: number; rashiSlug: string; initialWeek?: string; initialData?: WeeklyData | null }) {
   const { t, lang } = useLang();
   const rashi = RASHIS[rashiId];
-  const [data, setData] = useState<WeeklyData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<WeeklyData | null>(initialData ?? null);
+  const [loading, setLoading] = useState(!initialData);
   const [tab, setTab] = useState<"forecast" | "planets">("forecast");
 
   useEffect(() => {
+    if (initialData) return;
     (async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/rashifal/weekly`);
+        const q = initialWeek ? `?date=${initialWeek}` : "";
+        const res = await fetch(`/api/rashifal/weekly${q}`);
         if (res.ok) setData(await res.json());
       } finally { setLoading(false); }
     })();
-  }, []);
+  }, [initialWeek, initialData]);
 
   const pred = data?.predictions[rashiId];
   const el = ELEMENT[rashiId];

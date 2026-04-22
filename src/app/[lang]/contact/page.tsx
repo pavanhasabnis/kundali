@@ -8,7 +8,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/contact",
     mr: {
-      title: "संपर्क — भाग्यवेध पुणे | Contact Marathi | भाग्यवेध",
+      title: "संपर्क — भाग्यवेध पुणे | Contact Marathi",
       description:
         "भाग्यवेध पुणे — संपर्क करा ज्योतिष, पूजा, तीर्थयात्रा बुकिंगसाठी. फोन, ईमेल, पत्ता. Contact Bhaagyavedh Pune.",
       keywords: [
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Contact Bhaagyavedh — Astrology & Pooja Services Pune | Bhaagyavedh",
+      title: "Contact Bhaagyavedh — Astrology & Pooja Services Pune",
       description:
         "Contact Bhaagyavedh Pune for astrology consultation, pooja services, yatra bookings. Phone, email, address in Kothrud, Pune.",
       keywords: [

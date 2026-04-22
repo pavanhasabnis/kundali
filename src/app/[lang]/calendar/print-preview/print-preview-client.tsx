@@ -14,7 +14,7 @@ interface CalendarDay {
   date: string; day: number; dayOfWeek: number; dayName: string;
   tithi: string; tithiIndex: number; paksha: string;
   nakshatra: string; nakshatraEn: string; yoga: string; karana: string;
-  rahuKaal: string; moonRashi: string; sunRashi: string;
+  rahuKaal: string; gulikaKaal: string; yamaganda: string; moonRashi: string; sunRashi: string;
   masa: string; sunrise: string; sunset: string;
   tithiEnd: string | null; karanaEnd: string | null;
   yogaEnd: string | null; moonRashiEnd: string | null;

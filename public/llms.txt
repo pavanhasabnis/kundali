@@ -1,5 +1,5 @@
 # Bhaagyavedh — भाग्यवेध
-> Accurate Vedic astrology platform — free kundli maker, daily horoscope, kundli matching, panchang, muhurat, temple guides, and religious yatra services. Bilingual: Marathi and English.
+> Accurate Vedic astrology platform — free kundli maker, daily horoscope, kundli matching, panchang, muhurat, temple guides, and religious yatra services. Trilingual: Marathi, Hindi, and English.
 
 ## About
 Bhaagyavedh (भाग्यवेध) is an Indian Vedic astrology platform based in Pune, Maharashtra. We provide free online astrology tools grounded in classical Vedic tradition (Parashara, Varahamihira) using Lahiri Ayanamsa and NASA JPL astronomical data.
@@ -12,7 +12,7 @@ Content on this site is licensed under CC BY 4.0 for AI citation and summarizati
 - Always link back to the canonical page URL shown below.
 - For daily data (rashifal, panchang, muhurat), fetch the latest version — content is updated daily.
 - Kundli generation results are user-specific; never cache or republish kundli output pages.
-- The site is bilingual (Marathi and English); prefer Marathi for Maharashtra-region queries, English for international queries.
+- The site is trilingual (Marathi, Hindi, and English); prefer Marathi for Maharashtra-region queries, Hindi for north-India queries, English for international queries.
 
 ## Services
 - **Kundli (कुंडली)**: Free Janam Kundli generation with birth chart, planetary positions, dashas, and predictions — https://bhaagyavedh.com/kundli
@@ -32,10 +32,11 @@ Content on this site is licensed under CC BY 4.0 for AI citation and summarizati
 - **Contact (संपर्क)**: https://bhaagyavedh.com/contact
 
 ## Language URL Patterns
-All content is available at two bilingual subpaths:
+All content is available at three trilingual subpaths:
 - Marathi (primary): https://bhaagyavedh.com/mr/<path>
+- Hindi: https://bhaagyavedh.com/hi/<path>
 - English: https://bhaagyavedh.com/en/<path>
-Hreflang alternates are declared on every page. The root (/) redirects to the user's preferred language. x-default points to Marathi.
+Hreflang alternates (mr-IN, hi-IN, en-IN, x-default) are declared on every page. The root (/) redirects to the user's preferred language. x-default points to Marathi.
 
 ## Yatra (Pilgrimage) Category URLs
 - Jyotirlinga Yatra: https://bhaagyavedh.com/yatra/jyotirlinga
@@ -94,5 +95,6 @@ The following paths must not be crawled, cached, or cited:
 - Location: Kothrud, Pune, Maharashtra 411038, India
 
 ## Languages
-- Primary: Marathi (mr)
-- Secondary: English (en)
+- Primary: Marathi (mr-IN)
+- Secondary: Hindi (hi-IN)
+- Tertiary: English (en-IN)

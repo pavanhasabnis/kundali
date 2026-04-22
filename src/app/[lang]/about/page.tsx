@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/about",
     mr: {
-      title: "आमच्याबद्दल — Bhaagyavedh Marathi ज्योतिष प्लॅटफॉर्म | भाग्यवेध",
+      title: "आमच्याबद्दल — Bhaagyavedh Marathi ज्योतिष प्लॅटफॉर्म",
       description:
         "भाग्यवेध (Bhaagyavedh) — पुण्यातील विश्वसनीय मराठी वैदिक ज्योतिष प्लॅटफॉर्म. कुंडली, गुण मिलान, पंचांग, तीर्थयात्रा सेवा. आमच्याबद्दल जाणून घ्या.",
       keywords: [

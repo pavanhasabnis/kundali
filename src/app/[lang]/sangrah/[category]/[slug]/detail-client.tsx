@@ -208,7 +208,7 @@ export default function SangrahDetailClient({ item, categoryLabel }: Props) {
           headline: `${item.titleEn} — ${item.title}`,
           description: `${item.titleEn} — ${item.title}. Complete Sanskrit text with Marathi transliteration and English meaning.`,
           url: `https://bhaagyavedh.com/sangrah/${item.category}/${item.slug}`,
-          image: "https://bhaagyavedh.com/logos/og-image.png",
+          image: "https://bhaagyavedh.com/opengraph-image.png",
           inLanguage: ["sa", "mr", "en"],
           articleSection: categoryLabel.en,
           keywords: [item.deityEn, item.title, item.titleEn, "Sanskrit", "stotra", "mantra", "aarti"].join(", "),

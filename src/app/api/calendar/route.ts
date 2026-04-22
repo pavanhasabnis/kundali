@@ -22,6 +22,8 @@ export interface CalendarDay {
   yoga: string;
   karana: string;
   rahuKaal: string;
+  gulikaKaal: string;
+  yamaganda: string;
   moonRashi: string;
   sunRashi: string;
   masa: string;
@@ -140,6 +142,8 @@ export async function GET(req: NextRequest) {
         yoga: panchang.yoga,
         karana: panchang.karana,
         rahuKaal: panchang.rahuKaal,
+        gulikaKaal: panchang.gulikaKaal,
+        yamaganda: panchang.yamaganda,
         moonRashi: panchang.moonRashi,
         sunRashi: panchang.sunRashi,
         masa: panchang.masa,

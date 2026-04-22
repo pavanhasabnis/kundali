@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { calculateKundli } from "@/lib/astrology/calculator";
+import { checkKundliQuota, recordGeneration } from "@/lib/kundli-gate";
 import {
   analyzePlanetaryStrength,
   detectYogas,
@@ -24,6 +25,17 @@ import { calculateVimshopakBala } from "@/lib/astrology/vimshopak";
 
 export async function POST(req: NextRequest) {
   try {
+    // Gate BEFORE the expensive compute. Anon users hit per-IP day limit;
+    // authed users hit plan-based limits. Failures return 429 with a
+    // user-facing message + the plan so the client can prompt upgrade.
+    const gate = await checkKundliQuota(req);
+    if (!gate.ok) {
+      return NextResponse.json(
+        { error: gate.message, reason: gate.reason, plan: gate.plan },
+        { status: 429 },
+      );
+    }
+
     const body = await req.json();
     const { year, month, day, hour, minute, latitude, longitude, timezone } = body;
 
@@ -119,6 +131,17 @@ export async function POST(req: NextRequest) {
       gocharNaadi,
       vimshopakBala,
     };
+
+    // Record the generation against the user's quota (skip for anon — the IP
+    // rate limiter already counted). Errors here are swallowed: we'd rather
+    // the user get their kundli than fail on a tracking write.
+    if (gate.userId) {
+      try {
+        await recordGeneration(gate.userId, gate.plan);
+      } catch (e) {
+        console.error("kundli-gate: recordGeneration failed", e);
+      }
+    }
 
     return NextResponse.json(serialized);
   } catch (error: unknown) {

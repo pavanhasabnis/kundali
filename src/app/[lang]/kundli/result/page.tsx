@@ -9,12 +9,12 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     path: "/kundli/result",
     noindex: true,
     mr: {
-      title: "तुमची कुंडली — Janam Kundli Result | भाग्यवेध",
+      title: "तुमची कुंडली — Janam Kundli Result",
       description: "तुमच्या जन्म कुंडलीचे संपूर्ण विश्लेषण — ग्रह स्थिती, दशा, योग, दोष आणि भाव भविष्य.",
       keywords: ["कुंडली result", "janam kundli result", "birth chart result"],
     },
     en: {
-      title: "Your Kundli Result — Janam Kundli Analysis | Bhaagyavedh",
+      title: "Your Kundli Result — Janam Kundli Analysis",
       description: "Complete Vedic birth chart analysis — planetary positions, dasha periods, yogas, doshas, and detailed house predictions.",
       keywords: ["kundli result", "janam kundli result", "birth chart analysis"],
     },

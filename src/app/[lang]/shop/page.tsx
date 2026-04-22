@@ -9,9 +9,9 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/shop",
     mr: {
-      title: "भाग्यवेध दुकान — बांधील कुंडली पुस्तक व छापील दिनदर्शिका | घरपोच",
+      title: "भाग्यवेध शॉप — बांधील कुंडली पुस्तक व छापील दिनदर्शिका | घरपोच",
       description: "वैदिक पंचांग व कुंडलीवर आधारित छापील उत्पादने — बांधील कुंडली पुस्तक (८०+ पाने), वार्षिक छापील दिनदर्शिका, महाराष्ट्रभर मोफत शिपिंग.",
-      keywords: ["बांधील कुंडली पुस्तक", "छापील दिनदर्शिका", "मराठी पंचांग प्रिंट", "भाग्यवेध दुकान", "kundli book India"],
+      keywords: ["बांधील कुंडली पुस्तक", "छापील दिनदर्शिका", "मराठी पंचांग प्रिंट", "भाग्यवेध शॉप", "kundli book India"],
     },
     en: {
       title: "Bhaagyavedh Shop — Bound Kundli Book & Printed Calendar | Home Delivery",
@@ -26,7 +26,7 @@ const bookProduct = {
   "@type": "Product",
   name: "Bound Kundli Book — बांधील कुंडली पुस्तक",
   description: "Complete Vedic birth chart, dasha analysis, planetary positions, and remedies delivered as a beautifully bound hardcover book (80+ pages) to your home.",
-  image: "https://bhaagyavedh.com/logos/og-image.png",
+  image: "https://bhaagyavedh.com/opengraph-image.png",
   brand: { "@type": "Brand", name: "Bhaagyavedh" },
   offers: {
     "@type": "Offer",
@@ -48,7 +48,7 @@ const calendarProduct = {
   "@type": "Product",
   name: "Printed Annual Marathi Calendar 14×22\" — छापील वार्षिक दिनदर्शिका",
   description: "Full year of tithis, nakshatras, festivals, muhurat, and rahu-kaal — printed calendar for wall display, shipped to your home annually.",
-  image: "https://bhaagyavedh.com/logos/og-image.png",
+  image: "https://bhaagyavedh.com/opengraph-image.png",
   brand: { "@type": "Brand", name: "Bhaagyavedh" },
   offers: {
     "@type": "Offer",
@@ -68,7 +68,7 @@ const calendarProduct = {
 export default async function Page({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   const base = `https://bhaagyavedh.com/${lang}`;
-  const shopLabel = lang === "mr" ? "दुकान" : lang === "hi" ? "शॉप" : "Shop";
+  const shopLabel = lang === "mr" ? "शॉप" : lang === "hi" ? "शॉप" : "Shop";
   const homeLabel = lang === "mr" ? "मुख्यपृष्ठ" : lang === "hi" ? "मुख्य पृष्ठ" : "Home";
 
   return (

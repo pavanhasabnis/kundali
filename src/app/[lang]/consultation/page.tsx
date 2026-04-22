@@ -8,7 +8,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/consultation",
     mr: {
-      title: "ज्योतिष सल्ला — वैदिक ज्योतिष तज्ञांशी संपर्क | Astrology Consultation Marathi | भाग्यवेध",
+      title: "ज्योतिष सल्ला — वैदिक ज्योतिष तज्ञांशी संपर्क | Astrology Consultation Marathi",
       description:
         "अनुभवी वैदिक ज्योतिष तज्ञांकडून कुंडली विश्लेषण, दशा, उपाय यांचा सल्ला घ्या. Jyotish salla marathi pune. फोन, व्हिडिओ सल्ला उपलब्ध.",
       keywords: [
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Astrology Consultation — Vedic Jyotish in Marathi & English | Bhaagyavedh",
+      title: "Astrology Consultation — Vedic Jyotish in Marathi & English",
       description:
         "Get personalized Vedic astrology consultation from experienced jyotish experts. Kundli analysis, dasha reading, remedies. Jyotish salla marathi in Pune — phone or video.",
       keywords: [

@@ -1,5 +1,6 @@
 import { pageMetaI18n, type Lang } from "@/lib/seo";
 import { getAllSangrahItems, getSangrahCategoryCounts } from "@/lib/sangrah-reader";
+import type { SangrahPopularItem } from "@/lib/sangrah-types";
 import SangrahPageClient from "./sangrah-client";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
@@ -34,8 +35,37 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   });
 }
 
+// Popular slugs shown in the "Quick Access" strip on the index.
+// Kept in sync with the filter previously in the client component.
+const POPULAR_SLUGS = [
+  "aarti-ganpati",
+  "stotra-ramraksha",
+  "chalisa-hanuman",
+  "stotra-ganpati-atharvashirsha",
+  "mantra-gayatri",
+  "mantra-mahamrityunjay",
+  "aarti-shankar",
+  "aarti-vitthal",
+  "aarti-saibaba",
+] as const;
+
 export default function SangrahPage() {
   const items = getAllSangrahItems();
   const counts = getSangrahCategoryCounts();
-  return <SangrahPageClient items={JSON.parse(JSON.stringify(items))} counts={counts} />;
+  const totalCount = items.length;
+
+  // Ship only minimal fields for the 9 popular items — avoids serializing
+  // 90+ full devotional texts into the HTML payload (~1.5 MB → <20 KB).
+  const popular: SangrahPopularItem[] = items
+    .filter((i) => (POPULAR_SLUGS as readonly string[]).includes(i.slug))
+    .map((i) => ({
+      slug: i.slug,
+      title: i.title,
+      titleEn: i.titleEn,
+      category: i.category,
+      deityMrInitial: i.deityMr[0] ?? "",
+      deityEnInitial: i.deityEn[0] ?? "",
+    }));
+
+  return <SangrahPageClient totalCount={totalCount} counts={counts} popular={popular} />;
 }

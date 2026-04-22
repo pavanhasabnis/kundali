@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   },
   serverExternalPackages: ["swisseph"],
   allowedDevOrigins: ["192.168.1.7"],
+  // Hide the dev-only "1 issue" overlay — Playwright records would bake it
+  // into the MP4 otherwise.
+  devIndicators: false,
   async headers() {
     return [
       {

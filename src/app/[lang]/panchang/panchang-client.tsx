@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { useLang } from "@/lib/astrology/language-context";
 import { formatTimeMarathi, formatTimeRangeMarathi } from "@/lib/astrology/time-format";
 
@@ -9,7 +10,7 @@ interface Festival { name: string; nameMr: string; type: string; }
 interface PanchangData {
   date: string; day: string; tithi: string; tithiIndex: number; paksha: string;
   nakshatra: string; nakshatraEn: string; nakshatraLord: string;
-  yoga: string; karana: string; rahuKaal: string; masa: string;
+  yoga: string; karana: string; rahuKaal: string; gulikaKaal: string; yamaganda: string; masa: string;
   moonRashi: string; sunRashi: string;
   sunrise: string; sunset: string;
   tithiEnd: string | null; karanaEnd: string | null; yogaEnd: string | null; moonRashiEnd: string | null;
@@ -445,20 +446,23 @@ function todayLocalISO() {
   return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`;
 }
 
-export default function PanchangPageClient() {
+export default function PanchangPageClient({ initialDate }: { initialDate?: string } = {}) {
   const { t, lang } = useLang();
-  // Mumbai-default to match Kalnirnay. localStorage overrides below.
+  const router = useRouter();
+  const routeParams = useParams<{ lang: string }>();
   const DEFAULT_LOC = LOCATIONS.find((l) => l.key === "mumbai") || LOCATIONS[0];
-  // SSR-safe: initial state empty; hydrate from Date.now() + localStorage on mount.
-  const [date, setDate] = useState<string>("");
+  const [date, setDate] = useState<string>(initialDate ?? "");
   const [loc, setLoc] = useState(DEFAULT_LOC);
   const [panchang, setPanchang] = useState<PanchangData | null>(null);
   const [dayChart, setDayChart] = useState<DayChart | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Initialize client-side to avoid SSR/client date mismatch.
   useEffect(() => {
-    setDate(todayLocalISO());
+    if (initialDate) setDate(initialDate);
+  }, [initialDate]);
+
+  useEffect(() => {
+    if (!date && !initialDate) setDate(todayLocalISO());
     if (typeof window !== "undefined") {
       const saved = window.localStorage.getItem("panchang.loc");
       if (saved) {
@@ -466,7 +470,7 @@ export default function PanchangPageClient() {
         if (match) setLoc(match);
       }
     }
-  }, []);
+  }, [date, initialDate]);
 
   // Persist location selection.
   useEffect(() => {
@@ -502,7 +506,10 @@ export default function PanchangPageClient() {
   const shiftDay = (delta: number) => {
     const d = new Date(dateObj);
     d.setDate(d.getDate() + delta);
-    setDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`);
+    const next = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    setDate(next);
+    const langSeg = routeParams?.lang ?? "mr";
+    router.push(`/${langSeg}/panchang/${next}`);
   };
 
   const dayTypeColor = (() => {
@@ -550,13 +557,24 @@ export default function PanchangPageClient() {
             <input
               type="date"
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (!v) return;
+                setDate(v);
+                const langSeg = routeParams?.lang ?? "mr";
+                router.push(`/${langSeg}/panchang/${v}`);
+              }}
               className="px-3 py-2 border border-stone-300 rounded-lg text-sm font-semibold"
             />
             <button onClick={() => shiftDay(1)} className="w-9 h-9 rounded-lg hover:bg-stone-100 font-bold text-[#3d0c0c]">›</button>
           </div>
           <button
-            onClick={() => setDate(todayLocalISO())}
+            onClick={() => {
+              const v = todayLocalISO();
+              setDate(v);
+              const langSeg = routeParams?.lang ?? "mr";
+              router.push(`/${langSeg}/panchang/${v}`);
+            }}
             className="px-3 py-2 text-xs font-bold rounded-lg bg-[#FFF3D6] text-[#3d0c0c] hover:bg-[#FFF8E7]"
           >
             {t("आज", "Today", "आज")}
@@ -672,8 +690,8 @@ export default function PanchangPageClient() {
                     { l: t("योग", "Yoga", "योग"), v: `${panchang.yoga}${yogaTimeStr}` },
                     { l: t("करण", "Karana", "करण"), v: karanaTextMr },
                     { l: t("राहुकाळ", "Rahu Kaal", "राहुकाल"), v: formatTimeRangeMarathi(panchang.rahuKaal, lang), danger: true },
-                    { l: t("गुळिक काळ", "Gulika Kaal", "गुलिक काल"), v: fmtRangeMr(dayRange(panchang.sunrise, panchang.sunset, GULIKA_SLOT[dow]), lang) },
-                    { l: t("यमगंड", "Yamaganda", "यमगंड"), v: fmtRangeMr(dayRange(panchang.sunrise, panchang.sunset, YAMAGANDA_SLOT[dow]), lang) },
+                    { l: t("गुळिक काळ", "Gulika Kaal", "गुलिक काल"), v: formatTimeRangeMarathi(panchang.gulikaKaal, lang) },
+                    { l: t("यमगंड", "Yamaganda", "यमगंड"), v: formatTimeRangeMarathi(panchang.yamaganda, lang) },
                     { l: t("अभिजित मुहूर्त", "Abhijit Muhurta", "अभिजित मुहूर्त"), v: dow === 3 ? t("नाही (बुधवार)", "None (Wednesday)", "नहीं (बुधवार)") : fmtRangeMr(abhijitRange(panchang.sunrise, panchang.sunset), lang), good: true },
                     { l: t("राष्ट्रीय", "National", "राष्ट्रीय"), v: `${sakaMonthName} ${sakaDayStr}, ${t("शके", "Saka", "शक")} ${sakaYearStr}` },
                   ];

@@ -7,7 +7,6 @@ export function GET() {
     { path: "/kundli", lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { path: "/rashifal", lastModified: now, changeFrequency: "daily", priority: 0.9 },
     { path: "/matching", lastModified: now, changeFrequency: "monthly", priority: 0.9 },
-    { path: "/panchang", lastModified: now, changeFrequency: "daily", priority: 0.9 },
     { path: "/calendar", lastModified: now, changeFrequency: "daily", priority: 0.8 },
     { path: "/muhurat", lastModified: now, changeFrequency: "weekly", priority: 0.8 },
     { path: "/graha-sthiti", lastModified: now, changeFrequency: "daily", priority: 0.7 },

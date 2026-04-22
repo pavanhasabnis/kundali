@@ -187,7 +187,7 @@ export function articleSchema(opts: {
     url: opts.url,
     datePublished: opts.datePublished,
     dateModified: opts.dateModified || opts.datePublished,
-    image: opts.image || "https://bhaagyavedh.com/logos/og-image.png",
+    image: opts.image || "https://bhaagyavedh.com/opengraph-image.png",
     author: { "@type": "Organization", name: "Bhaagyavedh" },
     publisher: {
       "@type": "Organization",

@@ -3,20 +3,19 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useLang } from "@/lib/astrology/language-context";
-import { SANGRAH_CATEGORIES, type SangrahItem } from "@/lib/sangrah-types";
+import { SANGRAH_CATEGORIES, type SangrahPopularItem } from "@/lib/sangrah-types";
 import { JsonLd, breadcrumbSchema, serviceSchema } from "@/components/json-ld";
 import { PageHero } from "@/components/page-hero";
 
 interface Props {
-  items: SangrahItem[];
+  totalCount: number;
   counts: Record<string, number>;
+  popular: SangrahPopularItem[];
 }
 
-export default function SangrahPageClient({ items, counts }: Props) {
+export default function SangrahPageClient({ totalCount, counts, popular }: Props) {
   const { t, lang } = useLang();
   const [search, setSearch] = useState("");
-
-  const totalCount = items.length;
 
   const filteredCategories = SANGRAH_CATEGORIES.filter((cat) => {
     if (!search.trim()) return true;
@@ -178,41 +177,38 @@ export default function SangrahPageClient({ items, counts }: Props) {
       </section>
 
       {/* Quick Access — Popular Items */}
-      {items.length > 0 && (
+      {popular.length > 0 && (
         <section className="max-w-6xl mx-auto px-4 pb-12">
           <h2 className="text-xl font-bold text-[#3d0c0c] mb-5">
             {t("लोकप्रिय पठणे", "Popular Recitations", "लोकप्रिय पाठ")}
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {items
-              .filter((item) =>
-                ["aarti-ganpati", "stotra-ramraksha", "chalisa-hanuman", "stotra-ganpati-atharvashirsha", "mantra-gayatri", "mantra-mahamrityunjay", "aarti-shankar", "aarti-vitthal", "aarti-saibaba"].includes(item.slug)
-              )
-              .map((item) => (
-                <Link
-                  key={item.slug}
-                  href={`/sangrah/${item.category}/${item.slug}`}
-                  className="flex items-center gap-3 p-3 rounded-lg bg-white border border-gray-100 hover:border-[#d4a843]/40 hover:shadow-sm transition group"
+            {popular.map((item) => (
+              <Link
+                key={item.slug}
+                href={`/sangrah/${item.category}/${item.slug}`}
+                className="flex items-center gap-3 p-3 rounded-lg bg-white border border-gray-100 hover:border-[#d4a843]/40 hover:shadow-sm transition group"
+              >
+                <span
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
+                  style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}
                 >
-                  <span className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                    style={{ background: "linear-gradient(135deg, #3d0c0c, #5c1a1a)" }}
-                  >
-                    {t(item.deityMr[0], item.deityEn[0], item.deityMr[0])}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-800 truncate group-hover:text-[#5c1a1a]">
-                      {t(item.title, item.titleEn, item.title)}
-                    </p>
-                    <p className="text-xs text-gray-400 capitalize">
-                      {t(
-                        SANGRAH_CATEGORIES.find((c) => c.id === item.category)?.labelMr || item.category,
-                        SANGRAH_CATEGORIES.find((c) => c.id === item.category)?.labelEn || item.category,
-                        SANGRAH_CATEGORIES.find((c) => c.id === item.category)?.labelMr || item.category
-                      )}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+                  {t(item.deityMrInitial, item.deityEnInitial, item.deityMrInitial)}
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-gray-800 truncate group-hover:text-[#5c1a1a]">
+                    {t(item.title, item.titleEn, item.title)}
+                  </p>
+                  <p className="text-xs text-gray-400 capitalize">
+                    {t(
+                      SANGRAH_CATEGORIES.find((c) => c.id === item.category)?.labelMr || item.category,
+                      SANGRAH_CATEGORIES.find((c) => c.id === item.category)?.labelEn || item.category,
+                      SANGRAH_CATEGORIES.find((c) => c.id === item.category)?.labelMr || item.category
+                    )}
+                  </p>
+                </div>
+              </Link>
+            ))}
           </div>
         </section>
       )}

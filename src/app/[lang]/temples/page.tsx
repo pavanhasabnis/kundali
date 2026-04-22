@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Famous Hindu Temples Guide — Darshan & Travel | Bhaagyavedh",
+      title: "Famous Hindu Temples Guide — Darshan & Travel",
       description:
         "Guide to 50+ famous Hindu temples in India — darshan timings, history, how to reach. Jyotirlingas, Shakti Peeths, Divya Desams with Marathi & English info.",
       keywords: [

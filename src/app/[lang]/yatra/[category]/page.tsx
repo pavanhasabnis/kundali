@@ -53,8 +53,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     return pageMetaI18n({
       lang: l,
       path: `/yatra/${category}`,
-      mr: { title: "यात्रा पॅकेज | भाग्यवेध", description: "तीर्थयात्रा पॅकेज", keywords: ["तीर्थयात्रा"] },
-      en: { title: "Yatra Packages | Bhaagyavedh", description: "Pilgrimage packages", keywords: ["yatra"] },
+      mr: { title: "यात्रा पॅकेज", description: "तीर्थयात्रा पॅकेज", keywords: ["तीर्थयात्रा"] },
+      en: { title: "Yatra Packages", description: "Pilgrimage packages", keywords: ["yatra"] },
     });
   }
   return pageMetaI18n({
@@ -66,7 +66,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       keywords: cat.mrKeys,
     },
     en: {
-      title: `${cat.enName} — Pilgrimage Tour | Bhaagyavedh`,
+      title: `${cat.enName} — Pilgrimage Tour`,
       description: cat.enDesc,
       keywords: cat.enKeys,
     },

@@ -15,6 +15,13 @@
       "when": 1776515646043,
       "tag": "0001_vengeful_captain_america",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1776800556272,
+      "tag": "0002_chunky_rogue",
+      "breakpoints": true
     }
   ]
 }

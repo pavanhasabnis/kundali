@@ -8,12 +8,12 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/disclaimer",
     mr: {
-      title: "अस्वीकरण — Disclaimer Marathi | भाग्यवेध",
+      title: "अस्वीकरण — Disclaimer Marathi",
       description: "भाग्यवेध अस्वीकरण — ज्योतिष हे मार्गदर्शनासाठी आहे, अंतिम निर्णयासाठी नाही.",
       keywords: ["अस्वीकरण", "disclaimer marathi", "bhaagyavedh disclaimer"],
     },
     en: {
-      title: "Disclaimer — Bhaagyavedh",
+      title: "Disclaimer",
       description: "Bhaagyavedh disclaimer — astrology is for guidance, not final decisions. Available in Marathi and English.",
       keywords: ["disclaimer", "astrology disclaimer", "bhaagyavedh disclaimer"],
     },

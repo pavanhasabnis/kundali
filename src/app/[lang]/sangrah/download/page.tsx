@@ -3,7 +3,7 @@ import { pageMeta } from "@/lib/seo";
 import DownloadClient from "./download-client";
 
 export const metadata = pageMeta({
-  title: "Download Sangrah — संग्रह डाउनलोड | Bhaagyavedh",
+  title: "Download Sangrah — संग्रह डाउनलोड",
   description: "Download complete sangrah collection as PDF — aartis, stotras, chalisas, mantras, vrat kathas, daily prayers and namavalis.",
   path: "/sangrah/download",
   noindex: true,

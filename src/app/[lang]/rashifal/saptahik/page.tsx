@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Weekly Rashifal — 12 Zodiac Signs | Bhaagyavedh",
+      title: "Weekly Rashifal — 12 Zodiac Signs",
       description: "Weekly horoscope for all 12 zodiac signs based on real planetary transits. Marathi weekly rashifal covering career, love, health.",
       keywords: [
         "weekly rashifal marathi", "weekly horoscope 12 signs", "saptahik rashifal",

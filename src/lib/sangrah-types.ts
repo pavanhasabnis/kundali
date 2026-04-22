@@ -31,3 +31,15 @@ export const SANGRAH_CATEGORIES = [
 ] as const;
 
 export type SangrahCategoryId = (typeof SANGRAH_CATEGORIES)[number]["id"];
+
+/** Minimal projection of SangrahItem sent to the sangrah-client for the
+ *  "Popular Recitations" strip. Avoids shipping full devotional texts to
+ *  the browser — keeps the index page HTML small. */
+export interface SangrahPopularItem {
+  slug: string;
+  title: string;
+  titleEn: string;
+  category: string;
+  deityMrInitial: string;
+  deityEnInitial: string;
+}

@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Free Kundli Online — Janam Kundali Maker | Bhaagyavedh",
+      title: "Free Kundli Online — Janam Kundali Maker",
       description:
         "Free janam kundli online. Enter birth date, time, place — get accurate lagna chart, planetary positions, dashas & yogas. Mofat kundali marathi maker.",
       keywords: [

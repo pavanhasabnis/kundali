@@ -8,6 +8,9 @@
  */
 import swisseph from "swisseph";
 import { calculateGochar, type TransitPlanet, type GocharResult } from "./gochar";
+import { db } from "../db";
+import { weeklyRashifal } from "../db/schema";
+import { eq, and } from "drizzle-orm";
 
 const RASHI_MR = ["मेष", "वृषभ", "मिथुन", "कर्क", "सिंह", "कन्या", "तुला", "वृश्चिक", "धनु", "मकर", "कुंभ", "मीन"];
 const RASHI_EN = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
@@ -650,8 +653,60 @@ export function computeWeeklyForecast(anchorDate: Date): WeeklyForecast {
     });
   }
 
+  const weekStartStr = fmtDate(weekStart);
+
+  // Overlay DB-cached LLM prose when available for (weekStart, rashiId).
+  try {
+    const cached = db
+      .select()
+      .from(weeklyRashifal)
+      .where(eq(weeklyRashifal.weekStart, weekStartStr))
+      .all();
+    if (cached.length > 0) {
+      const byRashi = new Map<number, typeof cached[0]>();
+      for (const c of cached) byRashi.set(c.rashiId, c);
+      for (const pred of predictions) {
+        const c = byRashi.get(pred.rashiId);
+        if (!c) continue;
+        pred.summary = { mr: c.summary, en: pred.summary.en };
+        pred.narrative = { mr: c.narrative, en: pred.narrative.en };
+        try {
+          const cp = JSON.parse(c.careerPointsJson) as { day: string; text: string }[];
+          const lp = JSON.parse(c.lovePointsJson) as { day: string; text: string }[];
+          const hp = JSON.parse(c.healthPointsJson) as { day: string; text: string }[];
+          if (Array.isArray(cp) && cp.length) {
+            pred.careerPoints = cp.map((p, i) => ({
+              mr: p.text,
+              en: pred.careerPoints[i]?.en ?? p.text,
+            }));
+          }
+          if (Array.isArray(lp) && lp.length) {
+            pred.lovePoints = lp.map((p, i) => ({
+              mr: p.text,
+              en: pred.lovePoints[i]?.en ?? p.text,
+            }));
+          }
+          if (Array.isArray(hp) && hp.length) {
+            pred.healthPoints = hp.map((p, i) => ({
+              mr: p.text,
+              en: pred.healthPoints[i]?.en ?? p.text,
+            }));
+          }
+        } catch {
+          // Keep algorithmic bullets if JSON malformed.
+        }
+        if (c.advice) pred.advice = { mr: c.advice, en: pred.advice.en };
+        if (c.luckyColor) pred.luckyColor.mr = c.luckyColor;
+        if (c.luckyNumber) pred.luckyNumber = c.luckyNumber;
+        if (c.rating) pred.rating = c.rating;
+      }
+    }
+  } catch {
+    // DB unavailable — return algorithmic forecast.
+  }
+
   return {
-    weekStart: fmtDate(weekStart),
+    weekStart: weekStartStr,
     weekEnd: fmtDate(weekEnd),
     events,
     predictions,

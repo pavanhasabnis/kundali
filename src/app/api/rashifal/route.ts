@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import swisseph from "swisseph";
 import { calculateGochar, type TransitPlanet } from "@/lib/astrology/gochar";
+import { db } from "@/lib/db";
+import { dailyRashifal } from "@/lib/db/schema";
+import { eq, and } from "drizzle-orm";
+
+// Rashifal rotates daily — prevent browser/CDN stale cache.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 // Planet IDs
 const PLANET_IDS: { id: string; seId: number }[] = [
@@ -107,8 +114,36 @@ export async function GET(req: NextRequest) {
       for (let i = 0; i < 12; i++) {
         results.push(calculateGochar(transitPlanets, i));
       }
+      const dateStrAll = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+
+      // Overlay DB-cached LLM prose onto each result when available.
+      const cachedAll = db
+        .select()
+        .from(dailyRashifal)
+        .where(eq(dailyRashifal.date, dateStrAll))
+        .all();
+      const byRashi = new Map(cachedAll.map((c) => [c.rashiId, c]));
+      let anyCached = false;
+      for (const r of results) {
+        const c = byRashi.get(r.rashiId);
+        if (!c) continue;
+        anyCached = true;
+        r.overall = { mr: c.overall, en: r.overall.en };
+        r.career  = { mr: c.career,  en: r.career.en  };
+        r.love    = { mr: c.love,    en: r.love.en    };
+        r.health  = { mr: c.health,  en: r.health.en  };
+        if (c.advice)      r.advice    = { mr: c.advice, en: r.advice.en };
+        if (c.luckyColor)  r.luckyColor.mr = c.luckyColor;
+        if (c.luckyNumber) r.luckyNumber = c.luckyNumber;
+        if (c.rating)      r.rating = c.rating;
+        r.narrative = {
+          mr: `${c.overall}\n\n${c.career}\n\n${c.love}\n\n${c.health}`,
+          en: r.narrative.en,
+        };
+      }
+
       return NextResponse.json({
-        date: `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`,
+        date: dateStrAll,
         transitPlanets: transitPlanets.map(p => {
           const rashiEn = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"][p.rashiIndex];
           const rashiMr = ["मेष","वृषभ","मिथुन","कर्क","सिंह","कन्या","तुला","वृश्चिक","धनु","मकर","कुंभ","मीन"][p.rashiIndex];
@@ -116,6 +151,7 @@ export async function GET(req: NextRequest) {
           return { ...p, rashiEn, rashiMr, planetMr: planetMr[p.id] || p.id };
         }),
         predictions: results,
+        source: anyCached ? "llm-cached" : "live",
       });
     } else {
       const rashiId = parseInt(rashiParam);
@@ -123,8 +159,34 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "Invalid rashi ID (0-11)" }, { status: 400 });
       }
       const result = calculateGochar(transitPlanets, rashiId);
+      const dateStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;
+
+      // Check DB cache for LLM-generated prose for this (date, rashi).
+      // Overrides algorithmic narrative + scene fields when available.
+      const cached = db
+        .select()
+        .from(dailyRashifal)
+        .where(and(eq(dailyRashifal.date, dateStr), eq(dailyRashifal.rashiId, rashiId)))
+        .limit(1)
+        .all();
+      if (cached.length > 0) {
+        const c = cached[0];
+        result.overall = { mr: c.overall, en: result.overall.en };
+        result.career  = { mr: c.career,  en: result.career.en  };
+        result.love    = { mr: c.love,    en: result.love.en    };
+        result.health  = { mr: c.health,  en: result.health.en  };
+        if (c.advice)       result.advice    = { mr: c.advice, en: result.advice.en };
+        if (c.luckyColor)   result.luckyColor.mr = c.luckyColor;
+        if (c.luckyNumber)  result.luckyNumber = c.luckyNumber;
+        if (c.rating)       result.rating = c.rating;
+        result.narrative = {
+          mr: `${c.overall}\n\n${c.career}\n\n${c.love}\n\n${c.health}`,
+          en: result.narrative.en,
+        };
+      }
+
       return NextResponse.json({
-        date: `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`,
+        date: dateStr,
         transitPlanets: transitPlanets.map(p => {
           const rashiEn = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"][p.rashiIndex];
           const rashiMr = ["मेष","वृषभ","मिथुन","कर्क","सिंह","कन्या","तुला","वृश्चिक","धनु","मकर","कुंभ","मीन"][p.rashiIndex];
@@ -132,6 +194,7 @@ export async function GET(req: NextRequest) {
           return { ...p, rashiEn, rashiMr, planetMr: planetMr[p.id] || p.id };
         }),
         prediction: result,
+        source: cached.length > 0 ? cached[0].source : "live",
       });
     }
   } catch (error: unknown) {

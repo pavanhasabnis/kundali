@@ -176,13 +176,25 @@ export function detectMangalDosh(k: KundliResult): MangalDoshResult {
     const sevLabel = severity === "severe" ? "severe" : severity === "moderate" ? "moderate" : "mild";
     const sevMr = severity === "severe" ? "तीव्र" : severity === "moderate" ? "मध्यम" : "सौम्य";
     const sevHi = severity === "severe" ? "गंभीर" : severity === "moderate" ? "मध्यम" : "हल्का";
-    const sources: string[] = [];
-    if (fromLagna) sources.push("Lagna");
-    if (fromMoon) sources.push("Moon");
-    if (fromVenus) sources.push("Venus");
-    summaryEn = `Mangal Dosh present — ${sevLabel} (Mars in house ${houseFromLagna} from ${sources.join(", ")}).`;
-    summaryMr = `मंगळ दोष आहे — ${sevMr} (मंगळ ${sources.join(", ")} पासून ${houseFromLagna}व्या स्थानी).`;
-    summaryHi = `मंगल दोष है — ${sevHi} (मंगल ${sources.join(", ")} से ${houseFromLagna}वें भाव में).`;
+    // Emit per-source pair: which reference + which house Mars sits in from that reference.
+    // Fixes earlier bug where text always printed houseFromLagna regardless of trigger.
+    type Src = { en: string; mr: string; hi: string; house: number };
+    const srcs: Src[] = [];
+    if (fromLagna) srcs.push({ en: "Lagna", mr: "लग्न", hi: "लग्न", house: houseFromLagna });
+    if (fromMoon)  srcs.push({ en: "Moon",  mr: "चंद्र", hi: "चंद्र", house: houseFromMoon });
+    if (fromVenus) srcs.push({ en: "Venus", mr: "शुक्र", hi: "शुक्र", house: houseFromVenus });
+    const fmtMr = (s: Src) => s.house === 1
+      ? (s.en === "Lagna" ? "लग्नात" : `${s.mr}ाशी युती`)
+      : `${s.mr}ापासून ${s.house}व्या स्थानी`;
+    const fmtEn = (s: Src) => s.house === 1
+      ? (s.en === "Lagna" ? "in Lagna" : `conjunct ${s.en}`)
+      : `${s.house}th from ${s.en}`;
+    const fmtHi = (s: Src) => s.house === 1
+      ? (s.en === "Lagna" ? "लग्न में" : `${s.hi} से युति`)
+      : `${s.hi} से ${s.house}वें भाव में`;
+    summaryEn = `Mangal Dosh present — ${sevLabel} (Mars ${srcs.map(fmtEn).join(", ")}).`;
+    summaryMr = `मंगळ दोष आहे — ${sevMr} (मंगळ ${srcs.map(fmtMr).join(", ")}).`;
+    summaryHi = `मंगल दोष है — ${sevHi} (मंगल ${srcs.map(fmtHi).join(", ")}).`;
   }
 
   return {

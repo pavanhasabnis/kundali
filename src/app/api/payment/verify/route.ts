@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { users, payments } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
+import { getTierByTag, computeExpiryISO } from "@/lib/pricing";
+import { sendPurchaseReceipt } from "@/lib/email";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -13,7 +15,6 @@ export async function POST(req: Request) {
 
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = await req.json();
 
-  // Verify signature
   const body = razorpay_order_id + "|" + razorpay_payment_id;
   const expectedSignature = crypto
     .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
@@ -24,7 +25,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  // Update payment record
   const payment = await db.query.payments.findFirst({
     where: eq(payments.razorpayOrderId, razorpay_order_id),
   });
@@ -39,19 +39,46 @@ export async function POST(req: Request) {
     status: "paid",
   }).where(eq(payments.id, payment.id));
 
-  // If tag is a subscription plan, update user plan; if product (e.g. book), leave plan alone
-  const tag = payment.plan;
-  const isSubscription = tag === "premium" || tag === "plus";
+  // Subscription tier payment → update users.plan + planExpiresAt + billingCycle.
+  // Non-subscription (e.g. product:book) leaves user plan untouched.
+  const tier = getTierByTag(payment.plan);
 
-  if (isSubscription) {
-    const expiry = new Date();
-    expiry.setDate(expiry.getDate() + 30);
+  if (tier) {
+    const expiresAt = computeExpiryISO(tier);
+    const creditWasApplied = (payment.discountAmount ?? 0) > 0;
     await db.update(users).set({
-      plan: tag,
-      planExpiresAt: expiry.toISOString(),
+      plan: tier.plan,
+      planExpiresAt: expiresAt,
+      billingCycle: tier.cycle,
+      // Clear trial once a real payment lands — user is now paying.
+      trialEndsAt: null,
+      // Burn the one-shot starter credit when it actually funded this order.
+      ...(creditWasApplied ? { starterCreditApplied: true } : {}),
       updatedAt: new Date().toISOString(),
     }).where(eq(users.id, payment.userId));
+
+    // Fire receipt email — non-blocking. Webhook is idempotent and may also
+    // try to send; Resend dedupes on subject+to within a short window.
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, payment.userId),
+    });
+    if (user) {
+      sendPurchaseReceipt({
+        to: user.email,
+        name: user.name,
+        planLabel: tier.description,
+        amountRupees: tier.rupees,
+        expiresAtISO: expiresAt,
+        paymentId: razorpay_payment_id,
+      }).catch((e) => console.error("receipt email failed", e));
+    }
   }
 
-  return NextResponse.json({ success: true, plan: tag, subscription: isSubscription, paymentId: razorpay_payment_id });
+  return NextResponse.json({
+    success: true,
+    plan: tier?.plan ?? payment.plan,
+    cycle: tier?.cycle,
+    subscription: Boolean(tier),
+    paymentId: razorpay_payment_id,
+  });
 }

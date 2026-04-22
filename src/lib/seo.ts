@@ -21,9 +21,11 @@ export const SITE_ADDRESS = {
 
 export type Lang = "mr" | "en" | "hi";
 
-// ─── Default OpenGraph image (fallback) ─────────────────────
+// ─── Default OpenGraph image ────────────────────────────────
+// Dynamically rendered via src/app/opengraph-image.tsx (ImageResponse).
+// Next.js file-convention exposes this at /opengraph-image.png at runtime.
 export const OG_IMAGE = {
-  url: `${SITE_URL}/logos/og-image.png`,
+  url: `${SITE_URL}/opengraph-image.png`,
   width: 1200,
   height: 630,
   alt: "Bhaagyavedh — भाग्यवेध | Vedic Astrology",

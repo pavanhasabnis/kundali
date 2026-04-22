@@ -12,6 +12,13 @@ const RASHI_SYMBOL: Record<string, string> = {
   "तुला": "♎", "वृश्चिक": "♏", "धनु": "♐", "मकर": "♑", "कुंभ": "♒", "मीन": "♓",
 };
 
+const DEV_DIGITS = "०१२३४५६७८९";
+function toLocalDigits(input: string | number, lang: string): string {
+  const s = String(input);
+  if (lang !== "mr" && lang !== "hi") return s;
+  return s.replace(/[0-9]/g, (d) => DEV_DIGITS[parseInt(d)]);
+}
+
 export default function CurrentPlanetsPageClient() {
   const { t, lang } = useLang();
   const [planets, setPlanets] = useState<PlanetPos[] | null>(null);
@@ -70,7 +77,10 @@ export default function CurrentPlanetsPageClient() {
     return () => clearInterval(id);
   }, [lang]);
 
-  const dateStr = new Date().toLocaleDateString(lang === "mr" ? "mr-IN" : lang === "hi" ? "hi-IN" : "en-IN", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
+  const dateStr = toLocalDigits(
+    new Date().toLocaleDateString(lang === "mr" ? "mr-IN" : lang === "hi" ? "hi-IN" : "en-IN", { year: "numeric", month: "long", day: "numeric", weekday: "long" }),
+    lang
+  );
 
   return (
     <div className="min-h-screen bg-[#FAFAF8]">
@@ -129,9 +139,9 @@ export default function CurrentPlanetsPageClient() {
                     <span className="mr-1">{RASHI_SYMBOL[p.rashiMr] || ""}</span>
                     {t(p.rashiMr, p.rashi, p.rashiMr)}
                   </div>
-                  <div className="font-mono text-xs text-stone-600">{p.degreeDMS}</div>
+                  <div className="font-mono text-xs text-stone-600">{toLocalDigits(p.degreeDMS, lang)}</div>
                   <div className="text-xs">{t(p.nakshatraMr, p.nakshatra, p.nakshatraMr)}</div>
-                  <div className="text-center font-semibold">{p.house}</div>
+                  <div className="text-center font-semibold">{toLocalDigits(p.house, lang)}</div>
                 </div>
               ))}
             </div>

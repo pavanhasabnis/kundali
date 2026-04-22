@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Prashna Kundli — Horary Question Chart | Bhaagyavedh",
+      title: "Prashna Kundli — Horary Question Chart",
       description:
         "Ask a question and get an answer from the current planetary positions. Traditional Prashna (horary) astrology.",
       keywords: [

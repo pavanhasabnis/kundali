@@ -18,10 +18,16 @@ interface UserProfile {
   role?: string;
   plan?: string;
   planExpiresAt?: string;
+  billingCycle?: "monthly" | "yearly" | "onetime" | null;
+  trialEndsAt?: string | null;
+  familyOwnerId?: string | null;
   provider?: string;
   createdAt: string;
   updatedAt?: string;
 }
+
+type PaidPlan = "starter" | "premium" | "plus" | "family";
+type Cycle = "monthly" | "yearly" | "onetime";
 
 interface SavedKundli {
   id: string;
@@ -128,15 +134,22 @@ export default function AccountPageClient() {
     setTimeout(() => setToast(""), 3000);
   }
 
-  async function handlePayment(plan: "premium" | "plus") {
+  async function handlePayment(plan: PaidPlan, cycle?: Cycle) {
+    // Resolve default cycle per plan if caller didn't specify.
+    const resolvedCycle: Cycle =
+      cycle ?? (plan === "starter" ? "onetime" : "monthly");
     try {
       const res = await fetch("/api/payment/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({ plan, cycle: resolvedCycle }),
       });
       const data = await res.json();
-      if (!data.orderId) { setToast("Payment error"); setTimeout(() => setToast(""), 3000); return; }
+      if (!data.orderId) {
+        setToast(data.error || "Payment error");
+        setTimeout(() => setToast(""), 3000);
+        return;
+      }
 
       // Load Razorpay script if not loaded
       if (!(window as any).Razorpay) {
@@ -151,7 +164,7 @@ export default function AccountPageClient() {
         amount: data.amount,
         currency: data.currency,
         name: "Bhaagyavedh",
-        description: data.description ?? (plan === "plus" ? "Premium Plus Monthly — Full Access + Consultation" : "Premium Monthly — Unlimited Access"),
+        description: data.description ?? `${plan} ${resolvedCycle}`,
         order_id: data.orderId,
         handler: async (response: any) => {
           const verifyRes = await fetch("/api/payment/verify", {
@@ -166,7 +179,11 @@ export default function AccountPageClient() {
           const verifyData = await verifyRes.json();
           if (verifyData.success) {
             setToast(isMr ? "पेमेंट यशस्वी!" : "Payment successful!");
-            setUser((prev) => prev ? { ...prev, plan: verifyData.plan } : prev);
+            setUser((prev) =>
+              prev
+                ? { ...prev, plan: verifyData.plan, billingCycle: verifyData.cycle ?? resolvedCycle }
+                : prev,
+            );
           } else {
             setToast(isMr ? "पेमेंट अयशस्वी" : "Payment failed");
           }
@@ -183,6 +200,27 @@ export default function AccountPageClient() {
       setTimeout(() => setToast(""), 3000);
     }
   }
+
+  /* Auto-open Razorpay when redirected from /pricing with ?plan=X&cycle=Y.
+   * We consume the params once (clearing them from the URL) so refresh
+   * doesn't re-open the modal and 'Back' doesn't fire another order. */
+  useEffect(() => {
+    if (loading || !user) return;
+    const qpPlan = searchParams.get("plan") as PaidPlan | null;
+    const qpCycle = searchParams.get("cycle") as Cycle | null;
+    if (!qpPlan) return;
+    const validPlans: PaidPlan[] = ["starter", "premium", "plus", "family"];
+    if (!validPlans.includes(qpPlan)) return;
+
+    // Clear the query so refresh/back doesn't re-trigger, then fire.
+    const url = new URL(window.location.href);
+    url.searchParams.delete("plan");
+    url.searchParams.delete("cycle");
+    window.history.replaceState({}, "", url.toString());
+
+    handlePayment(qpPlan, qpCycle ?? undefined);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, user?.id]);
 
   if (loading) {
     return <div className="bg-[#f5f4f1] min-h-screen flex items-center justify-center"><p className="text-[#5c1a1a]/60">{t("लोड होत आहे...", "Loading...")}</p></div>;
@@ -203,9 +241,23 @@ export default function AccountPageClient() {
 
   const planLabels: Record<string, { mr: string; en: string }> = {
     free: { mr: "मोफत", en: "Free" },
+    starter: { mr: "स्टार्टर", en: "Starter" },
     premium: { mr: "प्रीमियम", en: "Premium" },
     plus: { mr: "प्रीमियम प्लस", en: "Premium Plus" },
+    family: { mr: "फॅमिली", en: "Family" },
   };
+
+  const cycleLabel = user.billingCycle === "yearly"
+    ? t("वार्षिक", "Yearly")
+    : user.billingCycle === "monthly"
+      ? t("मासिक", "Monthly")
+      : user.billingCycle === "onetime"
+        ? t("एकरकमी", "One-time")
+        : null;
+
+  const trialDaysLeft = user.trialEndsAt
+    ? Math.max(0, Math.ceil((new Date(user.trialEndsAt).getTime() - Date.now()) / 86400000))
+    : null;
 
   const navItems: { key: Tab; labelMr: string; labelEn: string }[] = [
     { key: "overview", labelMr: "माझे खाते", labelEn: "Overview" },
@@ -343,12 +395,56 @@ export default function AccountPageClient() {
               </div>
             </div>
 
+            {/* Family plan banner — shown to owners of family plans.
+                 Seat invite UI ships in Phase 3; for now just confirm ownership. */}
+            {user.plan === "family" && !user.familyOwnerId && (
+              <div className="bg-gradient-to-br from-[#3d0c0c] to-[#5c1a1a] text-white rounded-lg p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <p className="text-[#d4a843] text-xs uppercase tracking-wider font-semibold">
+                    {t("फॅमिली योजना — तुम्ही मालक", "Family plan — owner")}
+                  </p>
+                  <p className="text-sm mt-1 text-white/80">
+                    {t(
+                      "तुमच्या कुटुंबातील ४ सदस्यांसाठी Premium. सदस्य जोडण्याचा पर्याय लवकरच.",
+                      "Premium for up to 4 family members. Seat invitations coming soon.",
+                    )}
+                  </p>
+                </div>
+                <span className="inline-block px-3 py-1.5 rounded-lg bg-[#d4a843] text-[#3d0c0c] text-xs font-bold whitespace-nowrap">
+                  4 {t("जागा", "seats")}
+                </span>
+              </div>
+            )}
+
             {/* Plan & Stats */}
             <div className="grid sm:grid-cols-3 gap-4">
               <div className="bg-white rounded-lg border border-gray-200 p-5">
                 <p className="text-xs text-[#5c1a1a]/50 uppercase tracking-wide">{t("सध्याची योजना", "Current Plan")}</p>
-                <p className="text-xl font-bold text-[#3d0c0c] mt-1">{isMr ? planLabels[user.plan || "free"].mr : planLabels[user.plan || "free"].en}</p>
-                {user.planExpiresAt && <p className="text-[10px] text-[#5c1a1a]/40 mt-1">{t("समाप्ती:", "Expires:")} {new Date(user.planExpiresAt).toLocaleDateString()}</p>}
+                <div className="mt-1 flex items-center gap-2 flex-wrap">
+                  <p className="text-xl font-bold text-[#3d0c0c]">
+                    {isMr ? planLabels[user.plan || "free"].mr : planLabels[user.plan || "free"].en}
+                  </p>
+                  {cycleLabel && (
+                    <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-[#d4a843]/15 text-[#8c6a1d]">
+                      {cycleLabel}
+                    </span>
+                  )}
+                  {user.familyOwnerId && (
+                    <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">
+                      {t("सदस्य", "Seat")}
+                    </span>
+                  )}
+                </div>
+                {trialDaysLeft !== null && trialDaysLeft > 0 && (
+                  <p className="text-[11px] text-emerald-700 font-semibold mt-1">
+                    ⏳ {t(`${trialDaysLeft} दिवस ट्रायल`, `${trialDaysLeft}-day trial left`)}
+                  </p>
+                )}
+                {user.planExpiresAt && (
+                  <p className="text-[10px] text-[#5c1a1a]/40 mt-1">
+                    {t("समाप्ती:", "Expires:")} {new Date(user.planExpiresAt).toLocaleDateString()}
+                  </p>
+                )}
                 {user.plan === "free" && (
                   <button onClick={() => setActiveTab("payments")} className="mt-3 text-xs text-[#d4a843] hover:text-[#3d0c0c] font-medium">{t("अपग्रेड करा →", "Upgrade →")}</button>
                 )}
@@ -536,7 +632,7 @@ export default function AccountPageClient() {
                   {t("तुम्ही अजून छापील पुस्तक मागवले नाही.", "You haven't ordered a printed book yet.")}
                 </p>
                 <Link href={`/${lang}/shop`} className="inline-block px-5 py-2 rounded-lg bg-[#d4a843] text-[#3d0c0c] text-sm font-semibold">
-                  {t("दुकान पहा", "Visit Shop")}
+                  {t("शॉप पहा", "Visit Shop")}
                 </Link>
               </div>
             ) : (

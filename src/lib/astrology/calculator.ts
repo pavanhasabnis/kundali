@@ -487,17 +487,31 @@ export function calculatePanchang(date: Date, latitude: number, longitude: numbe
   else if (karanaAbsIndex === 58) karanaName = "चतुष्पाद";
   else karanaName = "नाग";
 
-  // Rahu Kaal calculation (simplified by day of week)
+  // Inauspicious time slots — sunrise-based (Kalnirnay / Drik / Datepanchang convention).
+  // Daylight (sunrise → sunset) split into 8 equal parts; slot varies by vaar.
   const dayOfWeek = date.getDay();
-  const rahuKaalSlots = [
-    "04:30 PM - 06:00 PM", // Sunday
-    "07:30 AM - 09:00 AM", // Monday
-    "03:00 PM - 04:30 PM", // Tuesday
-    "12:00 PM - 01:30 PM", // Wednesday
-    "01:30 PM - 03:00 PM", // Thursday
-    "10:30 AM - 12:00 PM", // Friday
-    "09:00 AM - 10:30 AM", // Saturday
-  ];
+  const RAHU_SLOT     = [8, 2, 7, 5, 6, 4, 3]; // Sun, Mon, Tue, Wed, Thu, Fri, Sat
+  const GULIKA_SLOT   = [7, 6, 5, 4, 3, 2, 1];
+  const YAMAGANDA_SLOT = [5, 4, 3, 2, 1, 7, 6];
+  const fmt12 = (hoursFloat: number) => {
+    let totalMin = Math.round(hoursFloat * 60);
+    totalMin = ((totalMin % 1440) + 1440) % 1440;
+    let h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    const suffix = h >= 12 ? "PM" : "AM";
+    h = h % 12 === 0 ? 12 : h % 12;
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")} ${suffix}`;
+  };
+  const daylightHours = sunsetLocal - sunriseLocal;
+  const slotSize = daylightHours / 8;
+  const slotRange = (slot: number) => {
+    const start = sunriseLocal + (slot - 1) * slotSize;
+    const end = start + slotSize;
+    return `${fmt12(start)} - ${fmt12(end)}`;
+  };
+  const rahuKaalStr = slotRange(RAHU_SLOT[dayOfWeek]);
+  const gulikaKaalStr = slotRange(GULIKA_SLOT[dayOfWeek]);
+  const yamagandaStr = slotRange(YAMAGANDA_SLOT[dayOfWeek]);
 
   const dayNames = ["रविवार", "सोमवार", "मंगळवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार"];
 
@@ -651,7 +665,9 @@ export function calculatePanchang(date: Date, latitude: number, longitude: numbe
     nakshatraLord: NAKSHATRAS[nakIndex].lord,
     yoga: yogaNames[yogaIndex % 27],
     karana: karanaName,
-    rahuKaal: rahuKaalSlots[dayOfWeek],
+    rahuKaal: rahuKaalStr,
+    gulikaKaal: gulikaKaalStr,
+    yamaganda: yamagandaStr,
     masa: masaNames[sunRashi],
     moonRashi: RASHIS[getRashiIndex(moonSid)].mr,
     sunRashi: RASHIS[sunRashi].mr,

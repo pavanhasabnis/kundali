@@ -8,7 +8,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     lang: l,
     path: "/matching",
     mr: {
-      title: "गुण मिलान — 36 गुण कुंडली मेळ | Gun Milan Marathi | भाग्यवेध",
+      title: "गुण मिलान — 36 गुण कुंडली मेळ | Gun Milan Marathi",
       description:
         "विवाहासाठी 36 गुण कुंडली जुळवणी. अष्टकूट गुण मिलान — वर्ण, वश्य, तारा, योनी, ग्रह मैत्री, गण, भकूट, नाडी. Gun milan marathi, kundali matching online free.",
       keywords: [
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     en: {
-      title: "Kundli Matching — 36 Gun Milan Ashtakoot | Bhaagyavedh",
+      title: "Kundli Matching — 36 Gun Milan Ashtakoot",
       description:
         "Free 36 guna kundli matching. Ashtakoot — Varna, Vashya, Tara, Yoni, Graha Maitri, Gana, Bhakoot, Nadi. Mangal & Nadi dosh check in Marathi + English.",
       keywords: [
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       ],
     },
     hi: {
-      title: "गुण मिलान — ३६ गुण कुंडली मिलान | Gun Milan Hindi | भाग्यवेध",
+      title: "गुण मिलान — ३६ गुण कुंडली मिलान | Gun Milan Hindi",
       description:
         "विवाह के लिए ३६ गुण कुंडली मिलान. अष्टकूट गुण मिलान — वर्ण, वश्य, तारा, योनि, ग्रह मैत्री, गण, भकूट, नाड़ी. Gun milan hindi, kundali matching online free.",
       keywords: [

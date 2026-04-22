@@ -2,19 +2,21 @@ import VideoPreviewClient from "./video-preview-client";
 
 export const dynamic = "force-dynamic";
 
+// Icon paths map to the SVGs already used across /rashifal, /kundli/result, etc.
+// Kept as the source of truth so the reel matches on-site branding.
 const RASHI_LIST = [
-  { id: 0, mr: "मेष", en: "Aries", hi: "मेष", symbol: "♈" },
-  { id: 1, mr: "वृषभ", en: "Taurus", hi: "वृषभ", symbol: "♉" },
-  { id: 2, mr: "मिथुन", en: "Gemini", hi: "मिथुन", symbol: "♊" },
-  { id: 3, mr: "कर्क", en: "Cancer", hi: "कर्क", symbol: "♋" },
-  { id: 4, mr: "सिंह", en: "Leo", hi: "सिंह", symbol: "♌" },
-  { id: 5, mr: "कन्या", en: "Virgo", hi: "कन्या", symbol: "♍" },
-  { id: 6, mr: "तुला", en: "Libra", hi: "तुला", symbol: "♎" },
-  { id: 7, mr: "वृश्चिक", en: "Scorpio", hi: "वृश्चिक", symbol: "♏" },
-  { id: 8, mr: "धनु", en: "Sagittarius", hi: "धनु", symbol: "♐" },
-  { id: 9, mr: "मकर", en: "Capricorn", hi: "मकर", symbol: "♑" },
-  { id: 10, mr: "कुंभ", en: "Aquarius", hi: "कुम्भ", symbol: "♒" },
-  { id: 11, mr: "मीन", en: "Pisces", hi: "मीन", symbol: "♓" },
+  { id: 0,  mr: "मेष",    en: "Aries",       hi: "मेष",    symbol: "♈", icon: "/images/rashi-gold/mesh.svg" },
+  { id: 1,  mr: "वृषभ",   en: "Taurus",      hi: "वृषभ",   symbol: "♉", icon: "/images/rashi-gold/vrushabh.svg" },
+  { id: 2,  mr: "मिथुन",  en: "Gemini",      hi: "मिथुन",  symbol: "♊", icon: "/images/rashi-gold/mithun.svg" },
+  { id: 3,  mr: "कर्क",   en: "Cancer",      hi: "कर्क",   symbol: "♋", icon: "/images/rashi-gold/kark.svg" },
+  { id: 4,  mr: "सिंह",   en: "Leo",         hi: "सिंह",   symbol: "♌", icon: "/images/rashi-gold/simha.svg" },
+  { id: 5,  mr: "कन्या",  en: "Virgo",       hi: "कन्या",  symbol: "♍", icon: "/images/rashi-gold/kanya.svg" },
+  { id: 6,  mr: "तुला",   en: "Libra",       hi: "तुला",   symbol: "♎", icon: "/images/rashi-gold/tula.svg" },
+  { id: 7,  mr: "वृश्चिक", en: "Scorpio",     hi: "वृश्चिक", symbol: "♏", icon: "/images/rashi-gold/vrushchik.svg" },
+  { id: 8,  mr: "धनु",    en: "Sagittarius", hi: "धनु",    symbol: "♐", icon: "/images/rashi-gold/dhanu.svg" },
+  { id: 9,  mr: "मकर",    en: "Capricorn",   hi: "मकर",    symbol: "♑", icon: "/images/rashi-gold/makar.svg" },
+  { id: 10, mr: "कुंभ",   en: "Aquarius",    hi: "कुम्भ",  symbol: "♒", icon: "/images/rashi-gold/kumbh.svg" },
+  { id: 11, mr: "मीन",    en: "Pisces",      hi: "मीन",    symbol: "♓", icon: "/images/rashi-gold/meen.svg" },
 ];
 
 export default async function Page({ params }: { params: Promise<{ lang: string; rashi: string }> }) {
